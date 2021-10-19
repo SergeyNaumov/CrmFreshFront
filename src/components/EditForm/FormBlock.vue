@@ -125,6 +125,7 @@ import FieldPassword from '../fields/password';
                 case 'wysiwyg':
                 case 'password':
                 case 'code':
+                case 'accordion':
                 case 'memo':
                 case '1_to_m':
                 case 'file':  

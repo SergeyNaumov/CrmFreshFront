@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{field.description}}:
         <div>
             <v-select v-if="values.length<20"
                 :items="values"
@@ -13,6 +12,7 @@
                 single-line
                 descriprion="выберите значения"
                 multiple
+                :label="field.description"
                 chips
                 clearable
                 @change="change"
@@ -27,6 +27,7 @@
                 hint="Выберите одно или несколько значений"
                 single-line
                 descriprion="выберите значения"
+                :label="field.description"
                 multiple
                 chips
                 clearable
@@ -62,7 +63,7 @@ export default {
                     if(D.success){
                         //console.log({list:D.list});
                         for(let l of D.list){ // с атрибутами id и header select не работает, хз почему
-                            this.values.push({'v':l.id,'d':l.header})
+                            this.values.push({'v':l.id+'','d':l.header})
                         }
                     }
 

@@ -5,20 +5,42 @@
         
         <!-- для изменения рег. данных -->
         <errors :errors="errors" v-if="errors.length"/> <!-- ошибки при инициализации компонента -->
-        <v-card max-width="500px" v-else> 
+        <template v-else>
           
-          <v-card-text >
+        
+        <v-card max-width="500px" > 
+          
+          <v-card-text style="margin-top: 20px;">
               <h3>Ваши регистрационные данные:</h3>
+              <template v-if="!edit_reg_data">
+                <div>
+                  &nbsp;<b>Email:</b> {{manager.login}}<br>
+                  &nbsp;<b>ФИО:</b> {{manager.name_f}} {{manager.name_i}} {{manager.name_o}}<br>
+                  <div v-if="manager.phone">&nbsp;<b>Телефон:</b> {{manager.phone}}</div>
+                  <template v-if="manager.type==2 || manager.type==3">
+                    <br>
+                    <hr>
+                    <br>
+                    <p>
+                      Если у вас отображаются не корректные данные или данные изменились, вы можете сообщить об этом вашему менеджеру или отправить запрос через форму «Изменить данные»
+                    </p>
+                  </template>
+                  <template v-if="!edit_reg_data">
+                  <div  style="text-align: right; width: 100%;">
+                    <template v-if="message_edit_reg_data">
+                      <p  style="color:red;">Спасибо. Ваша заявка на изменение данных отправлена на проверку</p>
+                    </template>
+                    <template v-else>
+                      <v-btn color="primary" ref="button"  @click.prevent="edit_reg_data=true" small v-if="!edit_reg_data">Изменить данные</v-btn>
+                    </template>
+                            
 
-              
-              <div v-if="!edit_reg_data">
+                    <!--<a href="" ><v-icon  color="primary" small>edit</v-icon></a>-->
+                  </div>
+                  </template>
 
-                &nbsp;<b>Логин:</b> {{manager.login}}<br>
-                &nbsp;<b>Имя:</b> {{manager.name}}<br>
-                <div  v-if="!edit_reg_data" style="text-align: right; width: 100%;">
-                  <a href="" @click.prevent="edit_reg_data=true"><v-icon  color="primary" small>edit</v-icon></a>
                 </div>
-              </div>
+               </template>
               <template v-else> 
 
                   <!-- Изменение рег. данных -->
@@ -66,8 +88,8 @@
                         <div class="err" v-if="error_change_password">
                           {{error_change_password}}
                         </div>
-                          <template v-if="password">
-                              <v-btn color="primary" ref="button"  @click="check_password()" small v-if="edit_reg_data">Ок</v-btn>        
+                          <template >
+                              <v-btn color="primary" ref="button"  @click="check_password()" small v-if="edit_reg_data && password">Ок</v-btn>&nbsp;
                               <v-btn color="red" ref="button"  @click="change_password_step=0" small v-if="edit_reg_data">Отмена</v-btn>        
                           </template>
                         </template>
@@ -112,37 +134,117 @@
                 Регистрационные данные успешно обновлены <v-btn color="primary" ref="button"  @click="get_reg_data()" small >Закрыть</v-btn>
               </div>
               <template v-else>
-                <v-btn color="primary" ref="button"  @click="change_reg_data()" small v-if="reg_data_ok">Внести изменения</v-btn>
+                <v-btn color="primary" ref="button"  @click="change_reg_data()" small :disabled="!reg_data_ok">Внести изменения</v-btn>
 
                 <v-btn color="red" ref="button"  @click="get_reg_data()" small >Не вносить изменения</v-btn>            
               </template>
           </v-card-actions>
           
         </v-card>
+        </template>
 
+
+        <v-card max-width="500px" style="margin-top: 10px;" v-if="manager.type==1">
+          <v-card-text>
+            <h3>Ваши юридические лица:</h3>
+            <div v-if="!manager.ur_lico_list.length">
+              У Вас нет юридических лиц
+            </div>
+            <div v-for="(u,idx) in manager.ur_lico_list" :key="idx">
+              <a :href="'/edit-form/ur_lico/'+u.id" target="_blank">{{u.header}}</a></div>
+          </v-card-text>
+            
+          
+        </v-card>
+
+        <v-card max-width="500px" class="pers_manager" v-if="manager.type==2 || manager.type==3">
+          <v-card-text>
+            <h3>Ваш персональный менеджер:</h3>
+            <template v-if="manager.ma_id">
+              <div><b>{{manager.ma_name_f}} {{manager.ma_name_i}} {{manager.ma_name_o}}</b></div>
+              <div><b>Email:</b>&nbsp;<a :href="'mailto:'+manager.ma_email">{{manager.ma_email}}</a></div>
+              <div><b>Телефон:</b> {{manager.ma_phone?manager.ma_phone:'не указан'}}</div>
+            </template>
+            <template v-else>
+              <p>персональный менеджер не выбран, свяжитесь с представителями компании</p>
+            </template>
+          </v-card-text>
+        </v-card>
+        
         <!-- ПРЕДСТАВИТЕЛЬ ЮРИДИЧЕСКОГО ЛИЦА -->
         <template v-if="manager.type==2"> 
-         
-          <v-card max-width="800px" class="ur_lico_settings">  
-          
-            <v-card-text>
             <template v-if="comp_list.length>0">
-              Вы являетесь представителем {{(comp_list.length>1)?'юридического лица':'юридических лиц'}}
-                
-                  <CompItem      
-                    v-for="c in comp_list" 
-                    :comp="c"
-                    :set_comp="set_comp"
-                    :get_reg_data="get_reg_data"
-                    :your_manager="your_manager"
-                    :key="c.id"
-                  />
+              <v-card class="ur_lico_settings" max-width="800px">
+                <v-card-text>
+                  <pre v-if="0"> {{comp_list}}</pre>
+                    <div><b>Вы являетесь представителем {{(comp_list.length>1)?'юридических лиц':'юридического лица'}}:</b></div>
+                      <!--
+                      :items="comp_list"-->
+                    <v-select 
+                      item-value="id"
+                      item-text="header"
+                      :items="cur_comp_header_list"
+                      single-line
+                      v-model="cur_comp_header"
+                      :disabled="false"
+                      :readonly="false"
+                    />
+                    <CompItem      
+                      :comp="cur_comp"
+                      :set_comp="set_comp"
+                      :get_reg_data="get_reg_data"
+                      :your_manager="your_manager"
+                    />
+                  </v-card-text>
+                </v-card>
 
+                <v-card max-width="800px" class="apteka_list" v-if="cur_comp.apteka_list.length">  
+                  <v-card-text>
+                      <!-- Список аптек -->
+                      <AptListForUl 
+                        :get_reg_data="get_reg_data"
+                        :comp="cur_comp"
+                        v-if="cur_comp"
+                      />
+                  </v-card-text>
+                </v-card>
+               <v-card class="orders_change_data">
+                <v-card-text>
+                  <template v-if="cur_comp.subscribe_actions.length">
+                    <p><b>Ваши аптеки подписаны на маркетинговые мероприятия:</b></p>
+                    <div v-for="a in cur_comp.subscribe_actions" :key="a.ic">
+                      <a :href="'/edit-form/action/' + a.id" target="_blank">{{a.header}}</a>
+                      <small>({{a.date_start}} ... {{a.date_start}})</small>
+                    </div>
+
+                  </template>
+                  <template v-else>
+                    <p>Ни одна из Ваших аптек не подписана на текущие маркетинговые мероприятия</p>
+                  </template>
+                </v-card-text>
+               </v-card> 
+                <v-card class="orders_change_data">
+                  <v-card-text>
+                    <template v-if="cur_comp.orders_change_apteka.length"> 
+                      <p><b>Заявки на изменение данных от аптек:</b></p>
+                      
+                      <div v-for="o in cur_comp.orders_change_apteka" :key="o.id">
+                        <a :href="'/edit-form/order_change_account/'+o.id" target="_blank">{{o.registered}} - {{o.ur_address}}</a>
+                      </div>
+                      <p><b><a href="/admin-table/order_change_account">смотреть все заявки на изменения от аптек</a></b></p>
+                    </template>
+                    <template v-else>
+                      <p>Заявки на изменение данных от аптек отсутствуют</p>
+                      
+                    </template>
+                  </v-card-text>
+                </v-card>
                 
-              <a href=""></a>
+                
+
             </template>
-            </v-card-text>
-          </v-card>
+            
+          
         </template>
 
         <!-- ПРЕДСТАВИТЕЛЬ АПТЕК -->
@@ -171,9 +273,11 @@
 </template>
 <script>
 import Vue from 'vue'
-import { phone_replace, phone_check, email_check } from '../js/check_func.js';
-Vue.component('CompItem',()=> import('./comp_item'));
-Vue.component('AptItem',()=> import('./apteka_item'));
+import { phone_replace, phone_check, email_check, is_cyrillic_str} from '../js/check_func.js';
+Vue.component('CompItem',()=> import('./comp_item'))
+Vue.component('AptListForUl',()=>import('./apt_list_for_ul')) // список аптек для юрлица
+Vue.component('AptItem',()=> import('./apteka_item'))
+Vue.component('AptManagerEdit',()=> import('./apt_manager_edit'))
 export default ({
   props:[],
   //components:[comp_item],
@@ -190,11 +294,14 @@ export default ({
       password1:'',
       password2:'',
       
+      cur_comp_header:'',
       error_change_password:'',
-      edit_reg_data:true,
+      edit_reg_data:false,
+      message_edit_reg_data:false, // для отображения сообщения "Спасибо. Ваша заявка на изменение данных отправлена на проверку"
       reg_data_errors:[],
       phone: '', // телефон менеджера храним здесь, чтобы можно было watch-ить
       change_reg_data_success: false,
+      orders_change_apteka:[], // заявки на изменение данных от аптек
       manager:{
         login: '',
         name_f: '',
@@ -234,6 +341,25 @@ export default ({
 
   },
   computed:{
+    cur_comp_header_list(){
+      let list=[]
+      for(let c of this.comp_list){
+        list.push(c.header)
+      }
+      return list
+    },
+    cur_comp(){
+      if(this.comp_list.length && this.cur_comp_header){
+        for(let c of this.comp_list){
+          if(this.cur_comp_header == c.header){
+            return c
+          }
+        }
+      }
+      return {id:false}
+
+    },
+
     reg_data_ok(){
       for(let f in this.manager_error)
         if(this.manager_error[f]){
@@ -264,6 +390,7 @@ export default ({
     }
   },
   methods:{
+
     set_comp(comp){
       for(let c of this.comp_list){
         if(c.id==comp.id){
@@ -297,12 +424,22 @@ export default ({
       if(!this.manager.name_f){
         this.manager_error['name_f']='укажите фамилию'
       }
+      else if(!is_cyrillic_str(this.manager.name_f))
+        this.manager_error['name_f']='допускается только кириллица'
+
       if(!this.manager.name_i){
         this.manager_error['name_i']='укажите имя'
       }
+      else if(!is_cyrillic_str(this.manager.name_i))
+        this.manager_error['name_i']='допускается только кириллица'
+
       if(!this.manager.name_o){
         this.manager_error['name_o']='укажите отчество'
       }
+      else if(!is_cyrillic_str(this.manager.name_o))
+        this.manager_error['name_o']='допускается только кириллица'
+
+
     },
     get_reg_data(){ // получаем регистрационные данные
       this.$http.get(BackendBase+'/anna/get-reg-data').then(
@@ -317,8 +454,13 @@ export default ({
             
               setTimeout(
                 ()=>{
-                  if(this.manager.type==2)
+                  if(this.manager.type==2){
                     this.comp_list=D.comp_list
+                    if(D.comp_list.length)
+                      this.cur_comp_header=D.comp_list[0].header
+
+                    this.orders_change_apteka=D.orders_change_apteka
+                  }
 
                   if(this.manager.type==3)
                     this.apt_list=D.apt_list
@@ -330,6 +472,8 @@ export default ({
             this.apt_list=D.apt_list
             this.change_password_step=0
             this.edit_reg_data=false
+            
+
             this.reg_data_errors=[]
             this.check_reg_data()
             
@@ -360,6 +504,7 @@ export default ({
       this.$http.post(
         BackendBase+'/anna/change-password',
         {
+          login: this.manager.login,
           password: this.password,
           password1: this.password1,
           password2: this.password2
@@ -388,8 +533,20 @@ export default ({
         ).then(
           r=>{
             let D=r.data
-            if(D.success)
+            if(D.success){
+
               this.get_reg_data()
+              this.message_edit_reg_data=true
+              setTimeout( // гасим сооьщение
+                ()=>{
+                  this.message_edit_reg_data=false
+                },
+                2000
+              )
+            }
+
+              
+
           }
         )
       }
@@ -404,6 +561,16 @@ export default ({
     margin: 5px;
     border-radius: 5px;
   }
-  .ur_lico_settings {margin-top: 10px;}
+  .ur_lico_settings, .orders_change_data {
+    margin-top: 10px;
+  }
   a {text-decoration: none;}
+
+  .pers_manager {margin-top: 20px;}
+  .v-card__text h3{ margin-bottom: 10px; }
+  .subscribes {
+    margin-left: 20px;
+  }
+
+  .v-input__control {display: block;}
 </style>

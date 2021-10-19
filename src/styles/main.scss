@@ -1,0 +1,18 @@
+@import './colors/blue2.scss';
+// Форма
+.form_header {margin-bottom: 20px;}
+
+table.tbl1 {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.tbl1 td {
+    border: 1px solid gray;
+    padding: 2px 5px;
+}
+
+
+@media only screen and (max-width: 1000px) {
+    .form_header {margin-bottom: 20px; font-size: 1.5em;}
+}

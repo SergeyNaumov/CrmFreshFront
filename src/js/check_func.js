@@ -31,3 +31,20 @@ export function email_check(v){
     
     return true
 }
+export const is_cyrillic_str=(str)=>{
+    return /^[абвгдеёжзийклмнопрстуфхцчшщьыъэюя\s]+$/i.test(str)
+}
+export function gen_pas(l,symbols){
+    if(!l)
+        l=6
+    if(!symbols)
+        symbols='123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+
+    let key='';
+
+    let lensym=symbols.length;
+    for(let k=0;k<=l;k++){
+        key+=symbols[parseInt(Math.random()*lensym)];
+    }
+    return key;
+}

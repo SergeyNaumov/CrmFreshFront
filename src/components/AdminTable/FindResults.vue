@@ -37,7 +37,7 @@
   </v-dialog>
 
       <div sm12 md12 lg12 class="mt-5 text-left" v-if="results.headers">
-            <h2 class="subheadling mb-2">Результаты поиска</h2>
+            <!--<h2 class="subheadling mb-2">Результаты поиска</h2>-->
 
             <div v-for="(o,idx) in out_before_search" :key="idx" v-html="o"></div>
             <template v-if="!not_out_result_search">
@@ -61,22 +61,36 @@
                                   
                                 </span>
                             </th>
-                            <th class="controls"></th>
+                            <th class="controls"
+                              v-if="!permissions.not_edit || permissions.make_delete"
+                            >
+                            </th>
                           </tr>
                         </thead>
                         <tbody>                          
                             <tr v-for="tr in results.output" :key="tr.tr_index">
                               <td  v-for="(td,td_index) in tr.data" :key="td.td_index" :data-label="results.headers[td_index]['h']+':'">
                                 <div class="field">
-                                  
-                                  <span v-if="1 || td.type=='html'" v-html="td.value"></span>
-                                  
+                                  <template v-if="typeof(td.value)=='object'">
+                                    <div v-if="td.value.before_html" v-html="td.value.before_html" />
+                                    
+                                    <res-file-uploader :opt="td.value" v-if="td.value.type=='file_uploader'"/>
+                                    <res-form :opt="td.value" v-else-if="td.value.type=='form'"/>
+
+                                    <div v-if="td.value.after_html" v-html="td.value.after_html" />
+                                  </template>
+                                  <template v-else-if="td.type=='html'">
+                                        <span v-html='td.value'></span>
+                                  </template>
                                   <template v-else-if="td.type=='text'">
-                                    <v-text-field                                    
-                                      v-model="td.value"
-                                      @input="change_in_search(tr,td)"
-                                      class="change_in_search"
-                                    ></v-text-field>
+                                      
+                                    {{td}}
+                                      <v-text-field
+                                        
+                                        v-model="td.value"
+                                        @input="change_in_search(tr,td)"
+                                        class="change_in_search"
+                                      />
                                     <div class="saved" :id="td.name+'_'+tr.key"></div>
                                     <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </template>
@@ -135,9 +149,15 @@
                                   
                                 </div>
                               </td>
-                              <td class="text-xs-left text-lg-right controls">
-                                <v-btn small v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" ><a :href="'/edit_form/'+results.config+'/'+tr.key" @click.prevent="go_to_edit(tr.key)"><v-icon  color="primary" small>edit</v-icon></a></v-btn>&nbsp;
-                                <v-btn v-if="permissions.make_delete" @click="delete_dialog(tr.key)" small><v-icon small  color="primary" icon >delete</v-icon></v-btn>
+                              <td class="text-xs-left text-md-right controls" v-if="!permissions.not_edit || permissions.make_delete">
+                                <v-btn small v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
+                                  <a :href="'/edit_form/'+results.config+'/'+tr.key" @click.prevent="go_to_edit(tr.key)">
+                                    <v-icon  color="primary" small>edit</v-icon>
+                                  </a>
+                                </v-btn>&nbsp;
+                                <v-btn v-if="permissions.make_delete" @click="delete_dialog(tr.key)" small>
+                                  <v-icon small  color="primary" icon >delete</v-icon>
+                                </v-btn>
                               </td>
                             </tr>
                             
@@ -148,8 +168,8 @@
                       <v-pagination :length="results.count_pages" v-model="page"></v-pagination>
                     </div>
               </template>
-              <template v-else>
-                <p>По Вашему запросу ничего не найдено</p>
+              <template v-else-if="!finding">
+                <p>По Вашему запросу ничего не найдено </p>
               </template>
             </template>
             <div v-for="(o,idx) in out_after_search" :key="idx" v-html="o"></div>
@@ -161,9 +181,13 @@
 <script>
 import FieldMemo from '../fields/memo.vue';
 
+import res_file_uploader from './result_objects/file_uploader';
+import res_form from './result_objects/form';
 export default {
   components:{
-    'field-memo':FieldMemo
+    'field-memo':FieldMemo,
+    'res-file-uploader':res_file_uploader,
+    'res-form':res_form
   },
   props:[
     'results','permissions','go_search','finding','SearchDataSet',
@@ -324,7 +348,6 @@ export default {
         v=v?1:0
       
       let values={}; values[td.name]=v;
-      //console.log('/edit_form/update/'+form.config)
       let url=BackendBase+'/edit-form/'+this.results.config+'/'+form_id;
       this.$http.post(url,{
         id:form_id, 

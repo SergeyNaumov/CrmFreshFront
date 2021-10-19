@@ -23,14 +23,17 @@
                 </template>
                 <template v-if="process_change">
                     <!-- начали генерировать пароль -->
-                    <v-text-field label="введите или сгенерируйте автоматически новый пароль" v-model="new_password" hide-details/>
+                    <v-text-field :label="new_password?'Вы задали пароль:':'введите или сгенерируйте новый пароль'" v-model="new_password" hide-details/>
                     <div>
                         <small>
-                            
                             <a href="" @click.prevent="generate_new_pas()">сгенерировать</a>
                         
                             <template v-if="new_password.length>=min_length">
-                                <span v-for="(m,idx) in field.methods_send" :key="'send_'+idx"> | <a href="" @click.prevent="save(idx)">{{m.description}}</a></span>
+                                <span v-for="(m,idx) in field.methods_send" :key="'send_'+idx"> 
+                                <template v-if="!(form.action=='new')">
+                                    | <a href="" @click.prevent="save(idx)">{{m.description}}</a>
+                                </template>
+                                </span>
                             </template>
                             
                                 | <a href="" style="color: red;"@click.prevent="new_password='' ; process_change=false">X</a>
@@ -57,6 +60,7 @@
 
 <script>
   import { bus } from '../../main'
+  import { gen_pas }  from '../../js/check_func.js'
   export default {
     data:function(){
         return {
@@ -97,10 +101,8 @@
     },
     methods: {
         generate_new_pas(){
-            let key='';
-            let l=this.field.generate_len_pas;
-            if(!l)
-                l=this.min_length;
+            /*let key='';
+
             
             let symbols=this.field.symbols?this.field.symbols:'123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
@@ -108,7 +110,12 @@
             for(let k=0;k<=l;k++){
                 key+=symbols[parseInt(Math.random()*lensym)];
             }
-            this.new_password=key;
+            this.new_password=key;*/
+            //let symbold=this.field.symbols?this.field.symbols:'123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+            let l=this.field.generate_len_pas;
+            if(!l)
+                l=this.min_length;
+            this.new_password=gen_pas(l,this.field.symbols)
         },
         save(method_send){
             this.$http.post(

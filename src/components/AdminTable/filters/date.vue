@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="description">{{field.description}}:</div>
         
+        <div class="description">{{field.description}}:</div>
         <template v-if="field.range">
             
             <v-layout row wrap>
@@ -15,14 +15,16 @@
                         readonly
                         min-width="290px"
                     >
-                    
+                        <!-- v-model="dat_value0" -->
                         <template v-slot:activator="{ on }">
                          <v-text-field
-                            v-model="dat_value0"
-                            label="Начало периода"
+                            
+                            v-model="show_dat_value0"
+                            label="C"
                             prepend-icon="event"
                             readonly
                             clearable
+                            
                             v-on="on"
                             style="max-width: 250px;"
                         ></v-text-field>
@@ -46,14 +48,15 @@
                         readonly
                         min-width="290px"
                     >
-                    
+                        <!--  v-model="dat_value1" -->
                         <template v-slot:activator="{ on }">
                          <v-text-field
-                            v-model="dat_value1"
-                            label="Окончание периода"
+                            v-model="show_dat_value1"
+                            label="По"
                             prepend-icon="event"
                             readonly
                             clearable
+                            
                             v-on="on"
                             style="max-width: 250px;"
                         ></v-text-field>
@@ -79,20 +82,23 @@
 <script>
 export default {
     props:["field",'filter_change'],
-    created(){
-        let f=this.field
-        if('value' in f){
-            if(f.value.length>0){
-                this.dat_value0=f.value[0]
-            }
-            if(f.value.length>1){
-                this.dat_value1=f.value[1]
-            }
-        }
+    mounted(){
+        this.init_filter()
+        
+
         
     },
     computed:{
-
+        // show_dat_value0(){
+        //     if(this.dat_value0)
+        //         return this.dat_value0.split('-').reverse().join('.')
+        //     return ''
+        // },
+        // show_dat_value1(){
+        //     if(this.dat_value1)
+        //         return this.dat_value1.split('-').reverse().join('.')
+        //     return ''
+        // },
         err_select(){
             if(this.dat_value0 && this.dat_value1){
 
@@ -107,6 +113,8 @@ export default {
         return {
             dat_value0:'',
             dat_value1:'',
+            show_dat_value0:'',
+            show_dat_value1:'',
             //show_calendar: false,
             menu: [false,false],
             modal: [false,false],
@@ -114,18 +122,48 @@ export default {
         }
     },
     watch:{
+        field(){
+            this.init_filter()
+        },
+        show_dat_value0(){
+            
+            if(!this.show_dat_value0)
+                this.dat_value0=''
+        },
+        show_dat_value1(){
+            
+            if(!this.show_dat_value1)
+                this.dat_value1=''
+        },
         dat_value0(){
             let filter=this.field;
             filter.value_low=this.dat_value0;
             this.filter_change(filter)
+            this.show_dat_value0=this.dat_value0.split('-').reverse().join('.')
         },
         dat_value1(){
             let filter=this.field;
             filter.value_hi=this.dat_value1;
             this.filter_change(filter)
+            this.show_dat_value1=this.dat_value1.split('-').reverse().join('.')
         },
     },
     methods:{
+      init_filter(){
+        let f=this.field
+        console.log('value:',f.value)
+        if('value' in f){
+            if(!f.value.length){
+                this.dat_value0='', this.dat_value1=''
+            }
+            if(f.value.length>0){
+                this.dat_value0=f.value[0]
+            }
+            if(f.value.length>1){
+                this.dat_value1=f.value[1]
+            }
+        }
+      },
       select_cal(idx){
         //this.calc_values();
         this.menu[idx] = false;

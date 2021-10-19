@@ -36,6 +36,7 @@
             <v-textarea
               @input="input"
               v-if="field.type=='textarea'"
+              :disabled="!!field.read_only"
               v-model="value"
               :label="field.description"
               :hint="field.add_description"

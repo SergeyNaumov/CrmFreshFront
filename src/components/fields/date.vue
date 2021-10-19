@@ -21,8 +21,10 @@
           >
           
             <template v-slot:activator="{ on }">
+              
+              <!-- v-model="value" -->
               <v-text-field
-                v-model="value"
+                v-model="value_show"
                 :label="field.description"
                 :prepend-icon="need_empty?'event':''"
                 readonly
@@ -56,7 +58,11 @@ import { bus } from '../../main'
 export default {
     props:['form','field','parent'], // ,'calc_values'
     computed:{
-
+      value_show(){
+        if(this.value)
+          return this.value.split('-').reverse().join('.')
+        return ''
+      }
     },
     watch:{
       field(){

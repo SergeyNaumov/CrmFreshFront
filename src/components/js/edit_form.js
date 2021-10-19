@@ -215,9 +215,9 @@ export function calc_values(self){
     let block=false;
     
     for(let f of self.form.fields){ 
-      if(f.not_process){
+      /*if(f.not_process){
         delete values[f.name]; continue;
-      }
+      }*/
       
       if(f.error)
         block=true;

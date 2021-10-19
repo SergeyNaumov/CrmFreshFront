@@ -26,7 +26,7 @@
                         
                             <template v-slot:activator="{ on }">
                             <v-text-field
-                                v-model="date"
+                                v-model="date_show"
                                 label="Дата: ГГГГ-ММ-ДД"
                                 prepend-icon="event"
                                 readonly
@@ -133,6 +133,13 @@ export default {
             modal: false,
             need_empty:false
         }
+    },
+    computed:{
+      date_show(){
+        if(this.date)
+          return this.date.split('-').reverse().join('.')
+        return ''
+      }
     },
     watch:{
 

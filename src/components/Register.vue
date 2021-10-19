@@ -5,8 +5,8 @@
                 <template v-if="success">
                     <v-card-title  class="headline">Регистрация прошла успешно!</v-card-title>
                     <v-card-text>
-                        Вы успешно прошли авторизацию! на Ваш электронный ящик <b>{{login}}</b> было отправлено письмо с кодом подтверждения
-                        <v-card-actions>
+                        Ваша заявка принята, с вами свяжется менеджер для уточнения деталей
+                        <v-card-actions v-if="0">
                             <v-btn color="primary" ref="button"  @click="to_login()" small>Войти в систему</v-btn>
                         </v-card-actions>
                     </v-card-text>

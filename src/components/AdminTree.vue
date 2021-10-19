@@ -99,6 +99,10 @@ export default {
                 for(let l of this.list){
                     this.add_to_map(null,l)
                 }
+                document.title=this.form.title;
+                
+                if(D.javascript)
+                  eval(D.javascript);
             }
             else{
               this.form.title='Ошибка!';

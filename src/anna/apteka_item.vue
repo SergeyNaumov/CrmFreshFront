@@ -1,8 +1,9 @@
 <template>
   <div>
- 
+    <div><a href="" v-if="!apt.more" @click.prevent="show()">{{apt_local.ur_address}}</a> </div>
+    <div>Юридическое лицо: {{apt_local.ul_header}}</div>
+    <div>Телефон юридического лица: {{apt_local.ul_phone}}</div>
 
-    <a href="" v-if="!apt.more" @click.prevent="show()">{{apt_local.header}}</a> 
         <v-card v-if="apt.more">
           
           <v-card-title>

@@ -1,6 +1,15 @@
 <template>
     <v-app>
-      
+        <!-- для вызова попапа извне -->
+        <v-dialog v-model="popup.show" max-width="500">
+          <v-card>
+            <v-card-title  class="headline">{{popup.header}}</v-card-title>
+            <v-card-text>
+              {{popup.body}}
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+
         <v-container :style="{width: width}" >
             <pre v-if="0">      
                 {{values}}
@@ -12,7 +21,7 @@
                       <errors :errors="fatal_errors"/>
               </v-card-text>
             </v-card>
-
+            
             <template v-else>
               
                     <template v-if="log">
@@ -46,12 +55,10 @@
                         </v-card>
                     </v-dialog>
 
-                    <h1 color="primary">{{form.title}}</h1>
-                    
+                    <h1 color="primary" class="form_header" v-html="form.title"/>
                     <form autocomplete="off">
                     <v-layout row wrap>
-                        <template v-if="cols.length">
-                            
+                        <template v-if="cols.length"> <!-- Колонки, блоки -->
                             <v-flex pl-3 md6 xs12 v-for="c in cols" :key="c.idx">
                             <v-card class="block" v-for="block in c" :key="block.name">
                                 <v-toolbar color="primary" dark height="35px" @click="block.hide=!block.hide">
@@ -74,7 +81,22 @@
                             </v-card>
 
                             </v-flex>
+                        </template>
+                        <template v-else-if="tabs.length"> <!-- Табы -->
+                              <v-tabs v-model="tab">
+                                <v-tab v-for="(tab,idx) in tabs" :key="'tab'+idx" :style="tab.style" v-html="tab.description"/>
 
+                              </v-tabs>
+                              <v-flex md12 >
+                              <v-card style="width: 100%;">
+                                <v-tabs-items v-model="tab" >
+                                  <v-tab-item v-for="(tab,idx) in tabs" :key="'tabitm'+idx">
+                                    <form-block :block_name="tab.name" :form="form"  :save="save" :values="values"></form-block>
+                                  </v-tab-item>
+                                </v-tabs-items>
+                              </v-card>
+                              </v-flex>
+                              
                         </template>
                         <template v-else> 
                             <v-flex md12 >
@@ -114,11 +136,18 @@ export default {
 
 data:function(){
   return {
+    popup:{ // для вызова извне: window.EditForm.popup='текст сообщения'
+      show: false,
+      header:'',
+      body:''
+    }, 
     log:[],
     title:'',
     errors:[],
     disabled_form: false,
     fatal_errors:[],
+    tabs:[],
+    tab:null,
     form:{
       id:'',
       title:'',
@@ -147,6 +176,9 @@ computed:{
 },
 //props:['params'],
 created(){
+  // Для того, чтобы можно было обратиться к объекту EditForm
+  window.EditForm=this
+
   calc_values(this);
   this._change_field=(field,not_frontend_process)=>{
     change_field(this,field,not_frontend_process)
@@ -176,6 +208,16 @@ watch:{
   }
 },
 methods: {
+          init_tabs(d){
+            if('tabs' in d && d.tabs.length){
+              let i=0
+              for(let t of d.tabs){
+                t.active=i?false:true
+                i++
+              }
+              this.tabs=d.tabs
+            }
+          },
           get_form_self(){
             return this
           },
@@ -191,10 +233,15 @@ methods: {
                         let data=response.data;
                         if(data.log)
                             this.log=data.log
-                          
-                        document.title=this.title=data.title;
+                        
+
+                        
                         if(data.success){
-                            
+                            if(data.title){
+                              this.title=data.title;
+                              document.title=this.title.replace(/<.+?>/g,' ')
+                            }
+
                             // для реактивности
                             for(let f of data.fields)
                               if(!('hide' in f))
@@ -204,6 +251,8 @@ methods: {
                             calc_values(this);
                             
                             this.cols=data.cols;
+                            this.init_tabs(data)
+
                             
                             for(let f of this.form.fields){
                               if(f.type=='file' && f.value){
@@ -221,8 +270,11 @@ methods: {
                         }
                         if(data.redirect)
                           window.location.href=data.redirect;
-                        
+                        if(data.javascript){
+                          eval(data.javascript)
+                        }
                         this.fatal_errors=data.errors;
+                        
                     }).catch(e => {
                         this.fatal_errors=[e]
                     })
@@ -331,4 +383,5 @@ methods: {
     .container.onecol {max-width: 1200px;}
     header {margin-top: 1rem;}  
     .v-list-item {min-height: 25px !important;}
+    .form_header {margin-bottom: 20px;}
 </style>

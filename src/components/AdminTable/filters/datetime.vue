@@ -19,7 +19,7 @@
 
                             <v-text-field
                                 v-model="field.value_low"
-                                label="Начало периода"
+                                label="С"
                                 prepend-icon="event"
                                 readonly
                                 clearable
@@ -60,7 +60,7 @@
                         <template v-slot:activator="{ on }">
                          <v-text-field
                             v-model="field.value_hi"
-                            label="Окончание периода"
+                            label="По"
                             prepend-icon="event"
                             readonly
                             clearable
@@ -152,7 +152,7 @@ export default {
             this.field.value_hi=this.dat_value1+' '+this.time_value1+':59'
             filter.value_hi=this.field.value_hi
         }
-        console.log({filter: filter})
+        //console.log({filter: filter})
         this.filter_change(filter)
         let values=[]; 
         

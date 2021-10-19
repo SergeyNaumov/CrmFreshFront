@@ -5,10 +5,18 @@
             оглавление
         </v-btn>
         <div class="content">
-                 <item-content
+                <pre v-if="log.length">
+                    {{log}}
+                </pre>
+
+                <links_block v-if="links.length" :links="links" />
+                <hr>
+                <div class="title">{{title}}</div>
+                <hr>
+                <item-content
                     v-for="c in list" :key="'content'+c.id"
                     :item="c" :level="0"
-                 />
+                />
         </div>
         <v-dialog v-model="dialog" max-width="500">
             <v-card>
@@ -41,10 +49,12 @@
 <script>
 import item_content from './item_content';
 import item_menu from './item_menu';
+import links_block from './links'
 export default {
     components:{
         'item-menu':item_menu,
         'item-content':item_content,
+        'links_block':links_block
     },
     props:['params','is_headapp'],
     created(){
@@ -55,7 +65,10 @@ export default {
             r=>{
                 let data=r.data;
                 if(data.success){
+                    document.title=data.title, this.title=data.title
                     this.list=data.list
+                    this.log=data.log
+                    this.links=data.links
                 }
             }
         )
@@ -63,18 +76,21 @@ export default {
     data(){
         return {
             scrollbutton_offset:0,
+            title:'',
             dialog:false,
             config:'',
-            list:[]
+            list:[],
+            links: [],
+            log:[]
         }
     },
     methods:{
         scrolling(p){
             let body=document.getElementsByTagName("body")[0];
             let scrollHeight = Math.max(
-            document.body.scrollHeight, document.documentElement.scrollHeight,
-            document.body.offsetHeight, document.documentElement.offsetHeight,
-            document.body.clientHeight, document.documentElement.clientHeight
+                document.body.scrollHeight, document.documentElement.scrollHeight,
+                document.body.offsetHeight, document.documentElement.offsetHeight,
+                document.body.clientHeight, document.documentElement.clientHeight
             );
             document.getElementById('scrollbutton').style.top=window.pageYOffset+'px';
             //this.scrollbutton_offset=window.pageYOffset
@@ -93,5 +109,10 @@ export default {
   .v-dialog .v-card{
       padding: 20px;
       max-width: 500px;
+  }
+  .title {
+    margin-bottom:  20px;
+    margin-top:  20px;
+    font-size:  36px !important;
   }
 </style>

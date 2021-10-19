@@ -1,7 +1,8 @@
 <template>
-  <div class="item" >
+  <div class="item" style="margin-left: 10px;">
+
       <template v-if="item.child.length"> <!-- Родительский пункт меню -->
-        <a href="" @click.prevent="show=!show">
+        <a href="#" @click.prevent="show=!show">
         <v-icon class="arrow">fa-{{show?'chevron-down':'chevron-right'}}</v-icon>
         <div class="icon_slot">
           <v-icon color="primary" x-small>{{item.icon}}</v-icon>
@@ -11,20 +12,19 @@
         
 
         <div v-if="show" class="childs">
-        <left_menu_item
-          v-for="m in item.child"
-          :key="m.id"
-          :item="m"
-          :get_link="get_link"
-          :go_link="go_link"
-          :manager="manager"
-          
-        />
+          <left_menu_item
+            v-for="m in item.child"
+            :key="m.id"
+            :item="m"
+            :get_link="get_link"
+            :go_link="go_link"
+            :manager="manager"
+          />
         </div>
       </template>
       <template v-else> <!-- дочерний пункт меню -->
-        <a :href="get_link(item)" @click.prevent="go_link(item)">
-          <div class="icon_slot">
+        <a :href="'#'+get_link(item)+':'+item.id"> <!-- get_link(item)   @click="go_link(item)" -->
+          <div class="icon_slot"> 
             <v-icon color="primary" x-small>{{item.icon}}</v-icon>
           </div>
           <span>{{item.header}}</span>
@@ -56,6 +56,7 @@ export default {
 <style scoped lang="scss">
 
   @import '@/styles/variables.scss';
+
   a { text-decoration: none; color: black !important;}
   a:hover { color: $primary;}
   a:hover span {text-decoration: underline;}

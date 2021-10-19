@@ -4,7 +4,8 @@
         <div class="cur_profile">
           <div style="display: inline-block; min-width: 165px;">
             <v-avatar size=24><v-icon small color="primary">fa-user-edit</v-icon></v-avatar>
-            <a :href="manager.link" target="_blank">{{manager.login}}</a>
+            <!--<a :href="manager.link" target="_blank">{{manager.login}}</a>-->
+            <span class="manager_login">{{manager.login}}</span>
           </div>
           <v-btn class="logout" @click.prevent="logout()" small>выйти</v-btn>
           
@@ -37,10 +38,10 @@ export default{
         logout(){
             this.$http.get(BackendBase+'/logout').then(
                 response=>{
-                let D=response.data;
-                if(D.success){
-                    location.href='/login'
-                }
+                  let D=response.data;
+                  if(D.success){
+                      location.href='/login'
+                  }
                 }
             )
         },
@@ -56,9 +57,12 @@ export default{
             else if(item.type == 'src'){
               this.setMenuItem(item);
             }
+            else if(item.type=='link'){
+              location.href=item.value
+            }
             else{
               if(item.params){
-                this.setMenuItemParams(JSON.parse(item.params));
+                this.setMenuItemParams(item.params);
               }
               this.setMenuItem(item)
             }
@@ -66,14 +70,23 @@ export default{
         get_link(item){
             let params={};
             if(item.params)
-                params=JSON.parse(item.params);
+                params=item.params;
             if(item.type=='vue'){
+                if(item.value=='mainpage')
+                  return 'mainpage'
+                
+                if(item.value=='documentation')
+                  return '/documentation/'+params.config
+                
+                if(item.value=='VideoList')
+                  return '/video_list/'+params.config
+
                 if(item.value=='admin-table')
-                return '/admin_table/'+params.config
+                  return '/admin_table/'+params.config
                 if(item.value=='admin-tree')
-                return '/admin_tree/'+params.config
+                  return '/admin_tree/'+params.config
                 if(item.value=='parser-excel')
-                return '/parser-excel/'+params.config
+                  return '/parser-excel/'+params.config
             }
             if(item.type=='src'){
               return item.value
@@ -110,6 +123,11 @@ export default{
   .cur_profile button {
     margin: 0; font-size: 10px;
     
+  }
+  .manager_login {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
   }
   .v-application .cur_profile a{color: white; text-decoration: none; font-weight: bold;} 
   

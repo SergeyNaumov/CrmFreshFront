@@ -1,8 +1,9 @@
 <template>
-    
+        
         <div  class="is_headapp">
-              <h1  @click="SHOW_FILTERS=!SHOW_FILTERS">{{title}}</h1>
-              <div v-if="permissions.make_create">
+
+              <h1  >{{title}}</h1>
+              <div v-if="permissions.make_create ">
                 <v-icon @click="new_card()" class="small" color="primary">fa-plus</v-icon>&nbsp;
                 <a href=""  @click.prevent="new_card()" class="">Добавить</a>
               </div>
@@ -48,9 +49,9 @@
                 </template>
                 <v-flex xs12 sm12 md4 lg4 class="mb-2 filters"  v-show="SHOW_FILTERS">
                       
-                          <v-toolbar >
+                          <v-toolbar @click="SHOW_FILTERS_all=!SHOW_FILTERS_all">
                             <!--<v-toolbar-side-icon @click="SHOW_FILTERS_all=!SHOW_FILTERS_all"></v-toolbar-side-icon>-->
-                            <v-app-bar-nav-icon color="primary" @click="SHOW_FILTERS_all=!SHOW_FILTERS_all"></v-app-bar-nav-icon>
+                            <v-app-bar-nav-icon color="primary" ></v-app-bar-nav-icon>
                             <v-subheader>Фильтры</v-subheader>
                           </v-toolbar>
                           <div v-if="SHOW_FILTERS_all && filters_groups.length">
@@ -78,20 +79,23 @@
                           </div>
    
                 </v-flex>
-
-                <on-filters :filters="filters"
-                  :config="params.config"
-                  :on_filters="on_filters"
-                  :filter_change="filter_change"
-                  :toggle_filters="toggle_filters"
-                  :SHOW_FILTERS_on="SHOW_FILTERS_on"
-                  :ORDER="ORDER"
-                />
-                <template v-if="!show_find_button_top">
-                  <v-flex xs12 lg12 v-show="on_filters && on_filters.length">
-                    <v-btn color="primary" small  @click.prevent="go_search(1);" href="" id="search_results"><v-icon  class="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
-                  </v-flex>
-                </template>
+                
+                  <on-filters :filters="filters"
+                    :config="params.config"
+                    :go_search="go_search"
+                    :on_filters="on_filters"
+                    :filter_change="filter_change"
+                    :toggle_filters="toggle_filters"
+                    :SHOW_FILTERS_on="SHOW_FILTERS_on"
+                    :ORDER="ORDER"
+                    :filters_values="filters_values"
+                  />
+                  <template v-if="!show_find_button_top">
+                    <v-flex xs12 lg12 v-show="on_filters && on_filters.length">
+                      <v-btn color="primary" small  @click.prevent="go_search(1)" href="" id="search_results"><v-icon  class="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
+                    </v-flex>
+                  </template>
+                
             
             <v-flex md12 class="mt-1" >
                 <!-- [loading...] -->
@@ -154,9 +158,9 @@ export default {
       filters_groups:[],
       on_filters:[],
       permissions:{
-        make_create: true,
-        make_delete: true,
-        not_edit: false,
+        make_create: false,
+        make_delete: false,
+        not_edit: true,
       },
       search_links:[],
       ORDER:1,
@@ -178,9 +182,7 @@ export default {
       },
       search_plugin:[],
       javascript:{
-        test:function(){
-          alert('this is test function');
-        }
+
       },
       results: {
         headers:[{h:''}],
@@ -209,7 +211,25 @@ export default {
 
   computed:{
     
-
+    filters_values(){ // для того, чтобы можно было реализовать механизм зависимых фильтров, формируем значения всех фильтров
+      let obj={}
+      for(let f of this.on_filters){
+        if('value' in f){
+          if(f.value){
+            if(typeof(f.value)=='object'){
+              if(f.value.length){
+                obj[f.name]=f.value
+              }
+              
+            }
+            else{
+              obj[f.name]=f.value
+            }
+          }
+        }
+      }
+      return obj
+    }
 
   },
   methods:{
@@ -303,10 +323,21 @@ export default {
                   if(!D.on_filters.length){
                     for(let f of D.filters){
                       if(f.filter_on){
-                        let value=[];
-                        if(f.value){
-                          value.push(f.value)
+                        let value='';
+                        if(f.type in ['select']){
+                          value=[]
+                          if(typeof(f.value)=='string'){
+                            value.push(f.value)
+                          }
+                          else if(f.value){
+                            value=f.value
+                          }
                         }
+                        else{
+                          value=f.value
+                        }
+
+
                         D.on_filters.push({name:f.name,value:value})
                       }
                     }
@@ -356,15 +387,17 @@ export default {
       }
       return q;
     },
-    go_search_plugin(plugin_name){
+    go_search_plugin(plugin_name,params){
       let q=this.get_query();
-      this.finding=false;
+      if(!params) params={}
+      //this.finding=false;
       this.$http.post(
         BackendBase+'/get-result',
         {
           config: this.params.config,
           plugin: plugin_name,
-          query:q
+          query:q,
+          params:params
         }
       ).then(
         r=>{
@@ -437,6 +470,14 @@ export default {
               //console.log({results:this.results})
               this.errors_find=d.errors, this.out_after_search=d.out_after_search
               this.finding=false;
+              
+              // запускаем form.javascript.find_objecs (если есть)
+              if(d.javascript){
+                this.$nextTick(
+                  ()=>{eval(d.javascript)}
+                )
+                
+              }
               //setTimeout( function(){let link=document.createElement("a"); link.href='#search_results'; link.click();}, 100)
           })
           .catch(e => {

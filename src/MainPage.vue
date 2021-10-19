@@ -2,18 +2,20 @@
   <div class="main">
       <errors :errors="errors" v-if="errors.length" /> <!-- ошибки при инициализации компонента -->
       <v-row  no-gutters class="manager_panel" >
-        <v-col class="p1" cols="12" sm="12" md="4">
+        <v-col class="p1" cols="12" sm="6" md="6" style="padding: 5px;">
+          <!--
+            <a href=""><v-icon small color="primary">fa-user-alt</v-icon></a>
+            <a :href="manager.link">{{manager.name}}</a>
+          -->
           
-          <a href=""><v-icon small color="primary">fa-user-alt</v-icon></a>
+            <v-icon small color="primary">fa-user-alt</v-icon>
+            {{manager.name}}
           
-          <a :href="manager.link">{{manager.name}}</a>
           
 
         </v-col>
-        <v-col class="p2" cols="12" sm="12" md="4" v-text="manager.position?manager.position:''">
-          
-        </v-col>
-        <v-col class="p3"  cols="12" sm="12" md="4">
+
+        <v-col class="p3"  cols="12" sm="6" md="6">
           <v-icon small color="primary">fa-calendar-alt</v-icon> {{curdate}}
         </v-col>
       </v-row>
@@ -119,7 +121,7 @@ export default {
 
   }
 .manager_panel .p1, .manager_panel .p2, .manager_panel .p3{
-  padding-top: 10px;
+  padding: 10px !important; 
 }
   .manager_panel .p1{
     font-weight: bold;
@@ -142,10 +144,12 @@ export default {
   .manager_panel .p3{
     text-align: right;
     font-weight: bold;
-    padding-right: 50px;
+    
   }
   .manager_panel .p3 .v-icon{
     margin-right: 5px;
+    
+
   }
   .v-avatar {
     background-color: $primary;

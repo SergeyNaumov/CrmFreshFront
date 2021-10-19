@@ -53,6 +53,7 @@
                                 name="attach"
                                 multiple="multiple"
                                 chips
+                                v-model="upload_value"
                                 label="выберите файлы для загрузки"
                             />
                             <v-btn x-small color="primary" @click="upload()">загрузить</v-btn>
@@ -118,6 +119,7 @@ export default {
             create_folder_form: false,
             new_folder_name: '',
             create_folder_errors:[],
+            upload_value:null,
             /*toolbar: [
                 "styleselect formatselect fontselect fontsizeselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify image",
                 "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | insertdatetime preview | forecolor backcolor",
@@ -280,7 +282,7 @@ export default {
                     let D=response.data;
                     if(D.success){ 
                         this.file_list=D.file_list;
-
+                        this.upload_value=null
                         this.uploader_errors=[];
                     }
                     this.uploader_errors=D.errors

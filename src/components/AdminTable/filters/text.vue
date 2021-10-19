@@ -8,7 +8,7 @@
                     prepend-icon="done"
                     label="От"
                     v-model="field.value_low"
-                    
+                    hide-details
                     clearable
                 ></v-text-field>
             </v-flex>
@@ -17,6 +17,7 @@
                     prepend-icon="done_all"
                     label="До"
                     v-model="field.value_hi"
+                    hide-details
                     clearable
                 ></v-text-field>
             </v-flex>
@@ -36,6 +37,11 @@
 <script>
 export default {
     props:["field"],
+    wathch:{
+        field(){
+
+        }
+    },
     data(){
         return {
 

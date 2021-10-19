@@ -7,17 +7,19 @@ import colors from 'vuetify/lib/util/colors'
 
 
 let color_scheme='blue'; // цветовую гамму меняем тут
-import '@/styles/colors/blue.scss'; // и тут
+import '@/styles/colors/blue2.scss'; // и тут
 
 
 
 export const bus = new Vue();
 // green light-green cyanvv
 let main_color=colors[color_scheme];
-
+//main_color.base='#253a5d'
+//console.log('BVA')
 Vue.prototype.$color = main_color;
 let color_set={ // текущий набор
-  primary: main_color.base,
+  //primary: main_color.base, //'#253a5d',
+  primary: '#253a5d',
   lighten1: main_color['lighten-1'],
   lighten2: main_color['lighten-2'],
   lighten3: main_color['lighten-3'],
@@ -76,6 +78,11 @@ Vue.component('admin-tree', ()=> import('./components/AdminTree'));
 Vue.component('admin-table', ()=> import('./components/AdminTable'));
 Vue.component('parser-excel', ()=> import('./components/ParserExcel'));
 Vue.component('documentation', ()=> import('./components/Documentation/Documentation'));
+Vue.component('VideoList', ()=> import('./components/VideoList/VideoList'));
+
+Vue.component('field-accordion', ()=> import('./components/fields/accordion'));
+Vue.component('field-table', ()=> import('./components/fields/table'));
+Vue.component('field-chart', ()=> import('./components/fields/chart'));
 
 import FormBlock from './components/EditForm/FormBlock';
 Vue.component('form-block',FormBlock);

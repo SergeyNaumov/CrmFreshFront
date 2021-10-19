@@ -93,11 +93,12 @@
       
     },
     computed:{
-
+/*
       exists_description(){
         return !(typeof(this.description)==undefined);
         
       }
+*/
     },
     methods: {
       init(){

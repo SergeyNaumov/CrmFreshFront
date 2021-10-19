@@ -1,0 +1,9 @@
+#!/bin/bash
+rm -rf /mnt/veresk/var/www/cdek2/css
+rm -rf /mnt/veresk/var/www/cdek2/js
+rm  /mnt/veresk/var/www/cdek2/index.html
+rm -rf /mnt/veresk/var/www/cdek2/fonts
+
+cp -R dist/{js,css,index.html,fonts} /mnt/veresk/var/www/cdek2/
+chmod g+w dist/{js,css,fonts}/* 
+chmod g+w dist/index.html 

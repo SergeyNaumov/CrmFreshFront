@@ -16,12 +16,13 @@
               hide-details
             />
           </template>
-
+              
             <template v-else>
+
                 <template v-if="field.background_color">
                   <div class="color_box">
                     <!-- colored select -->
- 
+
                             <div class="color_container" :style="{'background-color':field.background_color}">
                             </div>                         
                               <v-select 
@@ -33,7 +34,7 @@
                                 item-value="v"
                                 item-text="d"
                                 :hint="field.add_description"
-                                :disabled="!!field.read_only"
+                                :disabled="!!field.read_only || !!form.read_only"
                                 class="color_select"
                                 autocomplete
                                 :error-messages="error_message"
@@ -45,21 +46,21 @@
                 </template>
                 
                 <template v-else>  
-                    
                     <template v-if="field.autocomplete">
-                      
                       <v-autocomplete 
                           :label="field.description"
-                          v-model="field.value"
+                          v-model="value"
                           :items="values" item-value="v" item-text="d"
                           :search-input.sync="search"
                           :rounded="$theme.rounded"
+                          :disabled="!!field.read_only || !!form.read_only"
                           no-data-text="не выбрано"
                           cache-items
                           clearable
                       />
                     </template>
-                    <template v-else>        
+                    <template v-else>
+
                       <!-- not colored (p) select -->
                       <template v-if="values.length>15">
                       <v-autocomplete 
@@ -72,6 +73,7 @@
                           no-data-text="не выбрано"
                           cache-items
                           dense
+                          :disabled="!!field.read_only"
                           clearable
                           hide-details
                           @input="change_field(field)"
@@ -87,7 +89,7 @@
                           no-data-text="не выбрано"
                           v-model="value"
                           autocomplete
-                          :disabled="!!field.read_only"
+                          :disabled="!!field.read_only || !!form.read_only"
                           @input="change_field(field)"
                           :rounded="$theme.rounded"
                           hide-details
@@ -119,6 +121,10 @@ export default {
   },
   props:['form','field','parent','refresh'],
   watch:{
+        value(){
+          this.field.value=this.value
+          bus.$emit('change_field',this.field);
+        },
         refresh(){ 
             this.value=this.field.value+'';  
         },
@@ -184,7 +190,7 @@ export default {
   methods: {
     load_autocomplete(search){
       if(this.field.autocomplete){
-        return;
+        
         this.$http.post(
           BackendBase+'/autocomplete/'+this.form.config,
           {

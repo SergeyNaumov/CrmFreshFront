@@ -1,0 +1,9 @@
+#!/bin/bash
+rm -rf /mnt/stg_w02/var/www/fresh-admin/css
+rm -rf /mnt/stg_w02/var/www/fresh-admin/js
+rm  /mnt/stg_w02/var/www/fresh-admin/index.html
+rm -rf /mnt/stg_w02/var/www/fresh-admin/fonts
+
+cp -R dist/{js,css,index.html,fonts} /mnt/stg_w02/var/www/fresh-admin/
+chmod g+w dist/{js,css,fonts}/* 
+chmod g+w dist/index.html 

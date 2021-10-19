@@ -2,6 +2,8 @@
     <div>
 
         <template v-if="field.read_only">
+
+          <a :href="download_link" v-if="field.begin_value" download>скачать</a>
           
         </template>
         <template v-else>
@@ -17,9 +19,9 @@
           <div v-if="begin_value && !imgSrc" class="show_loaded">
             
             <div v-if="!show_loaded">
-              
-              <v-icon x-small @click.prevent="show_loaded=true" class="show">fa-eye</v-icon>
+              <v-icon x-small v-if="is_img" @click.prevent="show_loaded=true" class="show">fa-eye</v-icon>
               <!-- удалять разрешаем только тогда, когда фото не обязательно -->
+              <a :href="img_path" download>скачать</a> | 
               <a href="" v-if="!field.required" @click.prevent="remove()">удалить</a>
             </div>
 
