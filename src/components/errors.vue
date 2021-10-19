@@ -2,7 +2,7 @@
       
     <div>
         <template v-if="errors.length>0">
-            <div class="err" v-for="e in errors" :key="e">{{e}}</div>
+            <div class="err" v-for="e in errors" :key="e" v-html="e"></div>
         </template>
     </div>
 </template>
@@ -25,5 +25,5 @@
   }
 </script>
 <style score>
-    .err {color: red; font-weight: bold;}
+    .err {color: red; }
 </style>

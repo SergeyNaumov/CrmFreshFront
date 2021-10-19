@@ -83,6 +83,7 @@ Vue.component('VideoList', ()=> import('./components/VideoList/VideoList'));
 Vue.component('field-accordion', ()=> import('./components/fields/accordion'));
 Vue.component('field-table', ()=> import('./components/fields/table'));
 Vue.component('field-chart', ()=> import('./components/fields/chart'));
+Vue.component('field-time_table', ()=> import('./components/fields/time_table'));
 
 import FormBlock from './components/EditForm/FormBlock';
 Vue.component('form-block',FormBlock);

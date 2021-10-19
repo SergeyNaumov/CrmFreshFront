@@ -26,7 +26,7 @@
       
 
       <!-- Блок для проекта "Анна" -->
-      <MainPageAnna/>
+      
       
       <!-- Блок новостей
       <div v-if="news_list.length">
@@ -47,19 +47,17 @@
 </template>
 <script>
 
-// Для проекта Anna
+
 import Vue from 'vue'
-Vue.component('MainPageAnna',()=> import('./anna/main_page'));
-//Vue.component('RegDataInfo',()=> import('./MainPage/main_page'));
-//import main_page_anna from './anna/main_page.vue';
-//Vue.component(main_page_anna,'MainPageAnna')
+
+
 
 export default {
   props:[],
   data(){
     return {
       curdate: '',
-      errors:'',
+      errors:[],
       manager:{
         login:'',
         id:'',
@@ -86,7 +84,10 @@ export default {
 
           this.manager=D.manager, this.curdate=D.curdate;
         }
-        this.errors=D.errors
+        if(D.errors){
+          this.errors=D.errors
+        }
+        
 
         
       }

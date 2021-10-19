@@ -32,7 +32,7 @@
           
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title>
-            <a href="/"><img align="absmiddle" class="logo" src="/logo.png"></a> {{title}}
+            <a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> {{title}}
           </v-toolbar-title>
         </v-app-bar>
 
@@ -92,6 +92,7 @@ export default {
           
         },
         data: () => ({
+          logo_url:process.env.BASE_URL+'logo.png',
           drawer:true, // вкл / выкл левое меню
           active:{},
           dialog:false,
@@ -113,12 +114,14 @@ export default {
            
         },
         created(){
+          
           let self=this
           window.app=this
           get_headapp(self)
           window.onhashchange=e=>{
             get_headapp(self);
           }
+          
 
           
           if(!this.headapp){
@@ -139,6 +142,8 @@ export default {
                     //this.left_menu=D.left_menu,
                     if(D.left_menu_controller)
                       this.load_menu(D.left_menu_controller)
+                    if(D.left_menu)
+                      this.left_menu=D.left_menu
                     this.manager=D.manager;
                 }
                 this.$nextTick(()=>{

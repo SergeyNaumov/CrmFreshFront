@@ -38,12 +38,8 @@
                                   <b>обратитесь к разработчику: </b>
                                   <pre v-for="(l,idx) in (log)" :key="'l2'+idx" v-html="l"></pre>
                               </template>
-                              <template v-if="errors.length">
-                                  <div class="err" v-for="e in errors" v-bind:key="e.idx">
-                                      {{e}}
-                                  </div>
-                              </template>
-                              <template v-else>
+                              <errors :errors="errors"/>
+                              <template v-if="!errors.length">
                               {{dialog_body}}
                               </template>
                             </v-card-text>

@@ -5,17 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>edit_form</title>
+    <title>CrmFresh</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <link href="/dist/googleapis.com-Material-plus-Icons.css" rel="stylesheet">
-    <link href="/dist/fontawesome/all.css" rel="stylesheet">
+    <link href="<%= BASE_URL %>dist/googleapis.com-Material-plus-Icons.css" rel="stylesheet">
+    <link href="<%= BASE_URL %>dist/fontawesome/all.css" rel="stylesheet">
   </head>
   <body>
     <noscript>
       <strong>We're sorry but edit_form doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <script>
-      var BackendBase=/^localhost:/.test(location.host)?'http://dev-crm.test/backend':'/backend'
+      let path=location.pathname
+      var BackendBase=/^localhost:/.test(location.host)?'http://dev-crm.test/backend':path+'/backend'
     </script>
     <div id="app"></div>
     <!-- built files will be auto injected -->
