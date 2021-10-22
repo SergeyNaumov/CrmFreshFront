@@ -74,7 +74,7 @@ export default{
             if(item.type=='vue'){
                 if(item.value=='mainpage')
                   return 'mainpage'
-                
+                console.log(item.value)
                 if(item.value=='documentation')
                   return '/documentation/'+params.config
                 
@@ -87,6 +87,9 @@ export default{
                   return '/admin_tree/'+params.config
                 if(item.value=='parser-excel')
                   return '/parser-excel/'+params.config
+                if(item.value=='Schedule')
+                  return '/Schedule/'+params.config
+                
             }
             if(item.type=='src'){
               return item.value

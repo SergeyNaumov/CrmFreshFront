@@ -243,7 +243,7 @@ export default {
       sql=sql.replace(/\s\s+/gm,' ');
       sql=sql.replace(/(WHERE|FROM|GROUP\s+BY|ORDER\s+BY|LIMIT)\s+/gi,'<br>$1 ');
       sql=sql.replace(/((LEFT )?JOIN)/gim,'<br>$1');
-      sql=sql.replace(/(SELECT|FROM)/gi,'$1<br>');
+      sql=sql.replace(/(SELECT|FROM)[^_]/gi,'$1<br>');
       sql=sql.replace(/([a-zA-Z0-9\(\)\s\._]{1,30},)/gmi,'$1 ');
       sql=sql.replace(/(([a-zA-Z0-9\(\)\s\._]{1,50},){3})/gmi,'&nbsp;&nbsp;$1<br>');
       sql=sql.replace(/(\b(SELECT|FROM|LEFT|JOIN|GROUP|ORDER|BY|ON|LIMIT|WHERE|LIKE|IN|OR|AND|NOT|as)\b)/gim,'<span style="color: blue;">$1</span>');

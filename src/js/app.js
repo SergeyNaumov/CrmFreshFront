@@ -16,7 +16,12 @@ export const get_headapp=s=>{
     let url=location.pathname;
     
     let hash=location.hash
-
+    
+    if(url != process.env.BASE_URL){
+        url=url.replace(process.env.BASE_URL,'/')
+    }
+    
+    //console.log('env:',process.env.BASE_URL, url, hash)
     if(/^#.+:(\d+)$/.test(hash)){
         let menu_id=hash.match(/^#.+:(\d+)$/)[1];
         set_menu_by_id(s,s.left_menu,menu_id)
@@ -69,6 +74,11 @@ export const get_headapp=s=>{
     else if(/^\/documentation\/([^\/]+)$/.test(url)){ // documentation
         let arr=url.match(/\/([^\/]+)$/);
         s.headapp='documentation';
+        s.headapp_params={config:arr[1]};
+    }
+    else if(/^\/Shedule\/([^\/]+)$/.test(url)){ // Расписание
+        let arr=url.match(/\/([^\/]+)$/);
+        s.headapp='schedule';
         s.headapp_params={config:arr[1]};
     }
     else if(/^\/VideoList\/([^\/]+)$/.test(url)){ // documentation

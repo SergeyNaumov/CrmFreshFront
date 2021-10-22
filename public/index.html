@@ -16,7 +16,13 @@
     </noscript>
     <script>
       let path=location.pathname
-      var BackendBase=/^localhost:/.test(location.host)?'http://dev-crm.test/backend':path+'/backend'
+
+      if(/^localhost:/.test(location.host)){
+        BackendBase='http://dev-crm.test/backend'
+      }
+      else{
+        BackendBase='<%= BASE_URL %>backend'
+      }
     </script>
     <div id="app"></div>
     <!-- built files will be auto injected -->

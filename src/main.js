@@ -79,6 +79,7 @@ Vue.component('admin-table', ()=> import('./components/AdminTable'));
 Vue.component('parser-excel', ()=> import('./components/ParserExcel'));
 Vue.component('documentation', ()=> import('./components/Documentation/Documentation'));
 Vue.component('VideoList', ()=> import('./components/VideoList/VideoList'));
+Vue.component('Schedule', ()=> import('./components/Schedule/Schedule'));
 
 Vue.component('field-accordion', ()=> import('./components/fields/accordion'));
 Vue.component('field-table', ()=> import('./components/fields/table'));
