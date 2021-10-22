@@ -311,7 +311,7 @@ methods: {
                 }
                 if(this.form.id){
                   this.save_files();
-                  window.history.pushState(null, document.title, '/edit_form/'+this.params.config+'/'+this.form.id);
+                  window.history.pushState(null, document.title, BaseUrl+'edit_form/'+this.params.config+'/'+this.form.id);
                 }
                 this.Init()
               }

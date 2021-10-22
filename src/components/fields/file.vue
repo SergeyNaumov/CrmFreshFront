@@ -111,8 +111,8 @@ export default {
         // если ранее загруженное фото является изображением
         //  -- возвращаем путь к этому изображению
         if(/\.(jpg|png|svg|gif)/.test(this.begin_value)){
-            let full_name=this.field.filedir+'/'+this.begin_value;
-            return full_name.replace(/^\.\//,'/');
+            return BaseUrl+this.field.filedir.replace(/^\.\//,'/')+'/'+this.begin_value;
+            return full_name;
 
         }
         return '';
@@ -121,7 +121,7 @@ export default {
         return /^.+\.(jpg|png|wepb|gif)$/i.test(this.begin_value)
       },
       download_link(){
-        let filedir=this.field.filedir.replace(/^\./,'');
+        let filedir=BaseUrl+this.field.filedir.replace(/^\./,'');
         return filedir+'/'+this.field.begin_value
       }
 
@@ -307,7 +307,7 @@ export default {
       start_crop_already_loaded(){
         let full_name=this.field.filedir+'/'+this.begin_value;       
         this.orig_name=this.begin_value;
-        this.imgSrc=full_name.replace(/^\.\//,'/');
+        this.imgSrc=BaseUrl+full_name.replace(/^\.\//,'/');
       },
       remove(){ // удаляем текущее фото с сервера
         // получить с сервера загруженное ранее фото для кропа

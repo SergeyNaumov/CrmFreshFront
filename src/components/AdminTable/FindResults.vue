@@ -24,7 +24,7 @@
         </v-card-text>
 
         <v-card-actions v-if="dialog_type=='delete_dialog'">
-          <div class="flex-grow-1"></div>
+          <div class="flex-grow-1"></div>e
           <v-btn color="primary darken-1" text @click="delete_element()">Да</v-btn>
           <v-btn color="red darken-1" text  @click="dialog=false; dialog_type=''">Нет</v-btn>
         </v-card-actions>
@@ -150,8 +150,10 @@
                                 </div>
                               </td>
                               <td class="text-xs-left text-md-right controls" v-if="!permissions.not_edit || permissions.make_delete">
+                                
+                                
                                 <v-btn small v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
-                                  <a :href="'/edit_form/'+results.config+'/'+tr.key" @click.prevent="go_to_edit(tr.key)">
+                                  <a :href="edit_link(tr)" @click.prevent="go_to_edit(tr.key)">
                                     <v-icon  color="primary" small>edit</v-icon>
                                   </a>
                                 </v-btn>&nbsp;
@@ -262,10 +264,10 @@ export default {
     go_to_edit(key){
       let url=''; let config=this.results.config;
       if(this.results.card_format && this.results.card_format == 'vue'){
-        url='/edit_form/'+config+'/'+key
+        url=BaseUrl+'edit_form/'+config+'/'+key
       }
       else{
-        url='/edit_form.pl?config='+config+'&action=edit&id='+key;
+        url=BaseUrl+'edit_form.pl?config='+config+'&action=edit&id='+key;
       }
       window.open(url);
     },
@@ -367,6 +369,11 @@ export default {
               setTimeout(()=>{err.innerHTML='';},1500);
             }
       });      
+    },
+    edit_link(tr){
+        
+        
+        return BaseUrl+'edit_form/'+this.results.config+'/'+tr.key
     }
   }
 };

@@ -191,21 +191,21 @@ export function get_cgi_params(){
 
 export  function get_params(self){ // получаем параметры из url-а
     let url=location.pathname; let to_url=''
-    if(/^\/edit[\-_]form\/([^\/]+)\/(\d+)$/.test(url)){
-        let arr=url.match(/^\/edit[\-_]form\/([^\/]+)\/(\d+)$/);
+    if(/\/edit[\-_]form\/([^\/]+)\/(\d+)$/.test(url)){
+        let arr=url.match(/\/edit[\-_]form\/([^\/]+)\/(\d+)$/);
         self.params={config:arr[1],id:arr[2],action:'edit'};
         
         return BackendBase+'/edit-form/'+self.params.config+'/'+self.params.id;
         
     }
-    else if(/^\/edit[\-_]form\/([^\/]+)?$/.test(url)){
-        let arr=url.match(/^\/edit[\-_]form\/([^\/]+)$/); 
+    else if(/\/edit[\-_]form\/([^\/]+)?$/.test(url)){
+        let arr=url.match(/\/edit[\-_]form\/([^\/]+)$/); 
         self.params={config:arr[1],action:'new'};
 
         return BackendBase+'/edit-form/'+self.params.config;
     }
     else{
-        self.fatal_errors=['url должен быть в формате /edit_form/[config] или /edit_form/[config]/id'];
+        self.fatal_errors=[`url должен быть в формате ${BaseUrl}/edit_form/[config] или /edit_form/[config]/id`];
         return false;
     }
 }

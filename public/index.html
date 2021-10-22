@@ -16,11 +16,13 @@
     </noscript>
     <script>
       let path=location.pathname
-
+      var BaseUrl='<%= BASE_URL %>'
+      var BackendBase
       if(/^localhost:/.test(location.host)){
         BackendBase='http://dev-crm.test/backend'
       }
       else{
+
         BackendBase='<%= BASE_URL %>backend'
       }
     </script>

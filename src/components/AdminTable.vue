@@ -487,7 +487,7 @@ export default {
           });
     },
     new_card(){
-      window.open('/edit_form/'+this.params.config);
+      window.open(BaseUrl+'edit_form/'+this.params.config);
     },
     filter_change(filter){
       for(let f of this.on_filters){

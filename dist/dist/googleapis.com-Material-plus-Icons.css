@@ -1,4 +1,4 @@
-@font-face {font-family: 'Material Icons';font-style: normal;font-weight: 400;src: url('/dist/font.ttf') format('truetype');}
+@font-face {font-family: 'Material Icons';font-style: normal;font-weight: 400;src: url('./font.ttf') format('truetype');}
 
 .material-icons {
   font-family: 'Material Icons';
