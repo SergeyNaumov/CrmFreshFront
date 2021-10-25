@@ -46,10 +46,10 @@ export default{
             )
         },
         go_link:function(item){
-            
+
             if(document.body.clientWidth<1500)
                this.setDriwer(false);
-            
+           
             if(item.type=='newtab'){
               window.open(item.value, '_blank');
               window.focus();
@@ -73,26 +73,27 @@ export default{
                 params=item.params;
             if(item.type=='vue'){
                 if(item.value=='mainpage')
-                  return 'mainpage'
-                console.log(item.value)
+                  return '#mainpage'
+                
+
                 if(item.value=='documentation')
-                  return '/documentation/'+params.config
+                  return '#/documentation/'+params.config+':'+item.id
                 
                 if(item.value=='VideoList')
-                  return '/video_list/'+params.config
+                  return '#/video_list/'+params.config+':'+item.id
 
                 if(item.value=='admin-table')
-                  return '/admin_table/'+params.config
+                  return '#/admin_table/'+params.config+':'+item.id
                 if(item.value=='admin-tree')
-                  return '/admin_tree/'+params.config
+                  return '#/admin_tree/'+params.config+':'+item.id
                 if(item.value=='parser-excel')
-                  return '/parser-excel/'+params.config
+                  return '#/parser-excel/'+params.config+':'+item.id
                 if(item.value=='Schedule')
-                  return '/Schedule/'+params.config
+                  return '#/Schedule/'+params.config+':'+item.id
                 
             }
             if(item.type=='src'){
-              return item.value
+              return '#src:'+item.value+':'+item.id
             }
 
             return ''

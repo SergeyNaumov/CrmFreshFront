@@ -16,7 +16,7 @@
               </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-navigation-drawer v-model="drawer" app >
+        <v-navigation-drawer v-model="drawer" style="width: 300px" app >
           
           <left_menu
             :manager="manager"
@@ -31,9 +31,12 @@
         <v-app-bar app  > <!--color="darken1"-->
           
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-          <v-toolbar-title>
-            <a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> {{title}}
+          <v-toolbar-title >
+            {{title}}
+            <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
           </v-toolbar-title>
+          
+          
         </v-app-bar>
 
         <v-main>

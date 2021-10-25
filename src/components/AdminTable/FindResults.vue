@@ -70,6 +70,7 @@
                         <tbody>                          
                             <tr v-for="tr in results.output" :key="tr.tr_index">
                               <td  v-for="(td,td_index) in tr.data" :key="td.td_index" :data-label="results.headers[td_index]['h']+':'">
+                                
                                 <div class="field">
                                   <template v-if="typeof(td.value)=='object'">
                                     <div v-if="td.value.before_html" v-html="td.value.before_html" />
@@ -83,7 +84,7 @@
                                         <span v-html='td.value'></span>
                                   </template>
                                   <template v-else-if="td.type=='text'">
-                                      
+                                    
                                     {{td}}
                                       <v-text-field
                                         

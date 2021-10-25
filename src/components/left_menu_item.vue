@@ -1,5 +1,5 @@
 <template>
-  <div class="item" style="margin-left: 10px;">
+  <div class="item">
 
       <template v-if="item.child.length"> <!-- Родительский пункт меню -->
         <a href="#" @click.prevent="show=!show">
@@ -23,11 +23,11 @@
         </div>
       </template>
       <template v-else> <!-- дочерний пункт меню -->
-        <a :href="'#'+get_link(item)+':'+item.id"> <!-- get_link(item)   @click="go_link(item)" -->
-          <div class="icon_slot"> 
+        <a :href="get_link(item)" >  <!-- get_link(item)   @click="go_link(item)" -->
+          <div class="icon_slot" v-if="item.icon"> 
             <v-icon color="primary" x-small>{{item.icon}}</v-icon>
           </div>
-          <span>{{item.header}}</span>
+          <span :style="item.style">{{item.header}}</span>
         </a>
 
       </template>

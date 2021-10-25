@@ -89,7 +89,7 @@ export default {
     load(){
       if(!this.list.length){
         this.loading=true;
-        this.$http.get('/dist/json/awesome.json').then(
+        this.$http.get(BaseUrl+'dist/json/awesome.json').then(
           response=>{
             //this.list=response.data;
 
