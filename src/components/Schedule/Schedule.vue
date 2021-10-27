@@ -33,6 +33,11 @@
                 :items="form.select_list"
                 v-model="form_event.select_id"
               />
+              <div v-for="f in form.fields">
+                <template v-if="f.type=='checkbox'">
+                  <v-checkbox v-model="f.value" :label="f.description" />
+                </template>
+              </div>
               <v-btn v-if="form_event.interval" @click.prevent="insert_event">Добавить</v-btn>
             </form>
             
@@ -148,6 +153,10 @@ export default {
       },
       show_event_form(){
         this.form_event.interval=''
+        if(this.form.fields){
+            for(let f of this.form.fields) f.value=''
+        }
+
       }
     },
 
@@ -159,6 +168,13 @@ export default {
           r=>{
               let d=r.data
               if(d.success){
+                  if(d.form.fields){
+                    for(let f of d.form.fields){
+                      if(!f.value){
+                        f.value=''
+                      }
+                    }
+                  }
                   this.form=d.form
                   this.value=d.form.value
 
@@ -203,7 +219,7 @@ export default {
           {
             id: this.form_event.select_id,
             times:[this.form_event.interval[0],this.form_event.interval[1]],
-            
+            fields_values:this.fields_values
 
           }
         ).then(
@@ -226,7 +242,7 @@ export default {
         )
 
         /*this.events.push(  {
-          "name": "Кузнецов Виктор, индивидуальное занятие",
+          "name": "Кузнецов Викторfti, индивидуальное занятие",
           "start": '2021-10-21 12:00:00',//new Date('2021-10-21 12:00'),
           "end":   "2021-10-21 12:59:59",//new Date("2021-10-21 12:59"),
           "color": this.active_color,
@@ -276,7 +292,15 @@ export default {
       },
     },
     computed:{
-
+      fields_values(){
+        let rez={}
+        for(let f of this.form.fields){
+          if(f.value){
+            rez[f.name]=f.value
+          }
+        }
+        return rez
+      },
       form_event_intervals(){
         let d=new Date()
         let begin_day=new Date(d.getFullYear(), d.getMonth()+1, d.getDate())

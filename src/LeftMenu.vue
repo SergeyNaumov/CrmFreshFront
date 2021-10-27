@@ -61,6 +61,7 @@ export default{
               location.href=item.value
             }
             else{
+              console.log(item)
               if(item.params){
                 this.setMenuItemParams(item.params);
               }
@@ -90,7 +91,8 @@ export default{
                   return '#/parser-excel/'+params.config+':'+item.id
                 if(item.value=='Schedule')
                   return '#/Schedule/'+params.config+':'+item.id
-                
+                if(item.value=='table')
+                  return '#/table/'+params.config+':'+item.id
             }
             if(item.type=='src'){
               return '#src:'+item.value+':'+item.id

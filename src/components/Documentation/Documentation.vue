@@ -1,6 +1,6 @@
 <template>
     <div  class="is_headapp" >
-        <v-btn top right absolute="" color="primary" small @click="dialog=!dialog" v-scroll="scrolling" id="scrollbutton"
+        <v-btn top right absolute="" color="red" small @click="dialog=!dialog" v-scroll="scrolling" id="scrollbutton"
         >
             оглавление
         </v-btn>
@@ -18,15 +18,17 @@
                     :item="c" :level="0"
                 />
         </div>
-        <v-dialog v-model="dialog" max-width="500">
+        <v-dialog v-model="dialog" max-width="800">
             <v-card>
                  <v-card-title class="headline">Оглавление</v-card-title>
                  <v-card-text>
-                <item-menu 
-                    v-for="m in list" :key="m.id"
-                    :item="m"
-                    :level="0"
-                />
+                    <item-menu 
+                        v-for="m in list" :key="m.id"
+                        :item="m"
+                        :item_id="m.id"
+                        :level="0"
+                        :go_to_ankor="go_to_ankor"
+                    />
                 </v-card-text>
                 <v-card-actions>
                 </v-card-actions>
@@ -85,6 +87,13 @@ export default {
         }
     },
     methods:{
+        go_to_ankor(id){
+            
+            document.getElementById('header'+id).scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start'
+                })
+        },
         scrolling(p){
             let body=document.getElementsByTagName("body")[0];
             let scrollHeight = Math.max(
@@ -103,16 +112,20 @@ export default {
 
   .is_headapp {margin: 20px; max-width: 1400px;}
   .is_headapp h1 {margin-bottom: 20px;} 
+  #scrollbutton {color: #fff;}
   .v-dialog {
-      max-width: 500px;
+      max-width: 800px;
   }
   .v-dialog .v-card{
-      padding: 20px;
-      max-width: 500px;
+      max-width: 800px;
   }
   .title {
     margin-bottom:  20px;
     margin-top:  20px;
     font-size:  36px !important;
+  }
+  .headline {margin-bottom: 20px;}
+  @media only screen and (max-width: 800px) {
+    .title {font-size:  28px !important;}
   }
 </style>

@@ -16,7 +16,7 @@
               </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-navigation-drawer v-model="drawer" style="width: 300px" app >
+        <v-navigation-drawer v-model="drawer" app >
           
           <left_menu
             :manager="manager"
@@ -45,6 +45,7 @@
             <!-- vuecomponent -->
             <pre v-if="0">{{MenuItem}}</pre>
             <template v-if="MenuItem.type == 'vue'">
+
               <component :is="load_component(MenuItem.value)" :params="MenuItemParams"></component>
             </template>
 
@@ -232,6 +233,9 @@ export default {
           },
 
           load_component(component){
+              if(component=='table')
+                return 'table_component'
+
               return component;
           }
         },

@@ -37,13 +37,13 @@ export const get_headapp=s=>{
     }
     else{
         url=url.replace(/:\d+$/,'')
-        
+        log('url:',url)
         if(/^\/edit[\-_]form\/([^\/]+)\/(.+)$/.test(url)){
             let arr=url.match(/^\/edit[\-_]form\/([^\/]+)\/(\d+)$/)
             s.headapp='edit-form';
             s.headapp_params={config:arr[1],id:arr[2],action:'edit'};
         }
-        else if(/^\/edit[\-_]form\/([^\/]+):\d+$/.test(url)){
+        else if(/^\/edit[\-_]form\/([^\/]+)$/.test(url)){
             let arr=url.match(/^\/edit[\-_]form\/([^\/]+)$/);
             s.headapp='edit-form';
             s.headapp_params={config:arr[1],id:null,action:'new'};
@@ -60,6 +60,11 @@ export const get_headapp=s=>{
             s.set_active_manager_menu({element:'admin-tree',config:arr[1]});
             s.headapp_params={config:arr[1]};
             s.headapp='admin-tree';
+        }
+        else if(/^\/table\/([^\/]+)$/.test(url)){ // table -- произвольная таблица
+            let arr=url.match(/^\/table\/([^\/]+)$/)
+            s.headapp_params={config:arr[1]};
+            s.headapp='table_component';
         }
         else if(url=='/const'){ // const
             s.headapp_params={};
@@ -87,8 +92,9 @@ export const get_headapp=s=>{
             s.headapp='documentation';
             s.headapp_params={config:arr[1]};
         }
-        else if(/^\/Shedule\/([^\/]+)$/.test(url)){ // Расписание
+        else if(/^\/[Ss]chedule\/([^\/]+)$/.test(url)){ // Расписание
             let arr=url.match(/\/([^\/]+)$/);
+            log('schedule')
             s.headapp='schedule';
             s.headapp_params={config:arr[1]};
         }

@@ -41,6 +41,7 @@ const vuetify = new Vuetify({
   theme: theme
 });
 //bus.colors_primary=colors.indigo;
+window.log=console.log
 
 Vue.prototype.$theme=theme
 Vue.use(Vuetify)
@@ -78,8 +79,11 @@ Vue.component('admin-tree', ()=> import('./components/AdminTree'));
 Vue.component('admin-table', ()=> import('./components/AdminTable'));
 Vue.component('parser-excel', ()=> import('./components/ParserExcel'));
 Vue.component('documentation', ()=> import('./components/Documentation/Documentation'));
+Vue.component('table_component', ()=> import('./components/Table'));
 Vue.component('VideoList', ()=> import('./components/VideoList/VideoList'));
 Vue.component('Schedule', ()=> import('./components/Schedule/Schedule'));
+Vue.component('field-table', ()=> import('./components/fields/table'));
+
 
 Vue.component('field-accordion', ()=> import('./components/fields/accordion'));
 Vue.component('field-table', ()=> import('./components/fields/table'));
