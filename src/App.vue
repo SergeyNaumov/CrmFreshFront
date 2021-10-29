@@ -44,6 +44,7 @@
             <errors :errors="errors" />
             <!-- vuecomponent -->
             <pre v-if="0">{{MenuItem}}</pre>
+
             <template v-if="MenuItem.type == 'vue'">
 
               <component :is="load_component(MenuItem.value)" :params="MenuItemParams"></component>
@@ -149,6 +150,10 @@ export default {
                     if(D.left_menu)
                       this.left_menu=D.left_menu
                     this.manager=D.manager;
+
+                    if(D.startpage){
+                      this.MenuItem=D.startpage
+                    }
                 }
                 this.$nextTick(()=>{
                     this.copyright=D.copyright, document.title=this.title=D.title;              
