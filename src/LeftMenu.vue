@@ -12,7 +12,7 @@
         </div>
 
         <div class="left_menu">
-          <left_menu_item v-for="m in left_menu" :key="m.id"
+          <left_menu_item v-for="m in left_menu" 
             :item="m"
             :get_link="get_link"
             :go_link="go_link"
@@ -34,6 +34,24 @@ export default{
 
         }
     },
+    created(){
+      addEventListener("popstate",(e)=>{
+            
+            let item=e.state
+            if(item){
+              console.log('popstate:',e.state)
+              //this.setMenuItem(item,)
+              this.go_link(item,true)
+            }
+
+            //s.setMenuItem(item)
+            
+            //console.log('EventListener: ', location.pathname+location.search)
+            this.go_link(item,true)
+            //go(location.pathname+location.search);
+      })
+      
+    },
     methods:{
         logout(){
             this.$http.get(BackendBase+'/logout').then(
@@ -45,57 +63,67 @@ export default{
                 }
             )
         },
-        go_link:function(item){
+        go_link:function(item, not_push_state=false){
 
             if(document.body.clientWidth<1500)
                this.setDriwer(false);
-           
-            if(item.type=='newtab'){
+            console.log('BEFORE:',item)
+            if(item && item.type=='newtab'){
               window.open(item.value, '_blank');
               window.focus();
             }
-            else if(item.type == 'src'){
-              this.setMenuItem(item);
-            }
-            else if(item.type=='link'){
-              location.href=item.value
-            }
             else{
-              console.log(item)
+
               if(item.params){
                 this.setMenuItemParams(item.params);
               }
               this.setMenuItem(item)
+              if(!not_push_state){
+                console.log('PUSH state',item)
+                history.pushState(item, item.header, this.get_link(item))
+              }
             }
+
+            console.log('CUR_STATE: ',window.history)
         },
         get_link(item){
             let params={};
             if(item.params)
                 params=item.params;
             if(item.type=='vue'){
+                let UrlPrefix=config.UrlPrefix
                 if(item.value=='mainpage')
-                  return '#mainpage'
+                  return UrlPrefix+'/'
                 
-
+                if(item.value=='const'){
+                  return UrlPrefix+'/vue/const/'+params.config
+                }
                 if(item.value=='documentation')
-                  return '#/documentation/'+params.config+':'+item.id
+                  return UrlPrefix+'/vue/documentation/'+params.config
                 
                 if(item.value=='VideoList')
-                  return '#/video_list/'+params.config+':'+item.id
+                  return UrlPrefix+'/vue/video_list/'+params.config
 
                 if(item.value=='admin-table')
-                  return '#/admin_table/'+params.config+':'+item.id
+                  return UrlPrefix+'/vue/admin_table/'+params.config
                 if(item.value=='admin-tree')
-                  return '#/admin_tree/'+params.config+':'+item.id
+                  return UrlPrefix+'/vue/admin_tree/'+params.config
                 if(item.value=='parser-excel')
-                  return '#/parser-excel/'+params.config+':'+item.id
+                  return UrlPrefix+'/vue/parser-excel/'+params.config
                 if(item.value=='Schedule')
-                  return '#/Schedule/'+params.config+':'+item.id
+                  return UrlPrefix+'/vue/Schedule/'+params.config
                 if(item.value=='table')
-                  return '#/table/'+params.config+':'+item.id
+                  return UrlPrefix+'/vue/table/'+params.config
             }
             if(item.type=='src'){
-              return '#src:'+item.value+':'+item.id
+              //return '#src:'+item.value+':'+item.id
+              if(item.id){
+                return UrlPrefix+'/src:'+item.value
+              }
+              else{
+                return item.value
+              }
+              
             }
 
             return ''

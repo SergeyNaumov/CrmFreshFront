@@ -1,6 +1,6 @@
 <template>
     <div>
-        
+
         <v-dialog v-model="dialog_add_form" max-width="500">
             <v-card>
                 <v-card-title  class="headline">Создание нового элемента</v-card-title>
@@ -29,6 +29,7 @@
             </v-card>
         </v-dialog>
         <div class="Area">
+            
         <a href="#" v-if="make_add " @click.prevent="open_dialog_add_form">добавить
                 <span v-if="parent.id"> в "{{parent.header}}" </span>
                 <span v-else> в /</span>
@@ -40,9 +41,10 @@
                 :id="'p-'+parent.id"
                 tag="ul"
                 v-if="list.length"
-                :list="list"
+                
                 class="list-group"
                 ghost-class="ghost"
+                :renew="renew"
                 :options="{'group':'g'+parent.id}"
                 @start="move_start"
                 @end="move_end"
@@ -52,12 +54,18 @@
                 <div >
                     <div class="li_header" :style='{"background":cur_color}'  >
                             <div class="plus-icon " v-if="form.tree_use" >
-                                <v-icon small color="primary" v-if="!shows[l.id] && form.tree_use" @click="show_this(l)">fa fa-plus</v-icon>
+                                
+                                <v-icon small color="primary"
+                                    v-if="(level < form.max_level) && !shows[l.id] && form.tree_use"
+                                    @click="show_this(l)"
+                                >
+                                    fa fa-plus
+                                </v-icon>
                                 <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
                             <div class="branch-header" >
                                 {{ l.header }} 
-                                <template v-if="l.childs && form.tree_use">({{l.childs.length}})</template>
+                                <template v-if="l.childs && form.tree_use && l.childs.length>0">({{l.childs.length}})</template>
                             </div>
                             <div class="branch-tools " style="display: block; position: relative; top: -30px; height: 0; margin-bottom: 0; text-align: right; ">
                                 <a :href="'/edit_form/'+form.config+'/'+l.id" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
@@ -68,9 +76,9 @@
                         <nested-draggable v-if="l.childs"
                             :form="form"
                             :level="(level+1)"
-                            :list="l.childs" :add_to_map="add_to_map"
+                            :renew="renew" :add_to_map="add_to_map"
                             :parent="l"
-                            :add="add" :del="del" :move_end="move_end"
+                            :add="add" :del="del" :move_end="move_end" :get_list="get_list"
                         />
                     </template>
 
@@ -80,6 +88,7 @@
             </draggable>
         </div>
         <template v-else>
+
             <ul v-if="list.length">
                 <li v-for="l in list" :key="l.id" :id="'li-'+l.id">
                     <div class="li_header">
@@ -89,8 +98,8 @@
                                 <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
                             <div class="branch-header">
-                                {{ l.header }}
-                                <template v-if="l.childs && form.tree_use">({{l.childs.length}})</template>
+                                {{ l.header }} 
+                                <template v-if="l.childs && l.childs.length>0 && form.tree_use">({{l.childs.length}})</template>
                             </div>
                             <div class="branch-tools float-right">
                                 <a :href="'/edit_form/'+form.config+'/'+l.id" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
@@ -103,6 +112,7 @@
                         <nested-draggable v-if="l.childs"
                             :form="form"
                             :level="(level+1)"
+                            :renew="renew"
                             :list="l.childs" :add_to_map="add_to_map"
                             :parent="l"
                             :add="add" :del="del" :move_end="move_end"
@@ -122,7 +132,8 @@
 
 export default {
   props: {
-    list: {type: Array,required:false},
+    get_list: {required:true},
+    renew: {required:true},
     form:{type:Object,required:false},
     level:{type:Number,required:false},
     parent:{required:true}, // вышестоящий элемент
@@ -137,6 +148,8 @@ export default {
           dialog_add_form: false,
           values:{},
           errors:[],
+          list:[],
+          child_count:0,
           show_errors:false,
           shows:{
             0:false          
@@ -174,11 +187,13 @@ export default {
                             if(D.success){
                               l.childs=D.data;
                               for(let c of l.childs){
+                                  
                                   this.add_to_map(this.parent.id,c);
                               }
 
                               shows[l.id]=true;
                               this.shows=shows;
+                              
                             }
 
                     }).catch(function(){
@@ -187,6 +202,7 @@ export default {
                 
             }
             else{ // child-ы уже загружены
+                
                 if(this.form.tree_use){
                     let need_load_for_all_childs=false
                     let child_list=[]
@@ -210,6 +226,7 @@ export default {
                                     for(let child of D.data[object_id]){
                                         
                                         this.add_to_map(object_id,child)
+                                        this.list=this.get_list(this.parent.id)
                                     }
                                     
                                 }
@@ -220,6 +237,7 @@ export default {
 
                 shows[l.id]=true;
                 this.shows=shows;
+                this.list=this.get_list(this.parent.id)
             }
 
             
@@ -241,6 +259,7 @@ export default {
                         
                         this.add(this.parent.id,D.data);
                         this.values={};
+                        this.list=this.get_list(this.parent.id)
                     }
                     else{
                         this.show_errors=true, this.errors=D.errors
@@ -267,12 +286,16 @@ export default {
             setTimeout(
                 ()=>{
                     
-                    if(this.parent.id && this.$refs['new_header'+this.parent.id]){
+                    //if(this.parent.id && this.$refs['new_header'+this.parent.id]){
                         this.$refs['new_header'+this.parent.id].$refs.input.focus();
-                    }
-                    else{
-                        console.log('not refs: '+'new_header'+this.parent.id)
-                    }
+                    //}
+                    // else{
+                    //     this.$refs['new_header'+this.parent.id].$refs.input.focus();
+                    // }
+                    //else{
+                    //    console.log('not refs: '+'new_header'+this.parent.id)
+                        //console.log('parent_id:',this.parent.id)
+                    //}
                     
                     //this.$refs['new_header'+this.parent.id].$refs.input.focus();
                 },
@@ -286,6 +309,7 @@ export default {
 
         }
   },
+  
   computed:{
       cur_color(){
           let colors=['#CFD8DC','#D7CCC8','#FFCCBC','#FFE0B2','#FFECB3','#FFF9C4','#F0F4C3','#DCEDC8','#C8E6C9','#B2DFDB','#B2EBF2','#B3E5FC','#BBDEFB','#C5CAE9'];
@@ -300,16 +324,25 @@ export default {
         return (!this.form.not_create && (!this.form.max_level || (parseInt(this.form.max_level) >= parseInt(this.level)) ))
       }
   },
+  created(){
+    this.list=this.get_list(this.parent.id)
+  },
   mounted(){
 
   },
   watch:{
-      new_runner(){
+    renew(){
+        this.list=this.get_list(this.parent.id)
+        for(let l of this.list){
+            l.childs=this.get_list(l.id)
+        }
+    },
+    new_runner(){
           if(this.new_runner){
               this.dialog_add_form=true
           }
             
-      }
+    }
   },
   name: "nested-draggable"
 };

@@ -14,7 +14,7 @@
                 </template>
                 <template v-else>
                     <v-card-title  class="headline">
-                    Регистрация в системе АннА
+                    Регистрация в системе
                     </v-card-title>
                     <v-card-text>
                         

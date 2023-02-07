@@ -11,9 +11,6 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-
-
-
           <v-btn
             color="primary"
             @click="dialog = false"
@@ -32,49 +29,58 @@
       
       
       <div class="links" >
-          <template v-for="(l,idx) in form.links">
-              <a   :key="idx" :href="l.link" target="_blank">{{l.description}}</a>
+          <template v-for="(l,idx) in form.links" >
+              <a  :href="l.link" target="_blank">{{l.description}}</a>
               <template v-if="idx < form.links.length -1 ">&nbsp;|&nbsp;</template>
           </template>
 
       </div>
-      <v-simple-table v-if="!form.errors.length">
-        <template v-slot:default>
-            <thead>
-                <tr>
+          <template v-if="form.data.length>0">
+            <v-simple-table v-if="!form.errors.length" mobile-breakpoint="0" class="results">
+              <template v-slot:default>
+                  <thead>
+                      <tr>
 
-                    <th v-for="(header,idx) in form.headers" >
-                        <a href="" @click.prevent="go_sort(header.n,'')" v-html="header.h"/>
-                        <span style="padding-left: 8px; padding-bottom: 5px;" v-if="header.tooltip">
-                            <a href="" style="text-decoration: none; " @click.prevent="show_tooltip(header.tooltip);"><v-icon style="font-size: 8pt;" small color="primary">fa fa-question</v-icon></a>
-                        </span>
-                        <div>
-                            <a href="#" @click.prevent="go_sort(header.n,'asc')" class="sort_desc" :class=""><v-icon color="green" small>keyboard_arrow_down</v-icon></a>
-                              <a href="#" @click.prevent="go_sort(header.n,'desc')" class="sort_asc" :class=""><v-icon color="red" small>keyboard_arrow_up</v-icon></a>
-                        </div>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                  v-for="(tr,idx) in form.data"
-                  :key="'tr'+idx"
-                >  
-                  <template v-for="td in tr">
-                    
-                    <template v-if="td.type=='url'">
-                      <td ><a :href="td.url" target="_blank">{{td.header}}</a></td>
-                    </template>
-                    <template v-else-if="td.type=='dialog' || td.type=='ajax_dialog'">
-                      <td><a href="" @click.prevent="show_dialog(td)">{{td.header}}</a></td>
-                    </template>
-                    <td v-html="td" v-else></td>
-                  </template>
-                    
-                </tr>
-            </tbody>
-        </template>
-      </v-simple-table>
+                          <th v-for="(header,idx) in form.headers" :key="'th'+idx">
+                              <a href="" @click.prevent="go_sort(header.sort?header.sort:header.n,'')" v-html="header.h"/>
+                              <span style="padding-left: 8px; padding-bottom: 5px;" v-if="header.tooltip">
+                                  <a href="" style="text-decoration: none; " @click.prevent="show_tooltip(header.tooltip);"><v-icon style="font-size: 8pt;" small color="primary">fa fa-question</v-icon></a>
+                              </span>
+                              <div>
+                                  <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'asc')" class="sort_desc" :class=""><v-icon color="green" small>keyboard_arrow_down</v-icon></a>
+                                    <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'desc')" class="sort_asc" :class=""><v-icon color="red" small>keyboard_arrow_up</v-icon></a>
+                              </div>
+                          </th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr
+                        v-for="(tr,idx) in form.data"
+                        :key="'tr'+idx"
+                      >  
+
+                        <template v-for="(header,h_idx) in form.headers">
+                          
+                          <!--
+                          <template v-if="tr[header.name].type=='dialog' || tr[header.name].type=='ajax_dialog'">
+                            <td :key="idx+'_'+h_idx"><a href="" @click.prevent="show_dialog(tr[header.name])">{{tr[header.name].header}}</a></td>
+                          </template>
+                          -->
+                          <template >
+                            <td v-html="get_data_td(header,h_idx,tr)" :key="idx+'_'+h_idx"></td>
+                          </template>
+                          
+                          
+                        </template>
+                          
+                      </tr>
+                  </tbody>
+              </template>
+            </v-simple-table>
+          </template>
+          <template v-else>
+            {{empty_message}}
+          </template>
     </template>
   </div>
 </template>
@@ -90,7 +96,8 @@ export default {
             sort_desc: false,
             dialog: false,
             dialog_html: '',
-            dialog_title: ''
+            dialog_title: '',
+            empty_message:''
           }
         },
 
@@ -103,10 +110,30 @@ export default {
           
         },
         watch:{
-
+          params(){
+            t.init()
+          }
         },
         methods: {
+          get_data_td(header,h_idx,tr){
+            let name=header.n // имя поля
+            let td=tr[name]
+            if(typeof(td)=='object'){
+              let type=td.type
+              if(type=='url'){
+                return `<a href="${td.url}" target="_blank">${td.header}</a>`
+              }
+             
+            }
+            //if('type' in d){
+            //  return '-'
+            //}
+            
+            //console.log('header:',header,'h_idx:',h_idx,'tr:',tr)
+            return td
+          },
           go_sort(idx,order){
+
               if(order=='asc'){
                   t.sort_desc=false
               }
@@ -120,6 +147,7 @@ export default {
                   t.sort_desc=false
               }
               t.sort=idx
+              console.log('sort:',t.sort,t.sort_desc)
               t.sorted()
           },
           sorted(){
@@ -127,7 +155,7 @@ export default {
                                   (a,b)=>{
                                       
                                       let v1=a[this.sort], v2=b[this.sort]
-                                    
+                                      console.log(v1,v2)
                                       if(parseFloat(v1) && parseFloat(v2) ){
                                           v1=parseFloat(v1)
                                           v2=parseFloat(v2)
@@ -154,21 +182,26 @@ export default {
                               )
           },
           init(){
-            
-            t.$http.get(
-              BackendBase+'/table/'+t.params.config,
-            ).then(
+            let url=BackendBase+'/table/'+t.params.config
+            if(this.params.limit){
+              url+=`?limit=${this.params.limit}`
+            }
+            t.$http.get(url).then(
               r=>{
                 let d=r.data;
                 if(d.success)
                   t.form=d.form
+                  if(!t.params.limit){
+                    document.title=d.form.title
+                  }
+                  t.empty_message=d.form.empty_message
                   t.sort=t.form.sort
                   t.sort_desc=t.form.sort_desc
               }
             )
           },
           show_dialog(el){
-            console.log(el)
+            
             if(el.type=='ajax_dialog'){
 
             }
@@ -178,9 +211,18 @@ export default {
               t.dialog_title=el.header
             }
             
+          },
+          idx_header(name){
+            let i=0
+            for(let f of t.form.headers){
+              if(f.n==name){
+                return i
+              }
+              i++
+            }
+            return false
           }
-        },
-
+        }
 
         
         
@@ -193,6 +235,37 @@ export default {
   body {margin-top: 10%;}
   .sort_asc, .sort_desc {text-decoration: none !important;}
   .links {margin-left: 20px; border-bottom: 1px dotted black; padding-bottom: 20px;}
+  @media only screen and (max-width: 1000px) {
+    .results thead {
+        display: none;
+    }
+    .results tr {
+
+      line-height: auto !important;
+    }
+    .results td{
+      display: block;
+      margin-top: 10px;
+      padding-bottom: 10px !important;
+      height: auto !important;
+      
+    }
+    .results td:last-child{border-bottom: 3px solid $primary;}
+
+
+
+    .results td:before{
+      content: attr(data-label);
+      display: block;
+      font-weight: bold;
+      color: $primary;
+      text-decoration: underline;
+      
+    }
+
+    .results tr td:first-child {border-top: 2px solid black; padding-top: 20px;}
+    .results tr:first-child td:first-child {border-top: none;}
+  }
 </style>
 
 

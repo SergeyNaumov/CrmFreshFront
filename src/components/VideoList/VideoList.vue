@@ -51,23 +51,41 @@
     </v-dialog>
 
 
-       <div class="title">Список видеоматериалов</div>
-       
-       <div v-for="(s,idx) in list" class='section'>
-            <div class="section_name">
-                {{s.header}}
-            </div>
-            
-                <v-row>
-                    <v-col v-for="(v,idx) in s.child" cols="12" md="4" sm="12" :key="idx">
-                        <div><a href="" @click.prevent="open_video(v)">{{v.header}}</a></div>
-                        <a href="" @click.prevent="open_video(v)" v-if="!v.show"><img :src="v.img"/></a>
-                    </v-col>
-                </v-row>
-            
+       <h1 v-if="!params.without_title" >{{title}}</h1>
+       <errors :errors="errors"/>       
 
-       </div>
-       
+      <div class="links" >
+          <template v-for="(l,idx) in links">
+              <a   :key="idx" :href="l.link" target="_blank">{{l.description}}</a>
+              <template v-if="idx < links.length -1 ">&nbsp;|&nbsp;</template>
+          </template>
+
+      </div>
+       <template v-if="params.limit">
+            <v-row>
+                <v-col v-for="(v,idx) in list" cols="12" md="4" sm="12" :key="idx">
+                    <div><a href="" @click.prevent="open_video(v)">{{v.header}}</a></div>
+                    <a href="" @click.prevent="open_video(v)" v-if="!v.show"><img :src="v.img"/></a>
+                </v-col>
+            </v-row>
+       </template>
+       <template v-else>
+           <div v-for="(s,idx) in list" class='section'>
+                    <!-- вывод по секциям -->
+                
+                    <template v-if="s.child.length">
+                        <div class="section_name" >
+                            {{s.header}}
+                        </div>
+                        <v-row>
+                            <v-col v-for="(v,idx) in s.child" cols="12" md="4" sm="12" :key="idx">
+                                <div><a href="" @click.prevent="open_video(v)">{{v.header}}</a></div>
+                                <a href="" @click.prevent="open_video(v)" v-if="!v.show"><img :src="v.img"/></a>
+                            </v-col>
+                        </v-row>
+                    </template>
+           </div>
+       </template>
     </div>
 </template>
 <script>
@@ -125,9 +143,8 @@ export default {
         return {
             dialog:false,
             code_for_show: false,
-
             title:'',
-            
+            errors:[],
             config:'',
             list:[],
             links: [],
@@ -181,7 +198,6 @@ export default {
                                         )
                                     }
                                     else{
-                                        console.log('clear interval')
                                         clearInterval(interval_update_seconds)
                                     }
 
@@ -195,25 +211,37 @@ export default {
             )
         },
         load(){
+            let url=BackendBase+'/VideoList/'+this.params.config
+            if(this.params.limit)
+                url+='?limit='+this.params.limit
+
             this.$http.get(
-                BackendBase+'/VideoList/'+this.params.config
+                url
             ).then(
                 r=>{
                     let data=r.data;
                     if(data.success){
-                        document.title=data.title, this.title=data.title
-                        for(let sect of data.list){
-                            for(let v of sect.child){
-                                v.show=false
-                                fix_youtube_code(v)
+                        if(!this.params.not_set_title)
+                            document.title=data.title
 
-
-                                
+                        this.title=data.title
+                        if(this.params.limit){
+                            for(let v of data.list){
+                                    v.show=false
+                                    fix_youtube_code(v)
                             }
-                            
                         }
-                        this.list=data.list
+                        else{
+                            for(let sect of data.list){
+                                for(let v of sect.child){
+                                    v.show=false
+                                    fix_youtube_code(v)
+                                }
+                            }
+                        }
 
+                        this.list=data.list
+                        this.errors=data.errors
                         this.log=data.log
                         this.links=data.links
                     }

@@ -1,48 +1,62 @@
 <template>
-  <v-app>
-        <v-container>
-            <h1 color="primary">Константы системы</h1>
-            
+  <div class="const">
+            <h1 class="title">Константы системы</h1>
+            <p>(сохранение происходит сразу после изменения значений)</p>
+            <div >
             <template v-if="errors.length">
               <div v-for="(e,idx) in errors" class="error" :key="'e'+idx">{{e}}</div>
             </template>
-            <div class="form">
+            <div >
               <pre v-if=0>{{list}}</pre>
-              <div v-for="l in list" :key="l.name">
-                <template v-if="l.type=='text'">
-                  <v-text-field
-                    v-model="l.value"
-                    :label="l.header"
-                    @keyup="change(l)"
-                  />
-                </template>
-                <template v-if="l.type=='textarea'">
-                  <v-textarea
-                    v-model="l.value" 
-                    :label="l.header"
-                    @keyup="change(l)"
-                  />
-                </template>
-                <template v-if="l.type=='checkbox'">
-                    <v-checkbox  :label="l.header" v-model="l.value" @change="change(l)"/>
-                </template>
-                <template v-if="l.type=='switch'">
-                    <v-switch  :label="l.header" v-model="l.value" @change="change(l)"/>
-                </template>
-                <div style="height: 10px; vertical-align: top;">
+                <table>
+                <tr v-for="l in list" :key="l.name">
+                  <td class="label">{{l.header}}:</td>
+                  <td>
+                  <template v-if="l.type=='text'">
+                    <input type="text"
+                      v-model="l.value"
+                      
+                      @keyup="change(l)"
+                    >
+                  </template>
+                  <template v-if="l.type=='textarea'">
+                    <textarea
+                      v-model="l.value" 
+                      
+                      @keyup="change(l)"
+                    />
+                  </template>
+                  <template v-if="l.type=='file'">
+                    
+                    <input type="file"
+                    :id="'const_file_'+l.name"
+                    @change="file_upload(l)"
+                    />
+                    <div v-if="l.value">
+                      <a :href="filedir+'/'+l.value" target="_blank">открыть в браузере</a> | 
+                      <a :href="filedir+'/'+l.value" :download="l.value">загрузить</a>
+                    </div>
+                    
+                  </template>
+                  <template v-if="l.type=='checkbox'">
+                      <input type="checkbox"   v-model="l.value" @change="change(l)">
+                  </template>
+                  <template v-if="l.type=='switch'">
+                      <v-switch   v-model="l.value" @change="change(l)"/>
+                  </template>
                   <div v-if="l.saved" class="saved">
-                    сохранено
+                    
+                      сохранено
+                    
                   </div>
-                </div>
-              </div>
+                </td>
+              </tr>
+            </table>
             </div>
             
-            <v-card max-width="344" class="mx-auto auth"> 
-              
-            </v-card>
-          
-        </v-container>
-  </v-app>
+
+            </div>
+  </div>          
 </template>
 
 <script>
@@ -51,6 +65,7 @@ export default {
         props:["params"],
         data: () => ({
           config:'',
+          filedir:'',
           list:[], // список типов констант
           errors:[]
         }),
@@ -70,6 +85,45 @@ export default {
           
         },
         methods: {
+          file_upload(l){
+            
+            let file = document.getElementById('const_file_'+l.name).files[0];
+            if(file){
+              
+            
+              
+              let reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = (e) => {
+                let orig_name=file.name, fileSrc=e.target.result;
+                //this.field_error_check();
+                
+
+                this.$http.post(
+                  BackendBase+'/const/save_value',
+                  {
+                    config: this.config,
+                    name: l.name,
+                    value: orig_name,
+                    src: fileSrc
+                  }
+                ).then(
+                  r=>{
+                    let d=r.data;
+                    if(d.success){ 
+                        l.value=d.value
+                        this.mark_success(l);
+                    }
+                  }
+                ).catch(
+                  e=>{
+                    this.errors=[e]
+                  }
+                );
+              }
+            }
+
+          },
           get_list(){
             this.$http.post(BackendBase+'/const/get',{config: this.config}).then(
               r=>{
@@ -78,7 +132,7 @@ export default {
                 if(d.success){
                   for(let l of d.list){
                     if(l.type=='checkbox' || l.type=='switch')
-                        l.value=l.value?true:valse;
+                        l.value=l.value?true:false;
 
                     else if(!l.value)
                       if(l.type=='text' || l.type=='textarea')
@@ -89,6 +143,7 @@ export default {
                     
                   }
                   this.list=d.list
+                  this.filedir=d.filedir
                 }
               }
             )
@@ -151,9 +206,36 @@ export default {
         }
 }
 </script>
-<style scope>
-  .form {max-width: 800px;}
+<style scoped>
+  .const {margin: 20px; width: 100%; max-width: 1280px;}
   .saved {color: green; padding-bottom: 15px;}
+  table {
+    width: 100%;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+  }
+  td.label {max-width: 100px;}
+  table {width: 100%; border-collapse: collapse;}
+  table td {vertical-align: top; padding: 10px; 
+    font-size: 11pt;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+  }
+  table tr:nth-child(odd) td {background-color: #f1f1f1;}
+  input[type=text] {
+    padding: 2px;
+    border-radius: 3px;
+    border: 1px solid rgb(192, 192, 192); width: 100%;}
+  textarea {
+    padding: 2px;
+    width: 100%; height: auto;
+    border-radius: 3px;
+    border: 1px solid rgb(192, 192, 192) !important;
+  }
+  .saved {
+    height: 10px; position: relative; top: -1px; font-size: 9pt;
+    z-index: 1000;
+  }
 </style>
 
 

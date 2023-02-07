@@ -24,7 +24,7 @@
         </v-card-text>
 
         <v-card-actions v-if="dialog_type=='delete_dialog'">
-          <div class="flex-grow-1"></div>e
+          <div class="flex-grow-1"></div>
           <v-btn color="primary darken-1" text @click="delete_element()">Да</v-btn>
           <v-btn color="red darken-1" text  @click="dialog=false; dialog_type=''">Нет</v-btn>
         </v-card-actions>
@@ -73,6 +73,7 @@
                                 
                                 <div class="field">
                                   <template v-if="typeof(td.value)=='object'">
+                                    
                                     <div v-if="td.value.before_html" v-html="td.value.before_html" />
                                     
                                     <res-file-uploader :opt="td.value" v-if="td.value.type=='file_uploader'"/>
@@ -83,9 +84,14 @@
                                   <template v-else-if="td.type=='html'">
                                         <span v-html='td.value'></span>
                                   </template>
-                                  <template v-else-if="td.type=='text'">
+                                  <template v-else-if="td.type=='file'">
+                                    <template v-if="td.value">
+                                      <a :href="td.value" target="_blank">посмотреть</a> | 
+                                      <a :href="td.value" :download="td.value">скачать</a>
+                                    </template>
                                     
-                                    {{td}}
+                                  </template>
+                                  <template v-else-if="td.type=='text'">
                                       <v-text-field
                                         
                                         v-model="td.value"

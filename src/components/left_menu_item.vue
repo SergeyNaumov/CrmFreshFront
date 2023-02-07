@@ -23,12 +23,15 @@
         </div>
       </template>
       <template v-else> <!-- дочерний пункт меню -->
-        <a :href="get_link(item)" >  <!-- get_link(item)   @click="go_link(item)" -->
-          <div class="icon_slot" v-if="item.icon"> 
-            <v-icon color="primary" x-small>{{item.icon}}</v-icon>
-          </div>
-          <span :style="item.style">{{item.header}}</span>
-        </a>
+        <template>
+          <a :href="get_link(item)" @click.prevent="go_link(item)">  <!-- get_link(item)   " -->
+            <div class="icon_slot" v-if="item.icon"> 
+              <v-icon color="primary" x-small>{{item.icon}}</v-icon>
+            </div>
+            <span :style="item.style">{{item.header}}</span>
+          </a>
+        </template>
+
 
       </template>
   </div>

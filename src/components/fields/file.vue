@@ -46,7 +46,10 @@
               </v-layout>
               
               <div v-else-if="is_img" class="img_show">
+               
                 <img :src="img_path" style="max-width: 100%">
+                
+                
                 
               </div>
               <a :href="download_link" v-else>скачать</a>
@@ -67,7 +70,7 @@
                 <a href="" v-if="begin_value" @click.prevent="imgSrc=''; field_error_check()">отмена</a>
               </div>
 
-                    <v-layout row wrap>
+                    <v-layout row wrap style="margin-top:20px;">
                         <v-flex pl-3 lg4 md4 xs12 v-for="(c,idx) in crops" :key="'crop'+idx">
                           
                           <v-card class="card_cropper">
@@ -111,7 +114,7 @@ export default {
         // если ранее загруженное фото является изображением
         //  -- возвращаем путь к этому изображению
         if(/\.(jpg|png|svg|gif)/.test(this.begin_value)){
-            return BaseUrl+this.field.filedir.replace(/^\.\//,'/')+'/'+this.begin_value;
+            return BaseUrl+this.field.filedir.replace(/^\.\//,'')+'/'+this.begin_value;
             return full_name;
 
         }
@@ -312,7 +315,7 @@ export default {
       remove(){ // удаляем текущее фото с сервера
         // получить с сервера загруженное ранее фото для кропа
         this.$http.post(
-          this.BackendBase()+'/'+'/edit-form/'+this.form.config+'/'+this.form.id,
+          BackendBase+'/edit-form/'+this.form.config+'/'+this.form.id,
           {
             action:'delete_file',
             name: this.field.name
@@ -328,10 +331,7 @@ export default {
         )
 
         
-      },
-      BackendBase(){
-          return /^localhost:/.test(location.host)?'http://dev-crm.test/backend':'/backend';
-      },
+      }
     }
 }
 </script>

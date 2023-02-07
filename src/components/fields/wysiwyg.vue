@@ -31,14 +31,14 @@
                                     </td>
                                     <td></td>
                                 </tr>
-                                <template v-for="f in file_list" >
-                                    <tr v-if="f.type=='dir'" :key="f.name" >
+                                <template v-for="(f,idx) in file_list" >
+                                    <tr v-if="f.type=='dir'"  :key="f.name">
                                         <td ><v-icon color="primary" >mdi-folder </v-icon>
                                             <a href="" @click.prevent="go_to_folder(f.name)">{{f.name}}</a>
                                         </td>
                                         <td><v-icon @click.prevent="del(f)">mdi-delete</v-icon></td>
                                     </tr>
-                                    <tr v-else :key="f.name">
+                                    <tr v-else :key="idx">
                                         <td  color="primary"><v-icon>insert_drive_file</v-icon> 
                                         <a href="" @click.prevent="goFileCallBack(f.name,{})">{{f.name}}</a> </td>
                                         <td><v-icon @click.prevent="del(f)">mdi-delete</v-icon> </td>
@@ -168,7 +168,9 @@ export default {
     this.read_file_list() // debug
     
     this._field_update=(new_data)=>{field_update(new_data,this)};
-
+    if(this.field.edit_mode){
+        this.edit_mode=this.field.edit_mode
+    }
     if(!this.parent){
       bus.$on('field-update:'+this.field.name,this._field_update )
     }

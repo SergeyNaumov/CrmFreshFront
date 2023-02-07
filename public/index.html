@@ -14,17 +14,11 @@
     <noscript>
       <strong>We're sorry but edit_form doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+    <script src="<%= BASE_URL %>configure.js"></script>
     <script>
       let path=location.pathname
-      var BaseUrl='<%= BASE_URL %>'
-      var BackendBase
-      if(/^localhost:/.test(location.host)){
-        BackendBase='http://dev-crm.test/backend'
-      }
-      else{
+      var BaseUrl='<%= BASE_URL %>', BackendBase=config.BackendBase
 
-        BackendBase='<%= BASE_URL %>backend'
-      }
     </script>
     <div id="app"></div>
     <!-- built files will be auto injected -->

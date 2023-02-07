@@ -47,7 +47,11 @@
 
             <template v-if="MenuItem.type == 'vue'">
 
-              <component :is="load_component(MenuItem.value)" :params="MenuItemParams"></component>
+              <component 
+                :is="load_component(MenuItem.value)"
+                :params="MenuItemParams"
+                style="margin-bottom: 20px;"
+              />
             </template>
 
             <!-- iframe -->
@@ -74,8 +78,8 @@
 const menu_params_parse=list=>{
   for(let m of list){
   
-      if(m.params){
-        m.params=JSON.parse(m.params)
+      if(m.params && typeof(m.params)=='string'){
+          m.params=JSON.parse(m.params)
       }
       if(m.child.length){
         m.child=menu_params_parse(m.child)
@@ -116,7 +120,7 @@ export default {
           
         }),
         mounted () {
-           
+           console.log('env:',process.env)
         },
         created(){
           
@@ -126,6 +130,8 @@ export default {
           window.onhashchange=e=>{
             get_headapp(self);
           }
+
+
           
 
           
@@ -139,6 +145,8 @@ export default {
                   this.bottom_menu=D.bottom_menu
 
                 if(D.redirect && D.redirect!=location.pathname){
+                  localStorage.setItem('link_prev_login',location.href)
+
                   location.href=D.redirect;
                   return ;
                 }
@@ -177,6 +185,9 @@ export default {
                   this.left_menu=menu_params_parse(D.left_menu)
                   //this.left_menu=D.left_menu
                   get_headapp(this);
+                }
+                else{
+                  this.errors=D.errors
                 } 
               }
             )
@@ -204,6 +215,7 @@ export default {
             this.drawer=v
           },
           setMenuItem(v){
+            console.log('St')
             this.MenuItem=v
           },
 

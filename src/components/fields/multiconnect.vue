@@ -6,6 +6,7 @@
                 <div v-if="field.fast_search">
                     <v-text-field label='быстрый поиск' v-model="search" flat hide-details/>
                 </div>
+                
                 <v-treeview v-if="out_tree"
                     item-disabled="read_only"
                     :items="list"
@@ -265,10 +266,12 @@
     }
   }
 </script>
-<style scoped>
+<style scope>
     .tag_list {margin-left: 20px;}
     .tag_list div {margin-left: 10px;}
     .layout.multiconnect {padding-left: 20px;}
     .multiconnect, .multiconnect .v-label {font-size: 12px !important; }
     .v-input--selection-controls {margin-top: 5px; font-size: 10px;}
+    .v-treeview-node__children {margin-left: 50px !important;}
+    .v-treeview--dense .v-treeview-node__root {min-height: 20px;}
 </style>

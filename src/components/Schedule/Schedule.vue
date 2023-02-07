@@ -1,26 +1,32 @@
 <template>
     <div  class="is_headapp" >
       <h1>{{form.title}}</h1>
+      <errors :errors="errors_init"/>
+
       <pre v-if="form.log && form.log.length">
         {{form.log}}
       </pre>
-      <v-sheet >
+
+      <v-sheet style="margin-bottom: 20px;">
             <div v-if="!show_select_date">
-              {{value}} <v-btn @click="show_select_date=true" small>изменить дату</v-btn> 
+              <v-btn @click="show_select_date=true" small>{{value}}</v-btn> 
               &nbsp;
               <v-btn color="primary" small @click="show_event_form=!show_event_form">{{show_event_form?'Не добавлять в расписание':'Добавить в расписание'}}</v-btn>
             </div>
-            <v-date-picker 
-              v-if="show_select_date"
-              first-day-of-week="1" 
-              locale="ru-Ru"
-              v-model="value"
-            />
+            <div v-if="show_select_date">
+              <v-date-picker 
+                
+                first-day-of-week="1" 
+                locale="ru-Ru"
+                v-model="value"
+              />
+              <br>
+              <v-btn color="primary" @click="show_select_date=false" small>оставить {{value}}</v-btn>
+            </div>
       </v-sheet>
-          <div v-if="show_event_form" class="event_form"> 
+          <div v-if="show_event_form && !show_select_date" class="event_form"> 
             <h2>{{form.title}}</h2>
             <form @submit.prevent="insert_event">
-              
               <v-select 
                 hide-details
                 :items="form_event_intervals"
@@ -38,6 +44,10 @@
                   <v-checkbox v-model="f.value" :label="f.description" />
                 </template>
               </div>
+              <errors :errors="errors_add_time"/>
+              
+              <v-btn color="red" small @click="show_event_form=!show_event_form">Не добавлять</v-btn>
+
               <v-btn v-if="form_event.interval" @click.prevent="insert_event">Добавить</v-btn>
             </form>
             
@@ -49,14 +59,16 @@
                 :close-on-content-click="false"
                 :activator="selectedElement"
                 offset-x
-                max-width="500"
+                max-width="400"
               >
                 <v-card>
 
                   <v-card-text>
                     {{selectedEvent.name}}: {{getTime(selectedEvent.start)}} -  {{getTime(selectedEvent.end)}}
                     <hr>
-                    <v-btn @click="deleteEvent(selectedEvent)" color="primary" x-small>удалить запись</v-btn>
+                    <br>
+                    <v-icon small color="primary">fa fa-trash</v-icon>&nbsp;<a href="#" @click.prevent="deleteEvent(selectedEvent)">удалить запись</a> 
+                    <!--<v-btn @click="deleteEvent(selectedEvent)" color="primary" x-small></v-btn> удалить запись-->
                     <div v-for="e in errors_delete" class="err">{{e}}</div>
                   </v-card-text>
                 </v-card>
@@ -72,6 +84,11 @@
 
           
           <v-sheet height="600">
+            <div class="types">
+              <v-btn small :color="(type=='day')?'primary':''" @click="type='day'">дни</v-btn>
+              <v-btn small :color="(type=='week')?'primary':''" @click="type='week'">недели</v-btn>
+            </div>
+
             <v-calendar
               v-if="value"
               :ref="refname"
@@ -82,12 +99,15 @@
               :event-overlap-mode="mode"
               :event-overlap-threshold="30"
               :event-color="getEventColor"
-              :interval-minutes="form.interval_minutes"
-              :interval-count="form.interval_count"
-              :first-interval="form.first_interval"
+              :interval-minutes="form.interval_minutes_calendar"
+              :interval-count="form.interval_count_calendar"
+              :first-time="form.begin"
               @click:event="showEvent"
               locale="ru-Ru"
+              style="min-height: 800px;"
             />
+
+            
           </v-sheet>
       
 
@@ -106,7 +126,7 @@ export default {
     props:['params','is_headapp'],
     data: () => ({
       form:{},
-      type: 'week',
+      type: 'day',
       show_select_date:false,
       show_event_form: false,
       refname:'time_table'+parseInt(Math.random()*10**7),
@@ -129,8 +149,7 @@ export default {
         interval:'',
         select_id:''
       },
-      events: [
-      ],
+      events: [],
       selectedOpen:false,
       selectedEvent: {},
       selectedElement: null,
@@ -138,7 +157,9 @@ export default {
       //names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
       /*active_color: "#4a30d7", 
       busy_color: "#6f6d78",*/
-      errors_delete:[]
+      errors_delete:[],
+      errors_add_time:[],
+      errors_init:[]
     }),
     mounted(){
       this.value=new Date()
@@ -179,7 +200,8 @@ export default {
                   this.value=d.form.value
 
               }
-
+              
+              this.errors_init=d.errors
           }
         )
 
@@ -209,7 +231,7 @@ export default {
           }
         )
       },
-      add_enent(){
+      add_event(){
         this.show_event_form=true
       },
       insert_event(){
@@ -218,6 +240,7 @@ export default {
           `${BackendBase}/Schedule/${this.params.config}/addEvent`,
           {
             id: this.form_event.select_id,
+            multi: this.multi,
             times:[this.form_event.interval[0],this.form_event.interval[1]],
             fields_values:this.fields_values
 
@@ -226,6 +249,7 @@ export default {
           r=>{
             let d=r.data
             if(d.success){
+            
                 this.form_event.select_id=''
                 this.show_event_form=false
                 this.load_events()
@@ -238,6 +262,8 @@ export default {
                 })
                 this.show_event_form=false*/
             }
+            this.errors_add_time=d.errors
+            
           }
         )
 
@@ -255,7 +281,6 @@ export default {
       },
 
       deleteEvent(event){
-        console.log(event)
         this.$http.post(
           `${BackendBase}/Schedule/${this.params.config}/deleteEvent`,
           {
@@ -266,7 +291,9 @@ export default {
             let d=r.data
             if(d.success){
               this.selectedOpen=false
-              this.load_events()
+              
+              this.$nextTick(()=>{this.load_events()})
+
             }
             this.errors_delete=d.errors
           }
@@ -292,6 +319,22 @@ export default {
       },
     },
     computed:{
+      multi(){ // если true -- разрешено добавлять нескольких
+        if(this.form.multi){
+          
+          for(let f of this.form.fields){
+            if('multi' in f && !f['multi']){
+              if(f.type=='checkbox' && f.value){
+                return false
+              }
+            }
+          }
+          return true
+        }
+        
+        return false
+
+      },
       fields_values(){
         let rez={}
         for(let f of this.form.fields){
@@ -304,37 +347,67 @@ export default {
       form_event_intervals(){
         let d=new Date()
         let begin_day=new Date(d.getFullYear(), d.getMonth()+1, d.getDate())
-        let delta_min=0; // Сколько минут прошло с начала дня
+        let delta_min=this.form.begin; // Сколько минут прошло с начала дня
         let in_number=1 // порядковый номер интервала
         let return_value=[]
         
         // Для проверки, занято ли событие
         const exists_time=t=>{
           for(let e of this.events){
-            if(e.start==t)
+            //console.log(`e.: m: ${e.multi} ; ${e.start} =>  ${t}`)
+
+            if(e.start==t && !(e.multi && this.multi))
               return true
           }
         }
-
-        while(delta_min<1440){ // делим сутки на интервалы
-          let h=parseInt(delta_min/60), m=delta_min % 60
-          let h2=parseInt( (delta_min+this.form.interval_minutes)/60), m2=(delta_min+this.form.interval_minutes-1) % 60
-
-          if(m<10) m='0'+m
-          if(h<10) h='0'+h
-          if(m2<10) m2='0'+m2
-          if(h2<10) h2='0'+h2
-          let begin_interval=`${this.value} ${h}:${m}:00`
-          let end_interval=`${this.value} ${h}:59:59`
-          if(in_number>this.form.first_interval && !exists_time(begin_interval))
-            return_value.push({text:`${h}:${m} - ${h}:59`, value: [begin_interval,end_interval]})
-
-          if(in_number>= this.form.interval_count + this.form.first_interval){
-            break
+        
+        for(let i of this.form.interval_list){
+          let begin_interval=`${this.value} ${i[0]}`
+          if(!exists_time(begin_interval)){
+            let end_interval=`${this.value} ${i[1]}`
+            let text=`${i[0].replace(/:\d{2}$/,'')} - ${i[1].replace(/:\d{2}$/,'')}`
+            return_value.push({text:text, value: [begin_interval,end_interval]})
           }
-          delta_min+=this.form.interval_minutes
-          in_number++
-          //console.log(`interval: ${h}:${m}`)
+
+
+        }
+        // while(delta_min<1440){ // делим сутки на интервалы
+
+        //   let h=parseInt(delta_min/60), m=delta_min % 60
+        //   let h2=parseInt( (delta_min+this.form.interval_minutes)/60), m2=(delta_min+this.form.interval_minutes-1) % 60
+        //   console.log('delta_min:',delta_min,`${h}:${m}`,`${h2}:${m2}`)
+        //   if(m<10) m='0'+m
+        //   if(h<10) h='0'+h
+        //   if(m2<10) m2='0'+m2
+        //   if(h2<10) h2='0'+h2
+        //   let begin_interval=`${this.value} ${h}:${m}:00`
+        //   let end_interval=`${this.value} ${h}:59:59`
+        //   //console.log(`${begin_interval} ex: ${exists_time(begin_interval)}`)
+        //   if(!exists_time(begin_interval))
+        //     return_value.push({text:`${h}:${m} - ${h2}:${m2}`, value: [begin_interval,end_interval]})
+
+        //   if(in_number> this.form.interval_count){
+        //     break
+        //   }
+        //   delta_min+=this.form.interval_minutes
+        //   in_number++
+        //   //console.log(`interval: ${h}:${m}`)
+        // }
+
+        // Если выбранный интервал отсутствует в списке -- сбрасываем его
+        let event_interval_in_intervals=false
+        if(this.form_event.interval){
+          for(let i of return_value ){
+         
+            if(this.form_event.interval[0]==i.value[0]){
+              event_interval_in_intervals=true
+            }
+          }
+         
+        } 
+        
+        if(!event_interval_in_intervals){
+          this.form_event.interval=''
         }
         return return_value
       }
@@ -359,4 +432,6 @@ export default {
     font-size:  36px !important;
   }
   .event_form {max-width: 500px; border: 1px solid gray; padding: 20px; margin: 20px; border-radius: 5px;}
+  .types {margin: 20px;}
+  .types button {margin-right: 10px;}
 </style>

@@ -16,11 +16,12 @@
                 :level="1"
                 :form="form"
                 :add="add" :del="del" :move_end="move_end"
-                :list="list"
+                :renew="renew"
                 :parent="{id:0}"
                 :watch_parent="watch_parent"
                 :add_to_map="add_to_map"
                 :new_runner="new_runner"
+                :get_list="get_list"
               />
           </div>
         </template>
@@ -41,6 +42,7 @@ export default {
   },
   data () {
       return {
+            renew:0,
             form:{},
             list: [],
             map:{}, // быстрое нахождение по id элемента
@@ -93,7 +95,7 @@ export default {
 
     init(){
         this.$http.get(BackendBase+'/admin-tree/'+this.params.config).then(response=>{
-            var D=response.data;
+            let D=response.data;
             if(D.success){
                 this.list=D.tree; this.form=D.form;
                 for(let l of this.list){
@@ -103,6 +105,7 @@ export default {
                 
                 if(D.javascript)
                   eval(D.javascript);
+                this.renew++
             }
             else{
               this.form.title='Ошибка!';
@@ -117,16 +120,22 @@ export default {
     },
 
       add(parent_id,l){ // добавление элемента
-
+        //console.log('parent_id:',parent_id,'l:',l)
+        //console.log('map:',this.map)
         if(parent_id){
           if(this.map[parent_id])
-          this.map[parent_id].childs.push(l)
+            this.map[parent_id].childs.push(l)
+            //console.log('parents:',this.parents)
+            //this.parents[parent_id].push(l)
         }
         else{ 
           this.list.push(l);
         }
-        this.map[l.id]=l;
-        this.parents[l.id]=parent_id;
+        //this.map[l.id]=l;
+        //this.parents[l.id]=parent_id;
+        this.add_to_map(parent_id,l)
+        this.renew++
+        
       },
       del(parent_id, l){
           //var tree=this;
@@ -159,9 +168,10 @@ export default {
                   }
                   delete this.map[l.id];
                   delete this.parents[l.id];
+                  this.renew++
               }
               else
-                  alert(D.error);
+                  alert(D.errors[0]);
           });
       },
       add_to_map(parent_id,l){
@@ -187,7 +197,8 @@ export default {
                 this.add_to_map(l.id,child)
               }
           }
-
+          
+          this.renew++
       },
       obj_sort_by_parent(parent_id){
         parent_id=parseInt(parent_id);
@@ -206,23 +217,28 @@ export default {
         
         return obj_sort;
       },
+      get_list(parent_id){
+        parent_id=parseInt(parent_id);
+        let list=[];
+        if(!parent_id)
+          list=this.list
+        else{
+          list=this.map[parent_id].childs    
+        }
+        return list
+      },
       move_end(e){
           let arr;
           let from=e.from.getAttribute('id'),
               to=e.to.getAttribute('id'),
               item=e.item.getAttribute('id');
           
-          console.log({from:from})
+          
               arr=from.match(/p-([0-9]+)/); from=arr[1]; 
               arr=to.match(/p-([0-9]+)/); to=arr[1]; 
               arr=item.match(/li-([0-9]+)/); item=arr[1]; 
 
-          console.log({
-               from:from,
-               to:to,
-               item:item,
-               arr:arr
-          });
+
           
 
           if(from==to) // перемещение в пределах одной ветки
@@ -270,7 +286,8 @@ export default {
                   alert(error)
               }
           })
-      }
+      },
+
   }
   
 }

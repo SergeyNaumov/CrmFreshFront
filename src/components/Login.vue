@@ -71,8 +71,11 @@ export default {
             ).then(
               response=>{
                 let D=response.data;
-                if(D.success)
-                  location.href='/'
+                if(D.success){
+                  let prev_login=localStorage.getItem('link_prev_login')
+                  location.href=prev_login?prev_login:'/'
+                }
+
                 
                 this.errors=D.errors
                 
