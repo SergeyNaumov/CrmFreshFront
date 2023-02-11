@@ -35,10 +35,11 @@
 
 import branch from "./AdminTree/branch.vue";
 
+
 export default {
   props:['params'],
   components:{
-      branch
+    'branch':branch
   },
   data () {
       return {
@@ -120,19 +121,15 @@ export default {
     },
 
       add(parent_id,l){ // добавление элемента
-        //console.log('parent_id:',parent_id,'l:',l)
-        //console.log('map:',this.map)
         if(parent_id){
           if(this.map[parent_id])
             this.map[parent_id].childs.push(l)
-            //console.log('parents:',this.parents)
-            //this.parents[parent_id].push(l)
+
         }
         else{ 
           this.list.push(l);
         }
-        //this.map[l.id]=l;
-        //this.parents[l.id]=parent_id;
+
         this.add_to_map(parent_id,l)
         this.renew++
         
@@ -225,6 +222,7 @@ export default {
         else{
           list=this.map[parent_id].childs    
         }
+        //this.renew++
         return list
       },
       move_end(e){

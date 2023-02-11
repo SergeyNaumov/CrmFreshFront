@@ -5,7 +5,17 @@
             <v-card>
                 <v-card-title  class="headline">Создание нового элемента</v-card-title>
                 <v-card-text>
-                    <v-text-field  @keyup.enter="save()" label="Наименование раздела" :ref="'new_header'+parent.id" v-model="values[form.header_field]" />
+                    <template v-if="mode_new_element=='text'">
+                        <v-text-field  @keyup.enter="save()" label="Наименование раздела" placeholder="введите название" :ref="'new_header'+parent.id" v-model="values[form.header_field]" />
+                        <small><a href="" @click.prevent="mode_new_element='textarea'">создать сразу несколько записей</a></small>
+                    </template>
+                    <template v-else-if="mode_new_element=='textarea'">
+                        <v-textarea label="Наименование раздела" :ref="'new_header'+parent.id" v-model="values[form.header_field]" 
+                            placeholder="Если Вы напишите несколько строк, то будет создано, соответственно сразу несколько записей"
+                        />
+                        <small><a href="" @click.prevent="mode_new_element='text'">вернуться к стандартному режиму создания</a></small>
+                    </template>
+
                 </v-card-text>
                 <v-card-actions>
                     <div class="flex-grow-1"></div>
@@ -34,21 +44,15 @@
                 <span v-if="parent.id"> в "{{parent.header}}" </span>
                 <span v-else> в /</span>
         </a>
-        <div v-if="form.sort">
-            
-            <!-- -->
+        <div v-if="form.sort">  <!-- USE SORT-->
             <draggable
                 :id="'p-'+parent.id"
                 tag="ul"
                 v-if="list.length"
-                
                 class="list-group"
                 ghost-class="ghost"
                 :renew="renew"
-                :options="{'group':'g'+parent.id}"
-                @start="move_start"
-                @end="move_end"
-                
+                :options="{'group':'g'+parent.id}" @start="move_start" @end="move_end"                
             >   
                 <li v-for="l in list" :key="l.id" :id="'li-'+l.id" >
                 <div >
@@ -64,11 +68,19 @@
                                 <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
                             <div class="branch-header" >
-                                {{ l.header }} 
-                                <template v-if="l.childs && form.tree_use && l.childs.length>0">({{l.childs.length}})</template>
+                                <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
+                                <template v-if="l.childs && form.tree_use && l.childs.length>0">&nbsp;({{l.childs.length}})</template>
+                                <FormInBranch
+                                    :form="form"
+                                    :item="l"
+                                    :close_edit_form="close_edit_form"
+                                    :upload_header="upload_header"
+                                    v-if="show_edit_form==l.id"
+                                />
+                                
                             </div>
                             <div class="branch-tools " style="display: block; position: relative; top: -30px; height: 0; margin-bottom: 0; text-align: right; ">
-                                <a :href="'/edit_form/'+form.config+'/'+l.id" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
+                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
                                 <v-icon v-if="make_delete(parent.id,l)" small style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
                     </div>
@@ -87,7 +99,7 @@
                 </li>
             </draggable>
         </div>
-        <template v-else>
+        <template v-else> <!-- NOT USE SORT-->
 
             <ul v-if="list.length">
                 <li v-for="l in list" :key="l.id" :id="'li-'+l.id">
@@ -98,11 +110,11 @@
                                 <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
                             <div class="branch-header">
-                                {{ l.header }} 
+                                {{ l.header }}  
                                 <template v-if="l.childs && l.childs.length>0 && form.tree_use">({{l.childs.length}})</template>
                             </div>
                             <div class="branch-tools float-right">
-                                <a :href="'/edit_form/'+form.config+'/'+l.id" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
+                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
                                 <v-icon v-if="make_delete(parent.id,l)" small style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
                         </div>
@@ -129,8 +141,9 @@
     </div>
 </template>
 <script>
-
+import FormInBranch from "./FormInBranch.vue";
 export default {
+  components: {'FormInBranch': FormInBranch},
   props: {
     get_list: {required:true},
     renew: {required:true},
@@ -142,6 +155,7 @@ export default {
     move_end:{required:true},
     add_to_map:{required:true},
     new_runner:{type:Number,required:false},
+    
   },
   data(){
       return {
@@ -154,10 +168,20 @@ export default {
           shows:{
             0:false          
           },
+          mode_new_element:'text',
+          show_edit_form:0  // показываем форму редактирования для записи с l.id=show_edit_form
           
       }
   },
   methods:{
+        upload_header(id, new_header='this is new header'){
+            for(let l of this.list){
+                if(l.id==id){
+                    l.header=new_header
+                }
+            }
+
+        },
         make_delete(parent_id,l){
             // можно сделать зависимо от веток дерева
             if(this.form.read_only)
@@ -256,10 +280,17 @@ export default {
                     let D=R.data;
                     if(D.success){
                         // добавляем в структуру
-                        
-                        this.add(this.parent.id,D.data);
+                        if(D.data_for_multi){
+                            for(let dh of D.data_for_multi){
+                                this.add(this.parent.id,dh);
+                            }
+                        }
+                        else{
+                            this.add(this.parent.id,D.data);
+                        }
                         this.values={};
                         this.list=this.get_list(this.parent.id)
+
                     }
                     else{
                         this.show_errors=true, this.errors=D.errors
@@ -269,13 +300,23 @@ export default {
                 }
             );  
         },
-        go_to_edit(key){
-            let url=''; 
+        get_edit_link(key){
+            let url='', UrlPrefix=config.UrlPrefix
             if(this.form.card_format && this.form.card_format == 'old')
-                url='/edit_form.pl?config='+config+'&action=edit&id='+key;            
+                url=UrlPrefix+'/edit_form.pl?config='+config+'&action=edit&id='+key;            
             else
-                url='/edit_form/'+this.form.config+'/'+key
-            window.open(url);
+                url=UrlPrefix+'/edit_form/'+this.form.config+'/'+key
+            return url
+        },
+        go_to_edit(key){
+            let t=this
+            if(t.form.changed_in_tree){ // открываем форму для редактирования здесь же
+                t.show_edit_form=key
+            }
+            else{
+                window.open( this.get_edit_link(key) );
+            }
+            
         },
         open_dialog_add_form(l){
             this.dialog_add_form=true;
@@ -307,6 +348,9 @@ export default {
         },
         move_start(){
 
+        },
+        close_edit_form(){
+            this.show_edit_form=0
         }
   },
   

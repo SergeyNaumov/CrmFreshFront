@@ -356,7 +356,8 @@ export default {
                 50
             );
         }
-        tinymce.baseURL='/dist/tinymce';
+        
+        tinymce.baseURL=config.TinyMCE_BaseUrl;
 
         tinymce.init({
             selector:'#'+name+'.mce',
