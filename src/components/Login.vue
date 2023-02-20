@@ -14,7 +14,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-btn color="primary" ref="button" :disabled="submit_disabled" @click="on_login()" small>Войти</v-btn>&nbsp;
-                  <div>
+                  <div v-if="0">
                     <small><a href="/register">регистрация в системе</a></small>&nbsp;
                     <small><a href="/remember">забыли пароль?</a></small>
                   </div>

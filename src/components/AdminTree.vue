@@ -5,7 +5,7 @@
       <h1 class="title">{{form.title}}</h1>
         <pre v-if="0">{{map}}</pre>
         <div v-if="fatal_errors.length" class="errors">
-            <div v-for="e in fatal_errors" :key="e">{{e}}</div>
+            <div v-for="(e,idx) in fatal_errors" :key="`err${idx}`">{{e}}</div>
         </div>
         <template v-else>
           <div v-if="errors.length" class="errors">
@@ -63,6 +63,7 @@ export default {
   },
   watch:{
     params(){
+      console.log('params:',this.params)
       this.init();
     }
   },
@@ -108,10 +109,12 @@ export default {
                   eval(D.javascript);
                 this.renew++
             }
-            else{
+            else
+            {
               this.form.title='Ошибка!';
-              this.fatal_errors=D.errors
+              
             }
+            this.fatal_errors=D.errors
               
             
             

@@ -11,13 +11,10 @@
                     <div class="description">{{ f.description }}:</div>
                     
                     <template v-if="f.type=='text'">
-                        <input type="text" v-model="f.value" :id="'form_in_branch'+f.name"/>
-                    
+                        <input type="text" v-model="f.value" :id="'form_in_branch'+f.name"/>                    
                     </template>
                     <template v-else-if="f.type=='textarea'">
-                    
-                        <textarea  v-model="f.value"></textarea>
-                    
+                        <textarea  v-model="f.value"></textarea>                    
                     </template>
                 </div>
             </template>

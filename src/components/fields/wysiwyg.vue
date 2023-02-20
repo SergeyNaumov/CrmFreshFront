@@ -103,7 +103,7 @@ function show_hide_tox(mode){
 }
 
 let editor_object=false;
-let inited=false;
+let inited={};
 export default {
     name:'field-wysiwyg',
     components:{
@@ -330,7 +330,7 @@ export default {
         this.value=editor.getContent();
     },
     tinymce_init(name){
-        
+        console.log('init0 /' ,name)
         this.read_file_list(); // убрать
         let this_component=this;
         
@@ -342,15 +342,17 @@ export default {
             this_component.dialog=true;
 
         }
-        if(inited){
+        if(inited[name]){
+            console.log('already inited!',name)
             return 
         }
             
-        inited=true;
+        inited[name]=true;
 
         if(!document.querySelector('#'+this.field.name+'.mce')){
             setTimeout(
                 function(){
+                    console.log('tinymce init!')
                     this_component.tinymce_init(name)
                 },
                 50
@@ -377,14 +379,14 @@ export default {
             },
             
             plugins: [
-                "advlist autolink autosave link image lists charmap print preview hr anchor pagebreak spellchecker",
+                "advlist autolink autosave link image lists charmap print preview hr anchor pagebreak ", // spellchecker
                 "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
                 "table  directionality emoticons template  paste  textpattern"
             ], // fullpage
             menubar: false,
-            toolbar1: "styleselect formatselect fontselect fontsizeselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify ",
-            toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | insertdatetime preview | forecolor backcolor",
-            toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft",
+            toolbar1: "formatselect fontselect fontsizeselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify ", // styleselect
+            toolbar2: "cut copy paste |  bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code |  forecolor backcolor", // searchreplace insertdatetime preview |
+            toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | visualchars visualblocks nonbreaking template pagebreak", //  ltr rtl | spellchecker |  restoredraft
             language: 'ru',
             //width: 500,
             advlist_number_styles: "lower-alpha",
@@ -431,4 +433,5 @@ export default {
  form.upload {margin-top: 20px;}
 .close {text-align: right; } 
 .close a {text-decoration: none;}
+
 </style>

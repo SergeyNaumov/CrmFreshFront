@@ -19,13 +19,12 @@ const get_headapp_for_vue=(url)=>{
 export const get_headapp=s=>{
 
     let url=location.pathname;
-    console.log('GET HEAD APP, URL: ',url)
     let hash=location.hash, set_headapp=true
     
     if(url != process.env.BASE_URL){
         url=url.replace(process.env.BASE_URL,'/')
     }
-    console.log('HASH:',hash)
+    
     
     if(/^\/src:(.+)/.test(url)){
         
@@ -40,13 +39,13 @@ export const get_headapp=s=>{
     // Vue-компонент, разбор 
     else if(/^\/vue\/(.+)$/.test(url)){
         //let menu_id=hash.match(/^#.+$/)[1];
-        console.log('url1:',url)
+        
         //set_menu_by_id(s,s.left_menu)
     
         let arr=url.match(/^\/vue(\/.+)$/)
 
         url=arr[1]
-        console.log('arr:',arr)
+        
         
         set_headapp=false // vue-компонент в интерфейсе CRM
     }

@@ -24,10 +24,10 @@
                 />
                 <div v-else>
                     
-                    <a href="" @click.prevent="show_adding_form=true" v-if="!show_adding_form">добавить</a>
-                    <a href="" @click.prevent="show_adding_form=false"  v-if="show_adding_form">отменить</a>
-                    
+
                     <div v-if="field.make_add" v-show="show_adding_form">
+                        <a href="" @click.prevent="show_adding_form=true" v-if="!show_adding_form">добавить</a>
+                        <a href="" @click.prevent="show_adding_form=false"  v-if="show_adding_form">отменить</a>
                         <v-text-field label='новый тэг' v-model="new_tag" />
                         <div class="tag_list">
                             
@@ -47,11 +47,13 @@
                     <v-layout row class="multiconnect">
                         
                         <template v-if="field.view_only_selected">
+                            
                                 <v-flex v-for="(l,idx) in list_searched" :class="get_md_class" v-show="selected_hash[l.id]" :key="'l'+idx">
                                     <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()"></v-checkbox>
                                 </v-flex>
                         </template>
                         <template v-else>
+                            
                             <v-flex :class="get_md_class"  v-for="l in list_searched" :key="l.id">
                                 <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()"></v-checkbox>
                             </v-flex>
@@ -197,7 +199,8 @@
             this.value=new_value;
             let field=this.field;
             field.value=this.value;
-            this.change_field(field)
+            //this.change_field(field)
+            bus.$emit('change_field',field)
         },
         init(){ // получаем список элементов дерева
             

@@ -53,11 +53,11 @@
                           :items="values" item-value="v" item-text="d"
                           :search-input.sync="search"
                           :rounded="$theme.rounded"
-                          :disabled="!!field.read_only || !!form.read_only"
+                          
                           no-data-text="не выбрано"
                           cache-items
                           clearable
-                      />
+                      /> <!--:disabled="!!field.read_only || !!form.read_only"-->
                     </template>
                     <template v-else>
 
@@ -119,11 +119,18 @@ export default {
       search:'' // для autocomplete
     }
   },
-  props:['form','field','parent','refresh'],
+  props:['form','field','parent','name_parent_field','refresh'],
   watch:{
         value(){
+          //console.log('v:',this.value)
           this.field.value=this.value
-          bus.$emit('change_field',this.field);
+          if(this.parent){
+            this.parent(this.field)
+          }
+          else{
+            bus.$emit('change_field',this.field);
+          }
+          
         },
         refresh(){ 
             this.value=this.field.value+'';  
@@ -190,12 +197,14 @@ export default {
   methods: {
     load_autocomplete(search){
       if(this.field.autocomplete){
-        
+        console.log('form:',this.form)
+        let field_name=this.name_parent_field?`${this.name_parent_field}.${this.field.name}`:this.field.name
+        console.log('name_parent_field:',this.name_parent_field)
         this.$http.post(
           BackendBase+'/autocomplete/'+this.form.config,
           {
             term:this.search,
-            field_name: this.field.name,
+            field_name: field_name,
             action: 'get_list'
           }
         ).then(

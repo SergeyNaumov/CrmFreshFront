@@ -9,8 +9,8 @@
             </v-card-text>
           </v-card>
         </v-dialog>
-
-        <v-container :style="{width: width}" >
+        
+        <div :class="form.wide_form?'container_fluid':'container'" >
             <pre v-if="0">      
                 {{values}}
             </pre>
@@ -43,11 +43,13 @@
                               {{dialog_body}}
                               </template>
                             </v-card-text>
-                            <v-card-actions>
+                            <!--
+                            <v-card-actions ">
                                 <div class="flex-grow-1"></div>
                                 <v-btn color="primary darken-1" text @click="dialog = false">Продолжить работу</v-btn>
                                 <v-btn color="red darken-1" text v-if="exists_opener()" @click="window_close()">Закрыть</v-btn>
                             </v-card-actions>
+                            -->
                         </v-card>
                     </v-dialog>
 
@@ -110,10 +112,12 @@
                     </form>
             
         </template>
-        </v-container>
+      </div>
     </v-app>
 </template>
-
+<style scoped>
+  .container_fluid {margin-left: 20px; margin-right: 20px;}
+</style>
 <script>
 import { bus } from '../main'
 
@@ -157,6 +161,7 @@ data:function(){
     dialog_body:'',
     dialog_header:'',
     dialog: false,
+    save_window:false,
     pagination: {},
     params:{config:''}
   }
@@ -164,7 +169,7 @@ data:function(){
 computed:{
   width(){
     if(this.form.width){
-      return  this.form.width+'px'
+      return  this.form.width
     }
     return '';
   },
@@ -304,8 +309,9 @@ methods: {
               
               this.errors=R.errors;
               if(R.success){
-                this.dialog_header='Сохранение изменений';
-                this.dialog_body='Изменения успешно сохранены! Вы можете продолжить работу или закрыть карточку'; 
+                this.dialog_header='Изменения сохранены';
+                //this.dialog_body='Изменения успешно сохранены! Вы можете продолжить работу или закрыть карточку'; 
+                this.dialog_body=''; 
                 if(R.id){
                   this.form.id=R.id;
                 }
@@ -318,7 +324,11 @@ methods: {
               else{
                 this.dialog_header='При сохранении произошли ошибки';
               }
-              this.dialog=true;            
+              this.dialog=true;
+              if(!this.errors.length){
+                setTimeout(()=>{this.dialog=false},500)
+              }
+              
             }).catch(
               e=>{
                 this.errors=['Произошла ошибка при сохранении!: '+e]

@@ -16,12 +16,13 @@
                   <a href="" @click.prevent="go_search_plugin(sp.name)">{{sp.title}}</a>
                 </div>
               </div>
-
-              <div v-if="errors.length" class="errors">
-                <template v-for="e in errors" >
-                  <div class="error" :key="e"><v-icon color="primary">fa fa-bomb</v-icon> <span   v-html="e"></span></div>
-                </template>
-              </div>              
+              <template v-if="errors.length">
+              <div  class="errors">
+                
+                  <div v-for="(e,idx) in errors" class="error" :key="'err'+idx" ><v-icon color="primary">fa fa-bomb</v-icon> <span   v-html="e"></span></div>
+                
+              </div>     
+            </template>         
             <v-layout row wrap v-else>
             <v-flex xs12 lg12 class="mt-2 mb-2" >
               <v-icon v-if="0 && permissions.make_create" @click="new_card()" small color="primary">fa fa-plus</v-icon> 
@@ -202,6 +203,7 @@ export default {
   },
   watch:{
     params(v){
+      console.log('params:',v)
       if(v.config){
         this.Init()
       }
@@ -240,10 +242,10 @@ export default {
         if('filter_on' in f && f.filter_on)
           list.push(f)
       }
-
+      console.log('list:',list)
       this.on_filters=list.sort(
-        function(a,b){
-          return(a.order>b.order)?1:-1
+        (a,b)=>{
+          return(a.filter_order>b.filter_order)?1:-1
         }
       );
     },
@@ -268,7 +270,7 @@ export default {
           if(field){
             field.filter_on=true;
             
-            field.order=this.ORDER++;
+            field.filter_order=this.ORDER++;
             //this.filter_toggle(field);
             if(f.value){
               field.value=f.value
@@ -364,7 +366,7 @@ export default {
     },
     filter_toggle(f){  
           if(f.filter_on)
-            f.order=this.ORDER;
+            f.filter_order=this.ORDER;
           
           this.filters=this.filters
           this.init_on_filters()

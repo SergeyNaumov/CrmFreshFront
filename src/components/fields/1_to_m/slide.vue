@@ -117,6 +117,7 @@ export default {
             del_errors:[],
             del_errors_out:false, // выводить ошибку при операциях с 1_to_m (удаление)
             list:[], 
+            cur_fields:[],
             cur_refresh:0
         }
     },
@@ -146,11 +147,19 @@ export default {
 
     created(){
         this.list=this.values;
-        
+        this.cur_fields=this.field.fields // нужно для того, чтобы можно было обновить
+
+        bus.$on(`1_to_m_slide:${this.field.name}_reload`,
+            v=>{this.reload_slide(v)}
+        );        
 
     },
     methods:{
-
+        reload_slide(D){ // обновляем данные в слайде
+            
+            this.cur_fields=D.field.fields
+            this.list=D.values
+        },
         open_edit_dialog(v){
             bus.$emit( // событие передаём в 1_to_m_form
                 '1_to_m_open_edit_dialog:'+this.field.name,
@@ -198,7 +207,7 @@ export default {
             }
         },
         get_field_by_name(name){
-            for(let f of this.field.fields)
+            for(let f of this.cur_fields)
                 if(f.name==name)
                     return f
             return undefined
@@ -214,7 +223,7 @@ export default {
             if(this.form.read_only || this.field.read_only)
                 return true
             
-            for(let cf in this.field.fields){
+            for(let cf in this.cur_fields){
                 if(cf.name=='name'){
                 return cf.read_only?true:false
                 }

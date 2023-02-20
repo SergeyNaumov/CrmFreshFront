@@ -1,13 +1,13 @@
 <template>
     <v-dialog justify="center" v-model="in_dialog" id="is_dialog">
       <v-card class="one_to_m">
-
-          
+        form: {{form.id}} / {{id}}
         <div class="dialog_head">
           <div>
             <template v-if="save_action=='insert'">Создание элемента</template>
             <template v-if="save_action=='update'">Редактирование элемента</template>
           </div>
+
           <div class="close">
             <v-icon @click="in_dialog=false" style="text-align: right">mdi-close</v-icon>
           </div>
@@ -26,12 +26,15 @@
             
             
             <template v-else-if="cf.type=='select_from_table' || cf.type=='select_values'">
-                
+                v: {{edit_fields[cf.name].value}}
                 <field-select
                   :field="edit_fields[cf.name]"
                   :parent="parent_sub"
+                  :name_parent_field="field.name"
                   :refresh="cur_refresh"
+                  :form="form"
                 />
+                
                 <!--
                 <v-autocomplete v-if="cf.autocomplete"
                     :label="cf.description"
@@ -41,10 +44,10 @@
                     item-text="d"
                     no-data-text="ничего не найдено"
                     v-model="edit_fields[cf.name].value"
-                >-->
+                />
+                -->
             </template>
             <template v-else-if="cf.type=='checkbox' || cf.type=='switch'">
-
                 <field-checkbox 
                   :field="edit_fields[cf.name]" 
                   :parent="parent_sub"
@@ -76,7 +79,7 @@
 import { bus } from '../../../main'
 export default {
     props:["form","dialog","field","change_one_to_m","set_dialog",
-      "values","upload_values"
+      "values","upload_values",
     ],
     data(){
         return {
@@ -85,7 +88,8 @@ export default {
             in_dialog:false,
             fields:{},
             save_action:'',
-            dialog_errors:[]
+            dialog_errors:[],
+            id:null
         }
     },
     created(){
@@ -133,6 +137,7 @@ export default {
         },
         
         parent_sub(obj){ // для элементов fields/* правила сохранения
+          //console.log('parent_sub_obj:',obj.value)
           let value=obj.value;
           if(obj.type=='checkbox' || obj.type=='switch')
             value=value?1:0
@@ -153,8 +158,9 @@ export default {
         },
         open_edit_dialog(d){ // открываем форму для редактирования
           //this.create_edit_fields();
+          
           this.cur_refresh=Math.random();
-          this.id=d.id;
+          this.id=d[this.field.table_id];
           for(let f of this.field.fields){
             if(this.edit_fields[f.name]){
               this.edit_fields[f.name].value=d[f.name]
@@ -244,10 +250,10 @@ export default {
           else if(save_action=='update')
             url=BackendBase+'/1_to_m/update/'+this.form.config+'/'+this.field.name+'/'+this.form.id+'/'+this.id
           else{
-            console.error('not set save_action');
+            //console.error('not set save_action');
             return; 
           }
-          
+          //console.log('fk:',this.field.foreign_key, ' parent_id:',this.values )
           this.$http.post(
             url,
             {
@@ -264,6 +270,19 @@ export default {
                   if(!this.id)
                     this.id=D.id
 
+                  
+                  // В слайде после сохранения заставляем перечитать этот 1_to_m
+                  setTimeout(
+                    ()=>{
+                      console.log(`emit: 1_to_m:upload_values:${this.field.name}`)
+                      bus.$emit(
+                      //`1_to_m_slide:${this.field.name}_reload`,D
+                      `1_to_m:upload_values:${this.field.name}`
+                      )
+                    },
+                    500
+                  )
+                  
                   /*
                   let values=D.values;
                   for(let cf of this.field.fields){ // преобразование типов для select_from_table и select_values

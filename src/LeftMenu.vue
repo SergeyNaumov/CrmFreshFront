@@ -65,7 +65,7 @@ export default{
         },
         go_link:function(item, not_push_state=false){
 
-            if(document.body.clientWidth<1500)
+            if(document.body.clientWidth<800)
                this.setDriwer(false);
             console.log('BEFORE:',item)
             if(item && item.type=='newtab'){
@@ -79,7 +79,7 @@ export default{
               }
               this.setMenuItem(item)
               if(!not_push_state){
-                console.log('PUSH state',item)
+               
                 history.pushState(item, item.header, this.get_link(item))
               }
             }

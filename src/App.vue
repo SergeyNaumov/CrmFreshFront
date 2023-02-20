@@ -120,7 +120,7 @@ export default {
           
         }),
         mounted () {
-           console.log('env:',process.env)
+           //console.log('env:',process.env)
         },
         created(){
           

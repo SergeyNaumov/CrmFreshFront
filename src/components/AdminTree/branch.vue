@@ -110,8 +110,15 @@
                                 <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
                             <div class="branch-header">
-                                {{ l.header }}  
+                                <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
                                 <template v-if="l.childs && l.childs.length>0 && form.tree_use">({{l.childs.length}})</template>
+                                <FormInBranch
+                                    :form="form"
+                                    :item="l"
+                                    :close_edit_form="close_edit_form"
+                                    :upload_header="upload_header"
+                                    v-if="show_edit_form==l.id"
+                                />
                             </div>
                             <div class="branch-tools float-right">
                                 <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;

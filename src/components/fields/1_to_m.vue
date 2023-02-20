@@ -1,5 +1,6 @@
 <template>
       <div>
+        
         <one_to_m_form 
           :form="form"
           :field="field"
@@ -64,6 +65,7 @@
   data:function(){
     
     return {
+      child_id: null,
       id:undefined,
       dialog:false,
       values:[],

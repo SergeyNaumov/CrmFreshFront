@@ -121,7 +121,7 @@ export default {
         return '';
       },
       is_img(){
-        return /^.+\.(jpg|png|wepb|gif)$/i.test(this.begin_value)
+        return /^.+\.(jpg|png|wepb|gif|svg)$/i.test(this.begin_value)
       },
       download_link(){
         let filedir=BaseUrl+this.field.filedir.replace(/^\./,'');
