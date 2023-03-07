@@ -80,6 +80,7 @@
     bus.$on( // обновление значений в 1_to_m
       '1_to_m:upload_values:'+this.field.name,
       values=>{
+        console.log('opload_values:',values);
         this.upload_values(values)
       }
     );

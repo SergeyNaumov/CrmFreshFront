@@ -1,49 +1,78 @@
 <template>
         <div>
+          
           <template v-if="!field.hide">
-            <template v-if="0 && field.name=='login'">
-            {{field.regexp_rules}} | {{error_message}} | {{field.error}} ;;; {{field.error_message}}
+
+            <template v-if="field.subtype=='color'">
+              <div class="color_block">
+                  <div class="label">{{field.description}}</div>
+
+                  <v-color-picker
+                    
+                    v-model="value"
+                    :hide-canvas="!show_color_picker"
+                    :hide-sliders="false"
+                    hide-inputs
+                  />
+
+                  <a href="" @click.prevent="show_color_picker=!show_color_picker"><div class="picker_button"></div></a>
+                  <div v-if="field.values && field.values.length" style="padding: 10px;">
+                    <span v-for="v in field.values" :key="v.v">
+                      <a href="" @click.prevent="set_new_value(v.v)" >{{ v.d }}</a>&nbsp;
+                    </span>
+                  </div>
+              </div>
             </template>
-            <template v-if="show_city_for_address">
-              
-              <v-select
-                v-model="current_prefix"
-                :items="field.prefix_list"
-                :label="field.prefix_list_header"
-                @input="select_prefix"
+            <template v-else>
+              <template v-if="show_city_for_address">
+                
+                <v-select
+                  v-model="current_prefix"
+                  :items="field.prefix_list"
+                  :label="field.prefix_list_header"
+                  @input="select_prefix"
+                  hide-details
+                  :rounded="$theme.rounded"
+                />
+              </template>
+              <v-text-field 
+                v-if="field.type=='text'"
+                :label="field.description"
+                v-model="value"
+                :hint="field.add_description" :placeholder="field.placeholder"
+                :disabled="!!field.read_only"
+                @input="input"
+                @keyup="input"
+                :clearable="!field.read_only"
+                :style="field.style"
+                :error-messages="error_message"
+                :rounded="$theme.rounded"
                 hide-details
+              />
+              <div class="popup_list" v-if="show_popup_list"> 
+                <div class="close"><a href="" @click.prevent="show_popup_list=false">закрыть</a></div>
+                <div class="item" v-for="(p,idx) in popup_list" :key="'popup'+idx" @click="set_new_value(p.header)">{{p.header}}</div>
+              </div>
+
+              <v-textarea
+                @input="input"
+                v-if="field.type=='textarea'"
+                :disabled="!!field.read_only"
+                v-model="value"
+                :label="field.description"
+                :hint="field.add_description"
+                :auto-grow="true"
+                :clearable="true"
                 :rounded="$theme.rounded"
               />
+              <template v-if="field.values && field.values.length">
+                варианты: 
+                <span v-for="v in field.values" :key="v.v">
+                  <a href="" @click.prevent="set_new_value(v.v)" >{{ v.d }}</a>&nbsp;
+                </span>
+              </template>
             </template>
-            <v-text-field 
-              v-if="field.type=='text'"
-              :label="field.description"
-              v-model="value"
-              :hint="field.add_description" :placeholder="field.placeholder"
-              :disabled="!!field.read_only"
-              @input="input"
-              @keyup="input"
-              :clearable="!field.read_only"
-              :style="field.style"
-              :error-messages="error_message"
-              :rounded="$theme.rounded"
-              hide-details
-            />
-            <div class="popup_list" v-if="show_popup_list"> 
-              <div class="close"><a href="" @click.prevent="show_popup_list=false">закрыть</a></div>
-              <div class="item" v-for="(p,idx) in popup_list" :key="'popup'+idx" @click="set_new_value(p.header)">{{p.header}}</div>
-            </div>
-            <v-textarea
-              @input="input"
-              v-if="field.type=='textarea'"
-              :disabled="!!field.read_only"
-              v-model="value"
-              :label="field.description"
-              :hint="field.add_description"
-              :auto-grow="true"
-              :clearable="true"
-              :rounded="$theme.rounded"
-            />
+
             <div
               class="err" v-if="error_message" v-html="error_message"
             />
@@ -89,7 +118,8 @@
       warning_message:'',
       go_save:0,
       show_popup_list:false,
-      popup_list:[]
+      popup_list:[],
+      show_color_picker:false
     }
   },
   props:['form','field','parent','refresh'],
@@ -234,4 +264,26 @@
   .popup_list div.item {padding: 2px 5px; border-bottom: 1px dotted gray; font-size: 0.8rem;}
   .popup_list div.item:hover {background:$primary;}
   .popup_list .close {text-align: right;}
+  .label {
+    left: 0px; right: auto; font-size: 11px !important;
+    margin-left: 30px;
+    font-weight: bold;
+    color: rgba(0,0,0, 0.6);
+    position: relative;
+    top: -12px;
+    background: #fff;
+    
+    width: auto;
+    display: inline-block;
+  }
+  .color_block {
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-top: 20px;
+  }
+  .picker_button{
+    position: relative !important; top: -46px; left: 15px; z-index: 1; height: 30px;
+    width:30px;
+    display: inline-block;
+  }
 </style>

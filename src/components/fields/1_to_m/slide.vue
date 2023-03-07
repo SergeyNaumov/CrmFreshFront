@@ -1,7 +1,7 @@
 <template>
     <!-- slide -->
-    
-    <div v-if="values && values.length">      
+    <div>
+      <div v-if="values && values.length">      
         <v-dialog v-model="del_errors_out" max-width="500">
         <v-card class="one_to_m" >
             <v-card-title  class="headline">
@@ -22,29 +22,31 @@
                     :draggable="field.sort?'.v-card':false"
                 >
                 
-                    <v-card class="one_to_m"  v-for="(v,vi) in list" :key="v[vi]" 
-                        > <!--:style="{'background-color': $color.secondary}"-->
+                    <v-card class="one_to_m one_to_m_list"  v-for="(v,vi) in list" :key="v[vi]"> <!--:style="{'background-color': $color.secondary}"-->
 
-                    <template v-for="(h,hidx) in field.headers">
-                        <div :key="h[hidx]" v-if="v[h.name]">
-                            <template v-if="h.change_in_slide">
-                                <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="v.id" :values="v"></change_in_slide>
-                            </template>
-                            <template v-else>
-                                
-                                <span class="h">{{h.description}}:</span> 
-                                <template v-if="h.type=='file'">         
-                                    <span v-html="download_file_block(h.name,ch_id(v),v[h.name+'_filename'])"></span>
-                                    <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
-                                    <template v-else>-</template>
+                        <template v-for="(h,hidx) in field.headers">
+                            <div :key="h[hidx]" v-if="v[h.name]">
+                                <template v-if="h.change_in_slide">
+                                    <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="v.id" :values="v"></change_in_slide>
                                 </template>
                                 <template v-else>
-
-                                    {{get_value_for_slide(h,v)}}
+                                    
+                                    <span class="h">{{h.description}}:</span> 
+                                    <template v-if="h.type=='file'">         
+                                        <span v-html="download_file_block(h.name,ch_id(v),v[h.name+'_filename'])"></span>
+                                        <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
+                                        <template v-else>-</template>
+                                    </template>
+                                    <template v-else>
+                                        <!-- div squire color 20x20-->
+                                        <template v-if="h.type=='text' && h.subtype=='color'">
+                                            <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>
+                                        </template>
+                                        {{get_value_for_slide(h,v)}}
+                                    </template>
                                 </template>
-                            </template>
-                        </div>
-                    </template>
+                            </div>
+                        </template>
                         <div class="controls">
                             <v-icon small class="edit" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">edit</v-icon>
                             <v-icon small color="primary" v-if="make_delete" @click="del(v)">delete</v-icon>
@@ -83,9 +85,11 @@
                         <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
                         <template v-else>-</template>
                     </span>
-                    <span v-else v-html="get_value_for_slide(h,v)">
-                        
-                        
+                    <span v-else>
+                        <template v-if="h.type=='text' && h.subtype=='color'">
+                                            <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>&nbsp;
+                        </template>
+                        <span v-html="get_value_for_slide(h,v)"></span>
                     </span>
                 </template>
                 <!--<span v-else v-html="v[h.name]"></span>-->
@@ -102,6 +106,7 @@
         </template>
     </div>
     <!-- /slide -->
+    </div>
 </template>
 <script>
 //import ChangeInSlide from './change_in_slide';
@@ -126,6 +131,9 @@ export default {
             this.cur_refresh++;
             this.list=this.values;
             //Math.random();
+        },
+        field(){
+            console.log('refresh field in slide');
         }
     },
     computed:{
@@ -322,5 +330,10 @@ export default {
     .del_error li, .dialog_erros li {color: red; list-style-type: none;}
     .tool a {text-decoration: none;}
     .v-icon.edit {margin-right: 10px; }
-    .v-card.one_to_m {display: inline-block; margin-right: 20px;}
+    .v-card.one_to_m {display: inline-block; margin-right: 15px; padding-right: 40px; padding-bottom: 20px;}
+    .one_to_m_list .controls {margin-top: 10px !important; margin-left: 30px !important; position: absolute !important; top: 30px; right: 10px; margin-bottom: 10px;}
+    .one_to_m_list .controls button {margin: 5px !important;}
+    .color_squire {
+        border: 1px solid gray; margin-left: 5px; width: 10px; height: 10px; display: inline-block; vertical-align: middle;
+    }
 </style>

@@ -1,16 +1,17 @@
 <template>
-    <v-dialog justify="center" v-model="in_dialog" id="is_dialog">
+    <v-dialog class="one_to_m_form" justify="center" v-model="in_dialog" id="is_dialog">
+
       <v-card class="one_to_m">
-        form: {{form.id}} / {{id}}
+        <div class="close">
+            <v-icon @click="in_dialog=false" style="text-align: right">mdi-close</v-icon>
+        </div>
         <div class="dialog_head">
           <div>
             <template v-if="save_action=='insert'">Создание элемента</template>
             <template v-if="save_action=='update'">Редактирование элемента</template>
           </div>
 
-          <div class="close">
-            <v-icon @click="in_dialog=false" style="text-align: right">mdi-close</v-icon>
-          </div>
+
         </div>
           <div v-for="cf in field.fields" :key="cf.name">
          
@@ -26,7 +27,7 @@
             
             
             <template v-else-if="cf.type=='select_from_table' || cf.type=='select_values'">
-                v: {{edit_fields[cf.name].value}}
+               
                 <field-select
                   :field="edit_fields[cf.name]"
                   :parent="parent_sub"
@@ -275,9 +276,10 @@ export default {
                   setTimeout(
                     ()=>{
                       console.log(`emit: 1_to_m:upload_values:${this.field.name}`)
+                      //console.log(this.field.values)
                       bus.$emit(
-                      //`1_to_m_slide:${this.field.name}_reload`,D
-                      `1_to_m:upload_values:${this.field.name}`
+                      `1_to_m:upload_values:${this.field.name}`,
+                      this.field.values
                       )
                     },
                     500
@@ -345,6 +347,15 @@ export default {
   .row .col {margin: 0; padding-right: 0; padding-top: 0;}
   .dialog_head {width: 100%; margin: 20px 0 20px 0; border-bottom: 1px solid $primary; padding-bottom: 10px;}
   .dialog_head div {display: inline-block; width: auto; color: $primary; font-size: 14pt; min-width: 50%;}
-  .dialog_head div.close {width: 50px; text-align: right;}
+  .one_to_m .close {
+    position: absolute;
+    width: 50px;
+    text-align: right;
+    display: inline-block;
+    right: 5px;
+    top: 0px;
+    color: black;
+    
+  }
   .v-icon:hover {color :$primary;}
 </style> 
