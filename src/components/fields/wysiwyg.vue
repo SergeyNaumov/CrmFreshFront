@@ -1,6 +1,5 @@
 <template>      
     <div>
-        
         <errors :errors="errors" v-show="errors.length"></errors>
         <template v-show="!errors.length">        
             <!-- файловый навигатор -->
@@ -196,6 +195,7 @@ export default {
     },*/
     updateContent(){
         if(editor_object){
+            
             editor_object.setContent(this.value)
         }
     },
@@ -299,7 +299,7 @@ export default {
         let url=BackendBase+'/wysiwyg/'+this.form.config+'/'+this.field.name;
         if(this.form.id)
             url=url+'/'+this.form.id;
-        //console.log('DEL!')
+        
         this.$http.post(url,
             {
                 action:'delete',
@@ -330,7 +330,7 @@ export default {
         this.value=editor.getContent();
     },
     tinymce_init(name){
-        console.log('init0 /' ,name)
+        
         this.read_file_list(); // убрать
         let this_component=this;
         
@@ -360,13 +360,7 @@ export default {
         }
         
         tinymce.baseURL=config.TinyMCE_BaseUrl;
-
-        tinymce.init({
-            selector:'#'+name+'.mce',
-            // content_css:'/tinymce.css', // -- собственный файл стилей
-            browser_spellcheck: true,
-            relative_urls : false,
-            init_instance_callback: function (editor) {
+        const init_instance_callback=function (editor) {
                 editor_object=editor;
                 // ловим изменения в редаеторе и изменяем value компонента:
                 editor.on('keyup', function (e) {
@@ -376,7 +370,23 @@ export default {
                 editor.on('change', function (e) {
                     this_component.value=editor.getContent();
                 });
-            },
+        }
+        // функция инициализации (вызывается после ajax-а с получением опций tinymce)
+        const init=(options)=>{
+            tinymce.init(options);
+            tinymce.EditorManager.init({});
+            tinymce.activeEditor.getRnd=function(){
+                return Math.random()
+            }
+        }
+        
+        // опции по умолчанию
+        let init_options={
+            selector:'#'+name+'.mce',
+            // content_css:'/tinymce.css', // -- собственный файл стилей
+            browser_spellcheck: true,
+            relative_urls : false,
+            init_instance_callback: init_instance_callback,
             
             plugins: [
                 "advlist autolink autosave link image lists charmap print preview hr anchor pagebreak ", // spellchecker
@@ -386,7 +396,7 @@ export default {
             menubar: false,
             toolbar1: "formatselect fontselect fontsizeselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify ", // styleselect
             toolbar2: "cut copy paste |  bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code |  forecolor backcolor", // searchreplace insertdatetime preview |
-            toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | visualchars visualblocks nonbreaking template pagebreak", //  ltr rtl | spellchecker |  restoredraft
+            toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | visualchars visualblocks nonbreaking pagebreak", //  ltr rtl | spellchecker |  restoredraft
             language: 'ru',
             //width: 500,
             advlist_number_styles: "lower-alpha",
@@ -396,12 +406,46 @@ export default {
             image_advtab: true,
             extended_valid_elements: '@[itemscope|itemprop|itemtype|itemref|content],img[*],time[*],div[*|class|data-resultsUrl|data-newWindow|data-queryParameterName],span[*],strong[*],td[*],tr[*],p[*],small[*],a[*|download],ul[*],li[*],em[*],script[type|src],article[*],header[*],meta[itemprop|itemtype|itemref|itemscope|content],iframe[src|style|width|height|scrolling|marginwidth|marginheight|frameborder|allowfullscreen],object[width|height|classid|codebase|embed|param],param[name|value],embed[param|src|type|width|height|flashvars|wmode],a[*]',
             valid_children: '+a[div|p|img|span  ]'
-        });
-        tinymce.EditorManager.init({
-        });
-        tinymce.activeEditor.getRnd=function(){
-            return Math.random()
         }
+        
+        // if(this.field.frontend && this.field.frontend.wysiwyg_templates){
+        //     init_options.templates=this.field.frontend.wysiwyg_templates
+        //     init_options.toolbar2+=' | templates '
+            
+        //     console.log('toolbar2:',init_options.toolbar2)
+        // }
+        this.$http.get(BackendBase+'/wysiwyg/'+this.form.config+'/'+this.field.name+'/init_options').then(
+            r=>{
+                let d=r.data
+                if(d.success && d.options){
+                    init_options=d.options;
+                    init_options.selector=`#${name}.mce`,
+                    init_options.file_picker_callback=svBrowser
+                    init_options.init_instance_callback=init_instance_callback
+                    if(init_options.templates){
+                        console.log('TEMPLATES1:',init_options.templates)
+                        for(let t of init_options.templates){
+                            if(t.url){
+                                t.url=BackendBase+t.url
+                            }
+                        }
+                        console.log('TEMPLATES2:',init_options.templates)
+                    }
+                    
+                    init(init_options)
+                    
+                    
+                }
+                
+            }   
+        ).catch(
+            ()=>{
+                init(init_options)
+            }
+        )
+
+
+
         // tinymce.activeEditor.execCommand('ApplyOrderedListStyle', false, {
         // 'list-style-type': 'disc'
         // });

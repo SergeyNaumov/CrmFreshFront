@@ -1,9 +1,9 @@
 <template>
       <div>
-        
         <one_to_m_form 
           :form="form"
           :field="field"
+          :refresh="refresh"
           :dialog="dialog"
           :set_dialog="set_dialog"
           :values="values"
@@ -70,25 +70,27 @@
       dialog:false,
       values:[],
       save_action:'',
+      refresh:0,
       // загрузка нескольких файлов
       dialog_multiload: false
     }
   },
   props:['form','field'],
   created(){
-    
+    let t=this
     bus.$on( // обновление значений в 1_to_m
       '1_to_m:upload_values:'+this.field.name,
       values=>{
-        console.log('opload_values:',values);
+        //console.log('opload_values:',values);
         this.upload_values(values)
       }
     );
 
-    if(!this.field.values)
-        this.field.values=[];
+
+    if(!t.field.values)
+        t.field.values=[];
     //this.create_edit_fields();
-    this.values=this.field.values;
+    t.values=t.field.values;
     
     
   },
@@ -126,12 +128,29 @@
     set_dialog(d){
       this.dialog=d
     },
-
+    // reload_1_to_m(){  // Обновляем все значения в 1_to_m
+    //   let t=this, f=t.field;
+    //   this.$http.get(
+    //           BackendBase+`/1_to_m/${t.form.config}/${t.field.name}/${t.form.id}`
+    //   ).then(
+    //     r=>{
+    //       let d=r.data
+    //       if(d.success){
+    //         t.values=d.field.values
+    //         //t.field.fields=d.field.fields
+    //         console.log('fields:',d.field)
+    //         bus.$emit('change_field', d.field);
+    //       }
+    //     }
+    //   )
+      
+      
+    // },
     upload_values(new_values){
       this.values=new_values;
       let f=this.field;
       f.values=new_values;
-      bus.$emit('change_field', f);
+      this.refresh++
     },
     open_new_dialog(){
       bus.$emit('1_to_m_open_new_dialog:'+this.field.name);

@@ -51,7 +51,14 @@ export function change_field(self,field,not_frontend_process){
     if(field.type=='checkbox' || field.type=='switch'){
         v=parseInt(v)?true:false
     }
-    
+    if(field.type=='1_to_m'){
+      for(let f of self.form.fields){
+        if(f.name==field.name){
+          f.values=field.values
+          f.fields=field.fields
+        }
+      }
+    }
     self.values[field.name]=v;
     
     bus.$emit('field-update:'+field.name,field);
@@ -91,21 +98,19 @@ export function save_field_1_to_m(self,data){
 }
 
 export function frontend_result_process(self,result,proc_name){
-    
     if(result){
-      let i=0;
+      let i=0;      
       while(i<result.length){
-        let name=result[i], obj=result[i+1];
-        
+        let name=result[i], obj=result[i+1]; 
         let dep_field=on_dependence(self,name,obj,(proc_name==name));
         
         i+=2;
       }
     }
 }
-export function frontend_button_process(self,f,button,success_function){
+export const frontend_button_process=(self,f,button,success_function)=>{
   if(button.ajax){
-    let a=button.ajax;
+    
     self.$http.post(
       BackendBase+'/ajax/'+self.params.config+'/'+button.ajax,
       {values:self.values,id:self.form.id}
