@@ -95,9 +95,12 @@
   import { bus } from '../../main'
   export default {
   created(){
-    this._field_update=(new_data)=>{field_update(new_data,this)};
+    this._field_update=(new_data)=>{
+      field_update(new_data,this)
+    };
 
     if(!this.parent){
+      
       bus.$on('field-update:'+this.field.name,this._field_update )
     }
     // 
@@ -133,7 +136,10 @@
     },
     value(){
       this.field.value=this.value
-      bus.$emit('change_field',this.field);
+      if(!this.parent){
+        bus.$emit('change_field',this.field);
+      }
+      
     }
   },
   mounted(){
@@ -180,6 +186,7 @@
             this.parent({value:this.value,error:f.error,name:f.name})
           }      
           else{ // обработчик основной формы
+            
             f.value=this.value;
             bus.$emit('change_field', f);
           }

@@ -60,6 +60,7 @@ export function check_fld(self){
           if(f.error !== old_error){
             if(!self.parent){
               f.value=self.value
+              
               bus.$emit('change_field', f);  
             }
           }
