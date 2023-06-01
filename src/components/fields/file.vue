@@ -197,7 +197,7 @@ export default {
             load_methods:[
               {icon: 'fas fa-file-upload', header: 'из файла',  loader:'file'},
               {icon: 'fa fa-paste', header: 'из буфера', loader:'clipboard'},
-              {icon: 'fa fa-paste', header: 'по ссылке', loader:'from_link'},
+              //{icon: 'fa fa-paste', header: 'по ссылке', loader:'from_link'},
             ]
         }
     },
