@@ -57,13 +57,13 @@
                 <li v-for="l in list" :key="l.id" :id="'li-'+l.id" >
                 <div >
                     <div class="li_header" :style='{"background":cur_color}'  >
-                            <div class="plus-icon " v-if="form.tree_use" >
-                                
+                            <div class="plus-icon " v-if="form.tree_use && (!form.max_level || (level < form.max_level))" >
+                                <!---->
                                 <v-icon small color="primary"
-                                    v-if="(level < form.max_level) && !shows[l.id] && form.tree_use"
+                                    v-if="!shows[l.id]" 
                                     @click="show_this(l)"
                                 >
-                                    fa fa-plus
+                                    fa fa-plus 
                                 </v-icon>
                                 <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
