@@ -229,6 +229,7 @@ export default {
         return list
       },
       move_end(e){
+          //console.log('lst:',e, e.srcElement.children)
           let arr;
           let from=e.from.getAttribute('id'),
               to=e.to.getAttribute('id'),
@@ -242,9 +243,19 @@ export default {
 
           
 
-          if(from==to) // перемещение в пределах одной ветки
-              this.request_sort(from,this.obj_sort_by_parent(from));
+          if(from==to){ // перемещение в пределах одной ветки
+              let obj_sort={},idx=1;
+
+              for(let c of e.srcElement.children){
+                let id=c.id.replace('li-','')
+                obj_sort[id]=idx++
+                
+              }
+              //console.log(obj_sort)
+              this.request_sort(from,obj_sort);
+              //this.request_sort(from,this.obj_sort_by_parent(from));
           
+          }
           else // если ветки разные -- сначала переносим объект, потом сортируем ветки
               this.$http.post( 
                 BackendBase+'/admin-tree/'+this.form.config,
