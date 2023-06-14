@@ -33,7 +33,7 @@
                                     
                                     <span class="h">{{h.description}}:</span> 
                                     <template v-if="h.type=='file'">         
-                                        <span v-html="download_file_block(h.name,ch_id(v),v[h.name+'_filename'])"></span>
+                                        <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
                                         <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
                                         <template v-else>-</template>
                                     </template>
@@ -81,7 +81,7 @@
                 <template v-else>
                     
                     <span v-if="h.type=='file'">                   
-                        <span v-html="download_file_block(h.name,ch_id(v),v[h.name+'_filename'])"></span>
+                        <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
                         <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
                         <template v-else>-</template>
                     </span>
@@ -279,10 +279,14 @@ export default {
                     }
                 )
         },
-        download_file_block(child_name,child_id,orig_name){
-                
-            let link=BackendBase+'/1_to_m/download/'+this.form.config+'/'+this.field.name+'/'+child_name+'/'+this.form.id+'/'+child_id+'/'+orig_name;
-
+        download_file_block(h,child_id,orig_name,v){
+            let child_name=h.name
+            console.log('v: ',v)
+            console.log('h: ',h)
+            console.log('child_name: ',child_name)
+            //let link=BackendBase+'/1_to_m/download/'+this.form.config+'/'+this.field.name+'/'+child_name+'/'+this.form.id+'/'+child_id+'/'+orig_name;
+            let link=v.preview_img
+            console.log('link: ',link)
             //let cf=this.fields[child_name];
             let cf=this.get_field_by_name(child_name);
               
