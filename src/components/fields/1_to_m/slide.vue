@@ -15,6 +15,7 @@
         <!-- view type: list -->
         <template v-if="field.view_type=='list'">
             <v-layout>
+                
                 <draggable
                     v-model="list"
                     tag="div"
@@ -32,9 +33,9 @@
                                 <template v-else>
                                     
                                     <span class="h">{{h.description}}:</span> 
-                                    <template v-if="h.type=='file'">         
+                                    <template v-if="h.type=='file'"> 
                                         <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
-                                        <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
+                                        <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить фото</a>
                                         <template v-else>-</template>
                                     </template>
                                     <template v-else>
@@ -48,8 +49,10 @@
                             </div>
                         </template>
                         <div class="controls">
+                            
                             <v-icon small class="edit" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">edit</v-icon>
                             <v-icon small color="primary" v-if="make_delete" @click="del(v)">delete</v-icon>
+                            
                         </div>
                     </v-card>
                 </draggable>
@@ -82,7 +85,7 @@
                     
                     <span v-if="h.type=='file'">                   
                         <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
-                        <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
+                        <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить фото</a>
                         <template v-else>-</template>
                     </span>
                     <span v-else>
@@ -281,12 +284,10 @@ export default {
         },
         download_file_block(h,child_id,orig_name,v){
             let child_name=h.name
-            console.log('v: ',v)
-            console.log('h: ',h)
-            console.log('child_name: ',child_name)
+            
             //let link=BackendBase+'/1_to_m/download/'+this.form.config+'/'+this.field.name+'/'+child_name+'/'+this.form.id+'/'+child_id+'/'+orig_name;
             let link=v.preview_img
-            console.log('link: ',link)
+            
             //let cf=this.fields[child_name];
             let cf=this.get_field_by_name(child_name);
               
@@ -299,10 +300,10 @@ export default {
                 desc='просмотреть';
                 
                 if(cf.preview && cf.preview.length)
-                    return `${orig_name}:<br><a href="${link}?view=1" target="_blank"><img src="${link}?view=${cf.preview}"></a><br>`
+                    return `<br><a href="${link}?view=1" target="_blank"><img src="${link}"></a><br>`
                 
                 else
-                    return `${orig_name}: <a href="${link}?view=1" target="_blank">посмотреть</a> `
+                    return `<a href="${link}" target="_blank">посмотреть</a> `
             }
             return `${orig_name}:<br><a href="${link}?view=${view}">${desc}</a> `
         },
@@ -335,7 +336,7 @@ export default {
     .tool a {text-decoration: none;}
     .v-icon.edit {margin-right: 10px; }
     .v-card.one_to_m {display: inline-block; margin-right: 15px; padding-right: 40px; padding-bottom: 20px;}
-    .one_to_m_list .controls {margin-top: 10px !important; margin-left: 30px !important; position: absolute !important; top: 30px; right: 10px; margin-bottom: 10px;}
+    .one_to_m_list .controls {margin-top: 5px !important;   margin-bottom: 10px;}
     .one_to_m_list .controls button {margin: 5px !important;}
     .color_squire {
         border: 1px solid gray; margin-left: 5px; width: 10px; height: 10px; display: inline-block; vertical-align: middle;
