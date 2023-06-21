@@ -1,5 +1,5 @@
 #!/bin/bash
-npm run build
+npm run build_svcms
 basedir="/mnt/teleweb/var/www/assistweb/manager/frontend/"
 #echo "$basedir/css"
 check=${#basedir}
