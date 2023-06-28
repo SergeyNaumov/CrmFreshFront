@@ -58,7 +58,7 @@ export default{
                 response=>{
                   let D=response.data;
                   if(D.success){
-                      location.href='/login'
+                      location.href=UrlPrefix+'/login'
                   }
                 }
             )
