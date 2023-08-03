@@ -388,9 +388,15 @@ export default {
 <style scope lang="scss">
 @import '@/styles/variables.scss';
 .errors {color: $error;}
+.theme--light.v-pagination{
+  
+  
+}
   .theme--light.v-pagination .v-pagination__item{
     width: auto;
-    min-width: 20px;
+    font-size: 0.9rem;
+    min-width: 5px;
+    
   }
   .v-pagination__item {font-size: 14px; width: 15px;}
  .memo_item{

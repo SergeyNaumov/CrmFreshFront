@@ -1,9 +1,13 @@
 <template>
     <div class="root_element">
-
+        <!--
+        field: {{field}}<br>
+        orig_filename: {{orig_filename}}<br>
+        download_link: {{download_link}}
+        -->
         <template v-if="field.read_only">
 
-          <a :href="download_link" v-if="field.begin_value" download>скачать</a>
+          <a :href="download_link" :download="orig_filename" v-if="field.begin_value" >скачать</a>
           
         </template>
         <template v-else>
@@ -65,7 +69,7 @@
             <div v-if="!show_loaded">
               <v-icon x-small v-if="is_img" @click.prevent="show_loaded=true" class="show">fa-eye</v-icon>
               <!-- удалять разрешаем только тогда, когда фото не обязательно -->
-              <a :href="img_path" download>скачать</a> | 
+              <a :href="download_link" :download="orig_filename">скачать</a> | 
               <a href="" v-if="!field.required" @click.prevent="remove()">удалить</a>
             </div>
 
@@ -89,7 +93,7 @@
                 
                 
               </div>
-              <a :href="download_link" v-else>скачать</a>
+              <a :href="download_link" :download="orig_filename" v-else>скачать</a>
               
             </template>
           </div>
@@ -150,9 +154,10 @@ export default {
       img_path(){ 
         // если ранее загруженное фото является изображением
         //  -- возвращаем путь к этому изображению
-        if(/\.(jpg|png|svg|gif)/.test(this.begin_value)){
-            return BaseUrl+this.field.filedir.replace(/^\.\//,'')+'/'+this.begin_value;
-            return full_name;
+        if(/\.(jpg|png|svg|gif)/i.test(this.begin_value)){
+            return this.download_link
+            //return BaseUrl+this.field.filedir.replace(/^\.\//,'')+'/'+this.begin_value;
+            //return full_name;
 
         }
         return '';
@@ -160,13 +165,27 @@ export default {
       is_img(){
         return /^.+\.(jpg|png|wepb|gif|svg)$/i.test(this.begin_value)
       },
+      orig_filename(){
+        if(this.begin_value){
+          return this.field.keep_orig_filename?this.begin_value.split(';').pop():this.begin_value
+        }
+        return ''
+
+      },
       download_link(){
-        let filedir=BaseUrl+this.field.filedir.replace(/^\./,'');
-        return filedir+'/'+this.field.begin_value
+        let filedir=BaseUrl+this.field.filedir.replace(/^\./,'')
+        let saved_filename=''
+        if(this.field.begin_value){
+          saved_filename=this.field.keep_orig_filename?this.begin_value.split(';').shift():this.begin_value
+        }
+        let download_link=filedir+'/'+saved_filename
+        download_link=download_link.replace('//','/')
+        
+        return download_link
       },
       extend_file_link_ok(){
         let v=/^https?:\/\/.+?\..+$/.test(this.extent_file_link)
-        console.log('extend_file_link_ok:',v)
+        
         return v
       }
 

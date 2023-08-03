@@ -1,6 +1,5 @@
 <template>
-        <div>
-          
+        <div>         
           <template v-if="!field.hide">
 
             <template v-if="field.subtype=='color'">

@@ -197,9 +197,8 @@ export default {
   methods: {
     load_autocomplete(search){
       if(this.field.autocomplete){
-        console.log('form:',this.form)
+
         let field_name=this.name_parent_field?`${this.name_parent_field}.${this.field.name}`:this.field.name
-        console.log('name_parent_field:',this.name_parent_field)
         this.$http.post(
           BackendBase+'/autocomplete/'+this.form.config,
           {

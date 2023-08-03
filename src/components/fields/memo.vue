@@ -8,7 +8,8 @@
                 <div v-if="!data.length">
                   пусто
                 </div>
-                <div v-for="(l,idl) in data" :key="l.idl" >
+                
+                <div v-for="(l,idl) in data" :key="l.idl" class="memo_str">
                     <div v-if="l.edit_on" class="edit_on">
                       <v-textarea v-model="l.message" class="" :rows="1" 
                         :label="'Измените комментарий:'"
@@ -24,14 +25,16 @@
                         <div class="date" :style="l.style">{{l.date}}</div>
                         <div class="user_name" :style="l.style">{{l.user_name}}:</div>
                         <div class="message" v-html="to_html(l.message)"></div>
-                        <v-icon v-if="field.make_delete" small @click="edit(l,true)">edit</v-icon>
-                        <v-icon v-if="field.make_delete" small @click="del(l,idl)">delete</v-icon> 
+                        <div v-if=" (field.make_edit || field.make_delete)">
+                          <v-icon v-if="field.make_edit" small @click="edit(l,true)">edit</v-icon>
+                          <v-icon v-if="field.make_delete" small @click="del(l,idl)">delete</v-icon> 
+                        </div>
                     </div>
                 </div>
               </v-card>
 
-              <template v-if="!form.read_only && !field.read_only">
-                  <v-btn color="primary" v-if="!view_adding_block" @click="view_adding_block=1" small>Новый комментарий</v-btn>
+              <div v-if="!form.read_only && !field.read_only" class="new_comment">
+                  <v-btn color="primary" v-if="!view_adding_block" @click="view_adding_block=1" x-small>Новый комментарий</v-btn>
                   <div v-if="view_adding_block" class="adding_block pt-1">
                     <v-textarea v-model="adding_value" class="" :rows="1"
                       :label="'Введите комментарий'"
@@ -39,9 +42,9 @@
                       :clearable="true"
                       :autofocus="true">
                     </v-textarea>
-                    <v-btn color="primary"  @click="add()" small>Сохранить</v-btn> <v-btn color="red"  @click="view_adding_block=false" small>Отмена</v-btn>
+                    <v-btn color="primary"  @click="add()" x-small>Сохранить</v-btn> <v-btn color="red"  @click="view_adding_block=false" x-small>Отмена</v-btn>
                   </div>
-              </template>
+              </div>
             </template>
       </template>
       <template v-else>
@@ -258,18 +261,22 @@
     
   }
   .memo_item .message{
-    
-    padding-bottom: 15px;
+    display: inline-block;
   }
   
   .memo_item {
     padding: 5px; border-bottom: 1px dotted gray; line-height: 20px;
     
   }
-  div.memo div:nth-child(2n){
+  .memo_item .v-icon.v-icon{
+    margin: 0 5px 0 0 !important;
+    
+  }
+  div.memo div.memo_str:nth-child(2n){
     background-color: $lighten5;
   }
   .edit_on{
     margin: 5px;
   }
+  
 </style>}

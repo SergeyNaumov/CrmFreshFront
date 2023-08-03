@@ -21,7 +21,7 @@
                             offset-y
                             
                             readonly
-                            max-width="290px"
+                            max-width="350px"
                         >
                         
                             <template v-slot:activator="{ on }">
@@ -32,7 +32,7 @@
                                 readonly
                                 v-on="on"
                                 class="inline"
-                                style="max-width: 150px;"
+                                style="max-width: 190px;"
                             />
                             </template>
                             <v-date-picker :first-day-of-week="1"  locale="ru-Ru" v-model="date" @input="set_value(); menu_date=false"/>
@@ -60,7 +60,7 @@
                                 prepend-icon="event"
                                 readonly
                                 v-on="on"
-                                style="max-width: 150px"
+                                style="max-width: 180px"
                             ></v-text-field>
                             
                             
@@ -156,15 +156,19 @@ export default {
       select_cal_date(){
         this.menu_date = false;
         this.set_value();
+        this.set_need_empty();
       },
       select_cal_time(){
         this.set_value();
+        this.set_need_empty();
         
       },
       clear(){
         this.date=''; this.time=''; this.set_value();
+        this.need_empty=false
       },
       set_need_empty:function(){
+        
         if(this.field.not_clear)
           return false;
         this.need_empty=this.field.value?true:false
@@ -177,7 +181,8 @@ export default {
         }
         this.date=d.getFullYear()+'-'+values[ 1 ]+'-'+values[ 0 ];
         this.time=values[2]+':'+values[3]+':'+values[4]
-        
+        if(!this.field.not_clear)
+          this.need_empty=true
       }
     }
 }
