@@ -2,6 +2,7 @@
     <v-dialog class="one_to_m_form" justify="center" v-model="in_dialog" id="is_dialog">
 
       <v-card class="one_to_m">
+
         <div class="close">
             <v-icon @click="in_dialog=false" style="text-align: right">mdi-close</v-icon>
         </div>
@@ -13,6 +14,7 @@
 
 
         </div>
+
           <div v-for="cf in field.fields" :key="cf.name">
          
             <template v-if="edit_fields[cf.name] && (cf.type=='text' || cf.type=='textarea')">
@@ -21,6 +23,7 @@
                 :field="edit_fields[cf.name]"
                 :parent="parent_sub"
                 :refresh="cur_refresh"
+                :error-messages="error_messages[cf.name]"
               />
 
             </template>
@@ -50,6 +53,7 @@
             </template>
             <template v-else-if="cf.type=='checkbox' || cf.type=='switch'">
                 <field-checkbox 
+                  :form="form"
                   :field="edit_fields[cf.name]" 
                   :parent="parent_sub"
                   :refresh="cur_refresh"
@@ -60,7 +64,6 @@
                 <input type="file">
               </form>
             </template>
-            
           </div>
           
           <template v-if="dialog_errors.length">
@@ -70,8 +73,11 @@
           </template>
           
           <v-btn color="primary" 
-            v-if="!form.read_only && !field.read_only"
-            @click="save(edit_fields,save_action)" small>Сохранить</v-btn>
+            v-if="(!form.read_only && !field.read_only)"
+            :disabled="form_disabled"
+            @click="save(edit_fields,save_action)" small>Сохранить
+          </v-btn>
+          <div v-if="form_disabled" class="err">перед сохранением исправьте ошибки</div>
           
       </v-card>
     </v-dialog>
@@ -85,6 +91,8 @@ export default {
     data(){
         return {
             edit_fields:{},
+            error_messages:{},
+            form_disabled:false,
             cur_refresh:0,
             in_dialog:false,
             fields:{},
@@ -93,6 +101,7 @@ export default {
             id:null
         }
     },
+
     created(){
       
       
@@ -115,8 +124,21 @@ export default {
         in_dialog(){
             this.dialog_errors=[]
             //this.set_dialog(this.in_dialog)
+        },
+        cur_refresh(){
+          this.form_disabled=false
+          for(let name in this.error_messages){
+          
+            if(this.error_messages[name]){
+              this.form_disabled=true
+              return
+            }
+            
+          }
         }
+
     },
+
     methods:{
         save_cur(){
             
@@ -138,12 +160,32 @@ export default {
         },
         
         parent_sub(obj){ // для элементов fields/* правила сохранения
-          //console.log('parent_sub_obj:',obj.value)
+          
+          //console.log('obj:',obj)
           let value=obj.value;
-          if(obj.type=='checkbox' || obj.type=='switch')
+          if(obj.type=='checkbox' || obj.type=='switch'){
             value=value?1:0
+          }
+          
+          for(let attr of ['error','error_message','value']){
+            
+            if(attr=='error_message'){
+              this.error_messages[obj.name]=obj.error_message
+              
+            }
+            if(obj[attr]!==undefined){
 
-          this.edit_fields[obj.name].value=value;
+              this.edit_fields[obj.name][attr]=obj[attr]
+              
+            }
+            
+          }
+          if(obj.name=='phone'){
+            //console.log('OBJ:',obj)
+          }
+
+          this.cur_refresh=Math.random()
+
         },
         open_new_dialog(){ // Форма для добавления
           this.create_edit_fields();

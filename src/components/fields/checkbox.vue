@@ -37,7 +37,12 @@
     },
     computed:{
         disabled(){
-            return (this.field.read_only || this.form.read_only)?true:false
+            let form=this.form, field=this.field
+            /*if(!form){
+                form={}
+            }*/
+            
+            return (field.read_only || form.read_only)?true:false
         }
 
     },

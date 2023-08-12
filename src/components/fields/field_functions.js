@@ -21,10 +21,14 @@ export function check_fld(self){
     if(!self.value)
       self.value='';
     let f=self.field;
+    let error=false
+    let error_message=''
+
     if(f.replace_rules){
               let i=0;
               while(i<f.replace_rules.length){
                 let rule=f.replace_rules[i], rep=f.replace_rules[i+1];
+                
                 self.$nextTick(
                   ()=>{
                     self.value=eval('self.value.replace('+rule+",'"+rep+"')");
@@ -33,36 +37,57 @@ export function check_fld(self){
                 
                 i+=2;
               }
-          }
+    }
 
-          if(f.regexp_rules){
-            let i=0, error_message='';
+    let i=0
+    if(f.regexp_rules){
+            
             while(i<f.regexp_rules.length){
               let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
-              let test=eval(rule+'.test(self.value)');
               
+              let test=eval(rule+'.test(self.value)');
+              if(f.name=='phone'){
+              //  console.log('test:',test)
+              }
               if(!test){
-                error_message=msg;
+                error_message=msg
+                error=true
+                
                 break;
               }
               i=i+2;
             }
             
-            let field=self.field
-            field.error_message=error_message
+            //let field=self.field
+            //field.error_message=error_message
+            
             //self.error_message=error_message;
             
-          }
-          
-          let old_error=f.error
-          f.error=self.error_message?true:false;  
+    }
 
-          if(f.error !== old_error){
-            if(!self.parent){
-              f.value=self.value
+
+
+          //if(f.error !== old_error || ){
+    if(self.parent){
+      //console.log('TO_PARENT:',f)
+      self.parent({
+        from:'field_functions.js',
+        'name':f.name,
+        'value':self.value,
+        'error':error,
+        'error_message':error_message
+      })
               
-              bus.$emit('change_field', f);  
-            }
-          }
+    }
+    else{
+      f.value=self.value 
+      f.error_message=error_message
+      f.error=error
+      if(f.name=='inn'){
+        console.log(f)
+      }
+      bus.$emit('change_field', f);  
+    }
+          //}
 
   }

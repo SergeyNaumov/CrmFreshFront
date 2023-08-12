@@ -327,6 +327,13 @@ export default {
   img.logo {max-height: 50px;  margin: 0px 20px 0 0;}
   .v-toolbar__title .header {text-align: center;vertical-align: top; margin-top: 8px; font-size: 20px; display: inline-block;}
 
+  .v-textarea textarea{
+    line-height: 1.1rem !important;
+  }
+
+  .v-textarea .v-input__slot{
+    padding:  0 5px !important;
+  }
 
   @media only screen and (max-width: 800px) {
     img.logo {height: 20px; ; margin: 0;}

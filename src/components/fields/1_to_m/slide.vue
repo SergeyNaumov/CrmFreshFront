@@ -42,9 +42,19 @@
                                         <!-- div squire color 20x20-->
                                         <template v-if="h.type=='text' && h.subtype=='color'">
                                             <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>
+                                            
                                         </template>
-                                        {{get_value_for_slide(h,v)}}
+
+                                        
+                                        <template v-if="h.type=='text' && h.subtype=='qr_call'">
+                                            
+                                            <qr_call :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
+                                        </template>
+                                        <template v-else>
+                                            {{get_value_for_slide(h,v)}}
+                                        </template>
                                     </template>
+                                    
                                 </template>
                             </div>
                         </template>
@@ -115,9 +125,12 @@
 //import ChangeInSlide from './change_in_slide';
 import { bus } from '../../../main'
 import ChangeInSlide from './ChangeInSlide';
+import qr_call from '../text_subtypes/qr_call';
+
 export default {
     components:{
-       'change_in_slide': ChangeInSlide
+       'change_in_slide': ChangeInSlide,
+       'qr_call': qr_call
     },
     props:["form","values","field","upload_values"],
     data(){
@@ -336,9 +349,13 @@ export default {
     .tool a {text-decoration: none;}
     .v-icon.edit {margin-right: 10px; }
     .v-card.one_to_m {display: inline-block; margin-right: 15px; padding-right: 40px; padding-bottom: 20px;}
-    .one_to_m_list .controls {margin-top: 5px !important;   margin-bottom: 10px;}
+    .one_to_m_list .controls {margin-top: 5px !important;   margin-bottom: 5px; display: none;}
+    
+    .one_to_m_list:hover .controls{display: block;}
     .one_to_m_list .controls button {margin: 5px !important;}
     .color_squire {
         border: 1px solid gray; margin-left: 5px; width: 10px; height: 10px; display: inline-block; vertical-align: middle;
     }
+    
+    
 </style>

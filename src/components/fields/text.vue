@@ -79,7 +79,10 @@
               class="err" v-if="warning_message" v-html="warning_message"
             />
             <div class="add_description" v-else-if="field.add_description">{{field.add_description}}</div>     
+            
+            <qr_call v-if="field.subtype=='qr_call'" :value="field.value" :field="field"/>
 
+            
           </template>
       </div>
 </template>
@@ -92,8 +95,13 @@
   // end
   import { field_update,check_fld } from './field_functions'
   import { bus } from '../../main'
+  //import QRCode from '../../js/qrcode.min.js'
+  import qr_call from './text_subtypes/qr_call';
+  
   export default {
+  components:{ qr_call },
   created(){
+    //Vue.component('qr_call', ()=> import('./components/fields/text_subtypes/qr_call.vue'));
     this._field_update=(new_data)=>{
       field_update(new_data,this)
     };
@@ -105,6 +113,7 @@
     // 
     this.value=this.field.value;
     check_fld(this);
+
   },
   beforeDestroy(){
     if(!this.parent){
@@ -132,9 +141,13 @@
     },
     refresh(){ 
       this.value=this.field.value;  
+      this.error=this.field.error
+      this.warning_message=this.field.warning_message
+      this.error_message=this.field.error_message
     },
     value(){
       this.field.value=this.value
+      this.field.from='field-text component (text.vue)'
       if(!this.parent){
         bus.$emit('change_field',this.field);
       }
@@ -182,7 +195,17 @@
 
           
           if(this.parent){
-            this.parent({value:this.value,error:f.error,name:f.name})
+            this.parent({
+              from:'field-text component (text.vue), metod input',
+              value:this.value,
+              error:f.error,
+              name:f.name,
+              error_message:f.error_message
+            },
+            )
+            if(f.error_message!=this.error_message){
+              this.error_message=f.error_message
+            }
           }      
           else{ // обработчик основной формы
             

@@ -4,7 +4,7 @@
             <v-text-field 
               :label="field.description"
               disabled
-              v-model="value"
+              v-model="value_show"
               :rounded="$theme.rounded"
               hide-details
             />
@@ -59,8 +59,13 @@ export default {
     props:['form','field','parent'], // ,'calc_values'
     computed:{
       value_show(){
-        if(this.value)
-          return this.value.split('-').reverse().join('.')
+        let v=this.value
+        if(/\s\d{2}:\d{2}:\d{2}/.test(v)){
+          v=v.replace(/\s\d{2}:\d{2}:\d{2}/,'')
+          
+        }
+        if(v)
+          return v.split('-').reverse().join('.')
         return ''
       }
     },
