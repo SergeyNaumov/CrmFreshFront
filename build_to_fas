@@ -1,0 +1,18 @@
+#!/bin/bash
+npm run build
+basedir="/mnt/veresk2/var/www/fas/frontend/"
+#echo "$basedir/css"
+check=${#basedir}
+if [ $check -ge 10 ]
+then
+    echo "basedir ok"
+    rm -rf "$basedir/css"
+    rm -rf "$basedir/js"
+    #rm  "$basedir/index.html"
+    rm -rf "$basedir/fonts"
+    
+    cp -R dist/{js,css,index.html,fonts} "$basedir/"
+else
+    echo "error basedir"
+fi
+
