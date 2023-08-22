@@ -15,7 +15,7 @@
         
         <v-flex md12 xs12 v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
             <!-- FULL_STR -->
-            <div v-if="f.before_html" v-html="f.before_html"></div>
+            
               <div class="description_container" v-if="f.description && !is_default_not_description(f)">{{f.description}}:</div>
 
               <template if="dynamic_component(f)">
@@ -25,7 +25,9 @@
                 />
                 <template v-if="f.after_html" v-html="f.after_html"></template>
               </template>
-            <div v-if="f.after_html" v-html="f.after_html"></div>
+
+
+              
         </v-flex>
         <template v-else>
 
@@ -36,6 +38,7 @@
             
             <v-flex md10 xs12 class="field_container">
               <template v-if="is_dynamyc_loader(f)">
+              
                 <!--
                 <dynamic-loader 
                   :form="form" :field="f" 
@@ -44,10 +47,13 @@
               <template v-else-if="dynamic_component(f)">
                 <template v-if="f.before_html" v-html="f.before_html"></template>
 
+
                 <component  :is="dynamic_component(f)"
                   :form="form" :field="f" 
                 />
-                <template v-if="f.after_html" v-html="f.after_html"></template>
+                
+                <div v-if="f.type=='code' && f.after_html" v-html="f.after_html"></div>
+
               </template>
             </v-flex>
         </template>
@@ -154,7 +160,7 @@ import FieldPassword from '../fields/password';
             return true
           if(field.type=='multiconnect')
             return false
-          if(/^(wysiwyg|memo|1_to_m|password|file|datetime)$/.test(field.type))
+          if(/^(wysiwyg|memo|1_to_m|password|file|datetime|code)$/.test(field.type))
             return false
           return true
           //(field.not_description && );

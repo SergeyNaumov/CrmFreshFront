@@ -14,6 +14,12 @@ export function field_update(new_data, self){
       self.$nextTick(
         ()=>{self.warning_message=new_data.warning_message}
       );
+    }
+
+    if('after_html' in new_data){
+      self.$nextTick(
+        ()=>{self.after_html=new_data.after_html}
+      );
     } 
 }
 
@@ -46,9 +52,7 @@ export function check_fld(self){
               let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
               
               let test=eval(rule+'.test(self.value)');
-              if(f.name=='phone'){
-              //  console.log('test:',test)
-              }
+
               if(!test){
                 error_message=msg
                 error=true
@@ -83,9 +87,6 @@ export function check_fld(self){
       f.value=self.value 
       f.error_message=error_message
       f.error=error
-      if(f.name=='inn'){
-        console.log(f)
-      }
       bus.$emit('change_field', f);  
     }
           //}

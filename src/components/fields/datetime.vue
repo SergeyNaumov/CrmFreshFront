@@ -27,7 +27,7 @@
                             <template v-slot:activator="{ on }">
                             <v-text-field
                                 v-model="date_show"
-                                label="Дата: ГГГГ-ММ-ДД"
+                                label="Дата: ДД.ММ.ГГГГ"
                                 prepend-icon="event"
                                 readonly
                                 v-on="on"

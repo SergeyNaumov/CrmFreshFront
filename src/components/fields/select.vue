@@ -17,7 +17,7 @@
             />
           </template>
               
-            <template v-else>
+          <template v-else>
 
                 <template v-if="field.background_color">
                   <div class="color_box">
@@ -101,6 +101,7 @@
             </template>
             <div v-if="error_message" class="error_msg">{{error_message}}</div>
             <div v-if="warning_message" class="err" >{{warning_message}}</div>     
+            <div v-if="after_html" v-html="after_html"></div>
       </template>
     </div>
 </template>
@@ -116,6 +117,7 @@ export default {
       regexp_rules:[],
       error_message:'',
       warning_message:'',
+      after_html:'',
       search:'' // для autocomplete
     }
   },
@@ -169,6 +171,11 @@ export default {
         if('warning_message' in new_data){
           this.$nextTick(
             ()=>{this.warning_message=new_data.warning_message}
+          );
+        }
+        if('after_html' in new_data){
+          this.$nextTick(
+            ()=>{this.after_html=new_data.after_html}
           );
         }
       })

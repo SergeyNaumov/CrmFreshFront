@@ -1,6 +1,7 @@
 <template>
         <div>         
           <template v-if="!field.hide">
+            <div v-if="field.before_html" v-html="field.before_html"></div>
 
             <template v-if="field.subtype=='color'">
               <div class="color_block">
@@ -47,6 +48,7 @@
                 :error-messages="error_message"
                 :rounded="$theme.rounded"
                 hide-details
+                :id="field.name"
               />
               <div class="popup_list" v-if="show_popup_list"> 
                 <div class="close"><a href="" @click.prevent="show_popup_list=false">закрыть</a></div>
@@ -71,18 +73,17 @@
                 </span>
               </template>
             </template>
-
+            <div class="add_description" v-else-if="field.add_description">{{field.add_description}}</div>     
             <div
               class="err" v-if="error_message" v-html="error_message"
             />
             <div
               class="err" v-if="warning_message" v-html="warning_message"
             />
-            <div class="add_description" v-else-if="field.add_description">{{field.add_description}}</div>     
             
             <qr_call v-if="field.subtype=='qr_call'" :value="field.value" :field="field"/>
 
-            
+            <div v-if="after_html" v-html="after_html"></div>
           </template>
       </div>
 </template>
@@ -127,6 +128,7 @@
       current_prefix:'',
       error_message:'',
       warning_message:'',
+      after_html:'',
       go_save:0,
       show_popup_list:false,
       popup_list:[],
@@ -143,6 +145,7 @@
       this.value=this.field.value;  
       this.error=this.field.error
       this.warning_message=this.field.warning_message
+      this.after_html=this.field.after_html
       this.error_message=this.field.error_message
     },
     value(){

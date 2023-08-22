@@ -247,7 +247,7 @@ table.one_to_m tr:nth-child(2n+1) {
     padding: 1rem;
     margin-bottom: 1rem;
   }
-  div.one_to_m .h{color: $primary; font-size: 11pt;}
+  div.one_to_m .h{color: $primary; font-size: 11pt; vertical-align: top;}
   div.one_to_m .controls{position: absolute; right: 1rem; bottom: 0rem; padding-top: 2rem;}
   /*.one_to_m.theme--light.v-card {background-color: #7dd5f857 !important;}*/
   a.create {font-size: 12px;}  

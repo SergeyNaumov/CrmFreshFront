@@ -45,7 +45,7 @@
                                             
                                         </template>
 
-                                        
+
                                         <template v-if="h.type=='text' && h.subtype=='qr_call'">
                                             
                                             <qr_call :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>

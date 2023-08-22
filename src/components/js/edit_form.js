@@ -32,10 +32,12 @@ export function on_dependence(self, name,obj,not_frontend_process){
           f.error=f.error_message?true:false;
         }
 
-        if('warning' in obj){
+        if('warning' in obj)
           f.warning_message=obj.warning;
-        }
-          
+        
+        if('after_html' in obj)
+          f.after_html=obj.after_html 
+        
         bus.$emit('change_field',f,not_frontend_process);
       }
         
@@ -62,6 +64,7 @@ export function change_field(self,field,not_frontend_process){
     self.values[field.name]=v;
     
     bus.$emit('field-update:'+field.name,field);
+    
     calc_values(self);
     if(!not_frontend_process)
       frontend_process(self,field);
@@ -99,11 +102,16 @@ export function save_field_1_to_m(self,data){
 
 export function frontend_result_process(self,result,proc_name){
     if(result){
-      let i=0;      
+      let i=0; 
+
+      
       while(i<result.length){
-        let name=result[i], obj=result[i+1]; 
+        let name=result[i], obj=result[i+1]
+        console.log({obj: obj})
         let dep_field=on_dependence(self,name,obj,(proc_name==name));
-        
+        if(obj.jscode){
+          eval(obj.jscode)
+        }
         i+=2;
       }
     }
@@ -164,9 +172,13 @@ export function frontend_process(self,f){
                       let d=r.data;
                       if(d.success){
                         frontend_result_process(self,d.result,f.name);
+                        //console.log('result_process:',d.result)
                       }
                       if(d.errors.length)
                         alert(d.errors[0])
+                      
+
+                      
                     }
                   ).catch(
                     e=>{

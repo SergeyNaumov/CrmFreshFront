@@ -1,13 +1,14 @@
 <template>
-  <div :class="{'inline':for_slide}">
-    <div >   
+  <div >
+    <div > 
+
       <template v-if="!for_slide">QR-код для звонка: </template>
-      <span v-for="(p,idx) in splitted" :key="`qr-${idx}`"><a href="#"   @click.prevent="draw_qr(p)">{{ p }}</a><template v-if="idx!=splitted.length-1"> | </template></span>
+      <span v-for="(p,idx) in splitted" :key="`qr-${idx}`"><a href="#"   @click.prevent="show_qr==p?(show_qr=false):(draw_qr(p))">{{ format_phone(p) }}</a><template v-if="idx!=splitted.length-1"> | </template></span>
 
     </div>
     <template v-if="show_qr">
-      <div class="qr" :id="id"></div>
-      <a href="" @click.prevent="show_qr=false">скрыть qr код</a>
+      <div class="qr" :id="id" style="width: 100%;"></div>
+      <!--<a href="" @click.prevent="show_qr=false">скрыть qr код</a>-->
     </template>
     <pre v-if="0">
       {{ splitted }}
@@ -74,20 +75,25 @@ export default {
         }
       },
       draw_qr(phone){
-        this.show_qr=true
+        this.show_qr=phone
         setTimeout(
           ()=>{
             let qr_div=document.getElementById(this.id)
         
             qr_div.innerHTML='';
 
-            let qrcode_result=new QRCode(qr_div, `call:${phone}`);
+            let qrcode_result=new QRCode(qr_div, `tel:${phone}`);
+            //let qrcode_result=new QRCode(qr_div, `tel:${this.format_phone(phone)}`);
           },50
         )
 
         
+      },
+      format_phone(phone){
+        return phone.replace(/\+7(\d{3})(\d{3})(\d{2})(\d{2})/,'8($1)$2-$3$4')
       }
-    }
+    },
+
 }
 </script>
 <style scoped>
