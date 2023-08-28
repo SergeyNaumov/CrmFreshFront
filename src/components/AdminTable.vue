@@ -242,7 +242,6 @@ export default {
         if('filter_on' in f && f.filter_on)
           list.push(f)
       }
-      console.log('list:',list)
       this.on_filters=list.sort(
         (a,b)=>{
           return(a.filter_order>b.filter_order)?1:-1

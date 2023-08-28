@@ -151,7 +151,6 @@ export default {
     methods:{
       init_filter(){
         let f=this.field
-        console.log('value:',f.value)
         if('value' in f){
             if(!f.value.length){
                 this.dat_value0='', this.dat_value1=''

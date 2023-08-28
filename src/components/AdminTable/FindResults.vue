@@ -410,7 +410,8 @@ export default {
    color: red;
  }
 .results_wrap{
-  width: 100%;
+  
+  overflow-x: auto;
   /*max-width: 1200px;*/
   margin: 0 auto;
 }
