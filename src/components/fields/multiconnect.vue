@@ -1,5 +1,6 @@
 <template>
     <div class="multiconnect">
+
         <errors :errors="errors"/>
         
         <template>
@@ -15,7 +16,7 @@
                     item-text="header"
                     item-children="child"                   
 
-                    
+                    @change="selected_hash_to_value"
                     v-model="value"
                     dense
                     selectable
@@ -94,6 +95,7 @@
     props:['form','field'],
     watch:{
         value(){ // автосохранение
+            console.log('value:',this.value)
             let field=this.field;
             field.value=this.value;
             //this.change_field(field)
@@ -191,6 +193,7 @@
                 this.selected_hash[v]=true;
         },
         selected_hash_to_value(){
+            console.log('selected_hash_to_value')
             let new_value=[];
             for(let k of Object.keys(this.selected_hash)){
                 if(this.selected_hash[k])
@@ -220,9 +223,9 @@
                         }
                         this.list=D.list;
                         
-                        for(let i in D.value){
+                        /*for(let i in D.value){
                             D.value[i]=D.value[i].toString()
-                        }
+                        }*/
                         
                         this.value=D.value;
                         if(!this.out_tree) // если выводим как список -- инитим хэш включенных
