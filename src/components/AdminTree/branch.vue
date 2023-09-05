@@ -134,7 +134,7 @@
                             :renew="renew"
                             :list="l.childs" :add_to_map="add_to_map"
                             :parent="l"
-                            :add="add" :del="del" :move_end="move_end"
+                            :add="add" :del="del" :move_end="move_end" :get_list="get_list"
                         />
                     </template>
                 </li>
