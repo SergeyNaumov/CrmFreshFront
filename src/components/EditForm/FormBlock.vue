@@ -13,23 +13,30 @@
       </template>
       <div row wrap v-else>
         
-        <v-flex md12 xs12 v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
+          <v-flex md12 xs12 v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
             <!-- FULL_STR -->
-            
               <div class="description_container" v-if="f.description && !is_default_not_description(f)">{{f.description}}:</div>
 
               <template if="dynamic_component(f)">
+              <!--
+                Перенесено в компонент                
                 <template v-if="f.before_html" v-html="f.before_html"></template>
+              -->
+                
                 <component  :is="dynamic_component(f)"
                   :form="form" :field="f"  
                 />
-                <template v-if="f.after_html" v-html="f.after_html"></template>
-              </template>
 
+                
+              </template>
+              <!--
+                Перенесено в компонент
+                <div v-if="f.after_html" v-html="f.after_html"></div>
+              -->
 
               
-        </v-flex>
-        <template v-else>
+          </v-flex>
+          <template v-else>
 
             <!-- NOT_FULL_STR -->
             <v-flex md2 xs12 class="description_container">
@@ -37,6 +44,7 @@
             </v-flex>
             
             <v-flex md10 xs12 class="field_container">
+            
               <template v-if="is_dynamyc_loader(f)">
               
                 <!--
@@ -56,7 +64,7 @@
 
               </template>
             </v-flex>
-        </template>
+          </template>
       </div>
 
       <template v-if="f.type=='save_button' && !form.read_only">

@@ -1,5 +1,10 @@
 <template>
-    <div></div>
+    <div>
+        <div v-html="field.before_html"></div>
+        <div v-html="field.html"></div>
+
+        <div v-html="field.after_html"></div>
+    </div>
 </template>
 <script>
 export default {

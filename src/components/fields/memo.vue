@@ -4,10 +4,11 @@
       <template v-if="id">
             <v-progress-circular indeterminate color="primary" v-if="loading"></v-progress-circular>
             <template v-else>
-              <v-card class="memo"  :class="{'is_in_results':is_in_results}">
-                <div v-if="!data.length">
-                  пусто
-                </div>
+              <div v-if="!data.length">
+                &lt;комментарии отсутствуют&gt;
+              </div>
+              <v-card v-else class="memo"  :class="{'is_in_results':is_in_results}">
+
                 
                 <div v-for="(l,idl) in data" :key="l.idl" class="memo_str">
                     <div v-if="l.edit_on" class="edit_on">

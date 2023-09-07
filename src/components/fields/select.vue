@@ -1,5 +1,6 @@
 <template>
     <div > 
+       
         <!-- tree -->
         <template v-if="!field.hide">
           <template v-if="field.tree_use">
@@ -108,6 +109,7 @@
 
 <script>
 import { bus } from '../../main'
+import { field_update,check_fld } from './field_functions'
 export default {
   
   data:function(){
@@ -151,35 +153,16 @@ export default {
   },
 
   created(){  
+    this._field_update=(new_data)=>{
+      field_update(new_data,this)
+      console.log('new_data:',new_data)
+    };
+
     if(!this.parent){
       
-      bus.$on('field-update:'+this.field.name,new_data=>{
-        if('values' in new_data) this.values=new_data.values;
-        
-        if(this.value !== new_data.value){
-          this.$nextTick(
-            ()=>{this.value=new_data.value}
-          );
-        }
-
-
-        if('error_message' in new_data){
-          this.$nextTick(
-            ()=>{this.error_message=new_data.error_message}
-          );
-        }
-        if('warning_message' in new_data){
-          this.$nextTick(
-            ()=>{this.warning_message=new_data.warning_message}
-          );
-        }
-        if('after_html' in new_data){
-          this.$nextTick(
-            ()=>{this.after_html=new_data.after_html}
-          );
-        }
-      })
+      bus.$on('field-update:'+this.field.name,this._field_update )
     }
+
     this.value=this.field.value.toString(); 
     
     this.values=this.field.values;
@@ -187,7 +170,8 @@ export default {
     for(let v of this.values){
       v.v=v.v.toString()
     }
-    this.change_field();
+    //this.change_field();
+    check_fld(this);
   },
   mounted(){
     

@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app id="EditForm">
         <!-- для вызова попапа извне -->
         <v-dialog v-model="popup.show" max-width="500">
           <v-card>
@@ -72,7 +72,7 @@
                                     <form-block :block_name="block.name" :form="form"  :save="save" :values="values"></form-block>
                                     <v-flex xs12 lg12 text-lg-center>
 
-                                    <v-btn color="primary" v-if="!form.read_only" :disabled="disabled_form" @click="save()">Сохранить</v-btn> 
+                                    <v-btn color="primary" v-if="!form.read_only && !block.not_save_button" :disabled="disabled_form" @click="save()">Сохранить</v-btn> 
                                     </v-flex>
                                 </div>
                                 
@@ -173,7 +173,7 @@ computed:{
     }
     return '';
   },
-  
+
 },
 //props:['params'],
 created(){
@@ -238,6 +238,10 @@ methods: {
 
                         
                         if(data.success){
+                            if(data.redirect){
+                              window.location.href=data.redirect;
+                              return 
+                            }
                             if(data.title){
                               this.title=data.title;
                               document.title=this.title.replace(/<.+?>/g,' ')
@@ -269,8 +273,7 @@ methods: {
 
                             }
                         }
-                        if(data.redirect)
-                          window.location.href=data.redirect;
+
                         if(data.javascript){
                           eval(data.javascript)
                         }
