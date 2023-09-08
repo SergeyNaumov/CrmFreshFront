@@ -29,7 +29,7 @@
                             Счёт был успешно добавлен. <a href="" @click.prevent="success=false;"><b>добавить ещё</b></a>
                         </div>
                         <template v-else>
-                            <v-text-field style="max-width: 100px;" autofocus label="укажите сумму" v-model="new_summ"></v-text-field>
+                            <v-text-field style="max-width: 200px;" autofocus label="укажите сумму" v-model="new_summ"></v-text-field>
                             <a href="" @click.prevent="show_comment=true" v-if="new_summ>0 && !show_comment">нужен комментарий?</a>
                             <v-textarea v-if="show_comment"
 
