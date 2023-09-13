@@ -143,6 +143,10 @@
 </template>
 
 <script>
+import { 
+  get_cgi_params
+} from './js/edit_form.js'
+
 import OnFilters from './AdminTable/OnFilters';
 import FindResults from './AdminTable/FindResults';
 export default {
@@ -287,7 +291,10 @@ export default {
     },
     Init(){
           this.SHOW_FILTERS=true, this.SHOW_FILTERS_on=true, this.SHOW_FILTERS_all=true, this.filters_groups=[];
-          this.$http.get(BackendBase+'/get-filters/'+this.params.config).then(response=>{
+          this.$http.post(
+              BackendBase+'/get-filters/'+this.params.config,
+              {cgi_params: get_cgi_params()}
+          ).then(response=>{
               let D=response.data;
               
               
@@ -453,6 +460,7 @@ export default {
           
           this.SearchDataSet={page:page,query:q};
           let method,url;
+
           this.$http({
             url:BackendBase+'/get-result',
             method:'post',
@@ -460,7 +468,8 @@ export default {
               page: page,
               query: q,
               config: this.params.config,
-              params:params
+              params:params,
+              cgi_params: get_cgi_params()
             }
           })
           .then(r=>{
