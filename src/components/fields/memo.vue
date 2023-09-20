@@ -25,6 +25,7 @@
                     <div v-else class="memo_item">
                         <div class="date" :style="l.style">{{l.date}}</div>
                         <div class="user_name" :style="l.style">{{l.user_name}}:</div>
+
                         <div class="message" v-html="to_html(l.message)"></div>
                         <div v-if=" (field.make_edit || field.make_delete)">
                           <v-icon v-if="field.make_edit" small @click="edit(l,true)">edit</v-icon>
@@ -220,6 +221,9 @@
       },
 
       to_html(txt){
+        if(this.field.show_type=='html'){
+          return txt
+        }
         if(!txt)
           return '';
         txt=txt.replace(/</g,'&lt;');
