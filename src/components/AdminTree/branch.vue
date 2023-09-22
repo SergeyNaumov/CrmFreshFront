@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <v-dialog v-model="dialog_add_form" max-width="500">
             <v-card>
                 <v-card-title  class="headline">Создание нового элемента</v-card-title>

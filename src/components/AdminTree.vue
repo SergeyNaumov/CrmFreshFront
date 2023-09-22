@@ -64,7 +64,13 @@ export default {
   watch:{
     params(){
       console.log('params:',this.params)
+      this.list=[]
+      this.map={}
+      this.parents={}
+      
       this.init();
+      
+
     }
   },
   mounted(){
