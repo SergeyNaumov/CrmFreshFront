@@ -33,7 +33,15 @@
         </template>
         
         <template v-else-if="make_create">
-          <a href="" v-if="!dialog" class="create" @click.prevent="open_new_dialog()">добавить</a>
+          
+          <template v-if="field.link_add">
+            <a :href="link_converter(field.link_add)" target="blank">добавить</a>
+          </template>
+
+          <template v-else>
+            <a href="" v-if="!dialog" class="create" @click.prevent="open_new_dialog()">добавить</a>
+          </template>
+          
           <template v-if="multiload_name">
             | 
             <a href=""  @click.prevent="start_dialog_multiload"> загрузить несколько файлов</a>
@@ -125,6 +133,9 @@
 
   },
   methods: {
+    link_converter(link,id){
+      return link.replace('<%form.id%>',this.form.id).replace('<%id%>',id)
+    },
     set_dialog(d){
       this.dialog=d
     },

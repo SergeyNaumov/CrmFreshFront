@@ -1,35 +1,54 @@
 <template>
-    <div>
+    <div> 
         <template v-if="field.type=='checkbox'">
             <v-checkbox  :label="field.description" :disabled="disabled" color="primary" v-model="value" @change="change_field(field)" hide-details></v-checkbox>
+            
         </template>
         <template v-else-if="field.type=='switch'">
             <v-switch  :label="field.description" color="primary" :disabled="disabled"  v-model="value" @change="change_field(field)" hide-details></v-switch>
         </template>
-
+        
+        <div v-if="after_html" v-html="after_html"></div>
     </div>
 </template>
 
 <script>
   import { bus } from '../../main'
+  import { field_update,check_fld } from './field_functions'
   export default {
     data:function(){
         return {
+            after_html:'',
             value:false
         }
     },
     props:['form','field','parent','refresh'],
     watch:{
         refresh(){ 
-            this.value=parseInt(this.field.value)?true:false
+            this.value=(this.field.value || parseInt(this.field.value))?true:false
+            this.after_html=this.field.after_html
         },
         field(){
-            this.value=parseInt(this.field.value)?true:false
+            this.value=(this.field.value || parseInt(this.field.value))?true:false
+            this.after_html=this.field.after_html
         }
     },
     created(){   
-        this.value=parseInt(this.field.value)?true:false;
+
+        this._field_update=(new_data)=>{
+          field_update(new_data,this)
+        }
+        if(!this.parent){
+          bus.$on('field-update:'+this.field.name,this._field_update )
+        }
+        this.value=(this.field.value || parseInt(this.field.value))?true:false
+        check_fld(this);
         
+    },
+    beforeDestroy(){
+        if(!this.parent){
+           bus.$off('field-update:'+this.field.name,this._field_update)
+        }
     },
     mounted(){
 
@@ -49,6 +68,7 @@
     methods: {
         change_field(f){
             f.value=this.value;
+            this.after_html=this.field.after_html
             if(this.parent){
                 this.parent({value:f.value,error:f.error,name:this.field.name})
             }      

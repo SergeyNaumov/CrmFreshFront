@@ -281,7 +281,14 @@ export default {
           
           for(let f of this.field.fields){
             if(edit_fields[f.name]){
-              let v=edit_fields[f.name].value;
+              let v
+              if(f.type=='checkbox'){
+                v=edit_fields[f.name].value?1:0
+              }
+              else{
+                v=edit_fields[f.name].value;  
+              }
+
               new_values[f.name]=v;
             }
           }

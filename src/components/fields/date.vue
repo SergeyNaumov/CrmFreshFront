@@ -50,6 +50,7 @@
         <div
           class="err" v-if="warning_message" v-html="warning_message"
         />
+        <div v-if="after_html" v-html="after_html"></div>
     </div>
 </template>
 <script>
@@ -72,12 +73,18 @@ export default {
     watch:{
       field(){
         this.value=this.field.value
+        this.after_html=this.field.after_html
       }
     },
     created(){
       this.value=this.field.value;;
-      this._field_update=(new_data)=>{field_update(new_data,this)};
-
+      this._field_update=(new_data)=>{
+        field_update(new_data,this)
+      };
+      if(!this.parent){
+        bus.$on('field-update:'+this.field.name,this._field_update )
+      }
+      
       if(!/[1-9]/.test(this.value) || !/^\d{4}-\d{2}-\d{2}/.test(this.value)){
         this.value=''
       }
@@ -103,6 +110,7 @@ export default {
         //   }
         // })
       }
+      check_fld(this);
     },
     beforeDestroy(){
       if(!this.parent){
@@ -120,6 +128,7 @@ export default {
             menu: false,
             modal: false,
             need_empty:false,
+            after_html:'',
             error_message:'',
             warning_message:''
         }

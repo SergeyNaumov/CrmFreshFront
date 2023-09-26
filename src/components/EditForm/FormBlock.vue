@@ -9,7 +9,7 @@
           <component  :is="dynamic_component(f)"
                   :form="form" :field="f" 
           />
-          <div v-if="f.after_html" v-html="f.after_html"></div>
+          <!--<div v-if="f.after_html" v-html="f.after_html"></div>-->
       </template>
       <div row wrap v-else>
         
@@ -37,15 +37,10 @@
               
           </v-flex>
           <template v-else>
-
-            <!-- NOT_FULL_STR -->
-            <v-flex md2 xs12 class="description_container">
-              {{f.description}}:
-            </v-flex>
-            
-            <v-flex md10 xs12 class="field_container">
-            
-              <template v-if="is_dynamyc_loader(f)">
+            <v-row no-gutters>
+              <v-col cols="12" xs="12" md="2"  >{{f.description}}:</v-col>
+              <v-col cols="12" xs="12" md="10" >
+                <template v-if="is_dynamyc_loader(f)" style="display: inline-block;">
               
                 <!--
                 <dynamic-loader 
@@ -60,10 +55,23 @@
                   :form="form" :field="f" 
                 />
                 
-                <div v-if="f.type=='code' && f.after_html" v-html="f.after_html"></div>
+                <!--<div v-if="f.type=='code' && f.after_html" v-html="f.after_html"></div>-->
 
               </template>
+              </v-col>
+            </v-row>
+            <!-- NOT_FULL_STR -->
+            <!--
+            <v-flex md6 xs12 class="v-col-6description_container">
+              {{f.description}}:
             </v-flex>
+            
+            
+            <v-flex md6 xs12 class="field_container">
+            
+
+            </v-flex>
+            -->
           </template>
       </div>
 
