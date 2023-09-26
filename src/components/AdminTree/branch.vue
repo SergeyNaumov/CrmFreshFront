@@ -180,6 +180,15 @@ export default {
       }
   },
   methods:{
+        init(){
+            this.values={}
+            this.child_count=0
+            this.list=[]
+            this.show_edit_form=0
+            this.shows={0:false}
+
+            this.list=this.get_list(this.parent.id)
+        },
         upload_header(id, new_header='this is new header'){
             for(let l of this.list){
                 if(l.id==id){
@@ -375,7 +384,7 @@ export default {
       }
   },
   created(){
-    this.list=this.get_list(this.parent.id)
+    this.init()
   },
   mounted(){
 
@@ -386,6 +395,9 @@ export default {
         for(let l of this.list){
             l.childs=this.get_list(l.id)
         }
+    },
+    form(){
+        console.log('FORM_RELOAD')
     },
     new_runner(){
           if(this.new_runner){

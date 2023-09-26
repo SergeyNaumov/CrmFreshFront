@@ -1,5 +1,6 @@
 <template>      
     <div>
+      
       <errors :errors="errors" v-if="errors.length"></errors>
       <template v-if="id">
             <v-progress-circular indeterminate color="primary" v-if="loading"></v-progress-circular>
@@ -23,14 +24,15 @@
                     </div>
 
                     <div v-else class="memo_item">
-                        <div class="date" :style="l.style">{{l.date}}</div>
-                        <div class="user_name" :style="l.style">{{l.user_name}}:</div>
-
-                        <div class="message" v-html="to_html(l.message)"></div>
+                      <div>
+                        <span class="date" :style="l.style">{{l.date}}</span>&nbsp;
+                        <span class="user_name" :style="l.style">{{l.user_name}}:</span>&nbsp;
+                        <span class="message" v-html="to_html(l.message)"></span>
                         <div v-if=" (field.make_edit || field.make_delete)">
                           <v-icon v-if="field.make_edit" small @click="edit(l,true)">edit</v-icon>
                           <v-icon v-if="field.make_delete" small @click="del(l,idl)">delete</v-icon> 
                         </div>
+                      </div>
                     </div>
                 </div>
               </v-card>
@@ -267,6 +269,7 @@
   }
   .memo_item .message{
     display: inline-block;
+    width: 100%;
   }
   
   .memo_item {

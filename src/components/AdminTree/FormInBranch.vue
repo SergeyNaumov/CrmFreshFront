@@ -73,6 +73,10 @@ export default {
   methods:{
     init(){
         let t=this
+        t.data_loaded=false
+        t.fields=[]
+        t.values={}
+        
         t.$http.post(
                 `${BackendBase}/edit-form/${t.form.config}/${t.item.id}`,
                 {cgi_params: {}}
@@ -118,6 +122,11 @@ export default {
                 }
             }
         )
+    }
+  },
+  watch:{
+    form(){
+        this.init()
     }
   },
   name:'formInBranch'

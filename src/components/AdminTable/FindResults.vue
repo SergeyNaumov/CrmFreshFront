@@ -146,7 +146,8 @@
                                   </template>
                                   <template v-if="td.type=='datetime'">[datetime]</template>
                                   <template v-if="td.type=='yearmon'">[yearmon]</template>
-                                  <field-memo v-if="td.type=='memo'" :form_id="tr.key" :form="{'config':results.config}"  :field="{'name':td.name}"></field-memo>
+
+                                  <field-memo v-if="td.type=='memo'" :form_id="tr.key" :form="{'config':results.config}"  :field="{'name':td.name,'show_type':td.show_type}"></field-memo>
                                   
                                   <template v-if="td.type=='multiconnect'" >
                                     <template v-if="td.value">
