@@ -88,10 +88,12 @@ export default{
         },
         get_link(item){
             let params={};
+            let UrlPrefix=config.UrlPrefix
+            console.log('UrlPrefix:', UrlPrefix)
             if(item.params)
                 params=item.params;
             if(item.type=='vue'){
-                let UrlPrefix=config.UrlPrefix
+                
                 if(item.value=='mainpage')
                   return UrlPrefix+'/'
                 
@@ -116,7 +118,7 @@ export default{
                   return UrlPrefix+'/vue/table/'+params.config
             }
             if(item.type=='src'){
-              //return '#src:'+item.value+':'+item.id
+              
               if(item.id){
                 return UrlPrefix+'/src:'+item.value
               }

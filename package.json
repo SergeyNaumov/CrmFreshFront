@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/default.config.js vue-cli-service serve --port 8081 --host=localhost",
-    "build": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/default.config.js vue-cli-service build --target app --name index",
-    "build_trade": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/trade.config.js vue-cli-service build  --target app --name index",
-    "build_svcms": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/svcms.config.js vue-cli-service build  --target app --name index",
+    "serve": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service serve --port 8081 --host=localhost",
+    "build": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service build --target app --name index",
+    "build_trade": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/trade.js vue-cli-service build  --target app --name index",
+    "build_svcms": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/svcms.js vue-cli-service build  --target app --name index",
     "lint": "vue-cli-service lint",
     "report": "vue-cli-service build --report"
   },

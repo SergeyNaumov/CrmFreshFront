@@ -1,0 +1,43 @@
+#!/bin/bash
+basedir="/mnt/veresk2/var/www/beyeezy/manager/frontend"
+
+
+
+
+
+
+
+# собираем приложение
+npm run build_svcms
+
+check=${#basedir}
+if [ $check -ge 10 ]
+then
+    echo "basedir ok"
+
+    # ТОЛЬКО при первичном копировании
+    if [ -d "$basedir/dist" ]
+    then
+        echo "skip copy dist (exists)"
+    else
+        #создаём конфиг для фронта
+        echo "var config={BackendBase:'/manager/backend',UrlPrefix:'/manager',TinyMCE_BaseUrl: '/manager/dist/tinymce'}" > "$basedir/configure.js"
+
+        # fontawesome и timymce
+        mkdir -p "$basedir/dist"
+        cp  ./dist/dist/*.css "$basedir/dist"
+        cp  -r ./dist/dist/{fontawesome,tinymce} "$basedir/dist/"
+        cp  -r ./dist/dist/{fontawesome,tinymce,webfonts} "$basedir/dist/"
+        cp  -r ./dist/dist/font.ttf "$basedir/dist/"
+    fi
+
+    # чистим  предыдущие стили и скрипты
+    rm -rf "$basedir/css"
+    rm -rf "$basedir/js"
+    #rm -rf "$basedir/fonts"
+    
+    cp -R dist/{js,css,index.html} "$basedir/"
+else
+    echo "error basedir"
+fi
+
