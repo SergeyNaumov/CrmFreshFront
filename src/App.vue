@@ -17,7 +17,6 @@
             </v-card>
         </v-dialog>
         <v-navigation-drawer v-model="drawer" app >
-          
           <left_menu
             :manager="manager"
             :left_menu="left_menu"
@@ -32,11 +31,11 @@
           
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title >
-            {{title}}
+            {{title}} 
             <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
           </v-toolbar-title>
           
-          
+          <Messenger :manager="manager"/>
         </v-app-bar>
 
         <v-main>
@@ -120,7 +119,7 @@ export default {
           
         }),
         mounted () {
-           //console.log('env:',process.env)
+           //console.log('app_messenger:',Messenger)
         },
         created(){
           

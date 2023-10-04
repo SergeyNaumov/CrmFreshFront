@@ -82,9 +82,8 @@ Vue.component('documentation', ()=> import('./components/Documentation/Documenta
 Vue.component('table_component', ()=> import('./components/Table'));
 Vue.component('VideoList', ()=> import('./components/VideoList/VideoList'));
 Vue.component('Schedule', ()=> import('./components/Schedule/Schedule'));
+Vue.component('Messenger', ()=> import('./components/Messenger/Messenger'));
 Vue.component('field-table', ()=> import('./components/fields/table'));
-
-
 Vue.component('field-accordion', ()=> import('./components/fields/accordion'));
 Vue.component('field-table', ()=> import('./components/fields/table'));
 Vue.component('field-chart', ()=> import('./components/fields/chart'));

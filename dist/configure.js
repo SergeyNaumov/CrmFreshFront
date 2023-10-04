@@ -1,6 +1,8 @@
 var config={
     UrlPrefix:'',
-    //BackendBase:'http://newds.design-b2b.com/manager/backend',
+    
     BackendBase:'http://dev-crm.test/backend',
+    MessengerWS:'ws://localhost:5000/messenger/ws',
+    //MessengerWS:'ws://dev-crm.test/backend/messenger/ws',
     TinyMCE_BaseUrl: '/dist/tinymce'
 }

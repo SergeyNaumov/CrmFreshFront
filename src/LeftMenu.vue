@@ -39,7 +39,7 @@ export default{
             
             let item=e.state
             if(item){
-              console.log('popstate:',e.state)
+              //console.log('popstate:',e.state)
               //this.setMenuItem(item,)
               this.go_link(item,true)
             }
