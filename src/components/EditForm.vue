@@ -235,13 +235,15 @@ methods: {
                         if(data.log)
                             this.log=data.log
                         
+                        if(data.redirect && data.redirect!=location.pathname){
+                          localStorage.setItem('link_prev_login',location.href)
 
-                        
+                          location.href=data.redirect;
+                          return ;
+                        }
+     
                         if(data.success){
-                            if(data.redirect){
-                              window.location.href=data.redirect;
-                              return 
-                            }
+
                             if(data.title){
                               this.title=data.title;
                               document.title=this.title.replace(/<.+?>/g,' ')

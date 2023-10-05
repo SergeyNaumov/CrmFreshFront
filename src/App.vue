@@ -34,8 +34,8 @@
             {{title}} 
             <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
           </v-toolbar-title>
-          
-          <Messenger :manager="manager"/>
+
+          <Messenger v-if="app_components.navigator" :config="app_components.navigator" :manager="manager"/>
         </v-app-bar>
 
         <v-main>
@@ -116,7 +116,7 @@ export default {
           headapp_params:{},
           errors:[],
           manager:{},
-          
+          app_components:{}
         }),
         mounted () {
            //console.log('app_messenger:',Messenger)
@@ -160,6 +160,9 @@ export default {
 
                     if(D.startpage){
                       this.MenuItem=D.startpage
+                    }
+                    if(D.app_components){
+                      this.app_components=D.app_components
                     }
                 }
                 this.$nextTick(()=>{
