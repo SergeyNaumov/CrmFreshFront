@@ -11,12 +11,12 @@
 
         <template v-if="show">
             <div>
-                с печатями: <a :href="load_dog_link('doc')">doc</a> |
-                <a :href="load_dog_link('pdf')">pdf</a>
+                с печатями: <a :href="load_dog_link('doc',1)">doc</a>
+                <!-- | <a :href="load_dog_link('pdf',1)">pdf</a>-->
             </div>
             <div>
-                без печатей: <a :href="load_dog_link('doc',1)">doc</a> |
-                <a :href="load_dog_link('pdf',1)">pdf</a>
+                без печатей: <a :href="load_dog_link('doc',0)">doc</a> |
+                <!-- <a :href="load_dog_link('pdf',0)">pdf</a>-->
             </div>
 
             <v-card class="new_bill" >
@@ -65,11 +65,11 @@
                 
 
                 <div>
-                    с печатями: <a :href="load_bill_link(b,'doc')">doc</a> |
+                    с печатями: <a :href="load_bill_link(b,'doc',1)">doc</a> |
                     <a :href="load_bill_link(b,'pdf')">pdf</a>
                 </div>
                 <div>
-                    без печатей: <a :href="load_bill_link(b,'doc',1)">doc</a> |
+                    без печатей: <a :href="load_bill_link(b,'doc',0)">doc</a> |
                     <a :href="load_bill_link(b,'pdf',1)">pdf</a>
                 </div>
                 <template v-if="parseInt(b.paid)">
@@ -135,11 +135,13 @@
         }
     },
     methods: {
-        load_bill_link(bill,format,without_print){
-            return '/backend/load_document?doc_pack_id='+this.docpack.id+'&bill_id='+bill.id+'&format='+format+'&type=bill'+(without_print?'&without_print=1':'')
+        load_bill_link(bill,format,need_print=0){
+            //return '/backend/load_document?doc_pack_id='+this.docpack.id+'&bill_id='+bill.id+'&format='+format+'&type=bill'+(without_print?'&without_print=1':'')
+            return `${BackendBase}/docpack/load-bill/${this.docpack.id}/${bill.id}/${format}/${need_print}`
         },
-        load_dog_link(format,without_print){
-            return '/backend/load_document?doc_pack_id='+this.docpack.id+'&format='+format+'&type=dogovor'+(without_print?'&without_print=1':'')
+        load_dog_link(format,need_print=0){
+            //return '/backend/load_document?doc_pack_id='+this.docpack.id+'&format='+format+'&type=dogovor'+(without_print?'&without_print=1':'')
+            return `${BackendBase}/docpack/load-dogovor/${this.docpack.id}/${format}/${need_print}`
         },
         load(){
             this.$http.post(
@@ -178,7 +180,9 @@
                     }
                 }
             )
-        }
+        },
+
+
     }
 }
 </script>
