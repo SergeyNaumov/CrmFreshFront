@@ -13,16 +13,18 @@
 				class="message_item" 
 				:class="{your: m.your}"
 			>
-				<div>{{m.body}}</div>
+				
+					<div class="message" v-html="m.body"></div>
+					<div class="time">{{time(m.ts)}}</div>
+
 			</div>
 			<!--<a href="" @click.prevent="load_forward">load_forward ()</a>-->
 		</div>
         <div class="footer">
-          <v-textarea 
-          v-model="new_message"
-          label="Ваше сообщение:"
-          />
-          <v-btn @click.prevent="send_message"><v-icon x-small>far fa-paper-plane</v-icon>&nbsp;отправить</v-btn>
+          <textarea id="chat_window_newmes" v-model="new_message" placeholder="Введите Ваше сообщение (можно отправить нажатием Shift + Enter)"></textarea>
+          <div style="text-align: right; margin-bottom: 10px;">
+          	<v-btn @click.prevent="send_message"><v-icon x-small>far fa-paper-plane</v-icon>&nbsp;отправить</v-btn>
+          </div>
         </div>
 	</div>
 </template>
@@ -47,6 +49,12 @@ export default {
     }),
     mounted(){
       this.init()  
+      this.$el.addEventListener('keydown',this.keylistener)
+      document.querySelector('#chat_window_newmes').focus()
+
+    },
+    destroyed() {
+    	this.$el.removeEventListener('keydown',this.keylistener)
     },
     watch:{
       chat(){
@@ -64,6 +72,14 @@ export default {
     	init(){
     		load_chat(this,scroll_to_bottom)
     	},
+			keylistener(e){
+				const keyCode = e.which || e.keyCode;
+				
+				//console.log(e.key, e.keyCode)
+				if (keyCode === 13 && e.shiftKey) {
+				 	this.send_message()
+				}
+			},
     	load_forward(loopback){ // загрузка "вперёд" (вновь появившихся сообщений)
 
     		load_forward(this, ()=>{
@@ -78,6 +94,9 @@ export default {
     	send_message(){
     		send_message(this, scroll_to_bottom)
     		
+    	},
+    	time(ts){
+    		return ts
     	}
 
     }
@@ -121,26 +140,33 @@ export default {
 		max-height: 350px;
 	}
 	.message_item{
-		
+		padding: 5px;
 		margin-top: 10px;
 		
 		
 		min-height: 30px;
 		text-align: left;
 	}
-	.message_item div{
-		padding: 10px;
+	.message_item{
+		
 
 		background-color: $lighten4;;
 	}
 	.message_item.your{
 		text-align: right;	
-	}
-
-	.message_item.your div{
 		background-color: $lighten5;
 	}
 
+	.message_item.your div{
+		
+	}
+	message_item .message,  message_item .time{
+		padding: 0 !important;
+	}
+	textarea {
+		width: 100%; height: 60px; border: 1px solid gray; margin-bottom: 5px;
+		padding: 5px;
+	}
 	.footer {
 	    position: absolute;
 	    border-top: 1px solid gray;

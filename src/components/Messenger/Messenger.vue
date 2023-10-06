@@ -1,6 +1,10 @@
 <template>
     <div  class="messenger" >
-      
+      <audio id="sms_messenger" muted="muted" 
+         autoplay="">
+        <source :src="MessengerSignal" type="audio/ogg" />
+      </audio>
+
       <a href="" @click.prevent="go_chat_list"> 
         <template v-if="new_messages>0">
           <v-badge :content="new_messages" inline color="error"></v-badge>
@@ -20,7 +24,6 @@
         v-if="show_chat_window"
         :chat="show_chat_window"
         :go_chat_list="go_chat_list"
-
       />      
     </div>
 </template>
@@ -39,13 +42,14 @@ export default {
     data: () => ({
       chat_state:'',
       new_messages: 0,
+      MessengerSignal:config.MessengerSignal,
       show_chat_list: false,
       show_chat_window: false,
       chat_list: [],
       chat_messages: []
     }),
     mounted(){
-      
+      this.init()
     },
     watch:{
       manager(){

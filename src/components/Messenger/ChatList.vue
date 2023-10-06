@@ -12,7 +12,7 @@
         </div>
         <a v-for="c in chat_list" href="" @click.prevent="open_chat(c)" style="width: 100%;">
         		<div  class="chat_item" :class="{'selected': c.new_messages>0}">
-            {{c.name}}
+            {{c.name}} 
             <div class="cnt" >{{c.new_messages}}</div>
         </div>
         </a>
@@ -73,7 +73,7 @@ export default {
     width: 450px;
     max-width: 100%;
     right: 0;
-    top: 0;
+    
     position: absolute;
     background-color: #fff;
     overflow-y: auto;

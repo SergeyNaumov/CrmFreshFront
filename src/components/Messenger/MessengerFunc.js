@@ -1,9 +1,11 @@
 let messenger_app_object=null
 let chat_list_object=null
 let chat_window_object=null
-let ws=null
+let ws, interval, sockets
 
-
+const signal_message=()=>{ // проигать звук 
+	document.getElementById('sms_messenger').play()
+}
 
 // Инициализация вебсокета
 export function init_websocket(manager){
@@ -13,10 +15,11 @@ export function init_websocket(manager){
 	console.log(`ws = new WebSocket('${ws_url}')`)
 	ws = new WebSocket(ws_url)
     ws.onmessage = function(event) {
-    	//console.log('event.data:',event.data)
+    	
     	let res=event.data.match(/chat_id:(\d+):(\d+)/)
     	
     	if(res){
+    		signal_message()
     		//console.log('chat_state:',messenger_app_object.chat_state)
     		let chat_id=res[1]
     		let new_messages=res[2]
@@ -30,7 +33,12 @@ export function init_websocket(manager){
     		if(messenger_app_object.chat_state=='chat_window'){
     			chat_window_object.load_forward(
     				(new_messages)=>{
-    					messenger_app_object.new_messages=new_messages
+    					//if(messenger_app_object.new_messages<new_messages){
+    						messenger_app_object.new_messages=new_messages
+    						// проигрываем звуковой сигнал
+    						
+    					//}
+    					
     				}
     			)
     		}
@@ -40,15 +48,23 @@ export function init_websocket(manager){
 
         messenger_app_object
     };
+    ws.onopen=(e)=>{
+    	console.log('socket open'); 
+    	sockets = true;
+    }
 	ws.onclose = function(e) {  
 	  console.log('socket closed'); 
-	  setTimeout(()=>{
-	   	//init_websocket()	
-	  },1000)
-	  
+	  sockets = false;
 	}
-
-    console.log('connect_ws:',ws)
+	if(!interval){
+    interval = setInterval(()=>{
+    	console.log('sockets:',sockets)
+        if (!sockets) {
+        	console.log('MessengerFunc: websocket reconnect')
+            init_websocket(manager);
+        }
+    }, 5000)
+	}
 }
 export function get_new_messages(t){
 	messenger_app_object=t
