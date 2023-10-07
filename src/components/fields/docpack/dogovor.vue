@@ -11,12 +11,10 @@
 
         <template v-if="show">
             <div>
-                с печатями: <a :href="load_dog_link('doc',1)">doc</a>
-                <!-- | <a :href="load_dog_link('pdf',1)">pdf</a>-->
+                с печатями: <a :href="load_dog_link('doc',1)">doc</a> | <a :href="load_dog_link('pdf',1)">pdf</a>
             </div>
             <div>
-                без печатей: <a :href="load_dog_link('doc',0)">doc</a> |
-                <!-- <a :href="load_dog_link('pdf',0)">pdf</a>-->
+                без печатей: <a :href="load_dog_link('doc',0)">doc</a> | <a :href="load_dog_link('pdf',0)">pdf</a>
             </div>
 
             <v-card class="new_bill" >

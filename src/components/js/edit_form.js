@@ -12,7 +12,6 @@ export function on_dependence(self, name,obj,not_frontend_process){
           f.value=obj.instead_of_empty
           
         if('values' in obj){
-          //console.log({obj_values:obj.values, type:typeof(obj.values) })
           if( typeof(obj.values) == 'object'){
             f.values=obj.values
           }
@@ -107,7 +106,6 @@ export function frontend_result_process(self,result,proc_name){
       
       while(i<result.length){
         let name=result[i], obj=result[i+1]
-        console.log({obj: obj})
         let dep_field=on_dependence(self,name,obj,(proc_name==name));
         if(obj.jscode){
           eval(obj.jscode)

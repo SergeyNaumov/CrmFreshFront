@@ -12,7 +12,11 @@ table.tbl1 td {
     padding: 2px 5px;
 }
 
-
+/*
+.v-input__control {
+    max-width: 800px !important; 
+}
+*/
 @media only screen and (max-width: 1000px) {
     .form_header {margin-bottom: 20px; font-size: 1.5em;}
 }

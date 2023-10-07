@@ -47,15 +47,19 @@
                 </template>
                 
                 <template v-else>  
+                  
                     <template v-if="field.autocomplete">
+
                       <v-autocomplete 
+                          :name="'x'+Math.random()"
+                          autocomplete="false"
                           :label="field.description"
                           v-model="value"
                           :items="values" item-value="v" item-text="d"
                           :search-input.sync="search"
                           :rounded="$theme.rounded"
-                          
-                          no-data-text="не выбрано"
+                          hide-details
+                          no-data-text="Внимание! следует выбрать значение из списка, иначе оно не будет сохранено"
                           cache-items
                           clearable
                       /> <!--:disabled="!!field.read_only || !!form.read_only"-->
@@ -64,8 +68,10 @@
 
                       <!-- not colored (p) select -->
                       <template v-if="values.length>15">
+                        
                       <v-autocomplete 
                           
+
                           :label="field.description"
                           v-model="value"
                           :items="values" item-value="v" item-text="d"
@@ -128,6 +134,20 @@ export default {
         value(){
           //console.log('v:',this.value)
           this.field.value=this.value
+          // этот костыль нужен для того, чтобы можно было поменять значение извне
+
+          
+          // this.display=false
+          setTimeout(
+            ()=>{
+              
+                  let s = this.get_search_from_values()
+                  if(s){
+                    this.search=s 
+                  }                
+              
+            },200
+          )
           if(this.parent){
             this.parent(this.field)
           }
@@ -155,7 +175,7 @@ export default {
   created(){  
     this._field_update=(new_data)=>{
       field_update(new_data,this)
-      console.log('new_data:',new_data)
+      
     };
 
     if(!this.parent){
@@ -188,7 +208,12 @@ export default {
   methods: {
     load_autocomplete(search){
       if(this.field.autocomplete){
-
+        
+        if(this.search==this.get_search_from_values()){ // если в списке есть искомое значение, то сервер не дёргаем
+          console.log('load_autocomplete / break ajax',this.search,this.get_search_from_values())
+          return
+        }
+        
         let field_name=this.name_parent_field?`${this.name_parent_field}.${this.field.name}`:this.field.name
         this.$http.post(
           BackendBase+'/autocomplete/'+this.form.config,
@@ -210,6 +235,23 @@ export default {
           }
         )
       }
+    },
+    get_search_from_values(){
+      if(!this.value){
+        return ''
+      }
+      if(this.values.length){
+        for(let v of this.values){
+          //console.log('v:',v, this.value, (v==this.value) )
+          if(v.v==this.value) {
+            return v.d
+            break
+
+          }
+        }
+        return ''        
+      }
+
     },
 
     change_field(field){
