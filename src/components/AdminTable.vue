@@ -80,7 +80,7 @@
                           </div>
    
                 </v-flex>
-                
+
                   <on-filters :filters="filters"
                     :config="params.config"
                     :go_search="go_search"
@@ -385,7 +385,8 @@ export default {
       let q=[];
       for(let f of this.on_filters){
           if(f.range)
-            q.push([f.name,[f.value_low,f.value_hi]]);
+            //q.push([f.name,[f.value_low,f.value_hi]]);
+            q.push([f.name,this.filters_values[f.name] ]);
           else{
             if(f.type=='memo')
               q.push([f.name,{registered_low:f.registered_low, registered_hi: f.registered_hi,message: f.message, user_id: f.user_id}])
@@ -397,6 +398,7 @@ export default {
     },
     go_search_plugin(plugin_name,params){
       let q=this.get_query();
+
       if(!params) params={}
       //this.finding=false;
       this.$http.post(
@@ -452,6 +454,8 @@ export default {
           this.SHOW_FILTERS_on=false;
           
           let q=this.get_query();
+
+
           if(!params) params={}
           
           this.errors_find=[];
