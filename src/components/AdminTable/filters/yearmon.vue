@@ -139,6 +139,7 @@ export default {
                 }
                 field.value_low=this.value2[0]
                 field.value_hi=this.value2[1]
+                field[value]=this.value
                 this.filter_change(field);
             }
             else{

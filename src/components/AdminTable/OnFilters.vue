@@ -34,6 +34,7 @@
   </v-flex>
 </template>
 <script>
+/*
 import FilterText from './filters/text.vue';
 import FilterInExtUrl from './filters/in_ext_url.vue';
 import FilterSelect from './filters/select.vue';
@@ -44,8 +45,10 @@ import FilterDateTime from './filters/datetime.vue';
 import FilterMulticonnect from './filters/multiconnect.vue';
 import FilterYearMon from './filters/yearmon.vue'
 import FilterFile from './filters/file.vue';
+*/
 export default {
   components:{
+/*
     'filter-text':FilterText,
     'filter-select':FilterSelect,
     'filter-date':FilterDate,
@@ -56,6 +59,7 @@ export default {
     'filter-multiconnect':FilterMulticonnect,
     'filter-in_ext_url':FilterInExtUrl,
     'filter-file':FilterFile
+*/
   },
   props:[
     'config','filters','on_filters','filter_change', 'SHOW_FILTERS_on', 'toggle_filters','ORDER',

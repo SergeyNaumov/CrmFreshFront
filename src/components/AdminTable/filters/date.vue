@@ -3,7 +3,7 @@
         
         <div class="description">{{field.description}}:</div>
         <template v-if="field.range">
-            
+            range
             <v-layout row wrap>
                 <v-flex pl-3 md6 xs12 >
                     <v-menu
@@ -76,6 +76,36 @@
         </template>
         <template v-else>
 
+                    <v-menu
+                        v-model="menu[0]"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        readonly
+                        min-width="290px"
+                    >
+                        <!-- v-model="dat_value0" -->
+                        <template v-slot:activator="{ on }">
+                         <v-text-field
+                            
+                            v-model="show_dat_value0"
+                            :label="field.description"
+                            prepend-icon="event"
+                            readonly
+                            clearable
+                            
+                            v-on="on"
+                            style="max-width: 250px;"
+                        ></v-text-field>
+                        
+                        
+                        </template>
+                        <v-date-picker
+                        first-day-of-week="1" 
+                        locale="ru-Ru"
+                        v-model="dat_value0" @input="select_cal(0)" />
+                    </v-menu>
         </template>
     </div>
 </template>
@@ -138,12 +168,26 @@ export default {
         dat_value0(){
             let filter=this.field;
             filter.value_low=this.dat_value0;
+            //filter.value=[filter.value_low,filter.value_hi]
+            if(filter.range){
+                filter.value=[filter.value_low,filter.value_hi]
+            }
+            else{
+                filter.value=filter.value_low
+            }
             this.filter_change(filter)
             this.show_dat_value0=this.dat_value0.split('-').reverse().join('.')
         },
         dat_value1(){
             let filter=this.field;
             filter.value_hi=this.dat_value1;
+            if(filter.range){
+                filter.value=[filter.value_low,filter.value_hi]
+            }
+            else{
+                filter.value=filter.value_low
+            }
+            
             this.filter_change(filter)
             this.show_dat_value1=this.dat_value1.split('-').reverse().join('.')
         },

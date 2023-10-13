@@ -207,7 +207,7 @@ export default {
   },
   watch:{
     params(v){
-      console.log('params:',v)
+      //console.log('params:',v)
       if(v.config){
         this.Init()
       }
@@ -384,9 +384,13 @@ export default {
     get_query(){
       let q=[];
       for(let f of this.on_filters){
-          if(f.range)
-            //q.push([f.name,[f.value_low,f.value_hi]]);
-            q.push([f.name,this.filters_values[f.name] ]);
+          if(f.range){
+            //console.log('1:',[f.value_low,f.value_hi])
+
+            q.push([f.name,[f.value_low,f.value_hi]]);
+            //console.log('2:',this.filters_values[f.name])
+            //q.push([f.name,this.filters_values[f.name] ]);
+          }
           else{
             if(f.type=='memo')
               q.push([f.name,{registered_low:f.registered_low, registered_hi: f.registered_hi,message: f.message, user_id: f.user_id}])
@@ -506,7 +510,8 @@ export default {
     filter_change(filter){
       for(let f of this.on_filters){
         if(f.name==filter.name){
-          f=filter; break;
+          f.value=filter.value
+          break
         }
       }
     },

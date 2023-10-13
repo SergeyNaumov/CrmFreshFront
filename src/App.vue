@@ -73,12 +73,18 @@
 </template>
 
 <script>
-
+let self=null
 const menu_params_parse=list=>{
   for(let m of list){
   
       if(m.params && typeof(m.params)=='string'){
+        try {
           m.params=JSON.parse(m.params)
+        }
+        catch(error){
+          let err_str=`ошибка при парсинге параметров в пункте меню ${m.header} (${m.params})`
+          self.errors.push(err_str)
+        }
       }
       if(m.child.length){
         m.child=menu_params_parse(m.child)
@@ -123,7 +129,9 @@ export default {
         },
         created(){
           
-          let self=this
+          //let 
+          self=this
+          
           window.app=this
           get_headapp(self)
           window.onhashchange=e=>{

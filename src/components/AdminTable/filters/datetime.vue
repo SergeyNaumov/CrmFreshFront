@@ -152,7 +152,7 @@ export default {
             this.field.value_hi=this.dat_value1+' '+this.time_value1+':59'
             filter.value_hi=this.field.value_hi
         }
-        //console.log({filter: filter})
+        filter.value=[filter.value_low, filter.value_hi]
         this.filter_change(filter)
         let values=[]; 
         

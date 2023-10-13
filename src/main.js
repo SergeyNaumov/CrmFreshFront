@@ -4,7 +4,7 @@ import App from './App.vue'
 import '@mdi/font/css/materialdesignicons.css';
 import Vuetify from 'vuetify/lib'
 import colors from 'vuetify/lib/util/colors'
-
+import { dynamic_component_loader } from './dynamic_component_loader.js'
 
 let color_scheme='blue'; // цветовую гамму меняем тут
 import '@/styles/colors/blue2.scss'; // и тут
@@ -64,36 +64,13 @@ Vue.config.productionTip = false
 import draggable from "vuedraggable";
 Vue.component('draggable',draggable);
 
-//import Login from './components/Login.vue';
-//Vue.component('login',Login);
-Vue.component('login',()=> import('./components/Login.vue'));
-Vue.component('register',()=> import('./components/Register.vue'));
-Vue.component('remember',()=> import('./components/Remember.vue'));
-Vue.component('const', ()=> import('./components/Const.vue'));
 
-
-//import EditForm from './components/EditForm.vue';
-//Vue.component('edit-form',EditForm);
-Vue.component('edit-form', ()=> import('./components/EditForm'));
-Vue.component('admin-tree', ()=> import('./components/AdminTree'));
-Vue.component('admin-table', ()=> import('./components/AdminTable'));
-Vue.component('parser-excel', ()=> import('./components/ParserExcel'));
-Vue.component('documentation', ()=> import('./components/Documentation/Documentation'));
-Vue.component('table_component', ()=> import('./components/Table'));
-Vue.component('VideoList', ()=> import('./components/VideoList/VideoList'));
-Vue.component('Schedule', ()=> import('./components/Schedule/Schedule'));
-Vue.component('Messenger', ()=> import('./components/Messenger/Messenger'));
-Vue.component('field-table', ()=> import('./components/fields/table'));
-Vue.component('field-accordion', ()=> import('./components/fields/accordion'));
-Vue.component('field-table', ()=> import('./components/fields/table'));
-Vue.component('field-chart', ()=> import('./components/fields/chart'));
-Vue.component('field-time_table', ()=> import('./components/fields/time_table'));
+dynamic_component_loader(Vue)
 
 import FormBlock from './components/EditForm/FormBlock';
 Vue.component('form-block',FormBlock);
 
-/*import DynamicLoader from './components/EditForm/DynamicLoader';
-Vue.component('dynamic-loader',DynamicLoader);*/
+
 
 
 import TextField from './components/fields/text';
@@ -104,8 +81,8 @@ Vue.component('field-text',TextField);
 import InExtUrlField from './components/fields/in_ext_url';
 Vue.component('field-in_ext_url',InExtUrlField);
 
-import CheckboxField from './components/fields/checkbox';
-Vue.component('field-checkbox',CheckboxField);
+//import CheckboxField from './components/fields/checkbox';
+//veVue.component('field-checkbox',CheckboxField);
 
 import SelectField from './components/fields/select';
 Vue.component('field-select',SelectField);
@@ -125,27 +102,19 @@ Vue.component('field-yearmon',YearMonField);
 import DayMonField from './components/fields/daymon';
 Vue.component('field-daymon',DayMonField);
 
-import FontAwesome from './components/fields/font-awesome';
-Vue.component('field-font-awesome',FontAwesome);
 
 
-Vue.component('field-memo',() => import('./components/fields/memo'));
-Vue.component('field-1_to_m',() => import('./components/fields/1_to_m'));
-Vue.component('field-docpack',() => import('./components/fields/docpack'));
 
 
-import Multiconnect from './components/fields/multiconnect';
-Vue.component('field-multiconnect',Multiconnect);
 
 
-import Code from './components/fields/code';
-Vue.component('field-code',Code);
 
 
-Vue.component('field-file',()=>import('./components/fields/file'))
 
 
-Vue.component('field-wysiwyg',() => import('./components/fields/wysiwyg'))
+
+
+
 
 
 // FIELDS END

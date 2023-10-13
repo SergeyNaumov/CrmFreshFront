@@ -89,7 +89,7 @@ export default{
         get_link(item){
             let params={};
             let UrlPrefix=config.UrlPrefix
-            console.log('UrlPrefix:', UrlPrefix)
+            
             if(item.params)
                 params=item.params;
             if(item.type=='vue'){
@@ -105,7 +105,9 @@ export default{
                 
                 if(item.value=='VideoList')
                   return UrlPrefix+'/vue/video_list/'+params.config
-
+                if(item.value=='stat-tool'){
+                  return UrlPrefix+'/vue/stat-tool/'+params.config
+                }
                 if(item.value=='admin-table')
                   return UrlPrefix+'/vue/admin_table/'+params.config
                 if(item.value=='admin-tree')

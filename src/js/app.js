@@ -105,6 +105,11 @@ export const get_headapp=s=>{
             headapp='remember'
             headapp_params={};
         }
+        else if(/^\/stat-tool\/([^\/]+)$/.test(url)){ // parser-excel
+            let arr=url.match(/^\/stat-tool\/([^\/]+)$/);
+            headapp='stat-tool';
+            headapp_params={config:arr[1]};
+        }
         else if(/^\/parser-excel\/([^\/]+)$/.test(url)){ // parser-excel
             let arr=url.match(/^\/parser-excel\/([^\/]+)$/);
             headapp='parser-excel';
