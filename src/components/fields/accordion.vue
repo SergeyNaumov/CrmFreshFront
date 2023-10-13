@@ -13,27 +13,35 @@
                 
                 
                 <v-expansion-panel-content>
-                    <v-container>
-                      <v-row>
-                      <template v-for="(c,idx) in item.content" >
-                        
-                        
-                        <v-col cols="12" md="12" sm="12" v-if="c.type=='html'" v-html="c.body"/>
-                        
-                        
-                        <v-col v-else-if="c.type=='table'" cols="12" sm="12" md="6">
-                          <field-table :field="c"/>
-                        </v-col>
-                        <v-col v-else-if="c.type=='chart'" xs="12" sm="12" md="6" cols="12">
-                          <field-chart :field="c" />
-                        </v-col>
-                        
-                          
-                        
+                    <template v-if="item.not_container">
 
-                      </template>
-                      </v-row>
-                    </v-container>
+                        <div v-for="(c,idx) in item.content" v-if="c.type=='html'" v-html="c.body"/>
+                        
+                    </template>
+                    <template v-else>
+                        <v-container>
+                          <v-row>
+                          <template v-for="(c,idx) in item.content" >
+                            
+                            
+                            <v-col cols="12" md="12" sm="12" v-if="c.type=='html'" v-html="c.body"/>
+                            
+                            
+                            <v-col v-else-if="c.type=='table'" cols="12" sm="12" md="6">
+                              <field-table :field="c"/>
+                            </v-col>
+                            <v-col v-else-if="c.type=='chart'" xs="12" sm="12" md="6" cols="12">
+                              <field-chart :field="c" />
+                            </v-col>
+                            
+                              
+                            
+
+                          </template>
+                          </v-row>
+                        </v-container>                        
+                    </template>
+
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -41,6 +49,7 @@
 </template>
 <script>
 export default {
+    /* Важно! Чтобы данный компонент мог работать без form*/
     props:['form','field'],
 
     mounted(){

@@ -199,12 +199,18 @@ export default {
             if(!f.value.length){
                 this.dat_value0='', this.dat_value1=''
             }
-            if(f.value.length>0){
-                this.dat_value0=f.value[0]
+            if(this.range){
+                if(f.value.length>0){
+                    this.dat_value0=f.value[0]
+                }
+                if(f.value.length>1){
+                    this.dat_value1=f.value[1]
+                }                
             }
-            if(f.value.length>1){
-                this.dat_value1=f.value[1]
+            else{
+                this.dat_value0=f.value
             }
+
         }
       },
       select_cal(idx){

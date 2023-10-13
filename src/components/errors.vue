@@ -2,7 +2,7 @@
       
     <div>
         <template v-if="errors.length>0">
-            <div class="err" v-for="e in errors" :key="e" v-html="e"></div>
+            <div class="err" v-for="e in errors" :key="e" >{{e}}</div> <!--v-html="e"-->
         </template>
     </div>
 </template>
