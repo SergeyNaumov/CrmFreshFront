@@ -31,7 +31,7 @@
           
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title >
-            {{title}} 
+            <a href="/"><v-icon small>fa fa-home</v-icon>&nbsp; {{title}}</a>
             <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
           </v-toolbar-title>
 
@@ -137,10 +137,6 @@ export default {
           window.onhashchange=e=>{
             get_headapp(self);
           }
-
-
-          
-
           
           if(!this.headapp){
             this.$http.get(BackendBase+'/startpage').then(
@@ -306,8 +302,9 @@ export default {
 
   h1 {color: $primary;}
   h2 {color: $primary;}
-  .v-toolbar__title {font-size: 1rem; color: $text_on_primary; font-weight: bold;}
-  
+  .v-toolbar__title {font-size: 1rem; color: $text_on_primary; font-weight: bold; vertical-align: bottom;}
+  header .v-toolbar__title .v-icon {color: #fff; position: relative; top: -2px; margin-right: 10px;}
+  header .v-toolbar__title a {color: #fff; text-decoration: none;}
   .not_underline {text-decoration: none;}
 
   

@@ -11,15 +11,20 @@
           <filter-date :field="f" :filter_change="filter_change" v-if="f.type=='date'"/>
 
       </div>
-      <v-btn @click.prevent="search()">найти</v-btn>
-      <div class="results" v-if="list.length">
-        <pre v-if="0">
-          {{list}}
-        </pre>
-        <div v-for="d in list">
-          <field-accordion :field="d"/>
+      <v-btn @click.prevent="search()">найти</v-btn>      
+        <div class="results" v-if="show_results">
+            <template v-if="list.length">
+              <div v-for="d in list">
+                <field-accordion :field="d"/>
+              </div>
+            </template>
+            <template v-else>
+              
+              <p>ничего не найдено</p>
+            </template>
         </div>
-      </div>
+
+      
     </div>
 </template>
 <script>
@@ -40,6 +45,7 @@ export default {
 
     },
     data: () => ({
+     show_results: false,
      title:'',
      filters_hash:{},
      filters:[], // фильтры для поиска
@@ -84,8 +90,8 @@ export default {
       },
       filter_change(filter){
         this.filters_hash[filter.name]=filter.value
-        console.log(filter.value)
-        console.log(this.filters_hash)
+        //console.log(filter.value)
+        //console.log(this.filters_hash)
       },
       search(){ // поиск
           t.$http.post(`${BackendBase}/stat-tool/${t.params.config}/search`,
@@ -98,7 +104,7 @@ export default {
           r=>{
             let d=r.data
             if(d.success){
-              t.list=d.list
+              t.list=d.list, t.show_results=true
             }
             t.errors=d.errors
           }

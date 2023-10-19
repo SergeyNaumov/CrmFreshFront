@@ -4,8 +4,16 @@
         <div class="cur_profile">
           <div style="display: inline-block; min-width: 165px;">
             <v-avatar size=24><v-icon small color="primary">fa-user-edit</v-icon></v-avatar>
-            <!--<a :href="manager.link" target="_blank">{{manager.login}}</a>-->
-            <span class="manager_login">{{manager.login}}</span>
+            <template v-if="manager.out_manager_card_link">
+                <a :href="manager.link" target="_blank">{{manager.login}}</a>
+
+                <small class="manager_login" v-if="manager.role_login">&nbsp;(роль: {{manager.role_login}})</small>
+            </template>
+            <template v-else>
+              <span class="manager_login">{{manager.login}}</span>
+            </template>
+            
+            
           </div>
           <v-btn class="logout" @click.prevent="logout()" small>выйти</v-btn>
           
@@ -17,6 +25,7 @@
             :get_link="get_link"
             :go_link="go_link"
             :manager="manager"
+            :key="m.id"
           />
         </div>
 

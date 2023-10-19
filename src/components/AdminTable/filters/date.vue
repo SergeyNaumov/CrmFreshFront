@@ -3,7 +3,6 @@
         
         <div class="description">{{field.description}}:</div>
         <template v-if="field.range">
-            range
             <v-layout row wrap>
                 <v-flex pl-3 md6 xs12 >
                     <v-menu
@@ -176,6 +175,7 @@ export default {
                 filter.value=filter.value_low
             }
             this.filter_change(filter)
+            //console.log('v0:',this.dat_value0)
             this.show_dat_value0=this.dat_value0.split('-').reverse().join('.')
         },
         dat_value1(){
@@ -196,10 +196,14 @@ export default {
       init_filter(){
         let f=this.field
         if('value' in f){
+            if(f.name=='born'){
+                console.log(f.name, 'v:',f.value, 'typeof:',typeof(f.value))    
+            }
+            
             if(!f.value.length){
                 this.dat_value0='', this.dat_value1=''
             }
-            if(this.range){
+            if(typeof(f.value) == 'object'){ // this.range
                 if(f.value.length>0){
                     this.dat_value0=f.value[0]
                 }
@@ -210,6 +214,7 @@ export default {
             else{
                 this.dat_value0=f.value
             }
+            console.log(`this.dat_value0: ${this.dat_value0} this.dat_value1: ${this.dat_value0}`)
 
         }
       },
