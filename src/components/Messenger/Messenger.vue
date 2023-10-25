@@ -75,7 +75,7 @@ export default {
     methods: {
       init(){
         console.log('init Messenger')
-        init_websocket(this.manager)
+        init_websocket(this)
         get_new_messages(this)
 
       },

@@ -110,6 +110,11 @@ export const get_headapp=s=>{
             headapp='stat-tool';
             headapp_params={config:arr[1]};
         }
+        else if(/^\/memo-aggregate\/([^\/]+)$/.test(url)){ // parser-excel
+            let arr=url.match(/^\/memo-aggregate\/([^\/]+)$/);
+            headapp='memo-aggregate';
+            headapp_params={config:arr[1]};
+        }
         else if(/^\/parser-excel\/([^\/]+)$/.test(url)){ // parser-excel
             let arr=url.match(/^\/parser-excel\/([^\/]+)$/);
             headapp='parser-excel';

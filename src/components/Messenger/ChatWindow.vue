@@ -14,7 +14,7 @@
 				:class="{your: m.your}"
 			>
 				
-					<div class="message" v-html="m.body"></div>
+					<div class="message" v-html="load_body(m.body)"></div>
 					<div class="time">{{time(m.ts)}}</div>
 
 			</div>
@@ -90,6 +90,10 @@ export default {
     	},
     	load_back(){ // загрузка "назад" (старых сообщений)
 
+    	},
+    	load_body(body){
+    		body=body.replace(/\[img:(\/files.+?)\]/,`<img src="$1">`)
+    		return body
     	},
     	send_message(){
     		send_message(this, scroll_to_bottom)

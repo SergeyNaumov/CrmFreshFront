@@ -1,5 +1,5 @@
 <template>
-  <v-flex xs12 sm12 md7 lg7 offset-lg1 offset-md1  class="mb-2" >
+  <v-flex xs12 sm12 md7 lg7 offset-lg1 offset-md1  class="mb-2" id="on_filters">
 
     <v-card >
 
@@ -63,7 +63,7 @@ export default {
   },
   props:[
     'config','filters','on_filters','filter_change', 'SHOW_FILTERS_on', 'toggle_filters','ORDER',
-    'filters_values'
+    'filters_values','go_search'
   ],
   data () {
     return {
@@ -76,6 +76,20 @@ export default {
   },
   created(){
     this.filter_list=this.on_filters
+    setTimeout(
+        ()=>{
+            document.querySelector('#on_filters').addEventListener('keydown', e=>{
+              if (e.keyCode === 13) {
+                // можете делать все что угодно со значением текстового поля
+                console.log('press enter in on_filters');
+                this.go_search(1)
+              }
+            });
+        },
+        100
+    )
+
+
   },
   watch:{
     config(){

@@ -81,4 +81,6 @@ export default {
     table.tbl td {border: 1px solid black; padding: 2px 5px;}
     .header_link {padding-left: 50px; display: block !important;}
     .header_links_block :last-child {margin-bottom: 20px !important;}
+
+
 </style>

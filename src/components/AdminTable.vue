@@ -99,6 +99,7 @@
                 
             
             <v-flex md12 class="mt-1" >
+                <input type="text" name="">
                 <!-- [loading...] -->
                 <v-progress-linear
                   color="primary"

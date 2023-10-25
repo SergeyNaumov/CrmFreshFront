@@ -24,8 +24,9 @@
               
         </template>
         <template v-else>
+
             <v-text-field 
-                  v-bind:label="field.description"
+                  :label="field.description"
                   v-model="field.value"
                   class="input-group--focused"
                   clearable

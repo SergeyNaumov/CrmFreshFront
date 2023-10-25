@@ -9,9 +9,20 @@
 
       <div v-for="f in filters">
           <filter-date :field="f" :filter_change="filter_change" v-if="f.type=='date'"/>
+          <filter-select :field="f" :filter_change="filter_change" v-if="f.type=='select'"/>
 
       </div>
-      <v-btn @click.prevent="search()">найти</v-btn>      
+      <v-btn @click.prevent="search()">найти</v-btn>
+      <v-progress-linear
+        color="primary"
+        indeterminate
+        rounded
+        height="6"
+        v-if="finding"
+      />
+      <div style="border: 1px solid gray; margin: 10px; padding: 10px;" v-if="log_search.length">
+        <pre >{{log_search}}</pre>
+      </div>
         <div class="results" v-if="show_results">
             <template v-if="list.length">
               <div v-for="d in list">
@@ -38,6 +49,7 @@ let t
 import { 
   get_cgi_params
 } from '../js/edit_form.js'
+
 export default {  
     props:['params','is_headapp','manager'],
     components:{
@@ -50,14 +62,18 @@ export default {
      filters_hash:{},
      filters:[], // фильтры для поиска
      list:[], // список вывода
-     errors:[]
+     errors:[],
+     log_search:[],
+     finding:false,
     }),
     mounted(){
       this.init()
     },
     watch:{
      
-      
+      params(){
+        this.init()
+      }
 
     },
 
@@ -94,23 +110,36 @@ export default {
         //console.log(this.filters_hash)
       },
       search(){ // поиск
-          t.$http.post(`${BackendBase}/stat-tool/${t.params.config}/search`,
+          this.finding=true
+          let query=[] // query совместимо с поиском в admin_table
+
+          for(let f of this.filters){
+            let values=t.filters_hash[f.name] || ''
+
+
+            query.push([f.name, values ])
+          }
+          t.$http.post(`${BackendBase}/stat-tool/${t.params.config.replace(/\?.*$/,'')}/search`,
           {
             
             cgi_params: get_cgi_params(),
-            filters: t.filters_hash
+            query: query, // query совместимо с поиском в admin_table
+            filters: t.filters_hash, // передаём на случай если удобнее будет работать с ним (опционально)
           }
         ).then(
           r=>{
             let d=r.data
             if(d.success){
               t.list=d.list, t.show_results=true
+              t.log_search=d.log
             }
             t.errors=d.errors
+            this.finding=false
           }
         ).catch(
           e=>{
             t.errors=[`ошибка при поиске: ${e}`]
+            this.finding=false
           }
         )
       }
