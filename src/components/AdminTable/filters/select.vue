@@ -50,7 +50,7 @@
                     :label="field.description"
                     v-model="value"
                     :items="values" item-value="v" item-text="d"
-                    multiple chips
+                    :multiple="!field.not_multiple" chips
                     :no-data-text="no_data_text"
                     cache-items
                     clearable

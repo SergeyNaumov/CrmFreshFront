@@ -92,7 +92,7 @@ export default {
 
     	},
     	load_body(body){
-    		body=body.replace(/\[img:(\/files.+?)\]/,`<img src="$1">`)
+    		body=body.replace(/\[img:(\/files.+?)\]/,`<a href="$1" target="_blank"><img src="$1" style="border-style:none;width: auto;max-width:100%;display:block;margin-bottom:20px;"></a>`)
     		return body
     	},
     	send_message(){
@@ -114,7 +114,7 @@ export default {
 	    text-align: left;
 
 	   	height: 600px;
-	    width: 500px;
+	    width: 800px;
 	    max-width: 100%;
 	    
 	    border-radius: 5px;
@@ -124,6 +124,7 @@ export default {
 	    right: 0;
 	    font-size: 10pt;
 	}
+
 	.back {margin-left: 10px;}
 	.header {
 	    padding: 5px;
@@ -164,9 +165,10 @@ export default {
 	.message_item.your div{
 		
 	}
-	message_item .message,  message_item .time{
+	.message_item .message,  message_item .time{
 		padding: 0 !important;
 	}
+
 	textarea {
 		width: 100%; height: 60px; border: 1px solid gray; margin-bottom: 5px;
 		padding: 5px;

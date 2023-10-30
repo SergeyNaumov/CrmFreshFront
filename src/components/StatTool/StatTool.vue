@@ -10,6 +10,9 @@
       <div v-for="f in filters">
           <filter-date :field="f" :filter_change="filter_change" v-if="f.type=='date'"/>
           <filter-select :field="f" :filter_change="filter_change" v-if="f.type=='select'"/>
+          <filter-text :field="f" :filter_change="filter_change"
+            :config="params.config"
+            v-if="f.type=='text'"/>
 
       </div>
       <v-btn @click.prevent="search()">найти</v-btn>
@@ -26,7 +29,10 @@
         <div class="results" v-if="show_results">
             <template v-if="list.length">
               <div v-for="d in list">
-                <field-accordion :field="d"/>
+                <field-accordion v-if="d.type=='accordion'" :field="d"/>
+                <div v-if="d.type=='html'" v-html="d.body"></div>
+
+
               </div>
             </template>
             <template v-else>
@@ -131,7 +137,10 @@ export default {
             let d=r.data
             if(d.success){
               t.list=d.list, t.show_results=true
-              t.log_search=d.log
+              if(d.log){
+                t.log_search=d.log
+              }
+
             }
             t.errors=d.errors
             this.finding=false

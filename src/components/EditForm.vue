@@ -57,7 +57,9 @@
                     <form autocomplete="off">
                     <v-layout row wrap>
                         <template v-if="cols.length"> <!-- Колонки, блоки -->
-                            <v-flex pl-3 md6 xs12 v-for="c in cols" :key="c.idx">
+                          <!--  -->
+                            <v-flex pl-3 :class="'md'+12/Math.floor(cols.length)" xs12 v-for="c in cols" :key="c.idx">
+
                             <v-card class="block" v-for="block in c" :key="block.name">
                                 <v-toolbar color="primary" dark height="35px" @click="block.hide=!block.hide">
                                     <v-toolbar-title >
