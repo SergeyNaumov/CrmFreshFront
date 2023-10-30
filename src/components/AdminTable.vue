@@ -312,7 +312,7 @@ export default {
                   // преобразования
                   for(let f of D.filters){
                     if( (f.type=='checkbox' || f.type=='switch') && !f.values){ // чекбокс -- это select с вариантами "да / нет"
-                      f.values=[{v:1,d:"Да"},{v:0,d:"Нет"}];
+                      f.values=[{v:'',d:"Не использовать фильтр"},{v:1,d:"Да"},{v:'0',d:"Нет"}];
                       f.type='select'; f.not_multiple=true;
                       if(!f.value)
                         f.value=[];
