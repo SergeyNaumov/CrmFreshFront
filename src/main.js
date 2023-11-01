@@ -84,8 +84,7 @@ Vue.component('field-in_ext_url',InExtUrlField);
 //import CheckboxField from './components/fields/checkbox';
 //veVue.component('field-checkbox',CheckboxField);
 
-import SelectField from './components/fields/select';
-Vue.component('field-select',SelectField);
+
 
 import DateField from './components/fields/date';
 Vue.component('field-date',DateField);

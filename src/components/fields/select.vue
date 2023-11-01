@@ -12,10 +12,10 @@
               :label="field.description"
               class="input-group--focused"
               :rounded="$theme.rounded"
-              @input="change_field(field)"
+
               :hint="field.add_description"
               hide-details
-            />
+            /> <!--@input="change_field(field)"-->
           </template>
               
           <template v-else>
@@ -39,10 +39,10 @@
                                 class="color_select"
                                 autocomplete
                                 :error-messages="error_message"
-                                @input="change_field(field)"
+
                                 hide-details
                                 :rounded="$theme.rounded"
-                              />
+                              /> <!--@input="change_field(field)"-->
                   </div>
                 </template>
                 
@@ -83,8 +83,8 @@
                           :disabled="!!field.read_only"
                           clearable
                           hide-details
-                          @input="change_field(field)"
-                      />
+
+                      /> <!--@input="change_field(field)"-->
                       </template>
                       <template v-else>
                         <v-select
@@ -97,10 +97,10 @@
                           v-model="value"
                           autocomplete
                           :disabled="!!field.read_only || !!form.read_only"
-                          @input="change_field(field)"
+
                           :rounded="$theme.rounded"
                           hide-details
-                        />
+                        /> <!--@input="change_field(field)"-->
                       </template>
                       
                     </template>
@@ -183,7 +183,7 @@ export default {
       bus.$on('field-update:'+this.field.name,this._field_update )
     }
 
-    this.value=this.field.value.toString(); 
+    this.value=this.field.value?this.field.value.toString():'';
     
     this.values=this.field.values;
     

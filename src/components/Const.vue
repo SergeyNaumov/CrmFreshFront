@@ -26,6 +26,7 @@
                       @keyup="change(l)"
                     />
                   </template>
+
                   <template v-if="l.type=='file'">
                     
                     <input type="file"
@@ -44,6 +45,8 @@
                   <template v-if="l.type=='switch'">
                       <v-switch   v-model="l.value" @change="change(l)"/>
                   </template>
+                  <field-select :form="form" v-if="l.type=='select'" :field="l"
+                  />
                   <div v-if="l.saved" class="saved">
                     
                       сохранено
@@ -60,10 +63,11 @@
 </template>
 
 <script>
-
+import { bus } from '../main'
 export default {
         props:["params"],
         data: () => ({
+          form:{},
           config:'',
           filedir:'',
           list:[], // список типов констант
@@ -75,16 +79,27 @@ export default {
         },
 
         created(){
+          this._change_field=(field,not_frontend_process)=>{
+            //console.log('field: ',field)
+            this.change(field)
+          },
+          bus.$on('change_field', this._change_field);
           if(this.params && this.params.config){
             this.config=this.params.config
           }
           this.get_list()
           
         },
+        beforeDestroy(){
+          bus.$off('change_field',this._change_field);
+        },
         watch:{
           
         },
         methods: {
+          _change_field(){
+
+          },
           file_upload(l){
             
             let file = document.getElementById('const_file_'+l.name).files[0];
@@ -111,7 +126,7 @@ export default {
                   r=>{
                     let d=r.data;
                     if(d.success){ 
-                        l.value=d.value
+                        l.value=d.value || ''
                         this.mark_success(l);
                     }
                   }

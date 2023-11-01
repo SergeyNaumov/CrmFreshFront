@@ -18,7 +18,12 @@ export const dynamic_component_loader=(Vue)=>{
 
 	// инструмент статистики
 	Vue.component('stat-tool', ()=> import('./components/StatTool/StatTool'));
-	
+	/*
+import SelectField from './components/fields/select';
+Vue.component('field-select',SelectField);
+	*/
+	Vue.component('field-select',() => import('./components/fields/select'));
+
 	Vue.component('field-1_to_m',() => import('./components/fields/1_to_m'));
 	Vue.component('field-accordion', ()=> import('./components/fields/accordion'));
 	Vue.component('field-chart', ()=> import('./components/fields/chart'));
