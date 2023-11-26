@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!field.hide">
         <template v-if="field.read_only">
             <v-text-field 
               :label="field.description"

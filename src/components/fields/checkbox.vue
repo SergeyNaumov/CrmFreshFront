@@ -1,5 +1,5 @@
 <template>
-    <div> 
+    <div v-if="!field.hide">
         <template v-if="field.type=='checkbox'">
             <v-checkbox  :label="field.description" :disabled="disabled" color="primary" v-model="value" @change="change_field(field)" hide-details></v-checkbox>
             
@@ -23,16 +23,7 @@
         }
     },
     props:['form','field','parent','refresh'],
-    watch:{
-        refresh(){ 
-            this.value=(this.field.value || parseInt(this.field.value))?true:false
-            this.after_html=this.field.after_html
-        },
-        field(){
-            this.value=(this.field.value || parseInt(this.field.value))?true:false
-            this.after_html=this.field.after_html
-        }
-    },
+
     created(){   
 
         this._field_update=(new_data)=>{
@@ -50,9 +41,24 @@
            bus.$off('field-update:'+this.field.name,this._field_update)
         }
     },
-    mounted(){
+    watch:{
+        refresh(){
+            this.value=(this.field.value || parseInt(this.field.value))?true:false
+            this.after_html=this.field.after_html
+        },
+        field(){
+            this.value=(this.field.value || parseInt(this.field.value))?true:false
+            this.after_html=this.field.after_html
+        },
+        // value(v){
+        //       v=(v || parseInt(v))?true:false
+        //       this.field.value=v
+        //       this.field.from='field-checkbox component (checkbox.vue)'
+        //       if(!this.parent){
+        //         bus.$emit('change_field',this.field);
+        //       }
+        // }
 
-        
     },
     computed:{
         disabled(){

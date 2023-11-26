@@ -5,6 +5,11 @@ export function on_dependence(self, name,obj,not_frontend_process){
         if( !('value' in obj) && !('instead_of_empty' in obj) )
           not_frontend_process=true
 
+        if('fields' in obj){
+          f.fields=obj.fields
+          bus.$emit(`1_to_m/slide_${f.name}:update_fields`,f.fields);
+          //bus.$emit(`1_to_m:upload_values:${f.name}`)
+        }
         if('value' in obj && f.value != obj.value )
           f.value=obj.value
         
@@ -140,8 +145,11 @@ export const frontend_button_process=(self,f,button,success_function)=>{
 
 }
 export function frontend_process(self,f){
+    //console.log('frontend_process: ',f)
     if(!f.frontend) return;
+
     let front=f.frontend;
+
     if(front.fields_dependence){
       let dep;
       eval('dep='+front.fields_dependence);

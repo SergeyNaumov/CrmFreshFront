@@ -1,72 +1,90 @@
 <template>
   <div class="const">
-            <h1 class="title">Константы системы</h1>
-            <p>(сохранение происходит сразу после изменения значений)</p>
-            <div >
-            <template v-if="errors.length">
-              <div v-for="(e,idx) in errors" class="error" :key="'e'+idx">{{e}}</div>
+    <v-card>
+    <h1 class="title">Константы системы</h1>
+    <p>(сохранение происходит сразу после изменения значений)</p>
+
+    <v-tabs v-model="cur_tab" bg-color="primary" v-if="tabs.length">
+          <v-tab v-for="t in tabs" :key="`tab${t.name}`":value="t.name" >{{t.description}}</v-tab>
+    </v-tabs>
+
+    <div>
+      <!-- Вывод ошибок -->
+      <template v-if="errors.length">
+        <div v-for="(e,idx) in errors" class="error" :key="'e'+idx">{{e}}</div>
+      </template>
+
+      <div >
+        <pre v-if=0>{{list}}</pre>
+          <table>
+          <template v-for="l in list" >
+          <tr v-if="show_field(l)" :key="l.name">
+            <td class="label">{{l.header}}:</td>
+            <td>
+            <template v-if="l.type=='text'">
+              <input type="text"
+                v-model="l.value"
+
+                @keyup="change(l)"
+              >
             </template>
-            <div >
-              <pre v-if=0>{{list}}</pre>
-                <table>
-                <tr v-for="l in list" :key="l.name">
-                  <td class="label">{{l.header}}:</td>
-                  <td>
-                  <template v-if="l.type=='text'">
-                    <input type="text"
-                      v-model="l.value"
-                      
-                      @keyup="change(l)"
-                    >
-                  </template>
-                  <template v-if="l.type=='textarea'">
-                    <textarea
-                      v-model="l.value" 
-                      
-                      @keyup="change(l)"
-                    />
-                  </template>
+            <template v-if="l.type=='textarea'">
+              <textarea
+                v-model="l.value"
 
-                  <template v-if="l.type=='file'">
-                    
-                    <input type="file"
-                    :id="'const_file_'+l.name"
-                    @change="file_upload(l)"
-                    />
-                    <div v-if="l.value">
-                      <a :href="filedir+'/'+l.value" target="_blank">открыть в браузере</a> | 
-                      <a :href="filedir+'/'+l.value" :download="l.value">загрузить</a>
-                    </div>
-                    
-                  </template>
-                  <template v-if="l.type=='checkbox'">
-                      <input type="checkbox"   v-model="l.value" @change="change(l)">
-                  </template>
-                  <template v-if="l.type=='switch'">
-                      <v-switch   v-model="l.value" @change="change(l)"/>
-                  </template>
-                  <field-select :form="form" v-if="l.type=='select'" :field="l"
-                  />
-                  <div v-if="l.saved" class="saved">
-                    
-                      сохранено
-                    
-                  </div>
-                </td>
-              </tr>
-            </table>
+                @keyup="change(l)"
+              />
+            </template>
+
+            <template v-if="l.type=='file'">
+
+              <input type="file"
+              :id="'const_file_'+l.name"
+              @change="file_upload(l)"
+              />
+              <div v-if="l.value">
+                <a :href="filedir+'/'+l.value" target="_blank">открыть в браузере</a> |
+                <a :href="filedir+'/'+l.value" :download="l.value">загрузить</a>
+              </div>
+
+            </template>
+            <template v-if="l.type=='checkbox'">
+                <input type="checkbox"   v-model="l.value" @change="change(l)">
+            </template>
+            <template v-if="l.type=='switch'">
+                <v-switch   v-model="l.value" @change="change(l)"/>
+            </template>
+            <field-select :form="form" v-if="l.type=='select'" :field="l"
+            />
+            <div class="add_description" v-if="l.add_description">
+              {{l.add_description}}
             </div>
-            
+
+            <div v-if="l.saved" class="saved">
+
+                сохранено
 
             </div>
+          </td>
+        </tr>
+        </template>
+      </table>
+      </div>
+
+
+    </div>
+    </v-card>
   </div>          
 </template>
 
 <script>
+let t
 import { bus } from '../main'
 export default {
         props:["params"],
         data: () => ({
+          cur_tab:0,
+          tabs:[],
           form:{},
           config:'',
           filedir:'',
@@ -79,19 +97,20 @@ export default {
         },
 
         created(){
-          this._change_field=(field,not_frontend_process)=>{
+          t=this
+          t._change_field=(field,not_frontend_process)=>{
             //console.log('field: ',field)
-            this.change(field)
+            t.change(field)
           },
-          bus.$on('change_field', this._change_field);
-          if(this.params && this.params.config){
-            this.config=this.params.config
+          bus.$on('change_field', t._change_field);
+          if(t.params && t.params.config){
+            t.config=t.params.config
           }
-          this.get_list()
+          t.get_list()
           
         },
         beforeDestroy(){
-          bus.$off('change_field',this._change_field);
+          bus.$off('change_field',t._change_field);
         },
         watch:{
           
@@ -114,10 +133,10 @@ export default {
                 //this.field_error_check();
                 
 
-                this.$http.post(
+                t.$http.post(
                   BackendBase+'/const/save_value',
                   {
-                    config: this.config,
+                    config: t.config,
                     name: l.name,
                     value: orig_name,
                     src: fileSrc
@@ -127,12 +146,12 @@ export default {
                     let d=r.data;
                     if(d.success){ 
                         l.value=d.value || ''
-                        this.mark_success(l);
+                        t.mark_success(l);
                     }
                   }
                 ).catch(
                   e=>{
-                    this.errors=[e]
+                    t.errors=[e]
                   }
                 );
               }
@@ -157,8 +176,15 @@ export default {
                     l.saved=false;
                     
                   }
-                  this.list=d.list
-                  this.filedir=d.filedir
+                  t.list=d.list
+                  t.filedir=d.filedir
+
+                  // табы
+                  if(d.tabs && d.tabs.length){
+                    t.tabs=d.tabs
+
+
+                  }
                 }
               }
             )
@@ -213,11 +239,18 @@ export default {
               },
               500
             )
-          }
+          },
+          show_field(field){
+            // для табов: условие отображения поля
+            return !field.hide && (!t.tabs.length || t.tabs[t.cur_tab].name == field.tab)
+
+          },
+
+
         },
 
         computed: {
-          
+
         }
 }
 </script>
@@ -229,8 +262,8 @@ export default {
     border-left: 1px solid gray;
     border-right: 1px solid gray;
   }
-  td.label {max-width: 100px;}
-  table {width: 100%; border-collapse: collapse;}
+  td.label {width: 200px; }
+  table {width: calc(100% - 35px); border-collapse: collapse;}
   table td {vertical-align: top; padding: 10px; 
     font-size: 11pt;
     border-top: 1px solid gray;
@@ -238,14 +271,20 @@ export default {
   }
   table tr:nth-child(odd) td {background-color: #f1f1f1;}
   input[type=text] {
-    padding: 2px;
+    padding: 5px;
     border-radius: 3px;
     border: 1px solid rgb(192, 192, 192); width: 100%;}
   textarea {
-    padding: 2px;
+    padding: 5px;
     width: 100%; height: auto;
     border-radius: 3px;
+    height: 100px;
     border: 1px solid rgb(192, 192, 192) !important;
+  }
+  .add_description {
+    margin-top: 10px;
+    color: gray;
+    font-size: 0.8rem;
   }
   .saved {
     height: 10px; position: relative; top: -1px; font-size: 9pt;

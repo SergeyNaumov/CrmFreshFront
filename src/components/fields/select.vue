@@ -172,26 +172,32 @@ export default {
 
   },
 
-  created(){  
-    this._field_update=(new_data)=>{
-      field_update(new_data,this)
-      
+  created(){
+    let t=this
+    t._field_update=(new_data)=>{
+      field_update(new_data,t)
     };
 
-    if(!this.parent){
+    if(!t.parent){
       
-      bus.$on('field-update:'+this.field.name,this._field_update )
+      bus.$on(`field-update:${t.field.name}`,t._field_update )
+    }
+    else{
+      console.log('parent:',parent)
     }
 
-    this.value=this.field.value?this.field.value.toString():'';
-    
-    this.values=this.field.values;
-    
-    for(let v of this.values){
+    t.value=t.field.value?t.field.value.toString():'';
+
+    t.values=t.field.values;
+    if(t.values && t.values.length==1 && Array.isArray(t.values[0])){
+      // это костыль, отловить не смог, но в select-е 1_to_m values оборачивается внутрь []
+      t.values=t.values[0]
+    }
+    for(let v of t.values){
       v.v=v.v.toString()
     }
     //this.change_field();
-    check_fld(this);
+    check_fld(t);
   },
   mounted(){
     

@@ -16,7 +16,7 @@
         </div>
 
           <div v-for="cf in field.fields" :key="cf.name">
-         
+
             <template v-if="edit_fields[cf.name] && (cf.type=='text' || cf.type=='textarea')">
               
               <field-text
@@ -117,6 +117,9 @@ export default {
       )
     },
     watch:{
+        field(){
+          this.create_edit_fields
+        },
         dialog(){ // когда открывается окно -- инитим fields
             this.in_dialog=this.dialog;
             this.fields=this.edit_fields

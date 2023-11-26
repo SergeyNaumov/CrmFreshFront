@@ -15,7 +15,7 @@
         <!-- view type: list -->
         <template v-if="field.view_type=='list'">
             <v-layout>
-                
+
                 <draggable
                     v-model="list"
                     tag="div"
@@ -26,7 +26,7 @@
                     <v-card class="one_to_m one_to_m_list"  v-for="(v,vi) in list" :key="v[vi]"> <!--:style="{'background-color': $color.secondary}"-->
 
                         <template v-for="(h,hidx) in field.headers">
-                            <div :key="h[hidx]" v-if="v[h.name]">
+                            <div :key="h[hidx]" v-if="v[h.name] && fields_hash[h.name] ">
                                 <template v-if="h.change_in_slide">
                                     <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="v.id" :values="v"></change_in_slide>
                                 </template>
@@ -152,7 +152,16 @@ export default {
             console.log('refresh field in slide');
         }
     },
+
+
     computed:{
+        fields_hash(){
+            let h={}
+            for(let f of this.cur_fields){
+                h[f.name]=true
+            }
+            return h
+        },
         colors_primary(){
             return bus.colors_primary;
             /*let arr=[]
@@ -170,17 +179,32 @@ export default {
     },
 
     created(){
+        let field=this.field
         this.list=this.values;
         this.cur_fields=this.field.fields // нужно для того, чтобы можно было обновить
 
-        bus.$on(`1_to_m_slide:${this.field.name}_reload`,
-            v=>{this.reload_slide(v)}
-        );        
+        bus.$on( // обновление полей в 1_to_m
+            `1_to_m/slide_${field.name}:update_fields`,this._update_fields
+        )
+
+        bus.$on(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
+
 
     },
+    beforeDestroy(){
+        let field=this.field
+        bus.$off( // обновление полей в 1_to_m
+            `1_to_m/slide_${field.name}:update_fields`,this._update_fields
+        )
+        bus.$off(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
+    },
     methods:{
+        _update_fields(fields){
+            this.cur_fields=fields
+            console.log('fields:',fields)
+
+        },
         reload_slide(D){ // обновляем данные в слайде
-            
             this.cur_fields=D.field.fields
             this.list=D.values
         },

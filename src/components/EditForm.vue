@@ -184,6 +184,7 @@ created(){
 
   calc_values(this);
   this._change_field=(field,not_frontend_process)=>{
+
     change_field(this,field,not_frontend_process)
   }
   let self=this;

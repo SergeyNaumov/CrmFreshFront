@@ -1,5 +1,6 @@
 <template>
       <div>
+
         <one_to_m_form 
           :form="form"
           :field="field"
@@ -9,7 +10,7 @@
           :values="values"
           :upload_values="upload_values"
         />
-        
+
         <!-- multiload -->     
         <template v-if="dialog_multiload"> <!-- v-if для очистки формы-->
           <v-dialog  v-model="dialog_multiload" max-width="500">
@@ -95,6 +96,7 @@
     );
 
 
+
     if(!t.field.values)
         t.field.values=[];
     //this.create_edit_fields();
@@ -102,10 +104,12 @@
     
     
   },
+  beforeDestroy(){
+  },
   watch:{
-    //dialog(){
-      
-    //}
+    field(){
+      console.log('field_change')
+    }
   },
   computed:{
     multiload_name(){ 
