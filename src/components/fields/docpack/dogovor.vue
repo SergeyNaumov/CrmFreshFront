@@ -54,8 +54,31 @@
                 </template>
             </v-card>
             <v-card v-for="b in bills" :key="b.id" >
-                <v-card-title>Счёт №{{b.number}} от {{b.registered}} |&nbsp;<a :href="'/edit_form/bill/'+b.id" target="_blank">к счёту</a></v-card-title>                
-                <div><b>Сумма:</b> {{b.summ}}</div>
+                <v-card-title>
+
+                    Счёт №{{b.number}} от {{b.registered}} |&nbsp;<a :href="'/edit_form/bill/'+b.id" target="_blank">к счёту</a></v-card-title>
+                <div><b>Сумма:</b>
+                    <template v-if="b.make_edit_summ">
+
+                        <template v-if="!b.edit_sum">
+                            <!-- сумма не редактируется -->
+                            {{b.summ}}
+                            <a href="" @click.prevent="b.edit_sum=true"><v-icon small color="primary">fa fa-pencil-alt</v-icon></a>
+                        </template>
+                        <template v-else>
+                            <!-- сумма редактируется -->
+                            <input type="text" class="edited_summ" v-model="b.summ" @keyup="control_summ(b)">
+
+                            <a href="" @click.prevent="save_sum_bill(b)"><v-icon small color="primary">fa fa-save</v-icon></a>
+                            <a href="" @click.prevent="b.summ=b.old_summ; b.edit_sum=false"><v-icon small color="red">far fa-window-close</v-icon></a>
+
+                        </template>
+                    </template>
+                    <template v-else>
+                        {{b.summ}}
+                    </template>
+
+                </div>
                 
                 
                 <div><b>Комментарий:</b> {{b.comment}}</div>
@@ -87,6 +110,7 @@
     data:function(){
         return {
             show:false,
+            edited:{},
             bills:[], // список счетов
             errors:[],
             show_comment:false,
@@ -133,6 +157,36 @@
         }
     },
     methods: {
+        control_summ(b){
+            b.summ=b.summ.replace(/[^\d]/g,'')
+        },
+        save_sum_bill(b){
+            let t=this
+            t.$http.post(
+                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
+                {
+                    action: 'save_summ_bill',
+                    id:this.form.id,
+                    bill_id: b.id,
+                    summ: b.summ
+                }
+            ).then(
+                r=>{
+                    let d=r.data
+                    if(d.success){
+                        b.old_summ=b.summ
+                        b.edit_sum=false
+                    }
+                    else{
+                        if(d.errors && d.errors.length){
+                            alert(d.errors[0])
+                        }
+
+                    }
+                }
+            )
+
+        },
         load_bill_link(bill,format,need_print=0){
             //return '/backend/load_document?doc_pack_id='+this.docpack.id+'&bill_id='+bill.id+'&format='+format+'&type=bill'+(without_print?'&without_print=1':'')
             return `${BackendBase}/docpack/load-bill/${this.docpack.id}/${bill.id}/${format}/${need_print}`
@@ -153,9 +207,17 @@
                 r=>{
                     let d=r.data;
                     if(d.success){
-                        this.bills=d.list;
+                        this.bills=[]
+                        for(let b of d.list){
+                            b.old_summ=b.summ
+                            b.edit_sum=false // флаг редактирования суммы
+                            this.bills.push(b)
+
+                        }
+
                     }
-                    this.errors=d.errors
+
+
                 }
             )
         },
@@ -186,7 +248,12 @@
 </script>
 <style scoped lang="scss">
     @import '@/styles/variables.scss';
-    
+    .edited_summ {
+        padding: 5px; width: 80px; border: 1px solid gray;
+        text-align: right;
+        margin: 0px 10px;
+
+    }
     .row { padding-left: 20px;}
     .col { font-size: 10px; border-bottom: none; padding: none;}
     .v-icon {margin-right: 10px;}

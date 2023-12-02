@@ -44,15 +44,19 @@
                                             <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>
                                             
                                         </template>
+                                        <template v-if="h.type=='text' && h.subtype" >
+                                            <template  v-if="h.subtype=='qr_call'">
+                                                <qr_call :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
+                                            </template>
+                                            <template v-else-if="h.subtype=='email'">
+                                                <email :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
+                                            </template>
 
-
-                                        <template v-if="h.type=='text' && h.subtype=='qr_call'">
-                                            
-                                            <qr_call :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
                                         </template>
                                         <template v-else>
                                             {{get_value_for_slide(h,v)}}
                                         </template>
+
                                     </template>
                                     
                                 </template>
@@ -126,11 +130,13 @@
 import { bus } from '../../../main'
 import ChangeInSlide from './ChangeInSlide';
 import qr_call from '../text_subtypes/qr_call';
+import email from '../text_subtypes/email';
 
 export default {
     components:{
        'change_in_slide': ChangeInSlide,
-       'qr_call': qr_call
+       'qr_call': qr_call,
+       'email': email
     },
     props:["form","values","field","upload_values"],
     data(){
