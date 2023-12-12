@@ -3,6 +3,7 @@
         <div  class="is_headapp">
 
               <h1  >{{title}}</h1>
+
               <div v-if="permissions.make_create ">
                 <v-icon @click="new_card()" class="small" color="primary">fa-plus</v-icon>&nbsp;
                 <a href=""  @click.prevent="new_card()" class="">Добавить</a>
@@ -25,7 +26,6 @@
             </template>         
             <v-layout row wrap v-else>
             <v-flex xs12 lg12 class="mt-2 mb-2" >
-              <v-icon v-if="0 && permissions.make_create" @click="new_card()" small color="primary">fa fa-plus</v-icon> 
               <v-btn v-if=0 @click="SHOW_FILTERS=!SHOW_FILTERS" small><v-icon color="primary" small>filter_list</v-icon> </v-btn>  
               <v-flex xs12 lg12 class="mt-2 mb-2">
                     <template v-if="1">
@@ -45,6 +45,7 @@
             </v-flex>
                 <template v-if="show_find_button_top">
                   <v-flex xs12 lg12 v-show="on_filters && on_filters.length">
+
                     <v-btn color="primary" small  @click.prevent="go_search(1);" href="" id="search_results"><v-icon  class="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
                   </v-flex>
                 </template>
@@ -255,7 +256,7 @@ export default {
     },
     init_on_filters(on_filters){
       
-      if(!on_filters){
+      if(!on_filters || !on_filters.length){
         
         for(let f of this.filters){
           if(f.filter_on){
@@ -291,24 +292,25 @@ export default {
       
     },
     Init(){
-          this.SHOW_FILTERS=true, this.SHOW_FILTERS_on=true, this.SHOW_FILTERS_all=true, this.filters_groups=[];
-          this.$http.post(
+          let t=this
+          t.SHOW_FILTERS=true, t.SHOW_FILTERS_on=true, t.SHOW_FILTERS_all=true, t.filters_groups=[];
+          t.$http.post(
               BackendBase+'/get-filters/'+this.params.config,
               {cgi_params: get_cgi_params()}
           ).then(response=>{
               let D=response.data;
               
               
-              this.results={};
-              this.errors=D.errors;
+              t.results={};
+              t.errors=D.errors;
 
               if(D.success){
-                  document.title=this.title=D.title;
-                  this.log=D.log;
-                  this.permissions=D.permissions;
-                  this.search_plugin=D.search_plugin;
+                  document.title=t.title=D.title;
+                  t.log=D.log;
+                  t.permissions=D.permissions;
+                  t.search_plugin=D.search_plugin;
                   //console.log(D.on_filters);
-                  this.show_find_button_top=D.show_find_button_top;
+                  t.show_find_button_top=D.show_find_button_top;
                   // преобразования
                   for(let f of D.filters){
                     if( (f.type=='checkbox' || f.type=='switch') && !f.values){ // чекбокс -- это select с вариантами "да / нет"
@@ -319,14 +321,14 @@ export default {
                     }
                     
                   }
-                  this.filters=D.filters;
+                  t.filters=D.filters;
                   
-                  this.search_links=D.search_links;
+                  t.search_links=D.search_links;
                   if(D.javascript)
                     eval(D.javascript);
                   if(D.filters_groups && D.filters_groups.length)
-                    this.filters_groups=D.filters_groups;
-                  this.before_filters_html=D.before_filters_html;
+                    t.filters_groups=D.filters_groups;
+                  t.before_filters_html=D.before_filters_html;
                   
                   // Если фильтры были включены через filter_on -- собираем  on_filters
                   if(!D.on_filters.length){
@@ -352,10 +354,12 @@ export default {
                     }
                   }
 
-                  this.init_on_filters(D.on_filters);
+                  t.init_on_filters(D.on_filters);
+
+
                   
                   if (D.search_on_load){
-                    this.go_search(1);
+                    t.go_search(1);
 
                   }
                     
@@ -376,7 +380,7 @@ export default {
             f.filter_order=this.ORDER;
           
           this.filters=this.filters
-          this.init_on_filters()
+          t.init_on_filters()
           //console.log(f)
           //console.log(this.on_filters)
           this.get_on_filters();
@@ -399,6 +403,7 @@ export default {
               q.push([f.name,(f.value?f.value:'')]);
           }   
       }
+      //console.log('query:',q)
       return q;
     },
     go_search_plugin(plugin_name,params){
@@ -509,6 +514,7 @@ export default {
       window.open(BaseUrl+'edit_form/'+this.params.config);
     },
     filter_change(filter){
+      console.log('filter_change:',filter)
       for(let f of this.on_filters){
         if(f.name==filter.name){
           f.value=filter.value

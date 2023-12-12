@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <template v-if="field.range">
             <div class="description">{{field.description}}:</div>
             <v-flex xs6>
@@ -59,31 +60,34 @@
     </div>
 </template>
 <script>
-let t
 
 export default {
     props:["config", "field", "filter_change"],
     created(){
-        t=this
+
     },
     watch:{
         config(){
-            t.value=t.field.value
+            this.value=this.field.value
         },
         value(v){
+            let t=this
+            let field=t.field
             if(v && t.field.autocomplete){
 
                 setTimeout(
                     ()=>{
-                        if(v==this.value){
+                        if(v==t.value){
                             t.load_autocomplete()
                         }
                     },300
                 )
 
             }
-            t.field.value=t.value
-            t.filter_change(t.field);
+
+
+            field.value=v
+            t.filter_change(field);
         }
     },
     data(){
@@ -99,6 +103,7 @@ export default {
             console.log(s)
         },
         load_autocomplete(){
+            let t=this
             let req_data={
                 term:t.search,
                 action: 'get_list',
