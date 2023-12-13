@@ -380,7 +380,7 @@ export default {
             f.filter_order=this.ORDER;
           
           this.filters=this.filters
-          t.init_on_filters()
+          this.init_on_filters()
           //console.log(f)
           //console.log(this.on_filters)
           this.get_on_filters();
