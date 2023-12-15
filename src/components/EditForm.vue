@@ -11,7 +11,7 @@
         </v-dialog>
         
         <div :class="form.wide_form?'container_fluid':'container'" >
-            <pre v-if="0">      
+            <pre v-if="0">
                 {{values}}
             </pre>
             

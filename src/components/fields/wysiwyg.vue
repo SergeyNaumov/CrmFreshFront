@@ -1,5 +1,6 @@
 <template>      
     <div>
+
         <errors :errors="errors" v-show="errors.length"></errors>
         <template v-show="!errors.length">        
             <!-- файловый навигатор -->
@@ -146,12 +147,10 @@ export default {
         // ловим изменения в редакторе 
         // отправляем его выше по иерархии объектов
         this.field.value=this.value;
-        
-        
-
-
-        
-        bus.$emit('change_field',this.field);
+        this.field.from='field-text component (wysiwyg.vue)'
+        if(!this.parent){
+            bus.$emit('change_field',this.field);
+        }
       },
       file_path(){ // если мы осуществляем навигацию по папкам -- отправляемся за списком файлов
           this.read_file_list()
@@ -166,7 +165,11 @@ export default {
     
     this.read_file_list() // debug
     
-    this._field_update=(new_data)=>{field_update(new_data,this)};
+
+    this._field_update=(new_data)=>{
+      field_update(new_data,this)
+    };
+
     if(this.field.edit_mode){
         this.edit_mode=this.field.edit_mode
     }
@@ -435,6 +438,9 @@ export default {
                     init(init_options)
                     
                     
+                }
+                else{
+                    init(init_options)
                 }
                 
             }   

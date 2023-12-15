@@ -128,8 +128,8 @@ import FieldPassword from '../fields/password';
           // if(this.is_dynamyc_loader(field)){
           //   return () => import(`../fields/${field.type}`); 
           // }
-
-          switch(field.type){
+          let field_type=field.type.replace('1_to_1_','')
+          switch(field_type){
                 case 'text':
                 case 'textarea':
                     res='field-text';break;
@@ -154,7 +154,7 @@ import FieldPassword from '../fields/password';
                 case 'docpack':
                 case 'in_ext_url':
                 case 'time_table':
-                    res='field-'+field.type; break;
+                    res='field-'+field_type; break;
           };
 
           return res;

@@ -44,8 +44,28 @@
                         <v-btn @click.prevent="add_tag" v-show="new_tag && new_tag_checked && !new_tag_exists"  small>добавить тэг "{{new_tag}}"</v-btn>
 
                     </div>
+                    <v-container>
+                        <template v-if="field.view_only_selected">
+                            <v-row>
+                                <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" v-show="selected_hash[l.id]" :key="'l'+idx">
+                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()"></v-checkbox>
+                                </v-col>
+                            </v-row>
+                        </template>
+                        <template v-else>
+                            <v-row>
+                                <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" :key="'l'+idx">
+                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()" />
+                                </v-col>
 
-                    <v-layout row class="multiconnect">
+                            </v-row>
+                        </template>
+                        <div v-if="!list_searched.length && list.length">
+                            ничего не найдено
+                        </div>
+                    </v-container>
+                    <!--
+                    <v-layout class="row multiconnect">
                         
                         <template v-if="field.view_only_selected">
                             
@@ -64,6 +84,7 @@
                         </div>
 
                     </v-layout>
+                    -->
                 </div>
 
         </template>
@@ -159,6 +180,11 @@
             //console.log({out_tree:this.field.tree_use});
             return (this.field.tree_use)
 
+        },
+        get_md_class2(){
+            if(this.field.cols>0)
+                return parseInt(12/this.field.cols);
+            return '12'
         },
         get_md_class(){
             if(this.field.cols>0)

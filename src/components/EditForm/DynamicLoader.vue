@@ -29,7 +29,9 @@
             if (!this.field.type) {
                 return null
             }
-            return () => import(`../fields/${this.field.type}`)
+            let filed_type=this.field.type.replace(/^1_to_1_(.+)$/,$1)
+
+            return () => import(`../fields/${filed_type}`)
         },
 
   },
