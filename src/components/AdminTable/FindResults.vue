@@ -72,6 +72,7 @@
                               <td  v-for="(td,td_index) in tr.data" :key="td.td_index" :data-label="results.headers[td_index]['h']+':'">
                                 
                                 <div class="field">
+
                                   <template v-if="typeof(td.value)=='object'">
                                     
                                     <div v-if="td.value.before_html" v-html="td.value.before_html" />
