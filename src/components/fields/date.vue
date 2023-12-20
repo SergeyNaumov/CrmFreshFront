@@ -39,7 +39,6 @@
               first-day-of-week="1" 
               locale="ru-Ru"
               v-model="value" @input="select_cal()"></v-date-picker>
-              
           </v-menu>
           
         </template>
