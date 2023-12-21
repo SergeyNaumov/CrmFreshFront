@@ -98,29 +98,11 @@
                     <div><b>оплачен до:</b>  {{b.paid_to}}</div>
                 </template>
                 <div v-else class="not_paid">счёт не оплачен</div>
-                <div class="new_act"><a href="" @click.prevent="b.show_new_act_form=true; new_act_summ=''" v-if="!b.show_new_act_form">новый акт {{show_new_act_form}}</a></div>
-                <div class="new_act_form" v-if="b.show_new_act_form">
-                    <div><b>Создание нового акта</b></div>
-                    <v-text-field style="max-width: 200px;" autofocus label="укажите сумму" v-model="new_act_summ"></v-text-field>
-                    <div v-if="!b.show_picker">
-                        <a href="" @click.prevent="b.show_picker=true">{{new_act_date?new_act_date:'укажите дату'}}</a>
-                    </div>
-                    <div v-if="b.show_picker">
-                        <v-date-picker
-                            color="primary"
-                            v-model="new_act_date"
-                            first-day-of-week="1" 
-                            locale="ru-Ru"
-                            @change="b.show_picker=false"
-                        />                        
-                    </div>
 
-                </div>
+                <!-- блок актов для счёта -->
+                <acts_for_bill :bill="b" :config="config" :form="form" :field="field"/>
 
-                <div>
-                    
-                    <div v-for="a in b.act_list"><a :href="a.link" target="_blank">{{a.header}}</a></div>
-                </div>
+
             </v-card>
         </template>
     </div>
@@ -128,7 +110,11 @@
 
 <script>
   
+  import acts_for_bill from './acts_for_bill';
   export default {
+    components:{
+        'acts_for_bill': acts_for_bill
+    },
     data:function(){
         return {
             show:false,
@@ -233,8 +219,10 @@
                     if(d.success){
                         this.bills=[]
                         for(let b of d.list){
-                            b.show_new_act_form=false
-                            b.show_picker=false
+                            //b.show_new_act_form=false
+                            //b.show_picker=false
+                            //b.new_act_summ='' // сумма для нового акта
+                            //b.error_create_act='' // ошибка при создании акта
                             b.old_summ=b.summ
                             b.edit_sum=false // флаг редактирования суммы
                             this.bills.push(b)
@@ -291,6 +279,6 @@
     .v-card__title {font-size: 12px; font-weight: bold; color: $primary;}
     .not_paid {color: $error; font-weight: bold;}
     .v-application .success  {border: 1px solid $primary; border-radius: 5px; background-color: $lighten4 !important; padding: 10px;}
-    .new_act {font-weight: bold; padding-top: 20px;}
-    .new_act_form {border: 1px solid gray;}
+
+
 </style>

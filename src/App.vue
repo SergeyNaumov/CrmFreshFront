@@ -308,7 +308,7 @@ export default {
   .not_underline {text-decoration: none;}
 
   
-  .v-application .err  {background: #fff; background-color: #fff;  color: red; margin-bottom: 5px;}
+  .v-application .err  {background: #fff0; background-color: #fff0;  color: red; margin-bottom: 5px;}
   .v-application .succ  {background: #fff; background-color: #fff !important;  color: green; margin-bottom: 5px;}
   
   .v-select-list .v-list-item__title {font-size: 12px;}
