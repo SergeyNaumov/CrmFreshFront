@@ -172,6 +172,8 @@
                         setTimeout(
                             ()=>{
                                 t.new_act_success=false
+                                t.step_new_act=1
+                                t.show_new_act_form=false
                             },
                             1000
                         )
