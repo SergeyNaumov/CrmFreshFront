@@ -6,7 +6,9 @@
         {{filters_hash}}
 
       </pre>
-
+      <div style="border: 1px solid gray; margin: 10px; padding: 10px;" v-if="log_filters.length">
+        <pre >{{log_filters}}</pre>
+      </div>
       <div v-for="f in filters">
           <filter-date :field="f" :filter_change="filter_change" v-if="f.type=='date'"/>
           <filter-select :field="f" :filter_change="filter_change" v-if="f.type=='select'"/>
@@ -16,6 +18,7 @@
 
       </div>
       <v-btn @click.prevent="search()">найти</v-btn>
+
       <v-progress-linear
         color="primary"
         indeterminate
@@ -27,18 +30,37 @@
         <pre >{{log_search}}</pre>
       </div>
         <div class="results" v-if="show_results">
+          <template v-if="result_type=='columns'">
+            <!-- Вывод результатов колонками -->
+
+              <v-row>
+                <v-col v-for="col in columns">
+                  <div v-for="d in col">
+                    <field-accordion v-if="d.type=='accordion'" :field="d"/>
+                    <div v-if="d.type=='html'" v-html="d.body"></div>
+                    <div style="position: relative; display: inline-block;" v-if="d.type=='chart'">
+                      <field-chart  :field="d" />
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+
+          </template>
+          <template v-else>
             <template v-if="list.length">
               <div v-for="d in list">
                 <field-accordion v-if="d.type=='accordion'" :field="d"/>
                 <div v-if="d.type=='html'" v-html="d.body"></div>
-
-
+                <div style="position: relative; display: inline-block;" v-if="d.type=='chart'">
+                  <field-chart  :field="d" />
+                </div>
               </div>
             </template>
             <template v-else>
               
               <p>ничего не найдено</p>
             </template>
+          </template>
         </div>
 
       
@@ -63,12 +85,15 @@ export default {
 
     },
     data: () => ({
+     result_type: '', // если columns, то выводим колонками
      show_results: false,
      title:'',
      filters_hash:{},
      filters:[], // фильтры для поиска
      list:[], // список вывода
+     columns: [], // колонки для вывода при result_type=='columns'
      errors:[],
+     log_filters:[],
      log_search:[],
      finding:false,
     }),
@@ -100,7 +125,9 @@ export default {
               t.filters=d.filters, t.title=d.title
             }
             t.errors=d.errors
-
+            if(d.log){
+              t.log_filters=d.log
+            }
           }
         ).catch(        
           e=>{
@@ -117,6 +144,7 @@ export default {
       },
       search(){ // поиск
           this.finding=true
+          this.show_results=false
           let query=[] // query совместимо с поиском в admin_table
 
           for(let f of this.filters){
@@ -136,7 +164,15 @@ export default {
           r=>{
             let d=r.data
             if(d.success){
-              t.list=d.list, t.show_results=true
+              t.result_type=d.result_type || ''
+              if(t.result_type=='columns'){
+                t.list=[]
+                t.columns=d.columns, t.show_results=true
+              }
+              else{
+                t.list=d.list, t.show_results=true
+              }
+
               if(d.log){
                 t.log_search=d.log
               }

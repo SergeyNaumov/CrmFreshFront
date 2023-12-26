@@ -52,12 +52,15 @@
                 let f=this.field
                 let data=f.values
                 let labels=f.labels
-                let description=f.description
+                let description=f.description || ''
 
                 for(let i in data){
                     data[i]=parseInt(data[i])
                 }
                 console.log('subtype: ',f.type)
+                if(!f.subtype){
+                    f.subtype='circle'
+                }
                 if(f.subtype=='circle'){
                         let myChart = new Chart(ctx, {
                             type: 'doughnut',
@@ -65,7 +68,7 @@
                                 labels: labels,
                                 datasets: [{
                                     data: data,
-                                    backgroundColor: [ '#00e676','#e91e63',],
+                                    backgroundColor: f.colors || [ '#00e676','#e91e63','orange', 'blue', 'green', 'yellow', 'red'],
                                     borderWidth: 0.5 ,
                                     borderColor: '#ddd'
                                 }]
@@ -82,7 +85,7 @@
                                 },
                                 legend: {
                                     display: true,
-                                    position: 'top',
+                                    position: f.legend_position || 'top',
                                     //fullSize: true,
                                     fontSize: 50,
                                     labels: {
