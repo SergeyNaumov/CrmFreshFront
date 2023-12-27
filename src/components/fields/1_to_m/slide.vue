@@ -35,8 +35,10 @@
                                     <span class="h">{{h.description}}:</span> 
                                     <template v-if="h.type=='file'"> 
                                         <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
-                                        <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить фото</a>
-                                        <template v-else>-</template>
+                                        <template v-if="field.headers.length>1"> <!-- выводим эту ссылку если помимо файла есть другие поля -->
+                                            <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
+                                        </template>
+
                                     </template>
                                     <template v-else>
                                         <!-- div squire color 20x20-->
@@ -99,7 +101,10 @@
                     
                     <span v-if="h.type=='file'">                   
                         <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
-                        <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить фото</a>
+
+                        <template v-if="field.headers.length>1"> <!-- выводим эту ссылку если помимо файла есть другие поля -->
+                            <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
+                        </template>
                         <template v-else>-</template>
                     </span>
                     <span v-else>
@@ -346,9 +351,9 @@ export default {
                     return `<br><a href="${link}?view=1" target="_blank"><img src="${link}"></a><br>`
                 
                 else
-                    return `<a href="${link}" target="_blank">посмотреть</a> `
+                    return `<a href="${link}" target="_blank">${desc}</a> `
             }
-            return `${orig_name}:<br><a href="${link}?view=${view}">${desc}</a> `
+            return `${orig_name}:<br><a href="${link}?view=${view}" download="${orig_name}">${desc} </a> `
         },
         make_view(f){
             // возвращает true, если файл можно просмотреть в браузере

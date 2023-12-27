@@ -1,5 +1,4 @@
 <template>
-        
         <div  class="is_headapp">
 
               <h1  >{{title}}</h1>
@@ -81,7 +80,12 @@
                           </div>
    
                 </v-flex>
-
+                <template v-if="0">
+                  {{on_filters}}
+                  <hr>
+                  {{filters_values}}
+                  <hr>
+                </template>
                   <on-filters :filters="filters"
                     :config="params.config"
                     :go_search="go_search"
@@ -90,6 +94,7 @@
                     :toggle_filters="toggle_filters"
                     :SHOW_FILTERS_on="SHOW_FILTERS_on"
                     :ORDER="ORDER"
+
                     :filters_values="filters_values"
                   />
                   <template v-if="!show_find_button_top">
@@ -100,7 +105,7 @@
                 
             
             <v-flex md12 class="mt-1" >
-                <input type="text" name="">
+
                 <!-- [loading...] -->
                 <v-progress-linear
                   color="primary"
@@ -135,6 +140,11 @@
                     :out_after_search="out_after_search"
                     :not_out_result_search="not_out_result_search"
                     :last_search_params="last_search_params"
+                    :on_filters="on_filters"
+                    :search_multi_action="search_multi_action"
+                    :get_filter_by_name="get_filter_by_name"
+
+
                   />
                   
                 </template>
@@ -191,6 +201,9 @@ export default {
       javascript:{
 
       },
+
+
+      search_multi_action:[],
       results: {
         headers:[{h:''}],
         output:[{data:[{value:[]}]}],
@@ -209,7 +222,7 @@ export default {
   },
   watch:{
     params(v){
-      //console.log('params:',v)
+
       if(v.config){
         this.Init()
       }
@@ -236,6 +249,7 @@ export default {
           }
         }
       }
+
       return obj
     }
 
@@ -309,7 +323,8 @@ export default {
                   t.log=D.log;
                   t.permissions=D.permissions;
                   t.search_plugin=D.search_plugin;
-                  //console.log(D.on_filters);
+                  t.search_multi_action=D.search_multi_action || []
+
                   t.show_find_button_top=D.show_find_button_top;
                   // преобразования
                   for(let f of D.filters){
@@ -381,8 +396,7 @@ export default {
           
           this.filters=this.filters
           this.init_on_filters()
-          //console.log(f)
-          //console.log(this.on_filters)
+
           this.get_on_filters();
           this.ORDER++;
     },
@@ -390,11 +404,10 @@ export default {
       let q=[];
       for(let f of this.on_filters){
           if(f.range){
-            //console.log('1:',[f.value_low,f.value_hi])
+
 
             q.push([f.name,[f.value_low,f.value_hi]]);
-            //console.log('2:',this.filters_values[f.name])
-            //q.push([f.name,this.filters_values[f.name] ]);
+
           }
           else{
             if(f.type=='memo')
@@ -403,7 +416,6 @@ export default {
               q.push([f.name,(f.value?f.value:'')]);
           }   
       }
-      //console.log('query:',q)
       return q;
     },
     go_search_plugin(plugin_name,params){
@@ -426,7 +438,7 @@ export default {
           if(d.success){
             if(d.ready){
               if(d.format=='html'){
-                console.log({d:d});
+
                 this.plugin_out=d.result;
               }
               else if(d.format=='xls'){
@@ -491,7 +503,7 @@ export default {
               
               this.explain_query=d.explain_query;
               this.results=d.results, this.out_before_search=d.out_before_search, this.not_out_result_search=d.not_out_result_search
-              //console.log({results:this.results})
+
               this.errors_find=d.errors, this.out_after_search=d.out_after_search
               this.finding=false;
               
@@ -510,11 +522,12 @@ export default {
               this.finding=false;
           });
     },
+
     new_card(){
       window.open(BaseUrl+'edit_form/'+this.params.config);
     },
     filter_change(filter){
-      console.log('filter_change:',filter)
+
       for(let f of this.on_filters){
         if(f.name==filter.name){
           f.value=filter.value

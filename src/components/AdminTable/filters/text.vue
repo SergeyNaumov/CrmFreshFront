@@ -98,6 +98,9 @@ export default {
             values:[]
         }
     },
+    created(){
+        this.value=this.field.value || ''
+    },
     methods:{
         change_search(s){
             console.log(s)
