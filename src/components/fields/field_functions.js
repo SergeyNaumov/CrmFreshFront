@@ -54,6 +54,7 @@ export function check_fld(self){
               let test=eval(rule+'.test(self.value)');
 
               if(!test){
+                //console.log(`not test: ${rule} => ${self.value}`)
                 error_message=msg
                 error=true
                 

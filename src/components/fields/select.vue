@@ -132,11 +132,11 @@ export default {
   props:['form','field','parent','name_parent_field','refresh'],
   watch:{
         value(){
-          //console.log('v:',this.value)
+          console.log('v:',this.value)
           this.field.value=this.value
           // этот костыль нужен для того, чтобы можно было поменять значение извне
 
-          
+          check_fld(this);
           // this.display=false
           setTimeout(
             ()=>{
@@ -154,6 +154,7 @@ export default {
           else{
             bus.$emit('change_field',this.field);
           }
+
           
         },
         refresh(){ 
@@ -276,11 +277,13 @@ export default {
       }
     },
     regexp_check(){
+      console.log('regexp check')
       let f=this.field;
       if(f.regexp_rules){
         let i=0, error_message='';
         while(i<f.regexp_rules.length){
           let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
+          console.log('rule: ',rule)
           let test=eval(rule+'.test(this.value)');
           
           if(!test)
