@@ -9,7 +9,7 @@ export const dynamic_component_loader=(Vue)=>{
 	Vue.component('edit-form', ()=> import('./components/EditForm'));
 	Vue.component('admin-tree', ()=> import('./components/AdminTree'));
 	Vue.component('admin-table', ()=> import('./components/AdminTable'));
-	Vue.component('parser-excel', ()=> import('./components/ParserExcel'));
+	Vue.component('parser-excel', ()=> import('./components/ParserExcel/ParserExcel'));
 	Vue.component('documentation', ()=> import('./components/Documentation/Documentation'));
 	Vue.component('table_component', ()=> import('./components/Table'));
 	Vue.component('VideoList', ()=> import('./components/VideoList/VideoList'));

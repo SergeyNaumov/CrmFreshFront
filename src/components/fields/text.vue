@@ -1,5 +1,5 @@
 <template>
-        <div>         
+        <div>
           <template v-if="!field.hide">
             <div v-if="field.before_html" v-html="field.before_html"></div>
 
