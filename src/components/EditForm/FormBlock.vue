@@ -171,7 +171,7 @@ import FieldPassword from '../fields/password';
           return (typeof(field.full_str)=='undefined' && /^(1_to_1_)?(password|date|file|time|datetime|memo|wysiwyg|1_to_m|text|checkbox|select|switch|textarea|multiconnect|time_table)$/.test(field.type));
         },
         is_default_not_description(field){ // если вдруг буду ещё поля, которые по умолчанию должны быть без description-а
-          console.log(field.type)
+
           if(field.not_description)
             return true
           if(field.type=='multiconnect')

@@ -1,6 +1,12 @@
 <template>
     <v-app id="EditForm">
+        <GPTAssist
+          :config="params.config"
+          mode="form"
+        />
+
         <!-- для вызова попапа извне -->
+
         <v-dialog v-model="popup.show" max-width="500">
           <v-card>
             <v-card-title  class="headline">{{popup.header}}</v-card-title>
@@ -23,7 +29,6 @@
             </v-card>
             
             <template v-else>
-              
                     <template v-if="log">
                         <div>
                             <pre v-if="typeof(log)=='string'" v-html="log"></pre>
@@ -56,6 +61,7 @@
                     <h1 color="primary" class="form_header" v-html="form.title"/>
                     <form autocomplete="off">
                     <v-layout row wrap>
+
                         <template v-if="cols.length"> <!-- Колонки, блоки -->
                           <!--  -->
                             <v-flex pl-3 :class="'md'+12/Math.floor(cols.length)" xs12 v-for="c in cols" :key="c.idx">
@@ -100,7 +106,9 @@
                         </template>
                         <template v-else> 
                             <v-flex md12 >
+
                             <v-card style="padding: 1rem;">
+
                                 <form-block :block_name="''" :form="form"  :save="save" :values="values"></form-block>
                                 <v-flex xs12 lg12 text-lg-center>
                                 

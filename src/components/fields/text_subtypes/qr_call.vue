@@ -43,7 +43,6 @@ export default {
     props:['field','value','for_slide'],
 
     created(){
-      console.log('create qr_call')
       if(!window.QRCode){
         this.load_QRCode_js()
       }

@@ -101,7 +101,9 @@ Vue.component('field-yearmon',YearMonField);
 import DayMonField from './components/fields/daymon';
 Vue.component('field-daymon',DayMonField);
 
-
+// GPT-ассистент для форм
+import GPTAssist from './components/GPTAssist/GPTAssist';
+Vue.component('GPTAssist',GPTAssist);
 
 
 
