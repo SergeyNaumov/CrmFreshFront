@@ -19,7 +19,7 @@
           <table>
           <template v-for="l in list" >
           <tr v-if="show_field(l)" :key="l.name">
-            <td class="label">{{l.header}}:</td>
+            <td class="label" >{{l.header}}:</td>
             <td>
             <template v-if="l.type=='text'">
               <input type="text"
@@ -31,11 +31,14 @@
             <template v-if="l.type=='textarea'">
               <textarea
                 v-model="l.value"
-
                 @keyup="change(l)"
               />
             </template>
-
+            <template v-if="l.type=='wysiwyg'">
+              <field-wysiwyg
+                :field="l"
+              />
+            </template>
             <template v-if="l.type=='file'">
 
               <input type="file"

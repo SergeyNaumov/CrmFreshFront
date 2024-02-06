@@ -310,14 +310,15 @@ methods: {
             }
           },
           save () {
-            let data={};
+            let data={}, t=this
             let url=BackendBase+'/edit-form/'+this.params.config+(this.form.id?('/'+this.form.id):'');
-            this.errors=[]; this.log=[];
+            t.errors=[]; t.log=[];
             
-            this.$http.post(url,{
+            t.$http.post(url,{
               action:this.form.id?'update':'insert',
               id:this.form.id,
-              values:this.values
+              values:this.values,
+              cgi_params: get_cgi_params()
             }).then(response=>{
               let R=response.data;
               if(R.log)

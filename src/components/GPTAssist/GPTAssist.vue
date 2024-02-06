@@ -94,7 +94,7 @@ export default {
   data:function(){
     return {
       WS:'',
-      inited: true,
+      inited: false,
       show_panel: true,
       gpt_list:[],
       fields:[],

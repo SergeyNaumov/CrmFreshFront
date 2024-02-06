@@ -161,6 +161,7 @@ export default {
       },
   },
   created(){
+
     this.value=this.field.value;
     
     this.read_file_list() // debug
@@ -239,6 +240,9 @@ export default {
         this.file_path=this.file_path.replace(/[^\/]+\/$/,'');
     },
     read_file_list(){
+        if(!this.form){
+            return
+        }
         let url=BackendBase+'/wysiwyg/'+this.form.config+'/'+this.field.name;
         if(this.form.id)
             url=url+'/'+this.form.id;
@@ -417,38 +421,43 @@ export default {
             
         //     console.log('toolbar2:',init_options.toolbar2)
         // }
-        this.$http.get(BackendBase+'/wysiwyg/'+this.form.config+'/'+this.field.name+'/init_options').then(
-            r=>{
-                let d=r.data
-                if(d.success && d.options){
-                    init_options=d.options;
-                    init_options.selector=`#${name}.mce`,
-                    init_options.file_picker_callback=svBrowser
-                    init_options.init_instance_callback=init_instance_callback
-                    if(init_options.templates){
-                        console.log('TEMPLATES1:',init_options.templates)
-                        for(let t of init_options.templates){
-                            if(t.url){
-                                t.url=BackendBase+t.url
+        if(this.form){
+            this.$http.get(BackendBase+'/wysiwyg/'+this.form.config+'/'+this.field.name+'/init_options').then(
+                r=>{
+                    let d=r.data
+                    if(d.success && d.options){
+                        init_options=d.options;
+                        init_options.selector=`#${name}.mce`,
+                        init_options.file_picker_callback=svBrowser
+                        init_options.init_instance_callback=init_instance_callback
+                        if(init_options.templates){
+                            //console.log('TEMPLATES1:',init_options.templates)
+                            for(let t of init_options.templates){
+                                if(t.url){
+                                    t.url=BackendBase+t.url
+                                }
                             }
+                            //console.log('TEMPLATES2:',init_options.templates)
                         }
-                        console.log('TEMPLATES2:',init_options.templates)
+
+                        init(init_options)
+
+
                     }
-                    
-                    init(init_options)
-                    
-                    
+                    else{
+                        init(init_options)
+                    }
+
                 }
-                else{
+            ).catch(
+                ()=>{
                     init(init_options)
                 }
-                
-            }   
-        ).catch(
-            ()=>{
-                init(init_options)
-            }
-        )
+            )
+        }
+        else{
+            init(init_options)
+        }
 
 
 

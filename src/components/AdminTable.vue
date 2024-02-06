@@ -4,8 +4,8 @@
               <h1  >{{title}}</h1>
 
               <div v-if="permissions.make_create ">
-                <v-icon @click="new_card()" class="small" color="primary">fa-plus</v-icon>&nbsp;
-                <a href=""  @click.prevent="new_card()" class="">Добавить</a>
+                <v-icon class="small" color="primary">fa-plus</v-icon>&nbsp;
+                <a href=""  @click.prevent="new_card()">Добавить</a>
               </div>
               
               <p v-if="0"><a href="">Загрузка / сохранение фильтров</a></p>
@@ -524,7 +524,20 @@ export default {
     },
 
     new_card(){
-      window.open(BaseUrl+'edit_form/'+this.params.config);
+
+      let cgi='', cgi_params=get_cgi_params()
+
+      for(let k in get_cgi_params()){
+        if(!cgi){
+          cgi='?'
+        }
+        else{
+          cgi+='&'
+        }
+        cgi+=`${k}=${cgi_params[k]}`
+      }
+
+      window.open(`${BaseUrl}edit_form/${this.params.config}${cgi}`);
     },
     filter_change(filter){
 
