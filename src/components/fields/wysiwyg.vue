@@ -1,6 +1,5 @@
 <template>      
     <div>
-
         <errors :errors="errors" v-show="errors.length"></errors>
         <template v-show="!errors.length">        
             <!-- файловый навигатор -->
@@ -24,7 +23,7 @@
                     <template v-else>
                         <div>путь: {{file_path}}</div>
                         <p class="create_folder_link"><a href="#"  @click.prevent="create_folder_form=!create_folder_form">новая папка</a></p>
-                        <table align="center" style="margin-left: 2rem; min-width: 300px;">
+                        <table align="center" class="files">
                                 <tr v-if="file_path!='/'">
                                     <td >
                                         <a href="" @click.prevent="folder_up()">...</a>
@@ -77,6 +76,14 @@
                 <div v-show="!edit_mode && !!value">
                     <div class="read_only"  v-html="value" /> 
                 </div>
+                <template v-for="plugin in field.plugins">
+                    <GPTAssist
+                      v-if="plugin.type=='GPTAssist'"
+                      :set_value_button="plugin.set_value_button"
+                      :set_value="set_text"
+                    />
+                </template>
+
             </template>
         </template>
     </div>
@@ -192,6 +199,17 @@ export default {
       
   },
   methods: {
+    set_text(text){ // писалась для отправки текста из GPT
+        let result=''
+        // преобразуем текст в html
+        for(let str of text.split("\n")){
+            if(str){
+              result+=`<p>${str}</p>`
+            }
+        }
+        this.value=result
+        this.updateContent()
+    },
     /*update_content(){
         if(editor_object){
             editor_object.setContent(this.value)
@@ -199,7 +217,6 @@ export default {
     },*/
     updateContent(){
         if(editor_object){
-            
             editor_object.setContent(this.value)
         }
     },
@@ -212,7 +229,9 @@ export default {
                 {
                     new_folder_name:this.new_folder_name,
                     path: this.file_path,
-                    action: 'create_folder'
+                    action: 'create_folder',
+                    config: this.form.config,
+                    id: this.form.id
                 }
             ).then(
                 r=>{
@@ -250,7 +269,9 @@ export default {
         this.$http.post(url,
             {
                 action:'file_list',
-                path: this.file_path
+                path: this.file_path,
+                config: this.form.config,
+                id: this.form.id,
             }
         ).then(
             response=>{
@@ -280,7 +301,10 @@ export default {
         if(file.files.length){
             for(let f of file.files){      
                 let formData = new FormData();
+                formData.append('config', this.form.config);
+                formData.append('id', this.form.id);
                 formData.append('file', f);
+
                 formData.append('path',this.file_path);
                 this.$http.post(
                     url,
@@ -350,7 +374,7 @@ export default {
 
         }
         if(inited[name]){
-            console.log('already inited!',name)
+
             return 
         }
             
@@ -359,7 +383,7 @@ export default {
         if(!document.querySelector('#'+this.field.name+'.mce')){
             setTimeout(
                 function(){
-                    console.log('tinymce init!')
+
                     this_component.tinymce_init(name)
                 },
                 50
@@ -475,9 +499,6 @@ export default {
             if(PickerCallBack)
                 PickerCallBack(name,attr);
 
-            //callback('mypage.html', {text: 'My text'});            
-            // callback('myimage.jpg', {alt: 'My alt text'});
-            // callback('movie.mp4', {source2: 'alt.ogg', poster: 'image.jpg'});
             
     }
   }
@@ -492,5 +513,6 @@ export default {
  form.upload {margin-top: 20px;}
 .close {text-align: right; } 
 .close a {text-decoration: none;}
-
+table.files {margin-left: 2rem; min-width: 300px;}
+table.files td {padding: none;}
 </style>

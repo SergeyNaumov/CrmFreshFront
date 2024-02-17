@@ -50,11 +50,10 @@ export function check_fld(self){
             
             while(i<f.regexp_rules.length){
               let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
-              
-              let test=eval(rule+'.test(self.value)');
+              let test=eval(`${rule}.test(self.value)`);
 
               if(!test){
-                //console.log(`not test: ${rule} => ${self.value}`)
+
                 error_message=msg
                 error=true
                 

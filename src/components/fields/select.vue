@@ -1,9 +1,9 @@
 <template>
     <div > 
-       
         <!-- tree -->
         <template v-if="!field.hide">
           <template v-if="field.tree_use">
+
             <v-select
               :items="values"
               item-value="v"

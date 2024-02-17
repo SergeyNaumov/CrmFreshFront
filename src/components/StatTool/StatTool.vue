@@ -29,6 +29,7 @@
       <div style="border: 1px solid gray; margin: 10px; padding: 10px;" v-if="log_search.length">
         <pre >{{log_search}}</pre>
       </div>
+
         <div class="results" v-if="show_results">
           <template v-if="result_type=='columns'">
             <!-- Вывод результатов колонками -->

@@ -1,7 +1,7 @@
 <template>
   <div class="gpt-assist" v-if="inited">
-    <v-btn @click="show_panel=!show_panel" color="primary" style="margin: 0" v-if="!show_panel">GPT</v-btn>
-    <v-dialog v-model="show_panel" height="500" max-width="1000">
+    <v-btn x-small @click="show_panel=!show_panel" color="secondary" style="margin: 0" v-if="!show_panel">GPT</v-btn>
+    <v-dialog v-model="show_panel"  transition="dialog-bottom-transition" fullscreen>
 
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="show_panel = false">
@@ -10,71 +10,69 @@
           <v-toolbar-title>GPT - Ассистент</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
+        <v-card height="100%">
+          <v-row no-gutters style="height: 100%;">
+            <v-col cols="2"> <!-- левый столбец -->
+              <v-sheet class="pa-2 ma-2">
+                <select class="plain" v-model="gpt_engine" v-if="gpt_list.length>1">
+                  <option value="" disabled>выбор ассистента</option>
+                  <option v-for="o in gpt_list" :value="o.v">{{o.d}}</option>
+                </select>
 
-          <v-card>
+                <select v-model="prompt" @change="select_prompt" class="plain" >
+                  <option value="" disabled>Вариант генерации</option>
+                  <option v-for="o in prompts_for_out" :value="o.v" >{{o.d}}</option>
+                </select>
 
-            <v-card-text  style="padding: 20px;">
-              <p>Данный ассистент помогает Вам заполнить поля карточки</p>
-              <pre v-if="0">
-                {{mode}}
-                {{config}}
+              <div v-if="prompt" class="prompt_edit">
+                <p><b>{{prompt.header}}</b></p>
+                Температура: {{prompt.temperature}}<br>
+                <p>{{prompt.text}}</p>
 
-              </pre>
-              <div>
-                <!-- Это поле выводится если движков > 1-->
-                <v-select
-                  label="Выберите источник:" :items="gpt_list" item-value="v" item-text="d"
-                  v-model="gpt_engine" :rounded="$theme.rounded"
-                  hide-details v-if="gpt_list>1"
-                />
 
-                <v-select
-                  label="Выберите вариант генерации:" :items="prompts_for_out" item-value="v" item-text="d"
-                  v-model="prompt" :rounded="$theme.rounded"
-                  hide-details @change="select_prompt"
-                />
-                <div v-if="prompt" class="prompt_edit">
-                  <p><b>{{prompt.header}}</b></p>
-                  Температура: {{prompt.temperature}}<br>
-                  <p>{{prompt.text}}</p>
 
-                  <v-textarea label="Введите текст Вашего запроса:" placeholder="" v-model="ask" />
-                  <div v-if="prompt.placeholder">
-                      <p><b>Например так:</b></p>
-                      <div v-html="prompt.placeholder" />
+                <v-btn color="primary" v-if="ask.length > 10" @click="send_task_to_gpt">получить ответ</v-btn>
+              </div>
+
+
+              </v-sheet>
+
+            </v-col>
+
+            <v-col cols="10" style="border: 1px solid gray;"> <!-- правый столбец -->
+              <v-sheet class="pa-2 ma-2">
+                <template v-if="response">
+                  <div><a href="" @click.prevent="show_ask=!show_ask">{{show_ask?'скрыть':'показать'}} запрос</a></div>
+                </template>
+                <template v-if="!response || show_ask ">
+                  Текст Вашего запроса:
+                  <textarea class="question" :placeholder="prompt.placeholder?`например: ${prompt.placeholder}`:'введите текст запроса'" v-model="ask"></textarea>
+                </template>
+                <div v-if="ask_sended">
+                  Получаем ответ....
+                 <v-progress-circular indeterminate color="primary" ></v-progress-circular>
+                </div>
+
+                <div v-if="response"> <!-- ответ получен -->
+                  <div v-if="response_status==1" class="response_success">
+                    <div><b>Ответ от GPT:</b></div>
+                    <textarea v-model="response" class="response" />
+
+                    <template v-if="set_value_button && set_value">
+                      <v-btn  @click.prevent="set_value(response); show_panel=false">{{set_value_button}}</v-btn>
+                    </template>
+                  </div>
+                  <div v-if="response_status==2" class="response_error">
+                    <div><b>Произошла ошибка:</b></div>
+                    {{response}}
                   </div>
 
-                  <v-btn color="primary" v-if="ask.length > 10" @click="send_task_to_gpt">получить ответ</v-btn>
-                </div>
-              </div>
-
-
-              <div v-if="ask_sended">
-                Получаем ответ....
-               <v-progress-circular
-                  indeterminate
-                  color="primary"
-                ></v-progress-circular>
-              </div>
-              <div v-if="response">
-                <div v-if="response_status==1" class="response_success">
-                  <div><b>Ответ от GPT:</b></div>
-                  <v-textarea  v-model="response" />
-                  <v-select
-                    label="В какое поле отправить?" :items="fields_for_out" item-value="v" item-text="d"
-                    v-model="selected_field" :rounded="$theme.rounded"
-                    hide-details
-                  />
-                  <v-btn v-if="selected_field" @click.prevent="fill_field(selected_field)">Отправить  в карту</v-btn>
-                </div>
-                <div v-if="response_status==2" class="response_error">
-                  <div><b>Произошла ошибка:</b></div>
-                  {{response}}
                 </div>
 
-              </div>
-            </v-card-text>
-          </v-card>
+              </v-sheet>
+            </v-col>
+          </v-row>
+        </v-card>
     </v-dialog>
 
   </div>
@@ -95,9 +93,10 @@ export default {
     return {
       WS:'',
       inited: false,
-      show_panel: true,
+      show_panel: false,
+      show_ask: false,
       gpt_list:[],
-      fields:[],
+
       selected_field:null,
       gpt_engine:0,
       ask_sended: false,
@@ -127,13 +126,16 @@ export default {
       temperature: 0,
       maxTokens: 2000,
 
-      ask:'"Станция 2.0 с Алисой". Категория: умные колонки. Ключевые слова: умная колонка, алиса, умный дом.',
+      ask:'',
       response_status:0,
-      response:'Ответ от чат-бота',
+      response:'',
 
     }
   },
-  props:['config','mode'],
+  props:['mode',
+    'set_value_button',
+    'set_value'
+  ],
   // mode:
   //  form -- вызвано из формы
   //  system -- на главной странице системы
@@ -160,27 +162,19 @@ export default {
       return result
 
     },
-    fields_for_out(){
-      // для выбора, в какое поле отправ
-      let t=this, result=[]
-      for(let f of t.fields){
-        result.push({v:f.name,d:f.description})
-      }
-      return result
 
-    }
   },
   methods: {
     init(){
       let t=this
-      t.$http.get(`${BackendBase}/gpt-assist/init/${t.config}`).then(
+      t.$http.get(`${BackendBase}/gpt-assist/init`).then(
         r=>{
           let d=r.data
           if(d.success && d.need_inited && d.WS) {
             t.inited=true
             t.gpt_list=d.gpt_list
             t.gpt_engine=t.gpt_list[0].v
-            t.fields=d.fields
+
             t.WS=d.WS
           }
         }
@@ -227,34 +221,28 @@ export default {
 
     },
     fill_field(name){
-      let t=this
-      if(!t.response){
-        return
-      }
-      let type='text'
-      for(let f of t.fields){
+      // let t=this
+      // if(!t.response){
+      //   return
+      // }
 
-        if(name==f.name && f.type){
-          type=f.type
-        }
-      }
-      let result=''
-      if(type=='wysiwyg'){
-        // визивиг преобразуем в абзацы
+      // let result=''
+      // if(type=='wysiwyg'){
+      //   // визивиг преобразуем в абзацы
 
-        for(let str of t.response.split("\n")){
-            if(str){
-              result+=`<p>${str}</p>`
-            }
+      //   for(let str of t.response.split("\n")){
+      //       if(str){
+      //         result+=`<p>${str}</p>`
+      //       }
 
-        }
+      //   }
 
 
-      }
-      else{
-        result=t.response
-      }
-      bus.$emit(`field-update:${name}`,{'value':result});
+      // }
+      // else{
+      //   result=t.response
+      // }
+      //bus.$emit(`field-update:${name}`,{'value':result});
 
 
       setTimeout(
@@ -268,18 +256,37 @@ export default {
 </script>
 <style scoped>
   .response_success {
-    border: 1px solid gray; padding: 10px; background: #cacdff;
+    margin-top: 5px;
+    border: 1px solid gray; padding: 10px; background: #cacdff24;
     border-radius: 5px;
+    height: calc(100% - 20px);
   }
   .response_error {
     border: 1px solid gray; padding: 10px; background: #f5afaf;
     border-radius: 5px;
   }
   .gpt-assist {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10;
+    margin-top: 5px;
     font-weight: bold;
+  }
+  select.plain{
+    border: 1px solid gray;
+    width: 100%;
+    appearance: auto;
+    margin-bottom: 10px;
+  }
+  textarea.question {
+    border: 1px solid gray; min-height: 200px;
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+  }
+  textarea.response{
+    border: 1px solid gray; min-height: 200px;
+    padding: 5px;
+    width: 100%;
+    margin-top: 5px;
+    min-height: 550px;
+    line-height: 1.2rem;
   }
 </style>

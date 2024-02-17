@@ -17,59 +17,108 @@
       <div >
         <pre v-if=0>{{list}}</pre>
           <table>
-          <template v-for="l in list" >
-          <tr v-if="show_field(l)" :key="l.name">
-            <td class="label" >{{l.header}}:</td>
-            <td>
-            <template v-if="l.type=='text'">
-              <input type="text"
-                v-model="l.value"
+          <template v-for="l in list" v-if="show_field(l)">
+                <template v-if="l.type=='header'">
+                  <!-- <tr><td colspan="2"><b>{{l.header}}</b></td></tr> -->
+                  <div class="header"><b>{{l.header}}</b></div>
+                </template>
+                <template v-else>
+                  <div class="item">
+                        <template v-if="l.type=='text'">
+                          {{l.header}}:
+                          <input type="text" v-model="l.value" @keyup="change(l)">
+                        </template>
+                        <template v-if="l.type=='textarea'">
+                          {{l.header}}:
+                          <textarea
+                            v-model="l.value"
+                            @keyup="change(l)"
+                          />
+                        </template>
+                        <template v-if="l.type=='wysiwyg'">
+                          {{l.header}}:
+                          <field-wysiwyg
+                            :field="l"
+                          />
+                        </template>
+                        <template v-if="l.type=='file'">
+                          {{l.header}}:
+                          <input type="file"
+                          :id="'const_file_'+l.name"
+                          @change="file_upload(l)"
+                          />
+                          <div v-if="l.value">
+                            <a :href="filedir+'/'+l.value" target="_blank">открыть в браузере</a> |
+                            <a :href="filedir+'/'+l.value" :download="l.value">загрузить</a>
+                          </div>
 
-                @keyup="change(l)"
-              >
-            </template>
-            <template v-if="l.type=='textarea'">
-              <textarea
-                v-model="l.value"
-                @keyup="change(l)"
-              />
-            </template>
-            <template v-if="l.type=='wysiwyg'">
-              <field-wysiwyg
-                :field="l"
-              />
-            </template>
-            <template v-if="l.type=='file'">
+                        </template>
+                        <template v-if="l.type=='checkbox'">
+                            <input type="checkbox"   v-model="l.value" @change="change(l)"> {{l.header}}
+                        </template>
+                        <template v-if="l.type=='switch'">
+                            <v-switch   v-model="l.value" @change="change(l)"/>
+                        </template>
+                        <template v-if="l.type=='select'">
+                            {{l.header}}:
+                        <field-select :form="form" v-if="l.type=='select'" :field="l"
+                        />
 
-              <input type="file"
-              :id="'const_file_'+l.name"
-              @change="file_upload(l)"
-              />
-              <div v-if="l.value">
-                <a :href="filedir+'/'+l.value" target="_blank">открыть в браузере</a> |
-                <a :href="filedir+'/'+l.value" :download="l.value">загрузить</a>
-              </div>
+                        </template>
+                        <div v-if="l.saved" class="saved">
+                            сохранено
+                        </div>
+                  </div>
+<!--                       <tr :key="l.name">
+                        <td class="label">{{l.header}}:</td>
+                        <td>
+                        <template v-if="l.type=='text'">
+                          <input type="text" v-model="l.value" @keyup="change(l)">
+                        </template>
+                        <template v-if="l.type=='textarea'">
+                          <textarea
+                            v-model="l.value"
+                            @keyup="change(l)"
+                          />
+                        </template>
+                        <template v-if="l.type=='wysiwyg'">
+                          <field-wysiwyg
+                            :field="l"
+                          />
+                        </template>
+                        <template v-if="l.type=='file'">
 
-            </template>
-            <template v-if="l.type=='checkbox'">
-                <input type="checkbox"   v-model="l.value" @change="change(l)">
-            </template>
-            <template v-if="l.type=='switch'">
-                <v-switch   v-model="l.value" @change="change(l)"/>
-            </template>
-            <field-select :form="form" v-if="l.type=='select'" :field="l"
-            />
-            <div class="add_description" v-if="l.add_description">
-              {{l.add_description}}
-            </div>
+                          <input type="file"
+                          :id="'const_file_'+l.name"
+                          @change="file_upload(l)"
+                          />
+                          <div v-if="l.value">
+                            <a :href="filedir+'/'+l.value" target="_blank">открыть в браузере</a> |
+                            <a :href="filedir+'/'+l.value" :download="l.value">загрузить</a>
+                          </div>
 
-            <div v-if="l.saved" class="saved">
+                        </template>
+                        <template v-if="l.type=='checkbox'">
+                            <input type="checkbox"   v-model="l.value" @change="change(l)">
+                        </template>
+                        <template v-if="l.type=='switch'">
+                            <v-switch   v-model="l.value" @change="change(l)"/>
+                        </template>
+                        <template v-if="l.type=='select'">
+                            <select v-model="l.value">
+                              <option v-for="v in values" :value="v.v">{{v.d}}</option>
+                            </select>
+                        </template>
+                        <field-select :form="form" v-if="l.type=='select'" :field="l"
+                        />
+                        <div class="add_description" v-if="l.add_description">
+                          {{l.add_description}}
+                        </div>
 
-                сохранено
 
-            </div>
-          </td>
-        </tr>
+                      </td>
+                    </tr> -->
+              </template>
         </template>
       </table>
       </div>
@@ -273,6 +322,16 @@ export default {
     border-bottom: 1px solid gray;
   }
   table tr:nth-child(odd) td {background-color: #f1f1f1;}
+  div.item{
+    vertical-align: top; padding: 10px;
+    font-size: 11pt;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+  }
+  div.item:nth-child(odd) {background-color: #f1f1f1;}
+  div.header {text-align: center;
+    padding: 20px;
+  }
   input[type=text] {
     padding: 5px;
     border-radius: 3px;

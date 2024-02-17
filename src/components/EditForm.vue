@@ -1,12 +1,6 @@
 <template>
     <v-app id="EditForm">
-        <GPTAssist
-          :config="params.config"
-          mode="form"
-        />
-
         <!-- для вызова попапа извне -->
-
         <v-dialog v-model="popup.show" max-width="500">
           <v-card>
             <v-card-title  class="headline">{{popup.header}}</v-card-title>
