@@ -28,9 +28,9 @@
                         <span class="date" :style="l.style">{{l.date}}</span>&nbsp;
                         <span class="user_name" :style="l.style">{{l.user_name}}:</span>&nbsp;
                         <span class="message" v-html="to_html(l.message)"></span>
-                        <div v-if=" (field.make_edit || field.make_delete)">
-                          <v-icon v-if="field.make_edit" small @click="edit(l,true)">edit</v-icon>
-                          <v-icon v-if="field.make_delete" small @click="del(l,idl)">delete</v-icon> 
+                        <div v-if=" (l.make_edit || l.make_delete)">
+                          <v-icon v-if="l.make_edit" small @click="edit(l,true)">edit</v-icon>
+                          <v-icon v-if="l.make_delete" small @click="del(l,idl)">delete</v-icon>
                         </div>
                       </div>
                     </div>
@@ -156,23 +156,24 @@
         }
       },
       add(){
-        this.$http.post(BackendBase+'/memo/add/'+this.form.config+'/'+this.field.name+'/'+this.id,{
+        let t=this
+        t.$http.post(BackendBase+'/memo/add/'+t.form.config+'/'+t.field.name+'/'+t.id,{
           message: this.adding_value
         }).then(
           response=>{
             let D=response.data;
             if(D.success && D.memo_id){
-              let new_el={id:D.memo_id,message:this.adding_value,user_name:D.user_name,user_id:D.user_id,date:D.now }
-              if(this.field.reverse)
-                this.data.unshift(new_el);
+              let new_el=D.data//{id:D.memo_id,message:t.adding_value,user_name:D.user_name,user_id:D.user_id,date:D.now }
+              if(t.field.reverse)
+                t.data.unshift(new_el);
               else
-                this.data.push(new_el);
+                t.data.push(new_el);
               
-              this.adding_value='';
-              this.colored();
+              t.adding_value='';
+              t.colored();
             }
-            this.errors=D.errors
-            this.hide_timeout_errors()
+            t.errors=D.errors
+            t.hide_timeout_errors()
           }
         );
       },
