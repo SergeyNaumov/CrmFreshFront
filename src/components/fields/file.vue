@@ -97,13 +97,8 @@
               
             </template>
           </div>
-
-           
-
           
-
-
-          <template v-if="field.crops && imgSrc">
+          <template v-if="crops.length && imgSrc">
               <div class="accepted" v-if="all_accept"><b>Все фото подтверждены</b></div>
               <div class="not_accepted" v-else>
                 <b>Не все изображения подтверждены</b> 
@@ -163,7 +158,7 @@ export default {
         return '';
       },
       is_img(){
-        return /^.+\.(jpg|png|wepb|gif|svg)$/i.test(this.begin_value)
+        return /^.+\.(jpe?g|png|wepb|gif|svg)$/i.test(this.begin_value)
       },
       orig_filename(){
         if(this.begin_value){
@@ -203,7 +198,7 @@ export default {
             all_accept:false,
             err_str:'',
             img_loader:'',
-            new_image_url:'https://damion.club/uploads/posts/2022-02/1643959008_61-damion-club-p-ptitsa-sekretar-zhivotnie-68.jpg',
+            //new_image_url:'https://damion.club/uploads/posts/2022-02/1643959008_61-damion-club-p-ptitsa-sekretar-zhivotnie-68.jpg',
             clipboard_error:'', // ошибка при вставке из буфера картинки
             clipboard_success:'',
             crops:[
@@ -235,6 +230,7 @@ export default {
             this.crops.push({description:r.description || '', width:sz[0],height:sz[1],data:'',accept:0})
           }
         }
+        console.log('crops:',this.crops)
         //this.crops=arr;
         
       },
