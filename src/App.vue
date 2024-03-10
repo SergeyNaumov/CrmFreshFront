@@ -45,7 +45,6 @@
             <pre v-if="0">{{MenuItem}}</pre>
 
             <template v-if="MenuItem.type == 'vue'">
-
               <component 
                 :is="load_component(MenuItem.value)"
                 :params="MenuItemParams"
@@ -314,9 +313,9 @@ export default {
   .v-select-list .v-list-item__title {font-size: 12px;}
   
  
-  input, .v-select__selections [type=text] {font-size: 14px !important;}
-  .v-list-item__content, .v-select__slot {font-size: 14px;}
-  .v-label, .v-input {font-size: 14px !important; margin-bottom: 10px;}
+  input, .v-select__selections [type=text] {font-size: 12px !important;}
+  .v-list-item__content, .v-select__slot {font-size: 12px;}
+  .v-label, .v-input {font-size: 12px !important; margin-bottom: 10px;}
   .v-text-field--rounded .v-input__control {
     border: 1px solid black; 
     padding-left: 3px;

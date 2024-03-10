@@ -9,14 +9,21 @@
           -->
           
             <v-icon small color="primary">fa-user-alt</v-icon>
-            {{manager.name}}
-          
+            {{manager.name || manager.login}}
+            
           
 
         </v-col>
 
         <v-col class="p3"  cols="12" sm="6" md="6">
           <v-icon small color="primary">fa-calendar-alt</v-icon> {{curdate}}
+        </v-col>
+      </v-row>
+      <v-row>
+        
+        <v-col  v-for="(c,idx) in list_components" :cols="c.cols" :key="`maincomponent_${idx}`">
+          <component :is="c.component"  />
+          
         </v-col>
       </v-row>
       <!-- Блок для информации о регистрационных данных 
@@ -48,16 +55,24 @@
 <script>
 
 
-import Vue from 'vue'
-
-
+//import Vue from 'vue'
+import BirthDays from './components/BirthDays';
+import Notifications from './components/Notifications';
 
 export default {
+  components: {
+    'birth-days': BirthDays,
+    'notifications': Notifications
+  },
   props:[],
   data(){
     return {
       curdate: '',
       errors:[],
+      list_components:[
+        {'component':'birth-days','cols':12},
+        {'component':'notifications','cols':12}
+      ],
       manager:{
         login:'',
         id:'',
