@@ -69,10 +69,7 @@ export default {
     return {
       curdate: '',
       errors:[],
-      list_components:[
-        {'component':'birth-days','cols':12},
-        {'component':'notifications','cols':12}
-      ],
+      list_components:[],
       manager:{
         login:'',
         id:'',
@@ -85,19 +82,23 @@ export default {
     }
   },
   created(){
-    this.$http.get(BackendBase+'/get-events').then(
+    let t=this
+    t.$http.get(BackendBase+'/get-events').then(
       response=>{
         let D=response.data;
       }
     )
 
-    this.$http.get(BackendBase+'/mainpage').then(
+    t.$http.get(BackendBase+'/mainpage').then(
       response=>{
         let D=response.data;
         if(D.success){
-          this.news_list=D.news_list
+          t.news_list=D.news_list
 
-          this.manager=D.manager, this.curdate=D.curdate;
+          t.manager=D.manager, t.curdate=D.curdate;
+          if(D.main_page_components){
+            t.list_components=D.main_page_components
+          }
         }
         if(D.errors){
           this.errors=D.errors

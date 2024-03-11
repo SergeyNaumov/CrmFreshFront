@@ -6,6 +6,7 @@
     "serve": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service serve --port 8081 --host=localhost",
     "build": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service build --target app --name index",
     "build_trade": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/trade.js vue-cli-service build  --target app --name index",
+    "build_strateg": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/strateg.js vue-cli-service build  --target app --name index",
     "build_svcms": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/svcms.js vue-cli-service build  --target app --name index",
     "lint": "vue-cli-service lint",
     "report": "vue-cli-service build --report"
