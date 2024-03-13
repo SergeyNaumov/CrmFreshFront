@@ -2,6 +2,7 @@
   <div class="block">
     
     <div v-for="f in fields_for_block" :key="f.name+'_1'" class="field">
+      
       <template v-if="is_only_field(f)"> <!--только поле без всего лишнего (для миниатюрных полей) -->
           
           <template v-if="f.before_html" v-html="f.before_html"></template>
@@ -16,7 +17,7 @@
           <v-flex md12 xs12 v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
             <!-- FULL_STR -->
               <div class="description_container" v-if="f.description && !is_default_not_description(f)">{{f.description}}:</div>
-
+              
               <template if="dynamic_component(f)">
               <!--
                 Перенесено в компонент                
@@ -37,6 +38,7 @@
               
           </v-flex>
           <template v-else>
+            
             <v-row no-gutters>
               <v-col cols="12" xs="12" md="2"  >{{f.description}}:</v-col>
               <v-col cols="12" xs="12" md="10" >
@@ -136,6 +138,7 @@ import FieldPassword from '../fields/password';
                 case 'checkbox':
                 case 'switch':
                     res='field-checkbox'; break
+                case 'component':
                 case 'multiconnect':
                 case 'select':
                 case 'date':

@@ -16,6 +16,8 @@ export const bus = new Vue();
 let main_color=colors[color_scheme];
 //main_color.base='#253a5d'
 //console.log('BVA')
+window.Vue=Vue
+
 Vue.prototype.$color = main_color;
 let color_set={ // текущий набор
   //primary: main_color.base, //'#253a5d',

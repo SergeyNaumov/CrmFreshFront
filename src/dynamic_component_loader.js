@@ -23,24 +23,20 @@ import SelectField from './components/fields/select';
 Vue.component('field-select',SelectField);
 	*/
 	Vue.component('field-select',() => import('./components/fields/select'));
-
 	Vue.component('field-1_to_m',() => import('./components/fields/1_to_m'));
 	Vue.component('field-accordion', ()=> import('./components/fields/accordion'));
 	Vue.component('field-chart', ()=> import('./components/fields/chart'));
 	Vue.component('field-checkbox',()=>import('./components/fields/checkbox'))
 	Vue.component('field-code',() => import('./components/fields/code'))	
-
 	Vue.component('field-docpack',() => import('./components/fields/docpack'));
-
 	Vue.component('field-file',()=>import('./components/fields/file'))
 	Vue.component('field-font-awesome',()=>import('./components/fields/font-awesome'));
 	Vue.component('field-memo',() => import('./components/fields/memo'));
 	Vue.component('field-multiconnect',() => import('./components/fields/multiconnect'));
-
 	Vue.component('field-table', ()=> import('./components/fields/table'));
 	Vue.component('field-time_table', ()=> import('./components/fields/time_table'));
-	
-	Vue.component('field-wysiwyg',() => import('./components/fields/wysiwyg'))	
+	Vue.component('field-wysiwyg',() => import('./components/fields/wysiwyg'))
+	Vue.component('field-component',()=>import('./components/fields/component'))
 
 // Фильтры:
 	const filter_dir='./components/AdminTable/filters'

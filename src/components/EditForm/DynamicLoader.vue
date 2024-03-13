@@ -1,4 +1,5 @@
 <template>
+        {{ field }}
         <component  :is="component"
           :form="form" :field="field" :calc_values="calc_values" :change_field="change_field"
         />
