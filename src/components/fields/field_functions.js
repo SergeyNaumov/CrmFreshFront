@@ -16,9 +16,14 @@ export function field_update(new_data, self){
       );
     }
 
-    if('after_html' in new_data){
+    if( ('after_html' in new_data) ||  'before_html' in new_data){
       self.$nextTick(
-        ()=>{self.after_html=new_data.after_html}
+        ()=>{
+          if(new_data.after_html)
+            self.after_html=new_data.after_html
+          if(new_data.before_html)
+            self.before_html=new_data.before_html
+        }
       );
     } 
 }

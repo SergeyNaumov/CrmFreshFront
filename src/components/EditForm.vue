@@ -61,7 +61,7 @@
                             <v-flex pl-3 :class="'md'+12/Math.floor(cols.length)" xs12 v-for="c in cols" :key="c.idx">
 
                             <v-card class="block" v-for="block in c" :key="block.name">
-                                <v-toolbar color="primary" dark height="35px" @click="block.hide=!block.hide">
+                                <v-toolbar color="primary" dark height="35px" @click="block_toggle(block)">
                                     <v-toolbar-title >
                                         <v-icon v-if="!block.hide">keyboard_arrow_up</v-icon> 
                                         <v-icon v-if="block.hide">keyboard_arrow_down</v-icon>
@@ -268,10 +268,8 @@ methods: {
                             
                             for(let f of this.form.fields){
                               if(f.type=='file' && f.value){
-                                
                                 f.begin_value=f.value, f.value=''
                               }
-                                
                               
                               if(f.type=='checkbox' || f.type=='switch'){
                                 f.value=parseInt(f.value)?1:0;
@@ -280,9 +278,18 @@ methods: {
 
                             }
                         }
-
+                        // Динамический javascript
                         if(data.javascript){
                           eval(data.javascript)
+                        }
+                        
+                        // Статический javascript
+                        if(data.javascript_static){
+                          for(let src of data.javascript_static){
+                            let script = document.createElement('script')
+                            script.src=src
+                            document.head.appendChild(script)
+                          }
                         }
                         this.fatal_errors=data.errors;
                         
@@ -384,7 +391,12 @@ methods: {
           exists_opener(){
             return window.opener
           },
-
+          block_toggle(block){
+            block.hide=!block.hide
+            if(!block.hide && block.on_show){
+              eval(block.on_show)
+            }
+          }
           // 1_to_m-end
         }, // end-methods
 }

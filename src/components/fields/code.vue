@@ -1,8 +1,7 @@
 <template>
     <div>
         <div v-html="field.before_html"></div>
-        <div v-html="field.html"></div>
-
+        <div v-html="field.html" :style="field.style"></div>
         <div v-html="field.after_html"></div>
     </div>
 </template>

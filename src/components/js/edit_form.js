@@ -42,6 +42,8 @@ export function on_dependence(self, name,obj,not_frontend_process){
         if('after_html' in obj)
           f.after_html=obj.after_html 
         
+        if('before_html' in obj)
+          f.before_html=obj.before_html
         bus.$emit('change_field',f,not_frontend_process);
       }
         

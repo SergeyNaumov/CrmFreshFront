@@ -2,6 +2,7 @@
     <div > 
         <!-- tree -->
         <template v-if="!field.hide">
+          <div v-if="before_html" v-html="before_html"></div>
           <template v-if="field.tree_use">
 
             <v-select
@@ -12,7 +13,6 @@
               :label="field.description"
               class="input-group--focused"
               :rounded="$theme.rounded"
-
               :hint="field.add_description"
               hide-details
             /> <!--@input="change_field(field)"-->
@@ -126,6 +126,7 @@ export default {
       error_message:'',
       warning_message:'',
       after_html:'',
+      before_html:'',
       search:'' // для autocomplete
     }
   },

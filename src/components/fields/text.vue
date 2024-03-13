@@ -1,7 +1,8 @@
 <template>
         <div>
+          <div v-if="field.before_html" v-html="field.before_html"></div>
           <template v-if="!field.hide">
-            <div v-if="field.before_html" v-html="field.before_html"></div>
+            
 
             <template v-if="field.subtype=='color'">
               <div class="color_block">
@@ -36,7 +37,7 @@
                 />
               </template>
               <v-text-field 
-                v-if="field.type=='text'"
+                v-if="field.type=='text' && !field.hide_field"
                 :label="field.description"
                 v-model="value"
                 :hint="field.add_description" :placeholder="field.placeholder"
@@ -73,7 +74,7 @@
                 </span>
               </template>
             </template>
-            <div class="add_description" v-else-if="field.add_description">{{field.add_description}}</div>     
+            <div class="add_description" v-if="field.add_description">{{field.add_description}}</div>     
             <div
               class="err" v-if="error_message" v-html="error_message"
             />

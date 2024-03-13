@@ -165,9 +165,6 @@ import FieldPassword from '../fields/password';
           //return (field.type=='1_to_m' || field.type=='wysiwyg')?true:false
         },
         is_default_full_str(field){
-          
-          
-          
           return (typeof(field.full_str)=='undefined' && /^(1_to_1_)?(password|date|file|time|datetime|memo|wysiwyg|1_to_m|text|checkbox|select|switch|textarea|multiconnect|time_table)$/.test(field.type));
         },
         is_default_not_description(field){ // если вдруг буду ещё поля, которые по умолчанию должны быть без description-а
