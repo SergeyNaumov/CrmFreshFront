@@ -266,7 +266,9 @@ methods: {
                             this.form.read_only=parseInt(this.form.read_only);
                             calc_values(this);
                             
+                           
                             this.cols=data.cols;
+                            console.log('COLS:',this.cols)
                             this.init_tabs(data)
 
                             

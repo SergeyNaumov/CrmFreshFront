@@ -102,7 +102,7 @@ import FieldPassword from '../fields/password';
           valid: false
         }
       },
-      props:['block_name','form','save','params','values','block_name'],
+      props:['block_name','form','save','params','values'],
       created(){
 
       },

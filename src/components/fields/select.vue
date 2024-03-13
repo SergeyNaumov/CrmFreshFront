@@ -133,7 +133,6 @@ export default {
   props:['form','field','parent','name_parent_field','refresh'],
   watch:{
         value(){
-          console.log('v:',this.value)
           this.field.value=this.value
           // этот костыль нужен для того, чтобы можно было поменять значение извне
 
@@ -154,9 +153,7 @@ export default {
           }
           else{
             bus.$emit('change_field',this.field);
-          }
-
-          
+          }          
         },
         refresh(){ 
             this.value=this.field.value+'';  
@@ -167,11 +164,9 @@ export default {
           }
         },
         field(){
-          this.value=this.field.value+'';
-          
+          this.value=this.field.value+''; 
           //this.values=this.field.values;
         }
-
   },
 
   created(){
