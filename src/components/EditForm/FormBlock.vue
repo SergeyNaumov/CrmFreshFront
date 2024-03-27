@@ -13,11 +13,10 @@
           <!--<div v-if="f.after_html" v-html="f.after_html"></div>-->
       </template>
       <div row wrap v-else>
-        
+          
           <v-flex md12 xs12 v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
             <!-- FULL_STR -->
               <div class="description_container" v-if="f.description && !is_default_not_description(f)">{{f.description}}:</div>
-              
               <template if="dynamic_component(f)">
               <!--
                 Перенесено в компонент                

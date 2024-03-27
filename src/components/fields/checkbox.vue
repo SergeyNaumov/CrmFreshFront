@@ -1,6 +1,8 @@
 <template>
+    
     <div v-if="!field.hide">
-        <template v-if="field.type=='checkbox'">
+        
+        <template v-if="field.type=='checkbox' || field.type=='1_to_1_checkbox'">
             <v-checkbox  :label="field.description" :disabled="disabled" color="primary" v-model="value" @change="change_field(field)" hide-details></v-checkbox>
             
         </template>
