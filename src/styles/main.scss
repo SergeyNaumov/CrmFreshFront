@@ -8,7 +8,54 @@ table.tbl1 {
     border-collapse: collapse;
     width: 100%;
 }
+input.inp[type=text], select.inp {
+    border: 1px solid gray;
+    height: calc(2.25rem + 2px);
+}
+select.inp {
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
 
+}
+button.inp {
+    border: 1px solid gray;
+    background-color: rgb(239, 239, 239);
+    padding: 5px;
+}
+.block {
+    display: block;
+    padding:0;
+    margin: 0;
+}
+.w100, .w60, .w50, .w40, .w30{
+    vertical-align: top;
+}
+.w100 {
+    width: 100%;
+}
+.w60 {
+    width: calc(60% - 10px);
+    margin: 0;
+    display: inline-block;
+}
+.w50 {
+    width: calc(50% - 10px);
+    margin: 0;
+    display: inline-block;
+}
+.w40 {
+    width: calc(40% - 10px);
+    margin: 0;
+    display: inline-block;
+}
+.w30 {
+    width: calc(30% - 10px);
+    margin: 0;
+    display: inline-block;
+}
+.mt10{
+    margin-top: 10px;
+}
 table.tbl1 td {
     border: 1px solid gray;
     padding: 2px 5px;

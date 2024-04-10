@@ -11,7 +11,7 @@
               <v-card v-else class="memo"  :class="{'is_in_results':is_in_results}">
 
                 
-                <div v-for="(l,idl) in data" :key="l.idl" class="memo_str">
+                <div v-for="(l,idl) in data" :key="'l'+idl" class="memo_str">
                     <div v-if="l.edit_on" class="edit_on">
                       <v-textarea v-model="l.message" class="" :rows="1" 
                         :label="'Измените комментарий:'"
@@ -164,6 +164,7 @@
             let D=response.data;
             if(D.success && D.memo_id){
               let new_el=D.data//{id:D.memo_id,message:t.adding_value,user_name:D.user_name,user_id:D.user_id,date:D.now }
+
               if(t.field.reverse)
                 t.data.unshift(new_el);
               else
@@ -209,7 +210,7 @@
         
       },
       del(el,idl){
-        this.$http.get(BackendBase+'/memo/delete/'+this.form.config+'/'+this.field.name+'/'+this.id+'/'+el.id).then(
+        this.$http.get(BackendBase+'/memo/delete/'+this.form.config+'/'+this.field.name+'/'+this.id+'/'+el.id ).then(
           response=>{
 
             let D=response.data;

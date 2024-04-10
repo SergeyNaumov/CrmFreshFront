@@ -1,9 +1,5 @@
 <template>
     <v-app id="EditForm">
-      
-      
-        
-      
         <!-- для вызова попапа извне -->
         <v-dialog v-model="popup.show" max-width="500">
           <v-card>
