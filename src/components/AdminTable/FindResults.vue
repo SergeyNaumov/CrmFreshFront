@@ -162,7 +162,24 @@
                                       <div class="saved" :id="td.name+'_'+tr.key"></div>
                                       <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </template>
-                                  <template v-if="td.type=='datetime'">[datetime]</template>
+                                  <template v-if="td.type=='datetime'">
+
+                                      <field-datetime
+                                        :field="td" 
+                                        :form="{}"
+                                        style="width: 200px;"
+                                        :parent="(value)=>{
+                                          td.value=value; 
+                                          change_in_search(tr,td)
+                                        }"
+                                      />
+
+                                      
+                                      <div class="saved" :id="td.name+'_'+tr.key"></div>
+                                      <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
+                                  
+                                  
+                                  </template>
                                   <template v-if="td.type=='yearmon'">[yearmon]</template>
 
                                   <field-memo v-if="td.type=='memo'" :form_id="tr.key" :form="{'config':results.config}"  :field="{'name':td.name,'show_type':td.show_type}"></field-memo>

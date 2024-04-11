@@ -149,17 +149,17 @@ export default {
   },
   mounted(){
     // получаем filter_values
-    console.log('created begin', this.on_filters)
+    
     let t=this
 
 
     this.calc_ids()
-    console.log('created end')
+    
   },
 
   methods:{
     calc_ids(){
-          console.log('calc_ids!')
+          
           let list=[], t=this
           for(let id in t.selected_ids){
               if(t.selected_ids[id]){

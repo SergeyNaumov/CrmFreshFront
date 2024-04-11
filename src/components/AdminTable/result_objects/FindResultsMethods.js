@@ -2,7 +2,11 @@
   Методы для FindResults
 */
 export default {
-
+    parent_save_func(td, value){
+      td.value=value;
+      console.log('DT VALUE:',value)
+      //change_in_search(tr,td)
+    },
     parent_for_change_in_search(tr,td,value){
       //console.log([tr,td,value])
       td.value=value;
@@ -114,12 +118,14 @@ export default {
     },
     save_in_search(tr,td){
       let v=td.value;
+
       let form_id=tr.key;
 
       if(td.type=='checkbox')
         v=v?1:0
 
       let values={}; values[td.name]=v;
+
       let url=BackendBase+'/edit-form/'+this.results.config+'/'+form_id;
       this.$http.post(url,{
         id:form_id,

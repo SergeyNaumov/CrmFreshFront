@@ -76,7 +76,9 @@ export default {
       }
     },
     created(){
-      this.value=this.field.value;;
+      // .replace нужен для того, чтобы пофиксить время, которого быть не должно
+      this.value=this.field.value.replace(/[T\s][\d:]+$/,'');
+      //console.log('datevalue:',this.value)
       this._field_update=(new_data)=>{
         field_update(new_data,this)
       };
@@ -93,23 +95,10 @@ export default {
       else{
         bus.$on('field-update:'+this.field.name,this._field_update )
 
-        // bus.$on('field-update:'+this.field.name,new_data=>{
-        //   if(this.value !== new_data.value)
-        //     this.value=new_data.value
 
-        //   if('error_message' in new_data){
-        //     this.$nextTick(
-        //       ()=>{this.error_message=new_data.error_message}
-        //     );
-        //   }
-        //   if('warning_message' in new_data){
-        //     this.$nextTick(
-        //       ()=>{this.warning_message=new_data.warning_message}
-        //     );
-        //   }
-        // })
       }
-      check_fld(this);
+      // убрал, потому что из-за него криво отправляло из change_in_search
+      //check_fld(this);
     },
     beforeDestroy(){
       if(!this.parent){
@@ -141,7 +130,7 @@ export default {
         let field=this.field;
         field.value=this.value
         if(this.parent){
-          //console.log(this.value)
+          //console.log('date save:', this.value)
           this.parent(this.value)
         }
         else{

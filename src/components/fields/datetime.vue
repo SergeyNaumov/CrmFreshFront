@@ -35,13 +35,21 @@
                                 style="max-width: 190px;"
                             />
                             </template>
+                            
                             <v-date-picker :first-day-of-week="1"  locale="ru-Ru" v-model="date" @input="set_value(); menu_date=false"/>
                             
                         </v-menu>
                         
-                        
+                        <v-text-field
+                                v-model="time"
+                                label="Время: ЧЧ:MM"
+                                prepend-icon="event"
+                                @change="fix_time"
+                                @keyup="fix_time"
+                                style="max-width: 180px"
+                            ></v-text-field>
                 
-    
+                        <!--
                         <v-menu
                             v-model="menu_time"
                             :close-on-content-click="false"
@@ -52,23 +60,14 @@
                             readonly
                             min-width="290px"
                         >
+
                         
                             <template v-slot:activator="{ on }">
-                            <v-text-field
-                                v-model="time"
-                                label="Время: ЧЧ:MM"
-                                prepend-icon="event"
-                                readonly
-                                v-on="on"
-                                style="max-width: 180px"
-                            ></v-text-field>
-                            
-                            
                             </template>
-                            <v-time-picker format="24hr"
-                            v-model="time" @input="select_cal_time()"></v-time-picker>
+                            <v-time-picker format="24hr" v-model="time" @input="select_cal_time()" />
                             
                         </v-menu>
+                        -->
 
                         
             </div>
@@ -88,6 +87,10 @@ import { field_update } from './field_functions'
 export default {
     props:['form','field','refresh','parent'], // ,'calc_values'
     created(){
+      this.field.value=this.field.value.replace(/^(\d{2})\.(\d{2})\.(\d{4})/,'$3-$2-$1').replace(/\s\s+/,' ').replace(/({\d2}:\d{2})(:\d{2})?/,'$1')
+      //console.log('this.field.value:',this.field.value)
+      this.old_value=this.field.value
+      
       this._field_update=(new_data)=>{field_update(new_data,this)};
 
       if(!this.parent){
@@ -102,19 +105,24 @@ export default {
             this.value='не указано'
         }
         else{
-          let arr=this.field.value.split(' ');
+          let arr=this.field.value.replace(/\s\s+/g,' ').split(' ')
+          
           if(arr.length==2){
             this.date=arr[0];
             this.time=arr[1];
+
+            
             this.value=this.field.value;
+            
+            
           }
         }
-
+        
       }
       else{
         this.date='', this.time='', this.value='';
       }
-
+      this.fix_time()
       this.set_need_empty()
     },
     beforeDestroy(){
@@ -124,6 +132,7 @@ export default {
     },
     data:function(){
         return {
+            old_value:'',
             value:'',
             date: '',
             time: '',
@@ -142,16 +151,38 @@ export default {
       }
     },
     watch:{
-
+      
     },
     methods:{
+      fix_time(){
+        if(!/[1-9]/.test(this.date)){
+          this.date='', this.time=''
+        }
+        let time=this.time
+        // '22:5332222'.replace(/[^\d]/g,'').replace(/^(\d{1,4}).*$/,'$1').replace(/^(\d{2})(.*)$/,'$1:$2')
+        time=time.replace(/[^\d]/g,'').replace(/^(\d{1,4}).*$/,'$1').replace(/^(\d{2})(.*)$/,'$1:$2')
+        time=time.replace(/^[3-9]/,'2').replace(/^2[4-9]/,'23').replace(/:[6-9]/,':5')
+        this.time=time
+        this.set_value()
+      },
       set_value(){
         this.set_need_empty();
+        
         this.value=this.date+' '+this.time;
         let field=this.field;
         field.value=this.value
         
-        bus.$emit('change_field', field)
+        if(this.value != this.old_value){
+            
+            if(this.parent){
+              this.parent(this.value)
+            }
+            else{
+              bus.$emit('change_field', field);
+            }
+            this.old_value=this.value
+        }
+        //bus.$emit('change_field', field)
       },
       select_cal_date(){
         this.menu_date = false;
