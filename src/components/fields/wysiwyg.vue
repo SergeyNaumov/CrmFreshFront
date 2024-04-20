@@ -76,6 +76,12 @@
                 <div v-show="!edit_mode && !!value">
                     <div class="read_only"  v-html="value" /> 
                 </div>
+                <template v-if="field.values && field.values.length">
+                    варианты: 
+                    <span v-for="v in field.values" :key="v.v">
+                    <a href="" @click.prevent="value=v.v" >{{ v.d }}</a>&nbsp;
+                    </span>
+                </template>
                 <template v-for="plugin in field.plugins">
                     <GPTAssist
                       v-if="plugin.type=='GPTAssist'"

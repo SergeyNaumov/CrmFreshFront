@@ -88,7 +88,10 @@ export default {
     props:['form','field','refresh','parent'], // ,'calc_values'
     created(){
       this.field.value=this.field.value.replace(/^(\d{2})\.(\d{2})\.(\d{4})/,'$3-$2-$1').replace(/\s\s+/,' ').replace(/({\d2}:\d{2})(:\d{2})?/,'$1')
-      //console.log('this.field.value:',this.field.value)
+      if(!/[1-9]/.test(this.field.value)){
+        this.value=''
+      }
+      console.log('this.field.value:',this.field.value)
       this.old_value=this.field.value
       
       this._field_update=(new_data)=>{field_update(new_data,this)};
@@ -171,8 +174,8 @@ export default {
         this.value=this.date+' '+this.time;
         let field=this.field;
         field.value=this.value
-        
-        if(this.value != this.old_value){
+        //console.log(`"${this.old_value}" => "${this.value}"`)
+        if(this.value != this.old_value && !(!/[1-9]/.test(this.value) && !/[1-9]/.test(this.old_value)) ){
             
             if(this.parent){
               this.parent(this.value)

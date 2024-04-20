@@ -12,7 +12,6 @@
             {{field.name}} select filter range пока не реализован
         </template>
         <template v-else>
-
             <template v-if="field.autocomplete">
                 <v-autocomplete 
                     :label="field.description"
