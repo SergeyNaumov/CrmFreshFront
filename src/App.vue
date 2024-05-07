@@ -132,6 +132,15 @@ export default {
           self=this
           
           window.app=this
+          window.toggle=(sel)=>{
+            let el=document.querySelector(sel)
+            if(el){
+              console.log('display: ',el.style.display)
+              el.style.display=(el.style.display=='none')?'':'none'
+            }
+            return false
+          }
+
           get_headapp(self)
           window.onhashchange=e=>{
             get_headapp(self);

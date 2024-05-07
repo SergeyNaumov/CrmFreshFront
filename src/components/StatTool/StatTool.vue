@@ -124,6 +124,9 @@ export default {
             let d=r.data
             if(d.success){
               t.filters=d.filters, t.title=d.title
+              if(d.javascript){
+                eval(d.javascript)
+              }
             }
             t.errors=d.errors
             if(d.log){
