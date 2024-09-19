@@ -22,6 +22,7 @@
       <v-row>
         
         <v-col  v-for="(c,idx) in list_components" :cols="c.cols" :key="`maincomponent_${idx}`">
+          
           <component :is="c.component"  />
           
         </v-col>

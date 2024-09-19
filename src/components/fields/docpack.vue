@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <v-dialog v-model="dialog" style="min-height: 100px; width: 800px;">
             <v-card>
                 {{errors}}
@@ -40,6 +41,7 @@
                         :key="dogovor.id"
                         :field="field"
                         :dogovor="dogovor"
+                        :services="services"
                         :config="form.config"
                         :form="form"
                         :docpack="dp"
@@ -97,6 +99,7 @@
                         for(let dp of d.list)
                             dp.dogovor_list_show=false
                         this.list=d.list;
+                        this.services=d.services
                         this.permissions=d.permissions;
                     }
                     this.errors=d.errors
@@ -124,7 +127,6 @@
                     }
                     this.errors=d.errors;
                     if(d.errors.length){
-                        
                         this.dialog=true
                     }
                     
