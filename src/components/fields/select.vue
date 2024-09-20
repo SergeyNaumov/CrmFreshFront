@@ -159,7 +159,7 @@ export default {
             this.value=this.field.value+'';  
         },
         search(v){
-          if(v && v.length>3){
+          if(v && v.length>2){
             this.load_autocomplete(v)
           }
         },
