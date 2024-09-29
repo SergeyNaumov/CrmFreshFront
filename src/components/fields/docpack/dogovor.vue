@@ -23,6 +23,7 @@
                 :field="field"
                 :docpack="docpack"
                 :bills="bills"
+                :apps="apps"
                 :services="services"
                 :load="load"
             />
@@ -43,6 +44,7 @@
         return {
             show:false,
             edited:{},
+            apps: [], // приложения к договору
             bills:[], // список счетов
             errors:[],
             show_comment:false,
@@ -90,63 +92,29 @@
 
 
 
-        save_sum_bill(b){
-            let t=this
-            t.$http.post(
-                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
-                {
-                    action: 'save_summ_bill',
-                    id:this.form.id,
-                    bill_id: b.id,
-                    summ: b.summ
-                }
-            ).then(
-                r=>{
-                    let d=r.data
-                    if(d.success){
-                        b.old_summ=b.summ
-                        b.edit_sum=false
-                    }
-                    else{
-                        if(d.errors && d.errors.length){
-                            alert(d.errors[0])
-                        }
 
-                    }
-                }
-            )
-
-        },
 
         load_dog_link(format,need_print=0){
             //return '/backend/load_document?doc_pack_id='+this.docpack.id+'&format='+format+'&type=dogovor'+(without_print?'&without_print=1':'')
             return `${BackendBase}/docpack/load-dogovor/${this.docpack.id}/${format}/${need_print}`
         },
         load(){
-            this.$http.post(
-                BackendBase+'/docpack/'+this.config+'/'+this.field.name,
+            let t=this, field=t.field
+            t.$http.post(
+                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
                 {
                     action:'get_bills',
-                    id:this.form.id,
-                    dogovor_id:this.dogovor.docpack_id
+                    id:t.form.id,
+                    dogovor_id:t.dogovor.docpack_id,
+                    form_id_alternative: field.form_id || null,
+                    only_dogovor: field.only_dogovor || null,
+                    only_app: field.only_app || null
                 }
             ).then(
                 r=>{
                     let d=r.data;
                     if(d.success){
-                        this.bills=[]
-                        for(let b of d.list){
-                            //b.show_new_act_form=false
-                            //b.show_picker=false
-                            //b.new_act_summ='' // сумма для нового акта
-                            //b.error_create_act='' // ошибка при создании акта
-                            b.old_summ=b.summ
-                            b.edit_sum=false // флаг редактирования суммы
-                            this.bills.push(b)
-
-
-                        }
-
+                        t.bills=d.bills, t.apps=d.apps
                     }
 
 

@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <v-dialog v-model="dialog" style="min-height: 100px; width: 800px;">
             <v-card>
                 {{errors}}
@@ -8,8 +7,10 @@
             </v-card>
         </v-dialog>
         <docpack_new
+            v-if="!field.not_create_docpack"
             :form="this.form"
             :field="this.field"
+
             :refresh_docpack_list="load"
         />
 
@@ -86,23 +87,28 @@
     methods: {
 
         load(){
-            this.$http.post(
-                BackendBase+'/docpack/'+this.form.config+'/'+this.field.name,
+            let t=this
+            let form_id=t.field.form_id || t.form.id
+            t.$http.post(
+                BackendBase+'/docpack/'+t.form.config+'/'+t.field.name,
                 {
                     action:'list',
-                    id:this.form.id
+                    id:t.form.id,
+                    form_id_alternative: t.field.form_id || null,
+                    only_dogovor: t.field.only_dogovor || null
                 }
+
             ).then(
                 r=>{
                     let d=r.data;
                     if(d.success){
                         for(let dp of d.list)
                             dp.dogovor_list_show=false
-                        this.list=d.list;
-                        this.services=d.services
-                        this.permissions=d.permissions;
+                        t.list=d.list;
+                        t.services=d.services
+                        t.permissions=d.permissions;
                     }
-                    this.errors=d.errors
+                    t.errors=d.errors
                 }
             )
         },

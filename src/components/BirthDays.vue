@@ -88,13 +88,13 @@ export default {
         out_info(days){
             let r=`осталось дней: ${days}`
             switch (days) {
-                case 1:
+                case 0:
                     r='сегодня'
                     break;
-                case 2:
+                case 1:
                     r='завтра'
                     break
-                case 3:
+                case 2:
                     r='послезавтра'
                 default:
                     break;

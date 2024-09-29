@@ -1,6 +1,5 @@
 <template>
 	<div>
-		new_form: {{new_form}}
             <v-card class="new_bill" >
 				<template v-if="!new_form">
 	            	<a href="" @click.prevent="new_form='bill'"> новый счёт</a> |
@@ -25,7 +24,7 @@
                             <v-text-field
                                 style="max-width: 200px;"  @keyup="fix_new_summ(new_app)" label="Сумма постоплаты" v-model="new_app.summ_post"
                             />
-                            filled_all_fields: {{filled_all_fields}}
+
                             <v-text-field v-for="f in service_fields" :key="f.id"
                                 v-model="f.value"
                                 :label="f.header"
@@ -89,57 +88,153 @@
                     </div>
                 </div>
             </v-card>
-            <v-card v-for="b in bills" :key="b.id" >
-                <v-card-title>
+            <div v-if="apps.length" class="bills_without_app">
+                <h2>Приложения к договору:</h2>
+                <v-card v-for="a in apps" :key="a.id" >
+                    <v-card-title>Приложение №{{a.num_of_dogovor}} от {{a.registered}}</v-card-title>
+                    <div>
+                        Скачать приложение:
+                        <div>
+                            с печатями: <a :href="load_app_link(a,'doc',1)">doc</a> |
+                            <a :href="load_app_link(a,'pdf')">pdf</a>
+                        </div>
+                        <div>
+                            без печатей: <a :href="load_app_link(a,'doc',0)">doc</a> |
+                            <a :href="load_app_link(a,'pdf',1)">pdf</a>
+                        </div>
+                    </div>
+                    <div v-if="a.card_id">
+                        Создана СР: <a :href="a.sr_link" target="_blank">{{a.sr_name || '----'}}</a>
+                    </div>
+                    <v-btn small color="primary" v-else @click.prevent="create_sr(a)">создать СР</v-btn>
+                    <div>
+                        <b>Услуга:</b> {{a.service}}<br>
+                        <div class="err" v-html="a.error" v-if="a.error"></div>
 
-                    Счёт №{{b.number}} от {{b.registered}} |&nbsp;<a :href="'/edit_form/bill/'+b.id" target="_blank">к счёту</a></v-card-title>
-                <div><b>Сумма:</b>
-                    <template v-if="b.make_edit_summ">
 
-                        <template v-if="!b.edit_sum">
-                            <!-- сумма не редактируется -->
-                            {{b.summ}}
-                            <a href="" @click.prevent="b.edit_sum=true"><v-icon small color="primary">fa fa-pencil-alt</v-icon></a>
+
+                        <table class="fields">
+                            <tr><td>Предоплата:</td><td>{{a.summ}} р.</td></tr>
+                            <tr><td>Постоплата:</td><td>{{a.summ_post}} р.</td></tr>
+                            <tr v-for="f in a.fields">
+                                <td>{{f.name}}:</td>
+                                <td>
+                                    <template v-if="!f.edited">
+                                        {{f.value}}
+
+
+                                    </template>
+                                    <template v-else>
+                                        <textarea v-model="f.value"></textarea>
+                                        <a href="" @click.prevent="save_app_field(a,f)"><v-icon small color="primary">fa fa-save</v-icon></a>
+                                    </template>
+
+                                </td>
+                                <td>
+                                    <template v-if="!form.read_only">
+                                        <a href="" @click.prevent="f.edited=true"><v-icon x-small color="primary">fa fa-pencil-alt</v-icon></a>
+                                    </template>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <v-card v-for="b in a.bills" :key="b.id" >
+                        <v-card-title>
+
+                            Счёт №{{b.number}} от {{b.registered}} ({{b.type}}) |&nbsp;<a :href="'/edit_form/bill/'+b.id" target="_blank">к счёту</a></v-card-title>
+                            <div><b>Сумма:</b>
+                                <template v-if="b.make_edit_summ">
+
+                                    <template v-if="!b.edit_sum">
+                                        <!-- сумма не редактируется -->
+                                        {{b.summ}}
+                                        <a href="" @click.prevent="b.edit_sum=true"><v-icon small color="primary">fa fa-pencil-alt</v-icon></a>
+                                    </template>
+                                    <template v-else>
+                                        <!-- сумма редактируется -->
+                                        <input type="text" class="edited_summ" v-model="b.summ" @keyup="control_summ(b)">
+
+                                        <a href="" @click.prevent="save_sum_bill(b)"><v-icon small color="primary">fa fa-save</v-icon></a>
+                                        <a href="" @click.prevent="b.summ=b.old_summ; b.edit_sum=false"><v-icon small color="red">far fa-window-close</v-icon></a>
+
+                                    </template>
+                                </template>
+                                <template v-else>
+                                    {{b.summ}}
+                                </template>
+                            </div>
+                        <!--<div><b>Комментарий:</b> {{b.comment}}</div>-->
+                        <div><a :href="'/backend/load_document?doc_pack_id='+docpack.id+'&bill_id='+b.id+'&format=doc&type=paid'">платёжка (для частного лица)</a></div>
+                        <div>
+                            с печатями: <a :href="load_bill_link(b,'doc',1)">doc</a> |
+                            <a :href="load_bill_link(b,'pdf')">pdf</a>
+                        </div>
+                        <div>
+                            без печатей: <a :href="load_bill_link(b,'doc',0)">doc</a> |
+                            <a :href="load_bill_link(b,'pdf',1)">pdf</a>
+                        </div>
+                        <template v-if="parseInt(b.paid)">
+                            <div><b>дата оплаты:</b> {{b.paid_date}}</div>
+                            <div><b>оплачен до:</b>  {{b.paid_to}}</div>
+                        </template>
+                        <div v-else class="not_paid">счёт не оплачен</div>
+
+                        <!-- блок актов для счёта -->
+                        <!--<acts_for_bill :bill="b" :config="config" :form="form" :field="field"/>-->
+                    </v-card>
+                </v-card>
+                <pre v-if="0">
+                    {{apps}}
+                </pre>
+            </div>
+            <div v-if="bills.length" class="bills_without_app">
+
+                <h2>Счета без приложений:</h2>
+                <v-card v-for="b in bills" :key="b.id" >
+                    <v-card-title>
+
+                        Счёт №{{b.number}} от {{b.registered}} |&nbsp;<a :href="'/edit_form/bill/'+b.id" target="_blank">к счёту</a></v-card-title>
+                    <div><b>Сумма:</b>
+                        <template v-if="b.make_edit_summ">
+
+                            <template v-if="!b.edit_sum">
+                                <!-- сумма не редактируется -->
+                                {{b.summ}}
+                                <a href="" @click.prevent="b.edit_sum=true"><v-icon small color="primary">fa fa-pencil-alt</v-icon></a>
+                            </template>
+                            <template v-else>
+                                <!-- сумма редактируется -->
+                                <input type="text" class="edited_summ" v-model="b.summ" @keyup="control_summ(b)">
+
+                                <a href="" @click.prevent="save_sum_bill(b)"><v-icon small color="primary">fa fa-save</v-icon></a>
+                                <a href="" @click.prevent="b.summ=b.old_summ; b.edit_sum=false"><v-icon small color="red">far fa-window-close</v-icon></a>
+
+                            </template>
                         </template>
                         <template v-else>
-                            <!-- сумма редактируется -->
-                            <input type="text" class="edited_summ" v-model="b.summ" @keyup="control_summ(b)">
-
-                            <a href="" @click.prevent="save_sum_bill(b)"><v-icon small color="primary">fa fa-save</v-icon></a>
-                            <a href="" @click.prevent="b.summ=b.old_summ; b.edit_sum=false"><v-icon small color="red">far fa-window-close</v-icon></a>
-
+                            {{b.summ}}
                         </template>
+                    </div>
+                    <div><b>Комментарий:</b> {{b.comment}}</div>
+                    <div><a :href="'/backend/load_document?doc_pack_id='+docpack.id+'&bill_id='+b.id+'&format=doc&type=paid'">платёжка (для частного лица)</a></div>
+                    <div>
+                        с печатями: <a :href="load_bill_link(b,'doc',1)">doc</a> |
+                        <a :href="load_bill_link(b,'pdf')">pdf</a>
+                    </div>
+                    <div>
+                        без печатей: <a :href="load_bill_link(b,'doc',0)">doc</a> |
+                        <a :href="load_bill_link(b,'pdf',1)">pdf</a>
+                    </div>
+                    <template v-if="parseInt(b.paid)">
+                        <div><b>дата оплаты:</b> {{b.paid_date}}</div>
+                        <div><b>оплачен до:</b>  {{b.paid_to}}</div>
                     </template>
-                    <template v-else>
-                        {{b.summ}}
-                    </template>
+                    <div v-else class="not_paid">счёт не оплачен</div>
 
-                </div>
-
-
-                <div><b>Комментарий:</b> {{b.comment}}</div>
-                <div><a :href="'/backend/load_document?doc_pack_id='+docpack.id+'&bill_id='+b.id+'&format=doc&type=paid'">платёжка (для частного лица)</a></div>
-
-
-                <div>
-                    с печатями: <a :href="load_bill_link(b,'doc',1)">doc</a> |
-                    <a :href="load_bill_link(b,'pdf')">pdf</a>
-                </div>
-                <div>
-                    без печатей: <a :href="load_bill_link(b,'doc',0)">doc</a> |
-                    <a :href="load_bill_link(b,'pdf',1)">pdf</a>
-                </div>
-                <template v-if="parseInt(b.paid)">
-                    <div><b>дата оплаты:</b> {{b.paid_date}}</div>
-                    <div><b>оплачен до:</b>  {{b.paid_to}}</div>
-                </template>
-                <div v-else class="not_paid">счёт не оплачен</div>
-
-                <!-- блок актов для счёта -->
-                <acts_for_bill :bill="b" :config="config" :form="form" :field="field"/>
-
-
-            </v-card>
+                    <!-- блок актов для счёта -->
+                    <acts_for_bill :bill="b" :config="config" :form="form" :field="field"/>
+                </v-card>
+            </div>
 	</div>
 </template>
 <script>
@@ -151,7 +246,7 @@ export default {
     components:{
         'acts_for_bill': acts_for_bill
     },
-	props:['form', 'field','config','docpack', 'bills', 'services','load'],
+	props:['form', 'field','config','docpack', 'apps', 'bills', 'services','load'],
 	data(){
 		return {
 			success: false,
@@ -208,6 +303,87 @@ export default {
         },
 	},
 	methods:{
+        create_sr(a){ // Создание СР
+            console.log('create_sr:',a)
+            let t=this
+            t.$http.post(
+                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
+                {
+                    action:'create_sr',
+                    id: t.form.id,
+                    app_id: a.id
+                }
+            ).then(
+                r=>{
+                    let d=r.data
+                    if(d.success){
+                        console.log('d:',d)
+                        if(d.item){
+                            a.card_id=d.item.card_id
+                            a.sr_name=d.item.sr_name
+                            a.sr_link=d.item.sr_link
+                        }
+                    }
+                    if(d.errors.length)
+                        a.error=d.errors.join('<br>')
+                    else
+                        a.error=''
+                }
+            )
+        },
+        save_app_summ(app,name,value){
+            let t=this
+
+        },
+        save_app_field(app,field){ // сохранение доп. поля для приложения
+            // сохранение поля
+            let t=this
+            console.log('save_app_field:',app.id,field)
+            t.$http.post(
+                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
+                {
+                    action:'save_app_field',
+                    id:t.form.id,
+                    app_id:app.id,
+                    field_id:field.id,
+                    value: field.value
+                }
+            ).then(
+                r=>{
+                    let d=r.data
+                    if(d.success){
+                        field.edited=false
+                    }
+                }
+            )
+        },
+        save_sum_bill(b){
+            let t=this
+            t.$http.post(
+                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
+                {
+                    action: 'save_summ_bill',
+                    id:t.form.id,
+                    bill_id: b.id,
+                    summ: b.summ
+                }
+            ).then(
+                r=>{
+                    let d=r.data
+                    if(d.success){
+                        b.old_summ=b.summ
+                        b.edit_sum=false
+                    }
+                    else{
+                        if(d.errors && d.errors.length){
+                            alert(d.errors[0])
+                        }
+
+                    }
+                }
+            )
+
+        },
         check_filled_all_fields(){ // заполнены все доп. поля
 
             let t=this
@@ -250,8 +426,10 @@ export default {
             b.summ=b.summ.replace(/[^\d]/g,'')
         },
         load_bill_link(bill,format,need_print=0){
-            //return '/backend/load_document?doc_pack_id='+this.docpack.id+'&bill_id='+bill.id+'&format='+format+'&type=bill'+(without_print?'&without_print=1':'')
             return `${BackendBase}/docpack/load-bill/${this.docpack.id}/${bill.id}/${format}/${need_print}`
+        },
+        load_app_link(app,format,need_print=0){
+            return `${BackendBase}/docpack/load-app/${app.id}/${format}/${need_print}`
         },
         create_app(){
         	let t=this, tech_fields=[]
@@ -346,4 +524,7 @@ export default {
     .v-card div {padding: 4px 16px;}
     .v-card {padding-left: 0; border: 1px solid $primary; margin-bottom:10px; background-color: $lighten5; margin-top: 10px;}
     .v-card__title {font-size: 12px; font-weight: bold; color: $primary;}
+    .bills_without_app h2 {color: #000; margin-bottom: 3px;}
+    table.fields {margin-top: 5px;border-collapse: collapse;}
+    table.fields td {border-bottom: 1px solid gray; padding: 2px 5px;}
 </style>
