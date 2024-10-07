@@ -2,8 +2,10 @@
 	<div>
             <v-card class="new_bill" >
 				<template v-if="!new_form">
-	            	<a href="" @click.prevent="new_form='bill'"> новый счёт</a> |
-	            	<a href="" @click.prevent="new_form='app'"> новое приложение</a>
+	            	<template v-if="make_add_bill_without_app">
+                        <a href="" @click.prevent="new_form='bill'"> новый счёт</a>&nbsp;|&nbsp;
+                    </template>
+	            	<a href="" @click.prevent="check_filled_all_fields(); new_form='app'"> новое приложение</a>
 	            </template>
                 <div v-if="new_form=='app'">
                 	<v-card-title>Новое приложение |&nbsp;<a href="" @click.prevent="new_form=''">закрыть</a></v-card-title>
@@ -19,10 +21,10 @@
                             <template v-if="selected_service">
                             <v-text-field
 
-                                style="max-width: 200px;" @keyup="fix_new_summ(new_app)" label="Сумма предоплаты" v-model="new_app.summ"
+                                style="max-width: 200px;" @keyup="fix_new_summ(new_app); check_filled_all_fields()" label="Сумма предоплаты" v-model="new_app.summ"
                             />
                             <v-text-field
-                                style="max-width: 200px;"  @keyup="fix_new_summ(new_app)" label="Сумма постоплаты" v-model="new_app.summ_post"
+                                style="max-width: 200px;"  @keyup="fix_new_summ(new_app); check_filled_all_fields()" label="Сумма постоплаты" v-model="new_app.summ_post"
                             />
 
                             <v-text-field v-for="f in service_fields" :key="f.id"
@@ -246,7 +248,7 @@ export default {
     components:{
         'acts_for_bill': acts_for_bill
     },
-	props:['form', 'field','config','docpack', 'apps', 'bills', 'services','load'],
+	props:['form', 'field','config','docpack', 'apps', 'bills', 'services','load','make_add_bill_without_app'],
 	data(){
 		return {
 			success: false,
@@ -387,10 +389,12 @@ export default {
         check_filled_all_fields(){ // заполнены все доп. поля
 
             let t=this
+            console.log('check_filled_all_fields1')
             if(t.selected_service){
                 for(let s of t.services){
                     if(s.id==t.selected_service){
                         let all_field=true
+                        console.log('check_filled_all_fields2')
                         for(let f of s.fields){
                             console.log('field.value: ',f.value)
                             if(!f.value){
@@ -399,6 +403,7 @@ export default {
                             }
                         }
                         t.filled_all_fields=true
+                        console.log('check_filled_all_fields3')
                         return
                     }
                 }
@@ -408,10 +413,12 @@ export default {
 		fix_new_summ(item){
             const fix=(v)=>{
                 v+=''
-                if(/[^0-9]/.test(v)){
-                   v=v.replace(/[^\d]/g,'');
-                }
-                return parseInt(v)
+                v=v.replace(',','.').replace(/[^\d\.]/g,'').replace(/^\./,'0.').replace(/^(\d+\.\d*)\./,'$1').replace(/(\.\d{2})\d*/,'$1')
+                // if(/[^\d+\.]/.test(v)){
+                //    v=v.replace(/[^\d\.]/g,'');
+                // }
+                //return parseFloat(v) || 0
+                return v
             }
             //let t=this
             item.summ=fix(item.summ)
@@ -423,7 +430,8 @@ export default {
         },
 
         control_summ(b){
-            b.summ=b.summ.replace(/[^\d]/g,'')
+
+            b.summ=b.summ.replace(',','.').replace(/[^\d\.]/g,'').replace(/^\./,'0.').replace(/^(\d+\.\d*)\./,'$1').replace(/(\.\d{2})\d*/,'$1')
         },
         load_bill_link(bill,format,need_print=0){
             return `${BackendBase}/docpack/load-bill/${this.docpack.id}/${bill.id}/${format}/${need_print}`

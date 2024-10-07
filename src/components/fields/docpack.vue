@@ -55,6 +55,7 @@
 
             
         </v-card>
+        <div v-html="field.after_html"></div>
     </div>
 </template>
 

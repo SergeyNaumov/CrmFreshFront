@@ -24,6 +24,7 @@
                 :docpack="docpack"
                 :bills="bills"
                 :apps="apps"
+                :make_add_bill_without_app="make_add_bill_without_app"
                 :services="services"
                 :load="load"
             />
@@ -46,6 +47,7 @@
             edited:{},
             apps: [], // приложения к договору
             bills:[], // список счетов
+            make_add_bill_without_app:false,
             errors:[],
             show_comment:false,
             new_summ:0, // предоплата
@@ -115,6 +117,7 @@
                     let d=r.data;
                     if(d.success){
                         t.bills=d.bills, t.apps=d.apps
+                        t.make_add_bill_without_app=d.make_add_bill_without_app
                     }
 
 
