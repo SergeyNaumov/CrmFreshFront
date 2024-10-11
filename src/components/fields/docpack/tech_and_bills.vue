@@ -108,7 +108,23 @@
                     <div v-if="a.card_id">
                         Создана СР: <a :href="a.sr_link" target="_blank">{{a.sr_name || '----'}}</a>
                     </div>
-                    <v-btn small color="primary" v-else @click.prevent="create_sr(a)">создать СР</v-btn>
+                    <template v-else>
+                        <pre v-if="0">
+                            {{a}}
+                        </pre>
+
+                        <v-btn v-if="show_create_sr_list!=a.id" small color="primary" @click.prevent="show_create_sr(a)">создать СР</v-btn>
+                        <div v-if="show_create_sr_list==a.id" class="sr_list_select">
+                            Привязать приложение к существующей СР:
+                            <div v-for="sr in sr_list" class="item">
+                                <div><a :href="sr.link" target="_blank">{{sr.v}} от {{sr.from_date}}</a></div>
+                                <div>{{sr.last_comment?sr.last_comment:'-'}}</div>
+                                <v-btn x-small @click="link_sr(a,sr)">привязать</v-btn>
+                            </div>
+                            <v-btn small @click.prevent="show_create_sr_list=false">отмена</v-btn>
+                            <v-btn small color="primary" @click="create_sr(a)">создать новую СР</v-btn>
+                        </div>
+                    </template>
                     <div>
                         <b>Услуга:</b> {{a.service}}<br>
                         <div class="err" v-html="a.error" v-if="a.error"></div>
@@ -176,8 +192,8 @@
                             <a :href="load_bill_link(b,'pdf',1)">pdf</a>
                         </div>
                         <template v-if="parseInt(b.paid)">
-                            <div><b>дата оплаты:</b> {{b.paid_date}}</div>
-                            <div><b>оплачен до:</b>  {{b.paid_to}}</div>
+                            <div  class="paid"><b>дата оплаты:</b> {{b.paid_date}}</div>
+                            <div v-if="b.paid_to"><b>оплачен до:</b> {{b.paid_to}}</div>
                         </template>
                         <div v-else class="not_paid">счёт не оплачен</div>
 
@@ -252,6 +268,12 @@ export default {
 	data(){
 		return {
 			success: false,
+            sr_list:[
+                // {id: 1, v:'1234567890754323',last_comment:'09/09/09 Иванов Иван: Готов платить'},
+                // {id: 2, v:'6789075432312345',last_comment:'09/09/09 Иванов Иван: ПНХ'},
+                // {id: 3, v:'7543231234567890',last_comment:''},
+            ],
+
 			new_form:'',
 			selected_service:"",
 			new_bill:{
@@ -267,6 +289,7 @@ export default {
 				summ:0,
 				summ_post:0,
 			},
+            show_create_sr_list:false,
 			filled_all_fields: false // все доп. поля заполнены
 		}
 	},
@@ -274,7 +297,7 @@ export default {
 	computed:{
 		new_app_ok(){
 			let t=this
-			return t.filled_all_fields && ok_summ(t.new_app.summ) && ok_summ(t.new_app.summ_post) && t.selected_service
+			return t.filled_all_fields && ok_summ(t.new_app.summ) && t.selected_service
 		},
         new_bill_ok(){
             let t=this
@@ -305,9 +328,60 @@ export default {
         },
 	},
 	methods:{
-        create_sr(a){ // Создание СР
-            console.log('create_sr:',a)
+        show_create_sr(a){
             let t=this
+            //t.show_create_sr_list=a.id
+            //return
+            t.$http.post(
+                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
+                {
+                    action: 'load_sr_list',
+                    id: t.form.id,
+                    app_id: a.id
+                }
+            ).then(
+                r=>{
+                    let d=r.data
+                    if(d.success){
+                        t.sr_list=d.list
+                        t.show_create_sr_list=a.id
+
+                    }
+                }
+            )
+
+        },
+        link_sr(a,sr){ // Привязка приложения к договору к СР
+            let t=this
+            // a.sr_name='Новое имя СР'
+            // a.sr_link='/newlink'
+            // a.card_id=111
+            // t.show_create_sr_list=null
+            // return
+            t.$http.post(
+                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
+                {
+                    action:'link_sr',
+                    id: t.form.id,
+                    app_id: a.id,
+                    sr_id: sr.id
+                }
+            ).then(
+                r=>{
+                    let d=r.data
+                    if(d.success){
+                        a.sr_name=d.sr_name
+                        a.sr_link=d.sr_link
+                        a.card_id=d.card_id
+                        t.show_create_sr_list=null
+                    }
+                }
+            )
+        },
+        create_sr(a){ // Создание СР
+            //console.log('create_sr:',a)
+            let t=this
+
             t.$http.post(
                 `${BackendBase}/docpack/${t.config}/${t.field.name}`,
                 {
@@ -535,4 +609,12 @@ export default {
     .bills_without_app h2 {color: #000; margin-bottom: 3px;}
     table.fields {margin-top: 5px;border-collapse: collapse;}
     table.fields td {border-bottom: 1px solid gray; padding: 2px 5px;}
+    .sr_list_select {
+        border: 1px solid gray;
+        border-radius: 5px; padding-top: 20px !important; background: #efefef;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    }
+    .sr_list_select .item {border: 1px solid gray; border-radius: 5px; margin-top: 10px;  background-color: #bec4de;}
+    .not_paid {color: red;}
+    .paid {color: green; font-weight: bold;}
 </style>
