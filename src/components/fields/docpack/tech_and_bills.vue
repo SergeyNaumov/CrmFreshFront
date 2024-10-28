@@ -98,15 +98,16 @@
                         Скачать приложение:
                         <div>
                             с печатями: <a :href="load_app_link(a,'doc',1)">doc</a> |
-                            <a :href="load_app_link(a,'pdf')">pdf</a>
+                            <a :href="load_app_link(a,'pdf',1)">pdf</a>
                         </div>
                         <div>
                             без печатей: <a :href="load_app_link(a,'doc',0)">doc</a> |
-                            <a :href="load_app_link(a,'pdf',1)">pdf</a>
+                            <a :href="load_app_link(a,'pdf',0)">pdf</a>
                         </div>
                     </div>
                     <div v-if="a.card_id">
                         Создана СР: <a :href="a.sr_link" target="_blank">{{a.sr_name || '----'}}</a>
+                        &nbsp;|&nbsp;<a href="" @click.prevent="unlink_sr(a)">отвязать</a>
                     </div>
                     <template v-else>
                         <pre v-if="0">
@@ -185,11 +186,11 @@
                         <div><a :href="'/backend/load_document?doc_pack_id='+docpack.id+'&bill_id='+b.id+'&format=doc&type=paid'">платёжка (для частного лица)</a></div>
                         <div>
                             с печатями: <a :href="load_bill_link(b,'doc',1)">doc</a> |
-                            <a :href="load_bill_link(b,'pdf')">pdf</a>
+                            <a :href="load_bill_link(b,'pdf',1)">pdf</a>
                         </div>
                         <div>
                             без печатей: <a :href="load_bill_link(b,'doc',0)">doc</a> |
-                            <a :href="load_bill_link(b,'pdf',1)">pdf</a>
+                            <a :href="load_bill_link(b,'pdf',0)">pdf</a>
                         </div>
                         <template v-if="parseInt(b.paid)">
                             <div  class="paid"><b>дата оплаты:</b> {{b.paid_date}}</div>
@@ -237,11 +238,11 @@
                     <div><a :href="'/backend/load_document?doc_pack_id='+docpack.id+'&bill_id='+b.id+'&format=doc&type=paid'">платёжка (для частного лица)</a></div>
                     <div>
                         с печатями: <a :href="load_bill_link(b,'doc',1)">doc</a> |
-                        <a :href="load_bill_link(b,'pdf')">pdf</a>
+                        <a :href="load_bill_link(b,'pdf',1)">pdf</a>
                     </div>
                     <div>
                         без печатей: <a :href="load_bill_link(b,'doc',0)">doc</a> |
-                        <a :href="load_bill_link(b,'pdf',1)">pdf</a>
+                        <a :href="load_bill_link(b,'pdf',0)">pdf</a>
                     </div>
                     <template v-if="parseInt(b.paid)">
                         <div><b>дата оплаты:</b> {{b.paid_date}}</div>
@@ -374,6 +375,26 @@ export default {
                         a.sr_link=d.sr_link
                         a.card_id=d.card_id
                         t.show_create_sr_list=null
+                    }
+                }
+            )
+        },
+        unlink_sr(a){
+            /*a.sr_name=null, a.sr_link=null, a.card_id=null
+            return*/
+            let t=this
+            t.$http.post(
+                `${BackendBase}/docpack/${t.config}/${t.field.name}`,
+                {
+                    action:'unlink_sr',
+                    id: t.form.id,
+                    app_id: a.id
+                }
+            ).then(
+                r=>{
+                    let d=r.data
+                    if(d.success){
+                        a.sr_name=null, a.sr_link=null, a.card_id=null
                     }
                 }
             )
