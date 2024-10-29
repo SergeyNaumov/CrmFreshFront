@@ -65,6 +65,12 @@ export const get_headapp=s=>{
             headapp='edit-form';
             headapp_params={config:arr[1],id:arr[2],action:'edit'};
         }
+        else if(/^\/transfere[\-_]cards\/([^\/]+)$/.test(url)){
+            let arr=url.match(/^\/transfere[\-_]cards\/([^\/]+)$/)
+            headapp='transfere-cards'
+
+            headapp_params={config:arr[1],action:''};
+        }
         else if(/^\/edit[\-_]form\/([^\/]+)$/.test(url)){
             let arr=url.match(/^\/edit[\-_]form\/([^\/]+)$/);
             headapp='edit-form';
@@ -153,6 +159,6 @@ export const get_headapp=s=>{
 
     }
 
-
+    //console.log('headapp:', transfere-cards)
     return 1;
 }

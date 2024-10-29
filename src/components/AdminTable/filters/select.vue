@@ -39,7 +39,7 @@
                     :no-data-text="no_data_text"
                     cache-items
                     clearable
-                    multiple chips
+                    :multiple="!field.not_multiple" chips
                     hide-details
                 />
             </template>

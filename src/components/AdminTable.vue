@@ -537,7 +537,7 @@ export default {
         cgi+=`${k}=${cgi_params[k]}`
       }
 
-      window.open(`${BaseUrl}edit_form/${this.params.config}${cgi}`);
+      window.open(`${BaseUrl}edit_form/${this.params.config.replace(/\?.*$/,'')}${cgi}`);
     },
     filter_change(filter){
 

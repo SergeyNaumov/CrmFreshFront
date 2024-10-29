@@ -9,6 +9,7 @@ export const dynamic_component_loader=(Vue)=>{
 	Vue.component('edit-form', ()=> import('./components/EditForm'));
 	Vue.component('admin-tree', ()=> import('./components/AdminTree'));
 	Vue.component('admin-table', ()=> import('./components/AdminTable'));
+	Vue.component('transfere-cards', ()=> import('./components/TransfereCards/TransfereCards'));
 	Vue.component('parser-excel', ()=> import('./components/ParserExcel/ParserExcel'));
 	Vue.component('documentation', ()=> import('./components/Documentation/Documentation'));
 	Vue.component('table_component', ()=> import('./components/Table'));
