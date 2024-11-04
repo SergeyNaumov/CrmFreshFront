@@ -35,7 +35,7 @@
             <!-- Вывод результатов колонками -->
 
               <v-row>
-                <v-col v-for="col in columns">
+                <v-col v-for="(col,idx) in columns" :key="'col'+idx">
                   <div v-for="d in col">
                     <field-accordion v-if="d.type=='accordion'" :field="d"/>
                     <div v-if="d.type=='html'" v-html="d.body"></div>
