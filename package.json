@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service serve --port 8081 --host=localhost",
+    "serve": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service serve --port 8081 --host=0.0.0.0",
     "build": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service build --target app --name index",
     "build_trade": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/trade.js vue-cli-service build  --target app --name index",
     "build_strateg": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/strateg.js vue-cli-service build  --target app --name index",
