@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="read_only" v-if="field.read_only">
-            
             <v-text-field 
               :label="field.description"
               disabled
@@ -9,7 +8,6 @@
               :rounded="$theme.rounded"
               hide-details
             />
-            
         </div>
         <template v-else>
             <div>
@@ -91,7 +89,6 @@ export default {
       if(!/[1-9]/.test(this.field.value)){
         this.value=''
       }
-      console.log('this.field.value:',this.field.value)
       this.old_value=this.field.value
       
       this._field_update=(new_data)=>{field_update(new_data,this)};

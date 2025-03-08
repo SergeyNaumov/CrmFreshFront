@@ -3,26 +3,35 @@ import { bus } from '../../main'
 export function field_update(new_data, self){
     if(self.value !== new_data.value)
       self.value=new_data.value
+    //console.log('self: ',self.field, self.field.description)
 
-    if('error_message' in new_data){
-      self.$nextTick(
-        ()=>{self.error_message=new_data.error_message}
-      );
-    }
+    // if('error_message' in new_data){
+    //   self.$nextTick(
+    //     ()=>{self.error_message=new_data.error_message}
+    //   );
+    // }
+    //let field=window.EditForm.get_field_by_name(self.field.name) // дёргаем field прямо из формы
 
-    if('warning_message' in new_data){
-      self.$nextTick(
-        ()=>{self.warning_message=new_data.warning_message}
-      );
-    }
+    // if('warning_message' in new_data){
+    //   self.$nextTick(
+    //     ()=>{self.warning_message=new_data.warning_message}
+    //   );
+    // }
 
-    if( ('after_html' in new_data) ||  'before_html' in new_data){
+    const field_attributes=['after_html','before_html','description','warning_message','error_message']
+
+    // если какой-то из атрибутов пристутствует в new_data
+    if( field_attributes.some(key => key in new_data) ){
       self.$nextTick(
         ()=>{
-          if(new_data.after_html)
-            self.after_html=new_data.after_html
-          if(new_data.before_html)
-            self.before_html=new_data.before_html
+          for(let a of ['after_html','before_html','description']){
+              self[a]=new_data[a] || ''
+              // if(field){
+              //   field[a]=new_data[a] || ''
+              //   console.log(`set field ${field.name} => ${new_data[a]}`)
+              // }
+          }
+
         }
       );
     } 
@@ -92,6 +101,7 @@ export function check_fld(self){
       f.value=self.value 
       f.error_message=error_message
       f.error=error
+      f.not_parent=true
       bus.$emit('change_field', f);  
     }
           //}

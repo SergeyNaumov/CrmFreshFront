@@ -53,7 +53,7 @@ export function on_dependence(self, name,obj,not_frontend_process){
 
 export function change_field(self,field,not_frontend_process){
 
-    
+    //console.log('CHANGE_FIELD:',self)
     if(!field) return;
     let v=field.value;
     if(field.type=='checkbox' || field.type=='switch'){
@@ -110,10 +110,15 @@ export function frontend_result_process(self,result,proc_name){
     if(result){
       let i=0; 
 
-      
+      //console.log('proc_name:',proc_name)
       while(i<result.length){
         let name=result[i], obj=result[i+1]
         let dep_field=on_dependence(self,name,obj,(proc_name==name));
+        //console.log('name:', name, obj)
+        let f=window.EditForm.get_field_by_name(name)
+        if(f){
+          f.description=obj['description']
+        }
         if(obj.jscode){
           eval(obj.jscode)
         }
@@ -179,8 +184,11 @@ export function frontend_process(self,f){
                     r=>{
                       let d=r.data;
                       if(d.success){
+                        if(f.not_parent){
+
+                        }
                         frontend_result_process(self,d.result,f.name);
-                        //console.log('result_process:',d.result)
+                        //console.log('result_process:',f, d.result)
                       }
                       if(d.errors.length)
                         alert(d.errors[0])

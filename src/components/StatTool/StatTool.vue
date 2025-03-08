@@ -9,7 +9,7 @@
       <div style="border: 1px solid gray; margin: 10px; padding: 10px;" v-if="log_filters.length">
         <pre >{{log_filters}}</pre>
       </div>
-      <div v-for="f in filters">
+      <div v-for="f in filters" class="filter">
           <filter-date :field="f" :filter_change="filter_change" v-if="f.type=='date'"/>
           <filter-select :field="f" :filter_change="filter_change" v-if="f.type=='select'"/>
           <filter-text :field="f" :filter_change="filter_change"
@@ -122,6 +122,11 @@ export default {
         ).then(
           r=>{
             let d=r.data
+            if(d.redirect && d.redirect!=location.pathname){
+                localStorage.setItem('link_prev_login',location.href);
+                location.href=d.redirect;
+                return ;
+            }
             if(d.success){
               t.filters=d.filters, t.title=d.title
               if(d.javascript){
@@ -202,5 +207,5 @@ export default {
   .is_headapp {margin: 20px; }
   .is_headapp h1 {margin-bottom: 20px;} 
   .results {margin-top: 10px;}
-  
+  div.filter {max-width: 800px;}
 </style> 

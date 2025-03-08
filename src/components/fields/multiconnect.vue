@@ -7,8 +7,24 @@
                 <div v-if="field.fast_search">
                     <v-text-field label='быстрый поиск' v-model="search" flat hide-details/>
                 </div>
-                
-                <v-treeview v-if="out_tree"
+                <template v-if="field.subtype=='table'">
+                    <table class="mini" v-if="Object.keys(selected_hash).length">
+
+                        <tr v-for="tr in list" :key="`row_${tr.id}`">
+                            <td>{{tr.header}}: </td>
+                            <td v-for="f in field.fields" v-if="f.name && selected_hash[tr.id]">
+                                <template v-if="f.type=='text'" >
+                                    <input :class="{percent: f.subtype=='percent'}" type="text" :disabled="read_only" v-model="selected_hash[tr.id][f.name]" @keyup="subtype_percent_check(tr.id,f.name)">
+                                    <template v-if="f.subtype=='percent'">
+                                        %
+                                    </template>
+                                </template>
+
+                            </td>
+                        </tr>
+                    </table>
+                </template>
+                <v-treeview v-else-if="out_tree"
                     item-disabled="read_only"
                     :items="list"
                     :selection-type="selectionType"
@@ -64,27 +80,7 @@
                             ничего не найдено
                         </div>
                     </v-container>
-                    <!--
-                    <v-layout class="row multiconnect">
-                        
-                        <template v-if="field.view_only_selected">
-                            
-                                <v-flex v-for="(l,idx) in list_searched" :class="get_md_class" v-show="selected_hash[l.id]" :key="'l'+idx">
-                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()"></v-checkbox>
-                                </v-flex>
-                        </template>
-                        <template v-else>
-                            
-                            <v-flex :class="get_md_class"  v-for="l in list_searched" :key="l.id">
-                                <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()"></v-checkbox>
-                            </v-flex>
-                        </template>
-                        <div v-if="!list_searched.length && list.length">
-                            ничего не найдено
-                        </div>
 
-                    </v-layout>
-                    -->
                 </div>
 
         </template>
@@ -116,7 +112,7 @@
     props:['form','field'],
     watch:{
         value(){ // автосохранение
-            console.log('value:',this.value)
+
             let field=this.field;
             field.value=this.value;
             //this.change_field(field)
@@ -136,7 +132,6 @@
                         
                         return ;
                     }
-                    //console.log('go_ajax: '+this.new_tag_not_ajax);
 
                         
                     this.new_tag_exists=false, this.new_tag_checked=false;
@@ -172,12 +167,14 @@
 
     },
     computed:{
+        read_only(){
+            return this.form.read_only || this.field.read_only
+        },
         url(){
             return BackendBase+'/multiconnect/'+this.form.config+'/'+this.field.name
         },
         out_tree(){
             // если tree_use или не указано cols -- выводим через v-treeview
-            //console.log({out_tree:this.field.tree_use});
             return (this.field.tree_use)
 
         },
@@ -215,29 +212,61 @@
     methods: {
 
         value_to_selected_hash(){
-            for(let v of this.value)
-                this.selected_hash[v]=true;
+            let t=this
+
+
+            if(t.field.subtype=='table'){
+                let sh={}
+                for(let tr of t.list){
+
+                    sh[tr.id]={id: tr.id}
+                    for(let f of t.field.fields){
+                        sh[tr.id][f.name]=''
+                    }
+                }
+                for(let v of t.value){
+
+                    sh[v.id]={id:v.id}
+                    for(let f of t.field.fields){
+                        sh[v.id][f.name]=v[f.name]
+                    }
+
+                }
+                t.selected_hash=sh
+            }
+            else{
+                for(let v of t.value)
+                    t.selected_hash[v]=true
+            }
+
+
         },
         selected_hash_to_value(){
-            console.log('selected_hash_to_value')
-            let new_value=[];
-            for(let k of Object.keys(this.selected_hash)){
-                if(this.selected_hash[k])
-                    new_value.push(k)
+            let t=this, field=t.field, new_value=[];
+
+            if(t.field.subtype=='table'){
+                for(let k of Object.keys(t.selected_hash)){
+                    new_value.push(t.selected_hash[k])
+                }
             }
-            this.value=new_value;
-            let field=this.field;
-            field.value=this.value;
-            //this.change_field(field)
+            else{
+                for(let k of Object.keys(t.selected_hash)){
+                    if(t.selected_hash[k])
+                        new_value.push(k)
+                }
+            }
+
+            t.value=new_value
+            field.value=t.value
             bus.$emit('change_field',field)
         },
         init(){ // получаем список элементов дерева
-            
-            this.$http.post(
-                this.url,
+            let t=this
+            t.$http.post(
+                t.url,
                 {
                     action:'get',
-                    id:this.form.id?this.form.id:undefined
+                    id:t.form.id?t.form.id:undefined
                 }
             ).then(
                 response=>{
@@ -247,22 +276,19 @@
                         for(let i in D.list){
                             D.list[i].id=D.list[i].id.toString()
                         }
-                        this.list=D.list;
-                        
-                        /*for(let i in D.value){
-                            D.value[i]=D.value[i].toString()
-                        }*/
-                        
-                        this.value=D.value;
-                        if(!this.out_tree) // если выводим как список -- инитим хэш включенных
-                            this.value_to_selected_hash();
+                        t.list=D.list;
+
+                        t.value=D.value;
+                        if(!t.out_tree) // если выводим как список -- инитим хэш включенных
+                            t.value_to_selected_hash();
+
                         
                     }
-                    this.errors=D.errors;
+                    t.errors=D.errors;
                 }
             ).catch(
                 e=>{
-                    alert('on request: '+this.url+', error: '+e)
+                    alert('on request: '+t.url+', error: '+e)
                 }
             );
         },
@@ -293,7 +319,18 @@
                     }
                 }
             )
+        },
+        subtype_percent_check(id,name){
+            let t=this, v=t.selected_hash[id][name]+''
+
+            v=v.replace(/[^\d]+/g,'').replace(/^([2-9]\d)\d+$/,'$1')
+            if(parseInt(v)>100){
+                v=100
+            }
+            t.selected_hash[id][name]=v
+            t.selected_hash_to_value()
         }
+
 
     }
   }
@@ -306,4 +343,7 @@
     .v-input--selection-controls {margin-top: 5px; font-size: 10px;}
     .v-treeview-node__children {margin-left: 50px !important;}
     .v-treeview--dense .v-treeview-node__root {min-height: 20px;}
+    .mini td {border: none !important;}
+    .mini input {border: 1px solid gray !important; padding: 2px 1px; margin: 5px;}
+    input.percent {width: 30px; text-align: right}
 </style>

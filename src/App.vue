@@ -34,8 +34,7 @@
             <a href="/"><v-icon small>fa fa-home</v-icon>&nbsp; {{title}}</a>
             <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
           </v-toolbar-title>
-
-          <Messenger v-if="app_components.navigator" :config="app_components.navigator" :manager="manager"/>
+          <Messenger v-if="" :config="app_components.navigator" :manager="manager"/>
         </v-app-bar>
 
         <v-main>

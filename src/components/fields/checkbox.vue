@@ -1,7 +1,7 @@
 <template>
     
     <div v-if="!field.hide">
-        
+        <!-- <pre v-if="field.name=='prez_order'">{{field}}</pre> -->
         <template v-if="field.type=='checkbox' || field.type=='1_to_1_checkbox'">
             <v-checkbox  :label="field.description" :disabled="disabled" color="primary" v-model="value" @change="change_field(field)" hide-details></v-checkbox>
             
@@ -18,6 +18,7 @@
   import { bus } from '../../main'
   import { field_update,check_fld } from './field_functions'
   export default {
+    //attributes:['after_html','before_html','description'], // чтобы не было реактивным
     data:function(){
         return {
             after_html:'',

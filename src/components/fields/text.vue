@@ -36,52 +36,54 @@
                   :rounded="$theme.rounded"
                 />
               </template>
-              <v-text-field 
-                v-if="field.type=='text' && !field.hide_field"
-                :label="field.description"
-                v-model="value"
-                :hint="field.add_description" :placeholder="field.placeholder"
-                :disabled="!!field.read_only"
-                @input="input"
-                @keyup="input"
-                :clearable="!field.read_only"
-                :style="field.style"
-                :error-messages="error_message"
-                :rounded="$theme.rounded"
-                hide-details
-                :id="field.name"
-              />
-              <div class="popup_list" v-if="show_popup_list"> 
-                <div class="close"><a href="" @click.prevent="show_popup_list=false">закрыть</a></div>
-                <div class="item" v-for="(p,idx) in popup_list" :key="'popup'+idx" @click="set_new_value(p.header)">{{p.header}}</div>
-              </div>
+              <template v-if="!(field.subtype && field.show_only_subtype)">
+                  <v-text-field
+                    v-if="field.type=='text' && !field.hide_field"
+                    :label="field.description"
+                    v-model="value"
+                    :hint="field.add_description" :placeholder="field.placeholder"
+                    :disabled="!!field.read_only"
+                    @input="input"
+                    @keyup="input"
+                    :clearable="!field.read_only"
+                    :style="field.style"
+                    :error-messages="error_message"
+                    :rounded="$theme.rounded"
+                    hide-details
+                    :id="field.name"
+                  />
+                  <div class="popup_list" v-if="show_popup_list">
+                    <div class="close"><a href="" @click.prevent="show_popup_list=false">закрыть</a></div>
+                    <div class="item" v-for="(p,idx) in popup_list" :key="'popup'+idx" @click="set_new_value(p.header)">{{p.header}}</div>
+                  </div>
 
-              <v-textarea
-                @input="input"
-                v-if="field.type=='textarea'"
-                :disabled="!!field.read_only"
-                v-model="value"
-                :label="field.description"
-                :hint="field.add_description"
-                :auto-grow="true"
-                :clearable="true"
-                :rounded="$theme.rounded"
-              />
-              <template v-if="field.values && field.values.length">
-                варианты: 
-                <span v-for="v in field.values" :key="v.v">
-                  <a href="" @click.prevent="set_new_value(v.v)" >{{ v.d }}</a>&nbsp;
-                </span>
-              </template>
+                  <v-textarea
+                    @input="input"
+                    v-if="field.type=='textarea'"
+                    :disabled="!!field.read_only"
+                    v-model="value"
+                    :label="field.description"
+                    :hint="field.add_description"
+                    :auto-grow="true"
+                    :clearable="true"
+                    :rounded="$theme.rounded"
+                  />
+                  <template v-if="field.values && field.values.length">
+                    варианты:
+                    <span v-for="v in field.values" :key="v.v">
+                      <a href="" @click.prevent="set_new_value(v.v)" >{{ v.d }}</a>&nbsp;
+                    </span>
+                  </template>
+
+                </template>
+                <div class="add_description" v-if="field.add_description">{{field.add_description}}</div>
+                <div
+                  class="err" v-if="error_message" v-html="error_message"
+                />
+                <div
+                  class="err" v-if="warning_message" v-html="warning_message"
+                />
             </template>
-            <div class="add_description" v-if="field.add_description">{{field.add_description}}</div>     
-            <div
-              class="err" v-if="error_message" v-html="error_message"
-            />
-            <div
-              class="err" v-if="warning_message" v-html="warning_message"
-            />
-            
             <qr_call v-if="field.subtype=='qr_call'" :value="field.value" :field="field"/>
 
             <div v-if="after_html" v-html="after_html"></div>

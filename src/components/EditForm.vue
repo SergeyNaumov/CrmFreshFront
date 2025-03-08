@@ -9,7 +9,7 @@
             </v-card-text>
           </v-card>
         </v-dialog>
-        
+
         <div :class="form.wide_form?'container_fluid':'container'" >
             <pre v-if="0">
                 {{values}}
@@ -264,7 +264,7 @@ methods: {
                             
                            
                             this.cols=data.cols;
-                            console.log('COLS:',this.cols)
+
                             this.init_tabs(data)
 
                             
@@ -398,6 +398,14 @@ methods: {
             if(!block.hide && block.on_show){
               eval(block.on_show)
             }
+          },
+          get_field_by_name(name){
+            for(let f of this.form.fields){
+              if(f.name==name){
+                return f
+              }
+            }
+
           }
           // 1_to_m-end
         }, // end-methods
@@ -411,6 +419,7 @@ methods: {
     div.field {margin: 0 20px;}
     
     button {margin: 1rem;}
+    .container {max-width: 1200px;}
     .container.onecol {max-width: 1200px;}
     header {margin-top: 1rem;}  
     .v-list-item {min-height: 25px !important;}

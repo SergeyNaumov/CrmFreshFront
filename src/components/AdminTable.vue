@@ -377,6 +377,17 @@ export default {
                     t.go_search(1);
 
                   }
+                  if(D.redirect && D.redirect!=location.pathname){
+                    localStorage.setItem('link_prev_login',location.href);
+                    location.href=D.redirect;
+                    return ;
+                  }
+                  /*
+                    localStorage.setItem('link_prev_login',location.href)
+
+                    location.href=D.redirect;
+                    return ;
+                  */
                     
               }
               else{

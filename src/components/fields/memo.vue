@@ -44,6 +44,7 @@
                       :label="'Введите комментарий'"
                       :auto-grow="true"
                       :clearable="true"
+                      @keydown="handleKeyDown"
                       :autofocus="true">
                     </v-textarea>
                     <v-btn color="primary"  @click="add()" x-small>Сохранить</v-btn> <v-btn color="red"  @click="view_adding_block=false" x-small>Отмена</v-btn>
@@ -108,6 +109,13 @@
 */
     },
     methods: {
+      handleKeyDown(event){
+         if (event.ctrlKey && event.key === 'Enter') {
+          event.preventDefault(); // Предотвращаем стандартное поведение (например, перенос строки)
+          this.add()
+          this.view_adding_block=false
+         }
+      },
       init(){
         if(this.id){
           

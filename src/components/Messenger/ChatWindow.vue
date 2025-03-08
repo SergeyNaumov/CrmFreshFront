@@ -20,7 +20,7 @@
 			</div>
 			<!--<a href="" @click.prevent="load_forward">load_forward ()</a>-->
 		</div>
-        <div class="footer">
+        <div class="footer" v-if="!read_only">
           <textarea id="chat_window_newmes" v-model="new_message" placeholder="Введите Ваше сообщение (можно отправить нажатием Shift + Enter)"></textarea>
           <div style="text-align: right; margin-bottom: 10px;">
           	<v-btn @click.prevent="send_message"><v-icon x-small>far fa-paper-plane</v-icon>&nbsp;отправить</v-btn>
@@ -45,7 +45,9 @@ export default {
     data: () => ({
       
       messages: [],
-      new_message: ''
+      new_message: '',
+      read_only:false
+
     }),
     mounted(){
       this.init()  
@@ -70,7 +72,12 @@ export default {
 
     methods: {
     	init(){
-    		load_chat(this,scroll_to_bottom)
+    		load_chat(this,(d)=>{
+    			console.log('CHAT LOADED:',d)
+    			this.read_only=d.read_only
+    			scroll_to_bottom()
+
+    		})
     	},
 			keylistener(e){
 				const keyCode = e.which || e.keyCode;

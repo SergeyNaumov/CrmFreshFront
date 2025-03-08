@@ -1,8 +1,8 @@
 <template>
     <div>
-        <pre v-if="field.name=='default_component'">
+     <pre v-if="field.name=='stat'">
             {{field}}
-        </pre>
+    </pre>
         <errors :errors="errors"/>
         <component v-if="ready" :is="object"></component>
     </div>
@@ -30,9 +30,10 @@ export default {
     },
     methods:{
         load_template(){
-            //console.log('load_template: ',this.field.template)
+            console.log('load_template: ',this.field.template)
             if(this.field.template){
                 this.load_file('template', ()=>{
+                    console.log('load template ok')
                     this.load_methods()
                 }) 
             }
@@ -42,14 +43,17 @@ export default {
             
         },
         load_methods(){
-            //console.log('load_methods')
+
             
             if(this.field.methods){
+                console.log('load_methods')
                 this.load_file('methods', ()=>{
+                    console.log('load methods ok')
                     this.load_object()
                 }) 
             }
             else{
+                console.log('load_object')
                 this.load_object()
             }
         },
@@ -57,10 +61,11 @@ export default {
             let t=this
             if(t.field.object){
                 t.load_file('object', ()=>{
+                    console.log('load_object ok')
                     // компонент загружен последним, поэтому если он загружен, то всё готово
                     if(t.field.data && typeof(t.field.data)=='object'){
                         let object_data=t.object.data()
-
+                        console.log('data:',t.field.data)
                         for(let k in t.field.data){
                             object_data[k]=t.field.data[k]
                         }

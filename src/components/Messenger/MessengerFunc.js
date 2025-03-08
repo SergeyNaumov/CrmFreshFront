@@ -9,6 +9,7 @@ const signal_message=()=>{ // проигать звук
 
 // Инициализация вебсокета
 export function init_websocket(t){
+	console.log('INIT WebSocket:',t.$http)
 	let manager=t.manager
 	t.$http.get(
 		`${config.BackendBase}/messenger/get-socket-name`
@@ -16,7 +17,17 @@ export function init_websocket(t){
 		r=>{
 			let websocket_name=r.data
 			let ws_url=`${config.MessengerWS}/${websocket_name}`
-			//console.log(`ws = new WebSocket('${ws_url}')`)
+			/*
+ws = new WebSocket('wss://' + location.hostname + '/backend/messenger/ws/1')
+ws.onclose=()=>{console.log('MY SOCKET CLOSE')}
+ws.onopen=(e)=>{
+console.log('MYSOCKET is open');
+sockets = true;
+}
+ws.onmessage =(e)=>{
+console.log('MYSOCKET onmessage:',event.data)
+}
+			)*/
 
 			ws = new WebSocket(ws_url)
 		    ws.onmessage = function(event) {
@@ -66,7 +77,7 @@ export function init_websocket(t){
 			    	console.log('sockets:',sockets)
 			        if (!sockets) {
 			        	console.log('MessengerFunc: websocket reconnect')
-			            init_websocket(manager);
+			            init_websocket(t);
 			        }
 			    }, 5000)
 			}
@@ -141,7 +152,7 @@ export function load_chat(t, loopback){
 				if(d.not_read_messages && messenger_app_object){ // в чате были непрочитанные сообщения
 					get_new_messages(messenger_app_object)
 				}
-				loopback()
+				loopback(d)
 			}
 		}
 	)

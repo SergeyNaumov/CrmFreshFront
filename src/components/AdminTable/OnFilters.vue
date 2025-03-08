@@ -1,6 +1,6 @@
 <template>
   <v-flex xs12 sm12 md7 lg7 offset-lg1 offset-md1  class="mb-2" id="on_filters">
-
+<!---@ -->
     <v-card >
 
       <v-toolbar @click="toggle_filters()">
