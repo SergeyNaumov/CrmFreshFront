@@ -1,157 +1,179 @@
 <template>
-        <div  class="is_headapp">
+  <div class="is_headapp">
+    <!-- Заголовок -->
+    <h1>{{ title }}</h1>
 
-              <h1  >{{title}}</h1>
+    <!-- Кнопка "Добавить" -->
+    <div v-if="permissions.make_create">
+      <v-icon color="primary">mdi-plus</v-icon>&nbsp;
+      <a href="" @click.prevent="new_card()">Добавить</a>
+    </div>
 
-              <div v-if="permissions.make_create ">
-                <v-icon class="small" color="primary">fa-plus</v-icon>&nbsp;
-                <a href=""  @click.prevent="new_card()">Добавить</a>
-              </div>
-              
-              <p v-if="0"><a href="">Загрузка / сохранение фильтров</a></p>
-              
-              <div v-if="search_plugin" class="search_plugin">
-                <div v-for="(sp,idx) in search_plugin" :key="'sp'+idx">
-                  <v-icon color="primary">{{sp.icon}}</v-icon>
-                  <a href="" @click.prevent="go_search_plugin(sp.name)">{{sp.title}}</a>
-                </div>
-              </div>
-              <template v-if="errors.length">
-              <div  class="errors">
-                
-                  <div v-for="(e,idx) in errors" class="error" :key="'err'+idx" ><v-icon color="primary">fa fa-bomb</v-icon> <span   v-html="e"></span></div>
-                
-              </div>     
-            </template>         
-            <v-layout row wrap v-else>
-            <v-flex xs12 lg12 class="mt-2 mb-2" >
-              <v-btn v-if=0 @click="SHOW_FILTERS=!SHOW_FILTERS" small><v-icon color="primary" small>filter_list</v-icon> </v-btn>  
-              <v-flex xs12 lg12 class="mt-2 mb-2">
-                    <template v-if="1">
-                      <div class="links" v-if="1">
-                        <div v-for="l in search_links" v-bind:key="l.link"><a :href="l.link" :target="l.target">{{l.description}}</a></div>
-                      </div>
-                      <div class="log" v-if="log">
-                        <pre v-if="typeof(log)=='string'">{{ log }}</pre>
-                        <pre v-else v-for="(l,i) in log" v-bind:key="'log'+i">{{  l }}</pre>
-                      </div> 
-                      <div class="before_filters_html" v-if=" before_filters_html">
-                        <div v-if="typeof(before_filters_html)=='string'" v-html="before_filters_html"></div>
-                        <div v-else v-for="h in before_filters_html" :key="h.i" v-html="h"></div>
-                      </div>
-                    </template>
-              </v-flex>
-            </v-flex>
-                <template v-if="show_find_button_top">
-                  <v-flex xs12 lg12 v-show="on_filters && on_filters.length">
-
-                    <v-btn color="primary" small  @click.prevent="go_search(1);" href="" id="search_results"><v-icon  class="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
-                  </v-flex>
-                </template>
-                <v-flex xs12 sm12 md4 lg4 class="mb-2 filters"  v-show="SHOW_FILTERS">
-                      
-                          <v-toolbar @click="SHOW_FILTERS_all=!SHOW_FILTERS_all">
-                            <!--<v-toolbar-side-icon @click="SHOW_FILTERS_all=!SHOW_FILTERS_all"></v-toolbar-side-icon>-->
-                            <v-app-bar-nav-icon color="primary" ></v-app-bar-nav-icon>
-                            <v-subheader>Фильтры</v-subheader>
-                          </v-toolbar>
-                          <div v-if="SHOW_FILTERS_all && filters_groups.length">
-                            
-                            <div  v-for="(fg,idx) in filters_groups" class="filters_groups" :key="fg.description" >
-                                <a href="#" @click.prevent="filters_groups[idx].on=!filters_groups[idx].on" color="primary">{{fg.description}}</a>
-                                <template v-for="cid in fg.child">
-                                <div v-if="fg.on"  :key="cid.i" class="filter_block">
-                                    <v-checkbox
-                                      hide-details
-                                      small
-                                      color="primary" @change="filter_toggle(filters[cid])" v-model="filters[cid]['filter_on']" :label="filters[cid]['description']"
-                                    />
-                                </div>
-                                </template>
-                            </div>
-                          </div>
-                          <div v-else-if=" SHOW_FILTERS_all" class="filters_list">
-                                     <v-checkbox
-                                      v-for="f in filters" :key="f.name" class="filter_block"
-                                      hide-details
-                                      color="primary" @change="filter_toggle(f)" v-model="f.filter_on"
-                                      :label="f.description"
-                                    />
-                          </div>
-   
-                </v-flex>
-                <template v-if="0">
-                  {{on_filters}}
-                  <hr>
-                  {{filters_values}}
-                  <hr>
-                </template>
-                  <on-filters :filters="filters"
-                    :config="params.config"
-                    :go_search="go_search"
-                    :on_filters="on_filters"
-                    :filter_change="filter_change"
-                    :toggle_filters="toggle_filters"
-                    :SHOW_FILTERS_on="SHOW_FILTERS_on"
-                    :ORDER="ORDER"
-
-                    :filters_values="filters_values"
-                  />
-                  <template v-if="!show_find_button_top">
-                    <v-flex xs12 lg12 v-show="on_filters && on_filters.length">
-                      <v-btn color="primary" small  @click.prevent="go_search(1)" href="" id="search_results"><v-icon  class="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
-                    </v-flex>
-                  </template>
-                
-            
-            <v-flex md12 class="mt-1" >
-
-                <!-- [loading...] -->
-                <v-progress-linear
-                  color="primary"
-                  indeterminate
-                  rounded
-                  height="6"
-                  v-if="finding"
-                />
-
-
-                <div v-if="errors_find && errors_find.length" class="errors_find">
-                  <h2>Произошли ошибки при поиске</h2>
-                  <div v-for="ef in errors_find" :key="ef" style="color: red;">{{ef}}</div>
-                  <p><a href="" @click.prevent="go_search()">повторить попытку поиска</a></p>
-                </div>
-                <template v-else>
-                  <hr>
-                  
-                  <div v-if="plugin_out" class="plugin_out" v-html="plugin_out" />
-                  
-
-                  <find-results  
-                    v-else
-                    :results="results"
-                    :permissions="permissions"
-                    :go_search="go_search"
-                    :finding="finding"
-                    :SearchDataSet="SearchDataSet"
-                    :filters="filters"
-                    :explain_query="explain_query"
-                    :out_before_search="out_before_search"
-                    :out_after_search="out_after_search"
-                    :not_out_result_search="not_out_result_search"
-                    :last_search_params="last_search_params"
-                    :on_filters="on_filters"
-                    :search_multi_action="search_multi_action"
-                    :get_filter_by_name="get_filter_by_name"
-
-
-                  />
-                  
-                </template>
-            </v-flex>
-          </v-layout>
+    <!-- Плагины поиска -->
+    <p v-if="0"><a href="">Загрузка / сохранение фильтров</a></p>
+    <div v-if="search_plugin" class="search_plugin">
+      <div v-for="(sp, idx) in search_plugin" :key="'sp' + idx">
+        <v-icon color="primary">{{ sp.icon }}</v-icon>
+        <a href="" @click.prevent="go_search_plugin(sp.name)">{{ sp.title }}</a>
       </div>
+    </div>
 
+    <!-- Ошибки -->
+    <template v-if="errors.length">
+      <div class="errors">
+        <div v-for="(e, idx) in errors" class="error" :key="'err' + idx">
+          <v-icon color="primary">mdi-bomb</v-icon>
+          <span v-html="e"></span>
+        </div>
+      </div>
+    </template>
+
+    <!-- Основной контент -->
+    <v-row v-else>
+      <!-- Фильтры и кнопки -->
+      <v-col cols="12" lg="12" class="mt-2 mb-2">
+        <v-btn v-if="false" @click="SHOW_FILTERS = !SHOW_FILTERS" size="small">
+          <v-icon color="primary">mdi-filter</v-icon>
+        </v-btn>
+
+        <v-col cols="12" lg="12" class="mt-2 mb-2">
+          <template v-if="true">
+            <!-- Ссылки -->
+            <div class="links" v-if="true">
+              <div v-for="l in search_links" :key="l.link">
+                <a :href="l.link" :target="l.target">{{ l.description }}</a>
+              </div>
+            </div>
+
+            <!-- Логи -->
+            <div class="log" v-if="log">
+              <pre v-if="typeof log === 'string'">{{ log }}</pre>
+              <pre v-else v-for="(l, i) in log" :key="'log' + i">{{ l }}</pre>
+            </div>
+
+            <!-- HTML перед фильтрами -->
+            <div class="before_filters_html" v-if="before_filters_html">
+              <div v-if="typeof before_filters_html === 'string'" v-html="before_filters_html"></div>
+              <div v-else v-for="h in before_filters_html" :key="h.i" v-html="h"></div>
+            </div>
+          </template>
+        </v-col>
+      </v-col>
+
+      <!-- Кнопка "Искать" (вверху) -->
+      <template v-if="show_find_button_top">
+        <v-col cols="12" lg="12" v-show="on_filters && on_filters.length">
+          <v-btn color="primary" size="small" @click.prevent="go_search(1)" id="search_results">
+            <v-icon>mdi-magnify</v-icon>&nbsp;искать
+          </v-btn>
+        </v-col>
+      </template>
+
+      <!-- Блок фильтров -->
+      <v-col cols="12" sm="12" md="4" lg="4" class="mb-2 filters" v-show="SHOW_FILTERS">
+        <v-toolbar @click="SHOW_FILTERS_all = !SHOW_FILTERS_all">
+          <v-app-bar-nav-icon color="primary"></v-app-bar-nav-icon>
+          <!-- Замена v-subheader -->
+          <div class="text-subtitle-1 font-weight-bold pl-2">Фильтры</div>
+        </v-toolbar>
+
+        <div v-if="SHOW_FILTERS_all && filters_groups.length">
+          <div v-for="(fg, idx) in filters_groups" class="filters_groups" :key="fg.description">
+            <a href="#" @click.prevent="filters_groups[idx].on = !filters_groups[idx].on" color="primary">{{ fg.description }}</a>
+            <template v-for="cid in fg.child">
+              <div v-if="fg.on" :key="cid.i" class="filter_block">
+                <v-checkbox
+                  hide-details
+                  density="compact"
+                  color="primary"
+                  @change="filter_toggle(filters[cid])"
+                  v-model="filters[cid]['filter_on']"
+                  :label="filters[cid]['description']"
+                />
+              </div>
+            </template>
+          </div>
+        </div>
+        <div v-else-if="SHOW_FILTERS_all" class="filters_list">
+          <v-checkbox
+            v-for="f in filters"
+            :key="f.name"
+            class="filter_block"
+            hide-details
+            density="compact"
+            color="primary"
+            @change="filter_toggle(f)"
+            v-model="f.filter_on"
+            :label="f.description"
+          />
+        </div>
+      </v-col>
+
+      <!-- Компонент "on-filters" -->
+      <on-filters
+        :filters="filters"
+        :config="params.config"
+        :go_search="go_search"
+        :on_filters="on_filters"
+        :filter_change="filter_change"
+        :toggle_filters="toggle_filters"
+        :SHOW_FILTERS_on="SHOW_FILTERS_on"
+        :ORDER="ORDER"
+        :filters_values="filters_values"
+      />
+
+      <!-- Кнопка "Искать" (внизу) -->
+      <template v-if="!show_find_button_top">
+        <v-col cols="12" lg="12" v-show="on_filters && on_filters.length">
+          <v-btn color="primary" size="small" @click.prevent="go_search(1)" id="search_results">
+            <v-icon>mdi-magnify</v-icon>&nbsp;искать
+          </v-btn>
+        </v-col>
+      </template>
+
+      <!-- Результаты поиска -->
+      <v-col cols="12" class="mt-1">
+        <!-- Индикатор загрузки -->
+        <v-progress-linear
+          color="primary"
+          indeterminate
+          rounded
+          height="6"
+          v-if="finding"
+        />
+
+        <!-- Ошибки при поиске -->
+        <div v-if="errors_find && errors_find.length" class="errors_find">
+          <h2>Произошли ошибки при поиске</h2>
+          <div v-for="ef in errors_find" :key="ef" style="color: red;">{{ ef }}</div>
+          <p><a href="" @click.prevent="go_search()">повторить попытку поиска</a></p>
+        </div>
+
+        <!-- Результаты -->
+        <template v-else>
+          <hr />
+          <div v-if="plugin_out" class="plugin_out" v-html="plugin_out" />
+          <find-results
+            v-else
+            :results="results"
+            :permissions="permissions"
+            :go_search="go_search"
+            :finding="finding"
+            :SearchDataSet="SearchDataSet"
+            :filters="filters"
+            :explain_query="explain_query"
+            :out_before_search="out_before_search"
+            :out_after_search="out_after_search"
+            :not_out_result_search="not_out_result_search"
+            :last_search_params="last_search_params"
+            :on_filters="on_filters"
+            :search_multi_action="search_multi_action"
+            :get_filter_by_name="get_filter_by_name"
+          />
+        </template>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>

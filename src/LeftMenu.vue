@@ -15,7 +15,7 @@
             
             
           </div>
-          <v-btn class="logout" @click.prevent="logout()" small>выйти</v-btn>
+          <v-btn x-small class="logout" @click.prevent="logout()">выйти</v-btn>
           
         </div>
 
@@ -89,7 +89,7 @@ export default{
               this.setMenuItem(item)
               if(!not_push_state){
                
-                history.pushState(item, item.header, this.get_link(item))
+                //history.pushState(item, item.header, this.get_link(item))
               }
             }
 

@@ -86,7 +86,7 @@
   props:['form','field'],
   created(){
     let t=this
-    this.$bus.$on( // обновление значений в 1_to_m
+    this.$bus.on( // обновление значений в 1_to_m
       '1_to_m:upload_values:'+this.field.name,
       values=>{
         //console.log('opload_values:',values);
@@ -167,7 +167,7 @@
       this.refresh++
     },
     open_new_dialog(){
-      this.$bus.$emit('1_to_m_open_new_dialog:'+this.field.name);
+      this.$bus.emit('1_to_m_open_new_dialog:'+this.field.name);
     },
     // множественная загрузка файлов
     start_dialog_multiload(){ // диалог для множественной загрузки файлов

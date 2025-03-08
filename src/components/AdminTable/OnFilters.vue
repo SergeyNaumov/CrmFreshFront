@@ -1,65 +1,45 @@
 <template>
-  <v-flex xs12 sm12 md7 lg7 offset-lg1 offset-md1  class="mb-2" id="on_filters">
-<!---@ -->
-    <v-card >
-
+  <v-col cols="12" sm="12" md="7" lg="7" offset-lg="1" offset-md="1" class="mb-2" id="on_filters">
+    <!-- Карточка с фильтрами -->
+    <v-card>
       <v-toolbar @click="toggle_filters()">
-        <v-app-bar-nav-icon color="primary" ></v-app-bar-nav-icon>
-        <v-subheader>Используемые фильтры</v-subheader>
-      </v-toolbar></v-card>
-      <form @submit.prevent="go_search(1)" autocomplete="new-password">
-      <draggable :options="{handle:'.drag_area'}" :list="filter_list" v-show="SHOW_FILTERS_on">
-        <div v-for="f in filter_list" :key="f.name">
+        <v-app-bar-nav-icon color="primary"></v-app-bar-nav-icon>
+        <div>Используемые фильтры</div>
+      </v-toolbar>
+    </v-card>
+
+    <!-- Форма для фильтров -->
+    <form @submit.prevent="go_search(1)" autocomplete="new-password">
+      <draggable :list="filter_list" v-model="filter_list" handle=".drag_area">
+        <template #item="{ element: f, index }">
+          <div :key="index">
             <div class="drag_area">
               <v-icon>fa-arrows-alt-v</v-icon>
             </div>
-            <v-card   class="pa-2 mt-0 mb-3 onfilter" :outlined="true" >
-                <div v-if="dynamic_component(f)" style="inline-block;  border; 1px solid black;">
-                    <component
-                      :is="dynamic_component(f)"
-                      :field="f"
-                      :config="config"
-                      :filter_change="filter_change"
-                      :filters_values="filters_values"
-                      :refresh="refresh"
-                    />              
-                </div>            
+            <v-card class="pa-2 mt-0 mb-3 onfilter" outlined>
+              <div v-if="dynamic_component(f)">
+                <component
+                  :is="dynamic_component(f)"
+                  :field="f"
+                  :config="config"
+                  :filter_change="filter_change"
+                  :filters_values="filters_values"
+                  :refresh="refresh"
+                />
+              </div>
             </v-card>
-        </div>
-        
-
-        
-        </draggable>
-      </form>
-  </v-flex>
+          </div>
+        </template>
+      </draggable>
+    </form>
+  </v-col>
 </template>
+
 <script>
-/*
-import FilterText from './filters/text.vue';
-import FilterInExtUrl from './filters/in_ext_url.vue';
-import FilterSelect from './filters/select.vue';
-import FilterMemo from './filters/memo.vue';
-import FilterDate from './filters/date.vue';
-import FilterTime from './filters/time.vue';
-import FilterDateTime from './filters/datetime.vue';
-import FilterMulticonnect from './filters/multiconnect.vue';
-import FilterYearMon from './filters/yearmon.vue'
-import FilterFile from './filters/file.vue';
-*/
+
 export default {
   components:{
-/*
-    'filter-text':FilterText,
-    'filter-select':FilterSelect,
-    'filter-date':FilterDate,
-    'filter-time':FilterTime,
-    'filter-datetime':FilterDateTime,
-    'filter-yearmon':FilterYearMon,
-    'filter-memo':FilterMemo,
-    'filter-multiconnect':FilterMulticonnect,
-    'filter-in_ext_url':FilterInExtUrl,
-    'filter-file':FilterFile
-*/
+
   },
   props:[
     'config','filters','on_filters','filter_change', 'SHOW_FILTERS_on', 'toggle_filters','ORDER',

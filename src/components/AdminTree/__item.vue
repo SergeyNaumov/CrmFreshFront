@@ -1,7 +1,7 @@
 <template>
     <span>
     <div class="li_header" >
-        <v-icon small v-if="!shows[item.id] && form.tree_use" @click="show_this(item)">fa fa-plus</v-icon>
+        @<v-icon small v-if="!shows[item.id] && form.tree_use" @click="show_this(item)">@fa-plus</v-icon>
         <v-icon small v-if="shows[item.id]" @click="shows[item.id]=false">fa fa-minus</v-icon>
             {{ item.header }} 
             <pre>{{ form }}</pre>

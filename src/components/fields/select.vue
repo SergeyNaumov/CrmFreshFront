@@ -151,7 +151,7 @@ export default {
             this.parent(this.field)
           }
           else{
-            this.$bus.$emit('change_field',this.field);
+            this.$bus.emit('change_field',this.field);
           }          
         },
         refresh(){ 
@@ -176,7 +176,7 @@ export default {
 
     if(!t.parent){
       
-      this.$bus.$on(`field-update:${t.field.name}`,t._field_update )
+      this.$bus.on(`field-update:${t.field.name}`,t._field_update )
     }
     else{
       console.log('parent:',parent)
@@ -268,7 +268,7 @@ export default {
         if(this.parent)
             this.parent({value:f.value,error:f.error,name:f.name})
         else
-          this.$bus.$emit('change_field',f)
+          this.$bus.emit('change_field',f)
       }
     },
     regexp_check(){

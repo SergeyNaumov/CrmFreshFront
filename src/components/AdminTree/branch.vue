@@ -44,7 +44,9 @@
                 <span v-else> в /</span>
         </a>
         <div v-if="form.sort">  <!-- USE SORT-->
+
             <draggable
+                v-model="list"
                 :id="'p-'+parent.id"
                 tag="ul"
                 v-if="list.length"
@@ -53,49 +55,51 @@
                 :renew="renew"
                 :options="{'group':'g'+parent.id}" @start="move_start" @end="move_end"                
             >   
-                <li v-for="l in list" :key="l.id" :id="'li-'+l.id" >
-                <div >
-                    <div class="li_header" :style='{"background":cur_color}'  >
-                            <div class="plus-icon " v-if="form.tree_use && (!form.max_level || (level < form.max_level))" >
-                                <!---->
-                                <v-icon small color="primary"
-                                    v-if="!shows[l.id]" 
-                                    @click="show_this(l)"
-                                >
-                                    fa fa-plus 
-                                </v-icon>
-                                <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
-                            </div>
-                            <div class="branch-header" >
-                                <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
-                                <template v-if="l.childs && form.tree_use && l.childs.length>0">&nbsp;({{l.childs.length}})</template>
-                                <FormInBranch
-                                    :form="form"
-                                    :item="l"
-                                    :close_edit_form="close_edit_form"
-                                    :upload_header="upload_header"
-                                    v-if="show_edit_form==l.id"
-                                />
-                                
-                            </div>
-                            <div class="branch-tools " style="display: block; position: relative; top: -30px; height: 0; margin-bottom: 0; text-align: right; ">
-                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
-                                <v-icon v-if="make_delete(parent.id,l)" small style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
-                            </div>
+                <template #item="{ element: l }">
+                    <li  :key="l.id" :id="'li-'+l.id" >
+                    <div >
+                        <div class="li_header" :style='{"background":cur_color}'  >
+                                <div class="plus-icon " v-if="form.tree_use && (!form.max_level || (level < form.max_level))" >
+                                    <!---->
+                                    <v-icon small color="primary"
+                                        v-if="!shows[l.id]"
+                                        @click="show_this(l)"
+                                    >
+                                        fa fa-plus
+                                    </v-icon>
+                                    <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
+                                </div>
+                                <div class="branch-header" >
+                                    <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
+                                    <template v-if="l.childs && form.tree_use && l.childs.length>0">&nbsp;({{l.childs.length}})</template>
+                                    <FormInBranch
+                                        :form="form"
+                                        :item="l"
+                                        :close_edit_form="close_edit_form"
+                                        :upload_header="upload_header"
+                                        v-if="show_edit_form==l.id"
+                                    />
+
+                                </div>
+                                <div class="branch-tools " style="display: block; position: relative; top: -30px; height: 0; margin-bottom: 0; text-align: right; ">
+                                    <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
+                                    <v-icon v-if="make_delete(parent.id,l)" small style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
+                                </div>
+                        </div>
+                        <template v-if="shows[l.id]">
+                            <nested-draggable v-if="l.childs"
+                                :form="form"
+                                :level="(level+1)"
+                                :renew="renew" :add_to_map="add_to_map"
+                                :parent="l"
+                                :add="add" :del="del" :move_end="move_end" :get_list="get_list"
+                            />
+                        </template>
+
                     </div>
-                    <template v-if="shows[l.id]">
-                        <nested-draggable v-if="l.childs"
-                            :form="form"
-                            :level="(level+1)"
-                            :renew="renew" :add_to_map="add_to_map"
-                            :parent="l"
-                            :add="add" :del="del" :move_end="move_end" :get_list="get_list"
-                        />
-                    </template>
 
-                </div>
-
-                </li>
+                    </li>
+                </template>
             </draggable>
         </div>
         <template v-else> <!-- NOT USE SORT-->
@@ -147,6 +151,7 @@
     </div>
 </template>
 <script>
+import { reactive } from 'vue';
 import FormInBranch from "./FormInBranch.vue";
 export default {
   components: {'FormInBranch': FormInBranch},
@@ -162,6 +167,10 @@ export default {
     add_to_map:{required:true},
     new_runner:{type:Number,required:false},
     
+  },
+  setup(props){
+    const item = reactive(props.parent)
+    return {item}
   },
   data(){
       return {

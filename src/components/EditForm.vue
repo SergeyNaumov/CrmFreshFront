@@ -1,123 +1,159 @@
 <template>
-    <v-app id="EditForm">
-        <!-- для вызова попапа извне -->
-        <v-dialog v-model="popup.show" max-width="500">
+  <v-app id="EditForm">
+    <!-- Диалоговое окно для попапов -->
+    <v-dialog v-model="popup.show" max-width="500">
+      <v-card>
+        <v-card-title class="headline">{{ popup.header }}</v-card-title>
+        <v-card-text>{{ popup.body }}</v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <div :class="form.wide_form ? 'container_fluid' : 'container'">
+      <pre v-if="0">{{ values }}</pre>
+
+      <!-- Критическая ошибка -->
+      <v-card v-if="fatal_errors.length">
+        <v-card-title class="headline">Критическая ошибка</v-card-title>
+        <v-card-text>
+          <errors :errors="fatal_errors" />
+        </v-card-text>
+      </v-card>
+
+      <template v-else>
+        <!-- Логи -->
+        <template v-if="log">
+          <div>
+            <pre v-if="typeof log === 'string'" v-html="log"></pre>
+            <pre v-else v-for="(l, idx) in log" :key="idx" v-html="l"></pre>
+          </div>
+        </template>
+
+        <!-- Диалоговое окно -->
+        <v-dialog v-model="dialog" max-width="500">
           <v-card>
-            <v-card-title  class="headline">{{popup.header}}</v-card-title>
+            <v-card-title class="headline">{{ dialog_header }}</v-card-title>
             <v-card-text>
-              {{popup.body}}
+              <template v-if="log.length">
+                <b>Обратитесь к разработчику:</b>
+                <pre v-for="(l, idx) in log" :key="'l2' + idx" v-html="l"></pre>
+              </template>
+              <errors :errors="errors" />
+              <template v-if="!errors.length">{{ dialog_body }}</template>
             </v-card-text>
           </v-card>
         </v-dialog>
 
-        <div :class="form.wide_form?'container_fluid':'container'" >
-            <pre v-if="0">
-                {{values}}
-            </pre>
-            
-            <v-card v-if="fatal_errors.length">
-              <v-card-title  class="headline">Критическая ошибка</v-card-title>
-              <v-card-text >
-                      <errors :errors="fatal_errors"/>
-              </v-card-text>
-            </v-card>
-            
+        <!-- Заголовок формы -->
+        <h1 color="primary" class="form_header" v-html="form.title" />
+
+        <form autocomplete="off">
+          <v-row>
+            <!-- Колонки и блоки -->
+            <template v-if="cols.length">
+              <v-col
+                v-for="c in cols"
+                :key="c.idx"
+                :cols="12 / Math.floor(cols.length)"
+              >
+                <v-card
+                  v-for="block in c"
+                  :key="block.name"
+                  class="block"
+                >
+                  <v-toolbar
+                    color="primary"
+                    dark
+                    height="35px"
+                    @click="block_toggle(block)"
+                  >
+                    <v-toolbar-title>
+                      <v-icon v-if="!block.hide">keyboard_arrow_up</v-icon>
+                      <v-icon v-if="block.hide">keyboard_arrow_down</v-icon>
+                      <span>{{ block.description }}</span>
+                    </v-toolbar-title>
+                    <div class="flex-grow-1"></div>
+                  </v-toolbar>
+
+                  <div v-show="!block.hide" pb-1>
+                    <form-block
+                      :block_name="block.name"
+                      :form="form"
+                      :save="save"
+                      :values="values"
+                    ></form-block>
+                    <v-col cols="12" lg="12" class="text-lg-center">
+                      <v-btn
+                        color="primary"
+                        v-if="!form.read_only && !block.not_save_button"
+                        :disabled="disabled_form"
+                        @click="save()"
+                      >
+                        Сохранить
+                      </v-btn>
+                    </v-col>
+                  </div>
+                </v-card>
+              </v-col>
+            </template>
+
+            <!-- Табы -->
+            <template v-else-if="tabs.length">
+              <v-tabs v-model="tab">
+                <v-tab
+                  v-for="(tab, idx) in tabs"
+                  :key="'tab' + idx"
+                  :style="tab.style"
+                  v-html="tab.description"
+                ></v-tab>
+              </v-tabs>
+
+              <v-col cols="12">
+                <v-card style="width: 100%">
+                  <v-tabs-items v-model="tab">
+                    <v-tab-item
+                      v-for="(tab, idx) in tabs"
+                      :key="'tabitm' + idx"
+                    >
+                      <form-block
+                        :block_name="tab.name"
+                        :form="form"
+                        :save="save"
+                        :values="values"
+                      ></form-block>
+                    </v-tab-item>
+                  </v-tabs-items>
+                </v-card>
+              </v-col>
+            </template>
+
+            <!-- Простая форма -->
             <template v-else>
-                    <template v-if="log">
-                        <div>
-                            <pre v-if="typeof(log)=='string'" v-html="log"></pre>
-                            <pre v-else v-for="(l,idx) in (log)" v-bind:key="idx" v-html="l"></pre>
-                        </div>
-                    </template>
-                    <v-dialog v-model="dialog" max-width="500">
-                        <v-card>
-                            <v-card-title  class="headline">{{dialog_header}}</v-card-title>
-                            <v-card-text>
-                              <template v-if="log.length">
-                                  <b>обратитесь к разработчику: </b>
-                                  <pre v-for="(l,idx) in (log)" :key="'l2'+idx" v-html="l"></pre>
-                              </template>
-                              <errors :errors="errors"/>
-                              <template v-if="!errors.length">
-                              {{dialog_body}}
-                              </template>
-                            </v-card-text>
-                            <!--
-                            <v-card-actions ">
-                                <div class="flex-grow-1"></div>
-                                <v-btn color="primary darken-1" text @click="dialog = false">Продолжить работу</v-btn>
-                                <v-btn color="red darken-1" text v-if="exists_opener()" @click="window_close()">Закрыть</v-btn>
-                            </v-card-actions>
-                            -->
-                        </v-card>
-                    </v-dialog>
-
-                    <h1 color="primary" class="form_header" v-html="form.title"/>
-                    <form autocomplete="off">
-                    <v-layout row wrap>
-
-                        <template v-if="cols.length"> <!-- Колонки, блоки -->
-                          <!--  -->
-                            <v-flex pl-3 :class="'md'+12/Math.floor(cols.length)" xs12 v-for="c in cols" :key="c.idx">
-
-                            <v-card class="block" v-for="block in c" :key="block.name">
-                                <v-toolbar color="primary" dark height="35px" @click="block_toggle(block)">
-                                    <v-toolbar-title >
-                                        <v-icon v-if="!block.hide">keyboard_arrow_up</v-icon> 
-                                        <v-icon v-if="block.hide">keyboard_arrow_down</v-icon>
-                                        <span >{{block.description}} </span>
-                                    </v-toolbar-title>
-                                    <div class="flex-grow-1"></div>
-                                </v-toolbar>
-
-                                <div v-show="!block.hide" pb-1>
-                                    <form-block :block_name="block.name" :form="form"  :save="save" :values="values"></form-block>
-                                    <v-flex xs12 lg12 text-lg-center>
-
-                                    <v-btn color="primary" v-if="!form.read_only && !block.not_save_button" :disabled="disabled_form" @click="save()">Сохранить</v-btn> 
-                                    </v-flex>
-                                </div>
-                                
-                            </v-card>
-
-                            </v-flex>
-                        </template>
-                        <template v-else-if="tabs.length"> <!-- Табы -->
-                              <v-tabs v-model="tab">
-                                <v-tab v-for="(tab,idx) in tabs" :key="'tab'+idx" :style="tab.style" v-html="tab.description"/>
-
-                              </v-tabs>
-                              <v-flex md12 >
-                              <v-card style="width: 100%;">
-                                <v-tabs-items v-model="tab" >
-                                  <v-tab-item v-for="(tab,idx) in tabs" :key="'tabitm'+idx">
-                                    <form-block :block_name="tab.name" :form="form"  :save="save" :values="values"></form-block>
-                                  </v-tab-item>
-                                </v-tabs-items>
-                              </v-card>
-                              </v-flex>
-                              
-                        </template>
-                        <template v-else> 
-                            <v-flex md12 >
-
-                            <v-card style="padding: 1rem;">
-
-                                <form-block :block_name="''" :form="form"  :save="save" :values="values"></form-block>
-                                <v-flex xs12 lg12 text-lg-center>
-                                
-                                <v-btn color="primary" v-if="!form.read_only" :disabled="disabled_form" @click="save()">Сохранить</v-btn> 
-                                </v-flex>
-                            </v-card>
-                            </v-flex>
-
-                        </template>
-                    </v-layout>
-                    </form>
-            
-        </template>
-      </div>
-    </v-app>
+              <v-col cols="12">
+                <v-card style="padding: 1rem">
+                  <form-block
+                    :block_name="''"
+                    :form="form"
+                    :save="save"
+                    :values="values"
+                  ></form-block>
+                  <v-col cols="12" lg="12" class="text-lg-center">
+                    <v-btn
+                      color="primary"
+                      v-if="!form.read_only"
+                      :disabled="disabled_form"
+                      @click="save()"
+                    >
+                      Сохранить
+                    </v-btn>
+                  </v-col>
+                </v-card>
+              </v-col>
+            </template>
+          </v-row>
+        </form>
+      </template>
+    </div>
+  </v-app>
 </template>
 <style scoped>
   .container_fluid {margin-left: 20px; margin-right: 20px;}
@@ -196,16 +232,16 @@ created(){
   this._frontend_button_process=(field,button_name,success_function)=>{
     frontend_button_process(this,field,button_name,success_function)
   }
-  bus.$on('change_field', this._change_field);
-  bus.$on('save_field_1_to_m',this._save_field_1_to_m);
-  bus.$on('frontend_button_process',this._frontend_button_process);
+  this.$bus.on('change_field', this._change_field);
+  this.$bus.on('save_field_1_to_m',this._save_field_1_to_m);
+  this.$bus.on('frontend_button_process',this._frontend_button_process);
 
   this.Init();
 },
 beforeDestroy(){
-  bus.$off('change_field',this._change_field);
-  bus.$off('save_field_1_to_m',this._save_field_1_to_m);
-  bus.$off('frontend_button_process',this._frontend_button_process);
+  this.$bus.off('change_field',this._change_field);
+  this.$bus.off('save_field_1_to_m',this._save_field_1_to_m);
+  this.$bus.off('frontend_button_process',this._frontend_button_process);
 },
 watch:{
   errors(){
@@ -375,7 +411,7 @@ methods: {
                       let R=r.data;
                       this.errors=R.errors;
                       if(R.success){
-                        bus.$emit('file:'+f.name,R.value);
+                        this.$bus.emit('file:'+f.name,R.value);
                       }
                     }
                 ).catch(

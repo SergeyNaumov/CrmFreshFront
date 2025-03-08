@@ -106,11 +106,11 @@ export default {
       
       this.create_edit_fields();
       // событие открывания формы редактирования вызывается из слайда
-      this.$bus.$on('1_to_m_open_edit_dialog:'+this.field.name,
+      this.$bus.on('1_to_m_open_edit_dialog:'+this.field.name,
         v=>{this.open_edit_dialog(v)}
       );
       // открываем окно для создания нового элемента (из 1_to_m по кнопке "добавить")
-      this.$bus.$on('1_to_m_open_new_dialog:'+this.field.name,
+      this.$bus.on('1_to_m_open_new_dialog:'+this.field.name,
         ()=>{
           this.open_new_dialog()}
       )
@@ -328,7 +328,7 @@ export default {
                     ()=>{
                       console.log(`emit: 1_to_m:upload_values:${this.field.name}`)
                       //console.log(this.field.values)
-                      this.$bus.$emit(
+                      this.$bus.emit(
                       `1_to_m:upload_values:${this.field.name}`,
                       this.field.values
                       )

@@ -1,6 +1,6 @@
 <template>       
   <div class="main">
-      <errors :errors="errors" v-if="errors.length" /> <!-- ошибки при инициализации компонента -->
+      <errors :errors="errors" v-if="errors.length" />
       <v-row  no-gutters class="manager_panel" >
         <v-col class="p1" cols="12" sm="6" md="6" style="padding: 5px;">
           <!--

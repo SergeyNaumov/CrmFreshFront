@@ -1,11 +1,17 @@
 <template>
   <div>
+    <div v-if="0" style="height: 300px; color: black; background: #000;"> @@@@@
+      <i class="mdi mdi-menu" style="color: white"></i> <!-- Для MDI -->
+  <!-- Или -->
+  <i class="fas fa-bars"  style="color: white"></i>
+    </div>
     <v-app v-if="headapp">
 
         <component v-show="headapp" v-bind:is="headapp" is_headapp="1" :params="headapp_params"></component>
     </v-app>
      
   <v-app id="inspire" v-else>
+
         <v-dialog v-model="dialog" app>
             <v-card>
               <v-card-title  class="headline">{{dialog_header}}</v-card-title>
@@ -16,7 +22,7 @@
               </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-navigation-drawer v-model="drawer" app >
+        <v-navigation-drawer  v-model="drawer" app >
           <left_menu
             :manager="manager"
             :left_menu="left_menu"
@@ -27,12 +33,12 @@
           />
         </v-navigation-drawer>
 
-        <v-app-bar app  > <!--color="darken1"-->
+        <v-app-bar app  >
           
-          <v-app-bar-nav-icon @click="drawer = !drawer" ></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon style="color: white" @click="drawer = !drawer" ><v-icon>mdi-menu</v-icon></v-app-bar-nav-icon>
           <v-toolbar-title >
-            <a href="/" style="color: #fff;"><v-icon small>md:fa-home</v-icon>&nbsp; {{title}}</a>
-            <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
+            <v-icon x-small style="color: #fff;">fa-home</v-icon>&nbsp;<a href="/" style="color: #fff;"> {{title}}</a>
+
           </v-toolbar-title>
           <Messenger :config="app_components.navigator" :manager="manager"/>
         </v-app-bar>
@@ -40,7 +46,7 @@
         <v-main>
           <div class="fill-height" fluid>
             <errors :errors="errors" />
-            <!-- vuecomponent -->
+
             <pre v-if="0">{{MenuItem}}</pre>
 
             <template v-if="MenuItem.type == 'vue'">
@@ -51,7 +57,7 @@
               />
             </template>
 
-            <!-- iframe -->
+
             <template v-if="MenuItem.type=='src'">
               <iframe  style="width: 100%; height: 100%; border: none;" :src="MenuItem.value"></iframe>
             </template>
@@ -66,7 +72,7 @@
           
         </v-footer>
   </v-app>
-      
+
   </div>
 </template>
 
@@ -339,7 +345,7 @@ export default {
   }
   .v-input__prepend-outer {width: 50px;}
   img.logo {max-height: 50px;  margin: 0px 20px 0 0;}
-  .v-toolbar__title .header {text-align: center;vertical-align: top; margin-top: 8px; font-size: 20px; display: inline-block;}
+  .v-toolbar__title .header {text-align: center;vertical-align: top; margin-top: 8px;  display: inline-block;}
 
   .v-textarea textarea{
     line-height: 1.1rem !important;

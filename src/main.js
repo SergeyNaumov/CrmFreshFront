@@ -11,8 +11,8 @@ import 'vuetify/styles'; // Импорт стилей Vuetify
 
 import { dynamic_component_loader } from './dynamic_component_loader.js'; // Ваш кастомный загрузчик компонентов
 
-let color_scheme = 'blue'; // Цветовая схема
-import '@/styles/colors/blue2.scss'; // Импорт SCSS стилей
+//let color_scheme = 'blue'; // Цветовая схема
+//import '@/styles/colors/blue2.scss'; // Импорт SCSS стилей
 
 // Создаём экземпляр приложения Vue 3
 const app = createApp(App);
@@ -22,19 +22,22 @@ const bus = mitt();
 app.config.globalProperties.$bus = bus;
 
 // Настройка цветовой схемы
-let main_color = colors[color_scheme];
-let color_set = {
-  primary: '#253a5d',
-  lighten1: main_color.lighten1,
-  lighten2: main_color.lighten2,
-  lighten3: main_color.lighten3,
-  lighten4: main_color.lighten4,
-  lighten5: main_color.lighten5,
-};
+// let main_color = colors[color_scheme];
+// let color_set = {
+//   primary: '#253a5d',
+//   lighten1: main_color.lighten1,
+//   lighten2: main_color.lighten2,
+//   lighten3: main_color.lighten3,
+//   lighten4: main_color.lighten4,
+//   lighten5: main_color.lighten5,
+// };
 
-// Глобальные свойства и методы
-app.config.globalProperties.$color = main_color;
-app.config.globalProperties.$theme = color_set;
+// // Глобальные свойства и методы
+// app.config.globalProperties.$color = main_color;
+// app.config.globalProperties.$theme = color_set;
+app.config.globalProperties.$theme = {
+  rounded: true // или другое значение
+};
 
 app.config.globalProperties.$isMobile = () => {
   if (document.body.clientWidth < 1000) return true;
@@ -44,29 +47,6 @@ app.config.globalProperties.$isMobile = () => {
 // axios
 import axios from 'axios';
 app.config.globalProperties.$http = axios;
-// Глобальный обработчик ошибок для Axios
-// axios.interceptors.response.use(
-//   (response) => {
-//     // Если запрос успешен, просто возвращаем ответ
-//     return response;
-//   },
-//   (error) => {
-//     // Обрабатываем ошибку
-//     if (error.response) {
-//       // Ошибка с ответом от сервера (например, 4xx или 5xx)
-//       console.error('Ошибка сервера:', error.response.status, error.response.data);
-//     } else if (error.request) {
-//       // Ошибка сети (например, нет ответа от сервера)
-//       console.error('Ошибка сети:', error.message);
-//     } else {
-//       // Другие ошибки
-//       console.error('Ошибка:', error.message);
-//     }
-
-//     // Возвращаем отклонённый промис, чтобы ошибка не "всплывала" дальше
-//     return Promise.reject(error);
-//   }
-// );
 
 
 
@@ -105,8 +85,8 @@ app.component('field-daymon', DayMonField);
 import GPTAssist from './components/GPTAssist/GPTAssist';
 app.component('GPTAssist', GPTAssist);
 
-import Errors from './components/errors';
-app.component('errors', Errors);
+//import Errors from './components/errors';
+//app.component('errors', Errors);
 
 // Подключение Vuetify и монтирование приложения
 app.use(vuetify).mount('#app');

@@ -192,20 +192,20 @@ export default {
         this.list=this.values;
         this.cur_fields=this.field.fields // нужно для того, чтобы можно было обновить
 
-        this.$bus.$on( // обновление полей в 1_to_m
+        this.$bus.on( // обновление полей в 1_to_m
             `1_to_m/slide_${field.name}:update_fields`,this._update_fields
         )
 
-        this.$bus.$on(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
+        this.$bus.on(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
 
 
     },
     beforeDestroy(){
         let field=this.field
-        this.$bus.$off( // обновление полей в 1_to_m
+        this.$bus.off( // обновление полей в 1_to_m
             `1_to_m/slide_${field.name}:update_fields`,this._update_fields
         )
-        this.$bus.$off(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
+        this.$bus.off(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
     },
     methods:{
         _update_fields(fields){
@@ -218,7 +218,7 @@ export default {
             this.list=D.values
         },
         open_edit_dialog(v){
-            this.$bus.$emit( // событие передаём в 1_to_m_form
+            this.$bus.emit( // событие передаём в 1_to_m_form
                 '1_to_m_open_edit_dialog:'+this.field.name,
                 v
             );

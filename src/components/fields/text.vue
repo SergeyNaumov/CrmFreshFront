@@ -111,7 +111,7 @@
 
     if(!this.parent){
       
-      this.$bus.$on('field-update:'+this.field.name,this._field_update )
+      this.$bus.on('field-update:'+this.field.name,this._field_update )
     }
     // 
     this.value=this.field.value;
@@ -120,7 +120,7 @@
   },
   beforeDestroy(){
     if(!this.parent){
-       this.$bus.$off('field-update:'+this.field.name,this._field_update)
+       this.$bus.off('field-update:'+this.field.name,this._field_update)
     }
   },
     
@@ -154,7 +154,7 @@
       this.field.value=this.value
       this.field.from='field-text component (text.vue)'
       if(!this.parent){
-        this.$bus.$emit('change_field',this.field);
+        this.$bus.emit('change_field',this.field);
       }
       
     }
@@ -215,7 +215,7 @@
           else{ // обработчик основной формы
             
             f.value=this.value;
-            this.$bus.$emit('change_field', f);
+            this.$bus.emit('change_field', f);
           }
 
         },

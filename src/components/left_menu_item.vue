@@ -1,7 +1,7 @@
+
 <template>
   <div class="item">
-
-      <template v-if="item.child.length"> <!-- Родительский пункт меню -->
+      <template v-if="item.child && item.child.length"> <!-- Родительский пункт меню -->
         <a href="#" @click.prevent="show=!show">
         <v-icon class="arrow">fa-{{show?'chevron-down':'chevron-right'}}</v-icon>
         <div class="icon_slot">
@@ -10,7 +10,6 @@
         
         <span>{{item.header}}</span></a>
         
-
         <div v-if="show" class="childs">
           <left_menu_item
             v-for="m in item.child"
@@ -23,23 +22,24 @@
         </div>
       </template>
       <template v-else> <!-- дочерний пункт меню -->
-        <template>
           <a :href="get_link(item)" @click.prevent="go_link(item)">  <!-- get_link(item)   " -->
             <div class="icon_slot" v-if="item.icon"> 
               <v-icon color="primary" x-small>{{item.icon}}</v-icon>
             </div>
             <span :style="item.style">{{item.header}}</span>
           </a>
-        </template>
-
-
       </template>
   </div>
 </template>
 <script>
+import { reactive } from 'vue';
 export default {
   name:'left_menu_item',
   props:["manager","item","get_link","go_link"],
+  setup(props){
+    const item = reactive(props.item)
+    return {item}
+  },
   created(){
     if(this.item.show){
       this.show=true
