@@ -123,7 +123,7 @@
   .container_fluid {margin-left: 20px; margin-right: 20px;}
 </style>
 <script>
-import { bus } from '../main'
+//import { bus } from '../main'
 
 import { 
   on_dependence, change_field,save_field_1_to_m, 

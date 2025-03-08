@@ -59,14 +59,14 @@
 //import Vue from 'vue'
 import BirthDays from './components/BirthDays';
 import Notifications from './components/Notifications';
-import LinkTelegram from './components/MP/LinkTelegram';
+//import LinkTelegram from './components/MP/LinkTelegram';
 import ManagerLoad from './components/MP/ManagerLoad';
 
 export default {
   components: {
     'birth-days': BirthDays,
     'notifications': Notifications,
-    'link-telegram': LinkTelegram,
+    //'link-telegram': LinkTelegram,
     'manager-load': ManagerLoad
   },
   props:[],

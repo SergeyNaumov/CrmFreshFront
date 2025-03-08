@@ -98,8 +98,6 @@
 // 
 
 // npm install tinymce
-
-import { bus } from '../../main'
 import tinymce from 'tinymce/tinymce';
 import field_buttons from './frontend/buttons';
 import { field_update } from './field_functions' 
@@ -162,7 +160,7 @@ export default {
         this.field.value=this.value;
         this.field.from='field-text component (wysiwyg.vue)'
         if(!this.parent){
-            bus.$emit('change_field',this.field);
+            this.$bus.$emit('change_field',this.field);
         }
       },
       file_path(){ // если мы осуществляем навигацию по папкам -- отправляемся за списком файлов
@@ -188,12 +186,12 @@ export default {
         this.edit_mode=this.field.edit_mode
     }
     if(!this.parent){
-      bus.$on('field-update:'+this.field.name,this._field_update )
+      this.$bus.$on('field-update:'+this.field.name,this._field_update )
     }
   }, 
   beforeDestroy(){
     if(!this.parent){
-       bus.$off('field-update:'+this.field.name,this._field_update)
+       this.$bus.$off('field-update:'+this.field.name,this._field_update)
     }
   },
   mounted(){

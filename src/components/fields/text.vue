@@ -98,7 +98,6 @@
 
   // end
   import { field_update,check_fld } from './field_functions'
-  import { bus } from '../../main'
   //import QRCode from '../../js/qrcode.min.js'
   import qr_call from './text_subtypes/qr_call';
   
@@ -112,7 +111,7 @@
 
     if(!this.parent){
       
-      bus.$on('field-update:'+this.field.name,this._field_update )
+      this.$bus.$on('field-update:'+this.field.name,this._field_update )
     }
     // 
     this.value=this.field.value;
@@ -121,7 +120,7 @@
   },
   beforeDestroy(){
     if(!this.parent){
-       bus.$off('field-update:'+this.field.name,this._field_update)
+       this.$bus.$off('field-update:'+this.field.name,this._field_update)
     }
   },
     
@@ -155,7 +154,7 @@
       this.field.value=this.value
       this.field.from='field-text component (text.vue)'
       if(!this.parent){
-        bus.$emit('change_field',this.field);
+        this.$bus.$emit('change_field',this.field);
       }
       
     }
@@ -216,7 +215,7 @@
           else{ // обработчик основной формы
             
             f.value=this.value;
-            bus.$emit('change_field', f);
+            this.$bus.$emit('change_field', f);
           }
 
         },

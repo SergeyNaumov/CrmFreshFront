@@ -90,7 +90,6 @@
 </template>
 
 <script>
-  import { bus } from '../../main'
   export default {
     data:function(){
         return {
@@ -116,7 +115,7 @@
             let field=this.field;
             field.value=this.value;
             //this.change_field(field)
-            bus.$emit('change_field',field)
+            this.$bus.$emit('change_field',field)
         },
         new_tag(){
             this.new_tag_not_ajax++;
@@ -258,7 +257,7 @@
 
             t.value=new_value
             field.value=t.value
-            bus.$emit('change_field',field)
+            this.$bus.$emit('change_field',field)
         },
         init(){ // получаем список элементов дерева
             let t=this

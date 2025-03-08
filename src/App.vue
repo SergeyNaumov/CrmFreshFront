@@ -29,12 +29,12 @@
 
         <v-app-bar app  > <!--color="darken1"-->
           
-          <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon @click="drawer = !drawer" ></v-app-bar-nav-icon>
           <v-toolbar-title >
-            <a href="/"><v-icon small>fa fa-home</v-icon>&nbsp; {{title}}</a>
+            <a href="/" style="color: #fff;"><v-icon small>md:fa-home</v-icon>&nbsp; {{title}}</a>
             <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
           </v-toolbar-title>
-          <Messenger v-if="" :config="app_components.navigator" :manager="manager"/>
+          <Messenger :config="app_components.navigator" :manager="manager"/>
         </v-app-bar>
 
         <v-main>

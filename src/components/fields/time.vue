@@ -37,7 +37,6 @@
     </div>
 </template>
 <script>
-import { bus } from '../../main'
 export default {
     props:['form','field'],
     computed:{
@@ -60,7 +59,7 @@ export default {
         this.menu = false;
         this.set_need_empty();
         //this.change_field(this.field);
-        bus.$emit('change_field',this.field);
+        this.$bus.$emit('change_field',this.field);
       },
       clear(){
         this.field.value='';

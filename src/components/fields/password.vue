@@ -59,7 +59,6 @@
 </template>
 
 <script>
-  import { bus } from '../../main'
   import { gen_pas }  from '../../js/check_func.js'
   export default {
     data:function(){
@@ -78,7 +77,7 @@
            if(!this.form.id){ // если это новая карта -- закидываем в values
                 let field=this.field
                 field.value=this.new_password
-                bus.$emit('change_field', field)
+                this.$bus.$emit('change_field', field)
            }
        } 
     },

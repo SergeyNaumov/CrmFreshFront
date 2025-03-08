@@ -22,8 +22,7 @@
 
 <script>
   import { field_update,check_fld } from './field_functions'
-  import { bus } from '../../main'
-  export default {
+    export default {
   // created(){
   //   let f=this.field;
   //   this.value=f.value;
@@ -55,7 +54,7 @@
     this._field_update=(new_data)=>{field_update(new_data,this)};
 
     if(!this.parent){
-      bus.$on('field-update:'+this.field.name,this._field_update )
+      this.$bus.$on('field-update:'+this.field.name,this._field_update )
     }
 
     this.value=this.field.value;
@@ -65,13 +64,13 @@
       f.value='';
       this.value=''
     } 
-    bus.$emit('change_field', f);
+    this.$bus.$emit('change_field', f);
     
        
   },
   beforeDestroy(){
     if(!this.parent){
-       bus.$off('field-update:'+this.field.name,this._field_update)
+       this.$bus.$off('field-update:'+this.field.name,this._field_update)
     }
   },
   computed:{
@@ -89,7 +88,7 @@
           }      
           else{ // обработчик основной формы
             f.value=this.value;
-            bus.$emit('change_field', f);
+            this.$bus.$emit('change_field', f);
           }
           
         },

@@ -54,7 +54,7 @@
 </template>
 <script>
 import { field_update,check_fld } from './field_functions'
-import { bus } from '../../main'
+
 export default {
     props:['form','field','parent'], // ,'calc_values'
     computed:{
@@ -83,7 +83,7 @@ export default {
         field_update(new_data,this)
       };
       if(!this.parent){
-        bus.$on('field-update:'+this.field.name,this._field_update )
+        this.$bus.$on('field-update:'+this.field.name,this._field_update )
       }
       
       if(!/[1-9]/.test(this.value) || !/^\d{4}-\d{2}-\d{2}/.test(this.value)){
@@ -93,7 +93,7 @@ export default {
         //console.log(this.value)
       }
       else{
-        bus.$on('field-update:'+this.field.name,this._field_update )
+       this.$bus.$on('field-update:'+this.field.name,this._field_update )
 
 
       }
@@ -102,7 +102,7 @@ export default {
     },
     beforeDestroy(){
       if(!this.parent){
-       bus.$off('field-update:'+this.field.name,this._field_update)
+       this.$bus.$off('field-update:'+this.field.name,this._field_update)
       }
     },
     mounted(){
@@ -134,7 +134,7 @@ export default {
           this.parent(this.value)
         }
         else{
-          bus.$emit('change_field', field);
+          this.$bus.$emit('change_field', field);
         }
         
       },

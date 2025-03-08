@@ -1,131 +1,112 @@
-import Vue from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import mitt from 'mitt'; // Импортируем mitt
 
-import '@mdi/font/css/materialdesignicons.css';
-import Vuetify from 'vuetify/lib'
-import colors from 'vuetify/lib/util/colors'
-import { dynamic_component_loader } from './dynamic_component_loader.js'
+import '@mdi/font/css/materialdesignicons.css'; // Импорт Material Design Icons
+import '@fortawesome/fontawesome-free/css/all.css'; // Импорт Font Awesome
 
-let color_scheme='blue'; // цветовую гамму меняем тут
-import '@/styles/colors/blue2.scss'; // и тут
+import vuetify from './plugins/vuetify'; // Импорт Vuetify из plugins/vuetify.js
+import colors from 'vuetify/util/colors'; // Импорт цветов из Vuetify 3
+import 'vuetify/styles'; // Импорт стилей Vuetify
 
+import { dynamic_component_loader } from './dynamic_component_loader.js'; // Ваш кастомный загрузчик компонентов
 
+let color_scheme = 'blue'; // Цветовая схема
+import '@/styles/colors/blue2.scss'; // Импорт SCSS стилей
 
-export const bus = new Vue();
-// green light-green cyanvv
-let main_color=colors[color_scheme];
-//main_color.base='#253a5d'
-//console.log('BVA')
-window.Vue=Vue
+// Создаём экземпляр приложения Vue 3
+const app = createApp(App);
 
-Vue.prototype.$color = main_color;
-let color_set={ // текущий набор
-  //primary: main_color.base, //'#253a5d',
+// Создаём шину событий
+const bus = mitt();
+app.config.globalProperties.$bus = bus;
+
+// Настройка цветовой схемы
+let main_color = colors[color_scheme];
+let color_set = {
   primary: '#253a5d',
-  lighten1: main_color['lighten-1'],
-  lighten2: main_color['lighten-2'],
-  lighten3: main_color['lighten-3'],
-  lighten4: main_color['lighten-4'],
-  lighten5: main_color['lighten-5'],
+  lighten1: main_color.lighten1,
+  lighten2: main_color.lighten2,
+  lighten3: main_color.lighten3,
+  lighten4: main_color.lighten4,
+  lighten5: main_color.lighten5,
 };
 
-let theme={
-  rounded: true,
-  themes: {
-    light: color_set,
-    dark: {
-      primary: colors.blue.lighten3,
-    },
-  },
-};
+// Глобальные свойства и методы
+app.config.globalProperties.$color = main_color;
+app.config.globalProperties.$theme = color_set;
 
-const vuetify = new Vuetify({
-  theme: theme
-});
-//bus.colors_primary=colors.indigo;
-window.log=console.log
-
-Vue.prototype.$theme=theme
-Vue.use(Vuetify)
-
-Vue.prototype.$isMobile=function(){
-  if(document.body.clientWidth<1000)
-    return true;
-
-  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
-     return true;
-   
-  return false;
-   
+app.config.globalProperties.$isMobile = () => {
+  if (document.body.clientWidth < 1000) return true;
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 };
 
 // axios
-Vue.prototype.$http = require('axios');
-Vue.config.productionTip = false
+import axios from 'axios';
+app.config.globalProperties.$http = axios;
+// Глобальный обработчик ошибок для Axios
+// axios.interceptors.response.use(
+//   (response) => {
+//     // Если запрос успешен, просто возвращаем ответ
+//     return response;
+//   },
+//   (error) => {
+//     // Обрабатываем ошибку
+//     if (error.response) {
+//       // Ошибка с ответом от сервера (например, 4xx или 5xx)
+//       console.error('Ошибка сервера:', error.response.status, error.response.data);
+//     } else if (error.request) {
+//       // Ошибка сети (например, нет ответа от сервера)
+//       console.error('Ошибка сети:', error.message);
+//     } else {
+//       // Другие ошибки
+//       console.error('Ошибка:', error.message);
+//     }
 
-import draggable from "vuedraggable";
-Vue.component('draggable',draggable);
+//     // Возвращаем отклонённый промис, чтобы ошибка не "всплывала" дальше
+//     return Promise.reject(error);
+//   }
+// );
 
 
-dynamic_component_loader(Vue)
 
+// vuedraggable
+import draggable from 'vuedraggable';
+app.component('draggable', draggable);
+
+// Динамическая загрузка компонентов
+dynamic_component_loader(app);
+
+// Регистрация компонентов
 import FormBlock from './components/EditForm/FormBlock';
-Vue.component('form-block',FormBlock);
-
-
-
+app.component('form-block', FormBlock);
 
 import TextField from './components/fields/text';
-Vue.component('field-text',TextField);
-
-
+app.component('field-text', TextField);
 
 import InExtUrlField from './components/fields/in_ext_url';
-Vue.component('field-in_ext_url',InExtUrlField);
-
-//import CheckboxField from './components/fields/checkbox';
-//veVue.component('field-checkbox',CheckboxField);
-
-
+app.component('field-in_ext_url', InExtUrlField);
 
 import DateField from './components/fields/date';
-Vue.component('field-date',DateField);
+app.component('field-date', DateField);
 
 import TimeField from './components/fields/time';
-Vue.component('field-time',TimeField);
+app.component('field-time', TimeField);
 
 import DateTimeField from './components/fields/datetime';
-Vue.component('field-datetime',DateTimeField);
+app.component('field-datetime', DateTimeField);
 
 import YearMonField from './components/fields/yearmon';
-Vue.component('field-yearmon',YearMonField);
+app.component('field-yearmon', YearMonField);
 
 import DayMonField from './components/fields/daymon';
-Vue.component('field-daymon',DayMonField);
+app.component('field-daymon', DayMonField);
 
-// GPT-ассистент для форм
 import GPTAssist from './components/GPTAssist/GPTAssist';
-Vue.component('GPTAssist',GPTAssist);
+app.component('GPTAssist', GPTAssist);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// FIELDS END
-// для вывода блока с ошибками (в разных компонентах может быть свой)
 import Errors from './components/errors';
-Vue.component('errors',Errors);
+app.component('errors', Errors);
 
-new Vue({
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+// Подключение Vuetify и монтирование приложения
+app.use(vuetify).mount('#app');

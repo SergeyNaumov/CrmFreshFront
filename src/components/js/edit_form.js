@@ -1,4 +1,4 @@
-import { bus } from '../../main'
+
 export function on_dependence(self, name,obj,not_frontend_process){
     for(let f of self.form.fields){
       if(f.name == name){
@@ -7,7 +7,7 @@ export function on_dependence(self, name,obj,not_frontend_process){
 
         if('fields' in obj){
           f.fields=obj.fields
-          bus.$emit(`1_to_m/slide_${f.name}:update_fields`,f.fields);
+          self.$bus.$emit(`1_to_m/slide_${f.name}:update_fields`,f.fields);
           //bus.$emit(`1_to_m:upload_values:${f.name}`)
         }
         if('value' in obj && f.value != obj.value )
@@ -44,7 +44,7 @@ export function on_dependence(self, name,obj,not_frontend_process){
         
         if('before_html' in obj)
           f.before_html=obj.before_html
-        bus.$emit('change_field',f,not_frontend_process);
+        self.$bus.$emit('change_field',f,not_frontend_process);
       }
         
     }
@@ -69,7 +69,7 @@ export function change_field(self,field,not_frontend_process){
     }
     self.values[field.name]=v;
     
-    bus.$emit('field-update:'+field.name,field);
+    self.$bus.$emit('field-update:'+field.name,field);
     
     calc_values(self);
     if(!not_frontend_process)
@@ -92,11 +92,11 @@ export function save_field_1_to_m(self,data){
       let D=r.data;
       if(D.success){
           // Обновляем значения в 1_to_m
-          bus.$emit('1_to_m:upload_values:'+data.field,D.values);
-          bus.$emit(emit_key,{save_ok:true});
+          self.$bus.$emit('1_to_m:upload_values:'+data.field,D.values);
+          self.$bus.$emit(emit_key,{save_ok:true});
           
       }
-      bus.$emit(emit_key,{errors:D.errors})
+      self.$bus.$emit(emit_key,{errors:D.errors})
     }
   ).catch(
     e=>{

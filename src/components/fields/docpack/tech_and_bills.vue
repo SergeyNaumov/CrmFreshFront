@@ -133,28 +133,30 @@
 
 
                         <table class="fields">
-                            <tr><td>Предоплата:</td><td>{{a.summ}} р.</td></tr>
-                            <tr><td>Постоплата:</td><td>{{a.summ_post}} р.</td></tr>
-                            <tr v-for="f in a.fields">
-                                <td>{{f.name}}:</td>
-                                <td>
-                                    <template v-if="!f.edited">
-                                        {{f.value}}
+                            <tbody>
+                                <tr><td>Предоплата:</td><td>{{a.summ}} р.</td></tr>
+                                <tr><td>Постоплата:</td><td>{{a.summ_post}} р.</td></tr>
+                                <tr v-for="f in a.fields">
+                                    <td>{{f.name}}:</td>
+                                    <td>
+                                        <template v-if="!f.edited">
+                                            {{f.value}}
 
 
-                                    </template>
-                                    <template v-else>
-                                        <textarea v-model="f.value"></textarea>
-                                        <a href="" @click.prevent="save_app_field(a,f)"><v-icon small color="primary">fa fa-save</v-icon></a>
-                                    </template>
+                                        </template>
+                                        <template v-else>
+                                            <textarea v-model="f.value"></textarea>
+                                            <a href="" @click.prevent="save_app_field(a,f)"><v-icon small color="primary">fa fa-save</v-icon></a>
+                                        </template>
 
-                                </td>
-                                <td>
-                                    <template v-if="!form.read_only">
-                                        <a href="" @click.prevent="f.edited=true"><v-icon x-small color="primary">fa fa-pencil-alt</v-icon></a>
-                                    </template>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td>
+                                        <template v-if="!form.read_only">
+                                            <a href="" @click.prevent="f.edited=true"><v-icon x-small color="primary">fa fa-pencil-alt</v-icon></a>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                     <v-card v-for="b in a.bills" :key="b.id" >

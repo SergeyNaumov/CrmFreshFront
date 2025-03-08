@@ -131,8 +131,6 @@
     </div>
 </template>
 <script>
-//import ChangeInSlide from './change_in_slide';
-import { bus } from '../../../main'
 import ChangeInSlide from './ChangeInSlide';
 import qr_call from '../text_subtypes/qr_call';
 import email from '../text_subtypes/email';
@@ -174,7 +172,7 @@ export default {
             return h
         },
         colors_primary(){
-            return bus.colors_primary;
+            return this.$bus.colors_primary;
             /*let arr=[]
             for(let c in bus.colors_primary){
                 arr.push([c,bus.colors_primary[c]])
@@ -194,20 +192,20 @@ export default {
         this.list=this.values;
         this.cur_fields=this.field.fields // нужно для того, чтобы можно было обновить
 
-        bus.$on( // обновление полей в 1_to_m
+        this.$bus.$on( // обновление полей в 1_to_m
             `1_to_m/slide_${field.name}:update_fields`,this._update_fields
         )
 
-        bus.$on(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
+        this.$bus.$on(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
 
 
     },
     beforeDestroy(){
         let field=this.field
-        bus.$off( // обновление полей в 1_to_m
+        this.$bus.$off( // обновление полей в 1_to_m
             `1_to_m/slide_${field.name}:update_fields`,this._update_fields
         )
-        bus.$off(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
+        this.$bus.$off(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
     },
     methods:{
         _update_fields(fields){
@@ -220,7 +218,7 @@ export default {
             this.list=D.values
         },
         open_edit_dialog(v){
-            bus.$emit( // событие передаём в 1_to_m_form
+            this.$bus.$emit( // событие передаём в 1_to_m_form
                 '1_to_m_open_edit_dialog:'+this.field.name,
                 v
             );

@@ -1,5 +1,3 @@
-import { bus } from '../../main'
-
 export function field_update(new_data, self){
     if(self.value !== new_data.value)
       self.value=new_data.value
@@ -102,7 +100,7 @@ export function check_fld(self){
       f.error_message=error_message
       f.error=error
       f.not_parent=true
-      bus.$emit('change_field', f);  
+      self.$bus.$emit('change_field', f);
     }
           //}
 

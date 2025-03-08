@@ -33,7 +33,7 @@
     </div>
 </template>
 <script>
-import { bus } from '../../main'
+//import { bus } from '../../main'
 export default {
     props:['form','field'],
     computed:{
@@ -98,7 +98,7 @@ export default {
         let field=this.field;
         field.value=( (this.day>9)?this.day:'0'+this.day )+'-'+( (this.mon>9)?this.mon:'0'+this.mon );
         //this.change_field(field);
-        bus.$emit('change_field',field)
+        this.$bus.$emit('change_field',field)
       },
       
     }

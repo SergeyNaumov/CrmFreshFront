@@ -46,7 +46,7 @@
 <script>
   //import axios from 'axios'
   //import VueCodemirror from 'vue-codemirror';
-import { bus } from '../../main'
+
 export default {
   data:function(){
     return {
@@ -123,7 +123,7 @@ export default {
       field.value=this.full_icon_name(l);
       this.selected_icon=this.field.value;
       //this.change_field(field);
-      bus.$emit('change_field',field);
+      this.$bus.$emit('change_field',field);
       this.view_list=false;
     },
     del(l){

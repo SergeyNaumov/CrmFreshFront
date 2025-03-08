@@ -40,7 +40,7 @@ function get_cur_year(){
 function get_cur_mon(){
   var dt = new Date(); return dt.getMonth()+1
 }
-import { bus } from '../../main'
+
 export default {
     props:['form','field'],
     computed:{
@@ -107,7 +107,7 @@ export default {
         let field=this.field;
         field.value=this.value;
         //this.change_field(field);
-        bus.$emit('change_field',field)
+        this.$bus.$emit('change_field',field)
       },
       set_current(){
         this.year=get_cur_year(), this.mon=get_cur_mon();

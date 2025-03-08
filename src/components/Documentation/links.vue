@@ -1,7 +1,7 @@
 <template>
     <div class="links" >
-        <template v-for="(l,idx) in links">
-            <a   :key="idx" :href="l.link" target="_blank">{{l.description}}</a>
+        <template v-for="(l,idx) in links" :key="idx">
+            <a :href="l.link" target="_blank">{{l.description}}</a>
             <template v-if="idx < links.length -1 ">&nbsp;|&nbsp;</template>
         </template>
     </div>

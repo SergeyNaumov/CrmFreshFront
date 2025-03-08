@@ -131,7 +131,7 @@
 
 <script>
 let t
-import { bus } from '../main'
+//import { bus } from '../main'
 export default {
         props:["params"],
         data: () => ({
@@ -154,7 +154,7 @@ export default {
             //console.log('field: ',field)
             t.change(field)
           },
-          bus.$on('change_field', t._change_field);
+          this.$bus.$on('change_field', t._change_field);
           if(t.params && t.params.config){
             t.config=t.params.config
           }
@@ -162,7 +162,7 @@ export default {
           
         },
         beforeDestroy(){
-          bus.$off('change_field',t._change_field);
+          this.$bus.$off('change_field',t._change_field);
         },
         watch:{
           

@@ -47,8 +47,8 @@
                                   <a href="" style="text-decoration: none; " @click.prevent="show_tooltip(header.tooltip);"><v-icon style="font-size: 8pt;" small color="primary">fa fa-question</v-icon></a>
                               </span>
                               <div>
-                                  <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'asc')" class="sort_desc" :class=""><v-icon color="green" small>keyboard_arrow_down</v-icon></a>
-                                    <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'desc')" class="sort_asc" :class=""><v-icon color="red" small>keyboard_arrow_up</v-icon></a>
+                                  <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'asc')" class="sort_desc"><v-icon color="green" small>keyboard_arrow_down</v-icon></a>
+                                    <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'desc')" class="sort_asc"><v-icon color="red" small>keyboard_arrow_up</v-icon></a>
                               </div>
                           </th>
                       </tr>
@@ -59,19 +59,19 @@
                         :key="'tr'+idx"
                       >  
 
-                        <template v-for="(header,h_idx) in form.headers">
+                        <!-- <template v-for="(header,h_idx) in form.headers"> -->
                           
                           <!--
                           <template v-if="tr[header.name].type=='dialog' || tr[header.name].type=='ajax_dialog'">
                             <td :key="idx+'_'+h_idx"><a href="" @click.prevent="show_dialog(tr[header.name])">{{tr[header.name].header}}</a></td>
                           </template>
                           -->
-                          <template >
-                            <td v-html="get_data_td(header,h_idx,tr)" :key="idx+'_'+h_idx"></td>
-                          </template>
+
+                            <td v-for="(header,h_idx) in form.headers" v-html="get_data_td(header,h_idx,tr)" :key="idx+'_'+h_idx"></td>
+
                           
                           
-                        </template>
+                        <!-- </template> -->
                           
                       </tr>
                   </tbody>

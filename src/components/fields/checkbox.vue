@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import { bus } from '../../main'
+  // import { bus } from '../../main'
   import { field_update,check_fld } from './field_functions'
   export default {
     //attributes:['after_html','before_html','description'], // чтобы не было реактивным
@@ -33,7 +33,7 @@
           field_update(new_data,this)
         }
         if(!this.parent){
-          bus.$on('field-update:'+this.field.name,this._field_update )
+          this.$bus.$on('field-update:'+this.field.name,this._field_update )
         }
         this.value=(this.field.value || parseInt(this.field.value))?true:false
         check_fld(this);
@@ -41,7 +41,7 @@
     },
     beforeDestroy(){
         if(!this.parent){
-           bus.$off('field-update:'+this.field.name,this._field_update)
+           this.$bus.$off('field-update:'+this.field.name,this._field_update)
         }
     },
     watch:{
@@ -82,7 +82,7 @@
                 this.parent({value:f.value,error:f.error,name:this.field.name})
             }      
             else{ // обработчик основной формы
-                bus.$emit('change_field', f);
+                this.$bus.$emit('change_field', f);
             }
             
         }

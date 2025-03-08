@@ -79,7 +79,7 @@
     </div>
 </template>
 <script>
-import { bus } from '../../main'
+//import { bus } from '../../main'
 import { field_update } from './field_functions'
 
 export default {
@@ -94,7 +94,7 @@ export default {
       this._field_update=(new_data)=>{field_update(new_data,this)};
 
       if(!this.parent){
-        bus.$on('field-update:'+this.field.name,this._field_update )
+        this.$bus.$on('field-update:'+this.field.name,this._field_update )
       }
 
       if(this.field.value){
@@ -127,7 +127,7 @@ export default {
     },
     beforeDestroy(){
       if(!this.parent){
-        bus.$off('field-update:'+this.field.name,this._field_update)
+        this.$bus.$off('field-update:'+this.field.name,this._field_update)
       }
     },
     data:function(){
@@ -178,7 +178,7 @@ export default {
               this.parent(this.value)
             }
             else{
-              bus.$emit('change_field', field);
+              this.$bus.$emit('change_field', field);
             }
             this.old_value=this.value
         }

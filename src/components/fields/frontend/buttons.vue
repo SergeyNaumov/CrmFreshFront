@@ -13,8 +13,6 @@
     </div>
 </template>
 <script>
-import { bus } from '../../../main'
-//import {frontend_button_process} from '../../js/edit_form.js'
 export default {
     props:["after_update","field","form"],
     data(){
@@ -49,7 +47,7 @@ export default {
                     ()=>{this.success=false},500
                 )
             }
-            bus.$emit('frontend_button_process',this.field,button,success_function);
+            this.$bus.$emit('frontend_button_process',this.field,button,success_function);
         }
     }
 }

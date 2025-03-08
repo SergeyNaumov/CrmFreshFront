@@ -1,6 +1,6 @@
 <template>
 	<div class="chat_window" id="chat_window">
-		<div class="" class="header">
+		<div class="header">
 			Чат с {{chat.name}}
 			<a href="" @click.prevent="go_chat_list()"><div class="close">[x]</div></a>
 		</div>

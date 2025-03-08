@@ -132,12 +132,12 @@
 </template>
 <script>
 import { Cropper } from 'vue-advanced-cropper'
-import { bus } from '../../main'
+//import { bus } from '../../main'
 // https://norserium.github.io/vue-advanced-cropper/
 // https://norserium.github.io/vue-advanced-cropper/introduction/getting-started.html
 export default {
     created(){
-      bus.$on('file:'+this.field.name, begin_value=>{
+      this.$bus.$on('file:'+this.field.name, begin_value=>{
         this.begin_value=begin_value,
         document.getElementById(this.field.name+'_attach').value='',
         this.imgSrc='';
@@ -268,7 +268,7 @@ export default {
           field.error=false;
         
         field.value=t.get_value();
-        bus.$emit('change_field',field);
+        this.$bus.$emit('change_field',field);
 
       },
       get_value(){
@@ -431,7 +431,7 @@ export default {
         field.value={
           external_link:this.extent_file_link
         }
-        bus.$emit('change_field',field);
+        this.$bus.$emit('change_field',field);
       }
     }
 }

@@ -20,7 +20,7 @@
     </span>
 </template>
 <script>
-import { bus } from '../../../main';
+
 let go_save=0;
 export default {
     name:'change_in_slide',
@@ -36,7 +36,7 @@ export default {
     },
     created(){
         this.update_cur_value();
-        bus.$on(
+        this.$bus.$on(
             '1_to_m:change_in_slide:'+this.field.name+':'+this.name+':'+this.cur_id,
             data=>{
 
@@ -95,7 +95,7 @@ export default {
               ()=>{
                     go_save--;
                     if(go_save==0){
-                        bus.$emit('save_field_1_to_m',{
+                        this.$bus.$emit('save_field_1_to_m',{
                             field:this.field.name,
                             subfield:this.name,
                             id:this.cur_id,
