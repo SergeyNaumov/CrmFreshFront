@@ -1,37 +1,44 @@
 <template>
-    <div>
-        <template v-if="field.read_only">
-          <template v-if="field.value">{{field.value}}</template>
-          <template v-else>-</template>
-        </template>
-        <template v-else>
-          <v-layout row wrap>
-              <v-flex pl-3 md6 xs12 >
-                  <v-select
-                    v-model="year"
-                    :items="year_list"
-                    autocomplete
-                    label="Выберите год"
-                  />
-                  </v-flex>
-              <v-flex pl-3 md6 xs12 >
-                  <v-select
-                    v-model="mon"
-                    :items="mon_list"
-                    item-value="v"
-                    item-text="d"
-                    label="Выберите месяц"
-                  />
-              </v-flex>
-          </v-layout>
-        </template>
-        <div class="clear" v-show="need_empty">
-          <small>
-            <a href="#" @click.prevent="set_current()">установить текущие значения</a> |
-            <a href="#" @click.prevent="clear()"> очистить</a>
-          </small>
-        </div>
+  <div>
+    <!-- Только для чтения -->
+    <template v-if="field.read_only">
+      <template v-if="field.value">{{ field.value }}</template>
+      <template v-else>-</template>
+    </template>
+
+    <!-- Редактируемый режим -->
+    <template v-else>
+      <v-row no-gutters>
+        <!-- Выбор года -->
+        <v-col cols="12" md="6" class="pl-3">
+          <v-select
+            v-model="year"
+            :items="year_list"
+            label="Выберите год"
+          />
+        </v-col>
+
+        <!-- Выбор месяца -->
+        <v-col cols="12" md="6" class="pl-3">
+          <v-select
+            v-model="mon"
+            :items="mon_list"
+            item-value="v"
+            item-text="d"
+            label="Выберите месяц"
+          />
+        </v-col>
+      </v-row>
+    </template>
+
+    <!-- Ссылки для установки текущих значений или очистки -->
+    <div class="clear" v-show="need_empty">
+      <small>
+        <a href="#" @click.prevent="set_current()">Установить текущие значения</a> |
+        <a href="#" @click.prevent="clear()">Очистить</a>
+      </small>
     </div>
+  </div>
 </template>
 <script>
 function get_cur_year(){

@@ -16,62 +16,79 @@
         <template v-if="field.view_type=='list'">
             <v-layout>
 
-                <draggable
-                    v-model="list"
-                    tag="div"
-                    @end="move_end"
-                    :draggable="field.sort?'.v-card':false"
-                >
-                
-                    <v-card class="one_to_m one_to_m_list"  v-for="(v,vi) in list" :key="v[vi]"> <!--:style="{'background-color': $color.secondary}"-->
-
-                        <template v-for="(h,hidx) in field.headers">
-                            <div :key="h[hidx]" v-if="v[h.name] && fields_hash[h.name] ">
-                                <template v-if="h.change_in_slide">
-                                    <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="v.id" :values="v"></change_in_slide>
-                                </template>
-                                <template v-else>
-                                    
-                                    <span class="h">{{h.description}}:</span> 
-                                    <template v-if="h.type=='file'"> 
-                                        <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
-                                        <template v-if="field.headers.length>1"> <!-- выводим эту ссылку если помимо файла есть другие поля -->
-                                            <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
-                                        </template>
-
-                                    </template>
-                                    <template v-else>
-                                        <!-- div squire color 20x20-->
-                                        <template v-if="h.type=='text' && h.subtype=='color'">
-                                            <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>
-                                            
-                                        </template>
-                                        <template v-if="h.type=='text' && h.subtype" >
-                                            <template  v-if="h.subtype=='qr_call'">
-                                                <qr_call :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
-                                            </template>
-                                            <template v-else-if="h.subtype=='email'">
-                                                <email :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
-                                            </template>
-
-                                        </template>
-                                        <template v-else>
-                                            {{get_value_for_slide(h,v)}}
-                                        </template>
-
-                                    </template>
-                                    
-                                </template>
-                            </div>
+              <draggable
+                v-model="list"
+                tag="div"
+                :itemKey="'id'" <!-- Указываем уникальное поле -->
+                @end="move_end"
+                :draggable="field.sort ? '.v-card' : false"
+              >
+                <template #item="{ element: v }">
+                  <v-card class="one_to_m one_to_m_list" :key="v.id">
+                    <!-- Перебор заголовков -->
+                    <template v-for="(h, hidx) in field.headers" :key="hidx">
+                      <div v-if="v[h.name] && fields_hash[h.name]">
+                        <template v-if="h.change_in_slide">
+                          <change_in_slide
+                            :refresh="cur_refresh"
+                            :form="form"
+                            :field="field"
+                            :name="h.name"
+                            :cur_id="v.id"
+                            :values="v"
+                          />
                         </template>
-                        <div class="controls">
-                            
-                            <v-icon small class="edit" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">edit</v-icon>
-                            <v-icon small color="primary" v-if="make_delete" @click="del(v)">delete</v-icon>
-                            
-                        </div>
-                    </v-card>
-                </draggable>
+                        <template v-else>
+                          <span class="h">{{ h.description }}:</span>
+                          <template v-if="h.type === 'file'">
+                            <span v-html="download_file_block(h, ch_id(v), v[h.name + '_filename'], v)"></span>
+                            <template v-if="field.headers.length > 1">
+                              <!-- Выводим ссылку "удалить", если есть другие поля -->
+                              <a
+                                v-if="v[h.name + '_filename'] && !child_field_read_only(h.name)"
+                                href=""
+                                @click.prevent="del_file(h.name, ch_id(v))"
+                              >
+                                Удалить
+                              </a>
+                            </template>
+                          </template>
+                          <template v-else>
+                            <!-- Цветовой квадрат -->
+                            <template v-if="h.type === 'text' && h.subtype === 'color'">
+                              <div
+                                class="color_squire"
+                                :style="{ 'background-color': get_value_for_slide(h, v) }"
+                              ></div>
+                            </template>
+                            <template v-else-if="h.type === 'text' && h.subtype">
+                              <template v-if="h.subtype === 'qr_call'">
+                                <qr_call :value="get_value_for_slide(h, v)" :field="h" :for_slide="true" />
+                              </template>
+                              <template v-else-if="h.subtype === 'email'">
+                                <email :value="get_value_for_slide(h, v)" :field="h" :for_slide="true" />
+                              </template>
+                            </template>
+                            <template v-else>
+                              {{ get_value_for_slide(h, v) }}
+                            </template>
+                          </template>
+                        </template>
+                      </div>
+                    </template>
+
+                    <!-- Управление элементом -->
+                    <div class="controls">
+                      <v-icon size="small" class="edit" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">
+                        mdi-pencil
+                      </v-icon>
+                      <v-icon size="small" color="primary" v-if="make_delete" @click="del(v)">
+                        mdi-delete
+                      </v-icon>
+                    </div>
+                  </v-card>
+                </template>
+              </draggable>
             </v-layout>
         </template>
         
@@ -88,42 +105,60 @@
             <draggable
                 v-model="list"
                 tag="tbody"
+                :itemKey="ch_id" <!-- Указываем уникальное поле -->
                 @end="move_end"
-                :draggable="field.sort?'tr':false"
-            >
-            <tr v-for="v in list" :key="ch_id(v)">
+                :draggable="field.sort ? 'tr' : false"
+              >
+                <template #item="{ element: v }">
+                  <tr :key="ch_id(v)">
+                    <!-- Перебор заголовков -->
+                    <td v-for="h in field.headers" :key="h.name">
+                      <template v-if="h.change_in_slide">
+                        <change_in_slide
+                          :refresh="cur_refresh"
+                          :form="form"
+                          :field="field"
+                          :name="h.name"
+                          :cur_id="v.id"
+                          :values="v"
+                        />
+                      </template>
+                      <template v-else>
+                        <span v-if="h.type === 'file'">
+                          <span v-html="download_file_block(h, ch_id(v), v[h.name + '_filename'], v)"></span>
+                          <template v-if="field.headers.length > 1">
+                            <!-- Выводим ссылку "удалить", если есть другие поля -->
+                            <a
+                              v-if="v[h.name + '_filename'] && !child_field_read_only(h.name)"
+                              href=""
+                              @click.prevent="del_file(h.name, ch_id(v))"
+                            >
+                              Удалить
+                            </a>
+                          </template>
+                          <template v-else>-</template>
+                        </span>
+                        <span v-else>
+                          <template v-if="h.type === 'text' && h.subtype === 'color'">
+                            <div class="color_squire" :style="{ 'background-color': get_value_for_slide(h, v) }"></div>&nbsp;
+                          </template>
+                          <span v-html="get_value_for_slide(h, v)"></span>
+                        </span>
+                      </template>
+                    </td>
 
-                <td v-for="h in field.headers" :key="h.name"  >
-                <template v-if="h.change_in_slide">
-                    <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="v.id" :values="v"></change_in_slide>
+                    <!-- Управление элементом -->
+                    <td class="tool">
+                      <a :href="'/-'+ch_id(v)" v-if="!field.read_only" @click.prevent="open_edit_dialog(v)">
+                        <v-icon size="small" class="edit" color="primary">mdi-pencil</v-icon>
+                      </a>
+                      <a :href="'/-'+ch_id(v)" @click.prevent="del(v)" v-if="make_delete">
+                        <v-icon size="small" color="primary">mdi-delete</v-icon>
+                      </a>
+                    </td>
+                  </tr>
                 </template>
-                <template v-else>
-                    
-                    <span v-if="h.type=='file'">                   
-                        <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
-
-                        <template v-if="field.headers.length>1"> <!-- выводим эту ссылку если помимо файла есть другие поля -->
-                            <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
-                        </template>
-                        <template v-else>-</template>
-                    </span>
-                    <span v-else>
-                        <template v-if="h.type=='text' && h.subtype=='color'">
-                                            <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>&nbsp;
-                        </template>
-                        <span v-html="get_value_for_slide(h,v)"></span>
-                    </span>
-                </template>
-                <!--<span v-else v-html="v[h.name]"></span>-->
-                
-                
-                </td>
-                <td class="tool">
-                    <a :href="'/-'+ch_id(v)" v-if="!field.read_only" @click.prevent="open_edit_dialog(v)"><v-icon small class="edit" color="primary">edit</v-icon></a>
-                    <a :href="'/-'+ch_id(v)" @click.prevent="del(v)" v-if="make_delete"><v-icon small color="primary"  >delete</v-icon></a>
-                </td>
-            </tr>
-            </draggable>
+              </draggable>
             </table>
         </template>
     </div>

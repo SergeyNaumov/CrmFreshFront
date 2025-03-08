@@ -1,91 +1,72 @@
 <template>
   <div class="block">
-    
-    <div v-for="f in fields_for_block" :key="f.name+'_1'" class="field">
-      
-      <template v-if="is_only_field(f)"> <!--только поле без всего лишнего (для миниатюрных полей) -->
-          
-          <template v-if="f.before_html" v-html="f.before_html"></template>
-          
-          <component  :is="dynamic_component(f)"
-                  :form="form" :field="f" 
-          />
-          <!--<div v-if="f.after_html" v-html="f.after_html"></div>-->
+    <div v-for="f in fields_for_block" :key="f.name + '_1'" class="field">
+      <!-- Только поле без лишнего (для миниатюрных полей) -->
+      <template v-if="is_only_field(f)">
+        <template v-if="f.before_html" v-html="f.before_html"></template>
+
+        <component
+          :is="dynamic_component(f)"
+          :form="form"
+          :field="f"
+        />
       </template>
-      <div row wrap v-else>
-          
-          <v-flex md12 xs12 v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
-            <!-- FULL_STR -->
-              <div class="description_container" v-if="f.description && !is_default_not_description(f)">{{f.description}}:</div>
-              <template if="dynamic_component(f)">
+
+      <!-- Полное поле с описанием -->
+      <div v-else>
+        <v-row no-gutters v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
+          <v-col cols="12">
+            <div class="description_container" v-if="f.description && !is_default_not_description(f)">
+              {{ f.description }}:
+            </div>
+
+            <template v-if="dynamic_component(f)">
+              <component
+                :is="dynamic_component(f)"
+                :form="form"
+                :field="f"
+              />
+            </template>
+          </v-col>
+        </v-row>
+
+        <!-- Поле с разделением на описание и значение -->
+        <v-row no-gutters v-else>
+          <v-col cols="12" md="2">
+            {{ f.description }}:
+          </v-col>
+          <v-col cols="12" md="10">
+            <template v-if="is_dynamyc_loader(f)" style="display: inline-block;">
+              <!-- Dynamic loader component -->
               <!--
-                Перенесено в компонент                
-                <template v-if="f.before_html" v-html="f.before_html"></template>
+              <dynamic-loader
+                :form="form"
+                :field="f"
+              />
               -->
-                
-                <component  :is="dynamic_component(f)"
-                  :form="form" :field="f"  
-                />
+            </template>
 
-                
-              </template>
-              <!--
-                Перенесено в компонент
-                <div v-if="f.after_html" v-html="f.after_html"></div>
-              -->
+            <template v-else-if="dynamic_component(f)">
+              <template v-if="f.before_html" v-html="f.before_html"></template>
 
-              
-          </v-flex>
-          <template v-else>
-            
-            <v-row no-gutters>
-              <v-col cols="12" xs="12" md="2"  >{{f.description}}:</v-col>
-              <v-col cols="12" xs="12" md="10" >
-                <template v-if="is_dynamyc_loader(f)" style="display: inline-block;">
-              
-                <!--
-                <dynamic-loader 
-                  :form="form" :field="f" 
-                />-->
-              </template>
-              <template v-else-if="dynamic_component(f)">
-                <template v-if="f.before_html" v-html="f.before_html"></template>
-
-
-                <component  :is="dynamic_component(f)"
-                  :form="form" :field="f" 
-                />
-                
-                <!--<div v-if="f.type=='code' && f.after_html" v-html="f.after_html"></div>-->
-
-              </template>
-              </v-col>
-            </v-row>
-            <!-- NOT_FULL_STR -->
-            <!--
-            <v-flex md6 xs12 class="v-col-6description_container">
-              {{f.description}}:
-            </v-flex>
-            
-            
-            <v-flex md6 xs12 class="field_container">
-            
-
-            </v-flex>
-            -->
-          </template>
+              <component
+                :is="dynamic_component(f)"
+                :form="form"
+                :field="f"
+              />
+            </template>
+          </v-col>
+        </v-row>
       </div>
 
-      <template v-if="f.type=='save_button' && !form.read_only">
-                    <div style="text-align: center">
-                      <v-btn color="primary" >Сохранить</v-btn>
-                    </div>
+      <!-- Кнопка "Сохранить" -->
+      <template v-if="f.type === 'save_button' && !form.read_only">
+        <div style="text-align: center">
+          <v-btn color="primary">Сохранить</v-btn>
+        </div>
       </template>
-      
     </div>
-
   </div>
-           
 </template>
 
 <script>
@@ -187,7 +168,8 @@ import FieldPassword from '../fields/password';
       }
   }
 </script>
-<style scoped>
+<style scope>
+
   .block {margin-top: 10px; padding-bottom: 10px;}  
   table.one_to_m td{
     border: 1px solid gray;
@@ -213,4 +195,5 @@ import FieldPassword from '../fields/password';
   }
   .field_container {padding-left: 0; padding-right: 2rem;}
   div {line-height: 20px;}
+  header.v-toolbar {background-color: $primary !important;}
 </style>

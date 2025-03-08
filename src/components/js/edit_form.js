@@ -152,6 +152,7 @@ export const frontend_button_process=(self,f,button,success_function)=>{
 
 }
 export function frontend_process(self,f){
+  return
     //console.log('frontend_process: ',f)
     if(!f.frontend) return;
 

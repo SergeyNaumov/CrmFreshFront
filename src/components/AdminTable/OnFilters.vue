@@ -2,19 +2,26 @@
   <v-col cols="12" sm="12" md="7" lg="7" offset-lg="1" offset-md="1" class="mb-2" id="on_filters">
     <!-- Карточка с фильтрами -->
     <v-card>
-      <v-toolbar @click="toggle_filters()">
-        <v-app-bar-nav-icon color="primary"></v-app-bar-nav-icon>
+      <v-toolbar >
+        <!-- <v-app-bar-nav-icon color="primary"></v-app-bar-nav-icon> -->
+        <v-app-bar-nav-icon @click="toggle_filters()" color="primary" ></v-app-bar-nav-icon>
+
         <div>Используемые фильтры</div>
       </v-toolbar>
     </v-card>
 
     <!-- Форма для фильтров -->
-    <form @submit.prevent="go_search(1)" autocomplete="new-password">
-      <draggable :list="filter_list" v-model="filter_list" handle=".drag_area">
+    <form @submit.prevent="go_search(1)" autocomplete="new-password" v-if="SHOW_FILTERS_on">
+      <draggable
+        :list="filter_list"
+        v-model="filter_list"
+        handle=".drag_area"
+        itemKey="name" <!-- Указываем уникальный ключ -->
+      >
         <template #item="{ element: f, index }">
           <div :key="index">
             <div class="drag_area">
-              <v-icon>fa-arrows-alt-v</v-icon>
+              <v-icon>fa-arrows-up-down</v-icon>
             </div>
             <v-card class="pa-2 mt-0 mb-3 onfilter" outlined>
               <div v-if="dynamic_component(f)">

@@ -1,116 +1,129 @@
 <template>
-    <div > 
-        <!-- tree -->
-        <template v-if="!field.hide">
-          <div v-if="before_html" v-html="before_html"></div>
-          <template v-if="field.tree_use">
+  <div>
 
+
+    <!-- tree -->
+    <template v-if="!field.hide">
+      <div v-if="before_html" v-html="before_html"></div>
+
+      <!-- Если используется древовидная структура -->
+      <template v-if="field.tree_use">
+        <v-select
+          :items="values"
+          item-value="v"
+          item-title="d"
+          v-model="value"
+          :label="field.description"
+          :rounded="$theme.rounded"
+          :hint="field.add_description"
+          hide-details
+
+        />
+      </template>
+
+      <!-- Если не используется древовидная структура -->
+      <template v-else>
+        <!-- Цветной селект -->
+        <template v-if="field.background_color">
+          <div class="color_box">
+            <div
+              class="color_container"
+              :style="{ 'background-color': field.background_color }"
+            ></div>
             <v-select
+              :multiple="!!field.multiple"
+              :items="values"
+              :label="field.description"
+              v-model="value"
+              item-value="v"
+              item-title="d"
+              :hint="field.add_description"
+              :disabled="!!field.read_only || !!form.read_only"
+              class="color_select"
+              :error-messages="error_message"
+              hide-details
+              :rounded="$theme.rounded"
+            />
+          </div>
+        </template>
+
+        <!-- Обычный селект -->
+        <template v-else>
+
+          <!-- С автозаполнением -->
+          <template v-if="field.autocomplete">
+
+            <v-autocomplete
+              :name="'x' + Math.random()"
+              autocomplete="off"
+              :label="field.description"
+              v-model="value"
               :items="values"
               item-value="v"
               item-text="d"
-              v-model="value"
-              :label="field.description"
-              class="input-group--focused"
+              :search-input.sync="search"
               :rounded="$theme.rounded"
-              :hint="field.add_description"
+              no-data-text="Внимание! Следует выбрать значение из списка, иначе оно не будет сохранено"
+              cache-items
+              clearable
               hide-details
-            /> <!--@input="change_field(field)"-->
+            />
           </template>
-              
+
+          <!-- Без автозаполнения -->
           <template v-else>
 
-                <template v-if="field.background_color">
-                  <div class="color_box">
-                    <!-- colored select -->
+            <template v-if="values.length > 15">
 
-                            <div class="color_container" :style="{'background-color':field.background_color}">
-                            </div>                         
-                              <v-select 
-                                :multiple="!!field.multilpe"
-                                :items="values"
-                                :label="field.description"
-                                v-model="value"
-                                :descriprion="field.description"
-                                item-value="v"
-                                item-text="d"
-                                :hint="field.add_description"
-                                :disabled="!!field.read_only || !!form.read_only"
-                                class="color_select"
-                                autocomplete
-                                :error-messages="error_message"
+              <v-autocomplete
+                :label="field.description"
+                v-model="value"
+                :items="values"
+                item-value="v"
+                item-title="d"
+                :search-input.sync="search"
+                :rounded="$theme.rounded"
+                no-data-text="Не выбрано"
+                cache-items
+                variant="filled"
+                density="compact"
+                :disabled="!!field.read_only"
+                clearable
+                hide-details
 
-                                hide-details
-                                :rounded="$theme.rounded"
-                              /> <!--@input="change_field(field)"-->
-                  </div>
-                </template>
-                
-                <template v-else>  
-                  
-                    <template v-if="field.autocomplete">
-
-                      <v-autocomplete 
-                          :name="'x'+Math.random()"
-                          autocomplete="false"
-                          :label="field.description"
-                          v-model="value"
-                          :items="values" item-value="v" item-text="d"
-                          :search-input.sync="search"
-                          :rounded="$theme.rounded"
-                          hide-details
-                          no-data-text="Внимание! следует выбрать значение из списка, иначе оно не будет сохранено"
-                          cache-items
-                          clearable
-                      /> <!--:disabled="!!field.read_only || !!form.read_only"-->
+              >
+<!--                      <template #selection="{ item }">
+                      {{ item.raw.d }}
                     </template>
-                    <template v-else>
-
-                      <!-- not colored (p) select -->
-                      <template v-if="values.length>15">
-                        
-                      <v-autocomplete 
-                          
-
-                          :label="field.description"
-                          v-model="value"
-                          :items="values" item-value="v" item-text="d"
-                          :search-input.sync="search"
-                          :rounded="$theme.rounded"
-                          no-data-text="не выбрано"
-                          cache-items
-                          dense
-                          :disabled="!!field.read_only"
-                          clearable
-                          hide-details
-
-                      /> <!--@input="change_field(field)"-->
-                      </template>
-                      <template v-else>
-                        <v-select
-                          :label="field.description"
-                          :items="values"
-                          :style="field.style"
-                          item-value="v"
-                          item-text="d"
-                          no-data-text="не выбрано"
-                          v-model="value"
-                          autocomplete
-                          :disabled="!!field.read_only || !!form.read_only"
-
-                          :rounded="$theme.rounded"
-                          hide-details
-                        /> <!--@input="change_field(field)"-->
-                      </template>
-                      
-                    </template>
-                </template>
+                    <template #item="{ item }">
+                      <div>{{ item.raw.d }}</div>
+                    </template> -->
+              </v-autocomplete>
             </template>
-            <div v-if="error_message" class="error_msg">{{error_message}}</div>
-            <div v-if="warning_message" class="err" >{{warning_message}}</div>     
-            <div v-if="after_html" v-html="after_html"></div>
+            <template v-else>
+              <v-select
+                :label="field.description"
+                :items="values"
+                :style="field.style"
+                item-value="v"
+                item-title="d"
+                no-data-text="Не выбрано"
+                v-model="value"
+                :disabled="!!field.read_only || !!form.read_only"
+                :rounded="$theme.rounded"
+                hide-details
+              />
+            </template>
+          </template>
+        </template>
       </template>
-    </div>
+
+      <!-- Сообщения об ошибках и предупреждения -->
+      <div v-if="error_message" class="error_msg">{{ error_message }}</div>
+      <div v-if="warning_message" class="err">{{ warning_message }}</div>
+      <div v-if="after_html" v-html="after_html"></div>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -119,7 +132,15 @@ export default {
   
   data:function(){
     return {
-      value:'',
+
+        _value: "0", // Начальное значение
+        _values: [
+          { v: "0", d: "выберите значение" },
+          { v: "447", d: "HR" },
+          { v: "452", d: "IT" },
+        ],
+
+      value:'0',
       values:[],
       regexp_rules:[],
       error_message:'',
@@ -208,6 +229,9 @@ export default {
 
   },
   methods: {
+    delayOpen() {
+      setTimeout(() => {}, 10); // Добавляем задержку
+    },
     load_autocomplete(search){
       if(this.field.autocomplete){
         

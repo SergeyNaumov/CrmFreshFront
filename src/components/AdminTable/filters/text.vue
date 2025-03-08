@@ -1,63 +1,52 @@
 <template>
-    <div>
+  <div>
+    <!-- Если поле имеет диапазон -->
+    <template v-if="field.range">
+      <div class="description">{{ field.description }}:</div>
+      <v-row>
+        <v-col cols="6">
+          <v-text-field
+            prepend-icon="mdi-check"
+            label="От"
+            v-model="field.value_low"
+            density="compact"
+            clearable
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-text-field
+            prepend-icon="mdi-check-all"
+            label="До"
+            v-model="field.value_hi"
+            density="compact"
+            clearable
+          />
+        </v-col>
+      </v-row>
+    </template>
 
-        <template v-if="field.range">
-            <div class="description">{{field.description}}:</div>
-            <v-flex xs6>
-                <v-text-field 
-                    prepend-icon="done"
-                    label="От"
-                    v-model="field.value_low"
-                    hide-details
-                    clearable
-                />
-            </v-flex>
-            <v-flex xs6>
-                <v-text-field
-                    prepend-icon="done_all"
-                    label="До"
-                    v-model="field.value_hi"
-                    hide-details
-                    clearable
-                />
-            </v-flex>
-              
-        </template>
-        <template v-else>
+    <!-- Если поле не имеет диапазона -->
+    <template v-else>
+      <!-- Комбобокс для автозаполнения -->
+      <v-combobox
+        v-if="field.autocomplete"
+        v-model="value"
+        :items="values"
+        :label="field.description"
+        clearable
+        density="compact"
+      />
 
-            <!--
-                здесь не стал использовать autocomplete
-                потому что поиск может происходить по части слова и
-                в некоторых случаях функция аutocomplete не нужна
-            -->
-            <v-combobox
-                v-if="field.autocomplete"
-                :search-input.sync="value"
-
-                :label="field.description"
-                v-model="value"
-                :items="values"
-            />
-
-
-            <v-text-field 
-                v-else
-                :label="field.description"
-                v-model="value"
-                class="input-group--focused"
-                clearable
-                hide-details
-            />
-
- <!-- Необходим для того, чтобы скрыть выпадающее меню при нажатии вне него -->
-
-
-
-
-
-
-        </template>
-    </div>
+      <!-- Текстовое поле -->
+      <v-text-field
+        v-else
+        v-model="value"
+        :label="field.description"
+        clearable
+        density="compact"
+      />
+    </template>
+  </div>
 </template>
 <script>
 

@@ -1,4 +1,10 @@
 @import './colors/blue2.scss';
+$theme-colors: (
+  primary: $primary
+);
+$error: red;
+$text_on_primary: #fff;
+
 // Форма
 h1 {font-size: 1.8em;}
 h2 {font-size: 1.4em;}
@@ -53,6 +59,7 @@ button.inp {
     margin: 0;
     display: inline-block;
 }
+a {color: #253a5d;;}
 .mt10{
     margin-top: 10px;
 }
@@ -76,7 +83,15 @@ table.mini td{
 }
 html table.sm td {font-size: 10pt !important;}
 html table.x-sm td {font-size: 8pt !important;}
-
+.v-btn.bg-primary {
+    background-color: $primary !important;
+}
+.v-btn.text-primary{
+    background-color: $primary !important;
+}
+.v-selection-control__input::before {
+    background-color: $primary !important;
+}
 /*
 .v-input__control {
     max-width: 800px !important; 

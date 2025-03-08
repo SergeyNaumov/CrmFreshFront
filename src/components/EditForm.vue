@@ -109,8 +109,8 @@
 
               <v-col cols="12">
                 <v-card style="width: 100%">
-                  <v-tabs-items v-model="tab">
-                    <v-tab-item
+                  <v-tabs v-model="tab">
+                    <v-tab
                       v-for="(tab, idx) in tabs"
                       :key="'tabitm' + idx"
                     >
@@ -120,8 +120,8 @@
                         :save="save"
                         :values="values"
                       ></form-block>
-                    </v-tab-item>
-                  </v-tabs-items>
+                    </v-tab>
+                  </v-tabs>
                 </v-card>
               </v-col>
             </template>
@@ -447,17 +447,18 @@ methods: {
         }, // end-methods
 }
 </script>
-<style >
+<style scope>
     
     .v-application {line-height: 1;}  
-    body {font-size: 14px;}
+    body {font-size: 14px; margin: 20px;}
     
     div.field {margin: 0 20px;}
     
     button {margin: 1rem;}
     .container {max-width: 1200px;}
     .container.onecol {max-width: 1200px;}
-    header {margin-top: 1rem;}  
+    header {margin-top: 1rem; }
+    .v-toolbar__content { background-color: #253a5d !important; }
     .v-list-item {min-height: 25px !important;}
     .form_header {margin-bottom: 20px;}
 </style>

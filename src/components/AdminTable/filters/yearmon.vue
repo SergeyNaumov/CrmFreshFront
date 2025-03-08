@@ -1,59 +1,99 @@
 <template>
-    <div>
-        <div class="description">{{field.description}}:</div>
+  <div>
+    <!-- Описание поля -->
+    <div class="description">{{ field.description }}:</div>
 
-        <template v-if="field.range">
-            <div class="description">От:</div>
-            <v-flex xs6>
-                <v-row>
-                    
-                    <v-col>
-                        <v-select label="Месяц" :items="mon_items" item-value="v" item-text="d" v-model="mon_from" @change="set_value"/>
-                    </v-col>
-                    <v-col>
-                        
-                        <v-select label="Год" :items="year_items" v-model="year_from" class="year" @change="set_value"/>
-                    </v-col>
-                    <v-col class="reset_link" >
-                        <small v-if="year_from || mon_from"><a href="" @click.prevent="reset(0)">сбросить</a></small>
-                    </v-col>
-                </v-row>
-            </v-flex>
-            <div class="description">До:</div>
-            <v-flex xs6>
-                <v-row>
-                    <v-col md-2>
+    <!-- Если поле имеет диапазон -->
+    <template v-if="field.range">
+      <!-- От -->
+      <div class="description">От:</div>
+      <v-row>
+        <v-col cols="4">
+          <v-select
+            label="Месяц"
+            :items="mon_items"
+            item-value="v"
+            item-text="d"
+            v-model="mon_from"
+            @change="set_value"
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-select
+            label="Год"
+            :items="year_items"
+            v-model="year_from"
+            class="year"
+            @change="set_value"
+          />
+        </v-col>
+        <v-col cols="4" class="reset_link">
+          <small v-if="year_from || mon_from">
+            <a href="" @click.prevent="reset(0)">сбросить</a>
+          </small>
+        </v-col>
+      </v-row>
 
-                        <v-select label="Месяц" :items="mon_items" item-value="v" item-text="d" v-model="mon_to" @change="set_value"/>
-                    </v-col>
-                    <v-col md-2>
-                        <v-select label="Год" :items="year_items" v-model="year_to" class="year" @change="set_value"/>
-                    </v-col>
-                    <v-col class="reset_link"  md-1>
-                        <small v-if="year_to || mon_to"><a href="" @click.prevent="reset(1)">сбросить</a></small>
-                    </v-col>
-                </v-row>
-            </v-flex>
-              
-        </template>
-        <template v-else>
-            
-            
-            <v-container>
-                <v-row>
-                    <v-col>
-                        
-                        <v-select label="Месяц" :items="mon_items" item-value="v" item-text="d" v-model="mon"/>
-                    </v-col>
-                    <v-col>
-                        <v-select label="Год" :items="year_items" v-model="year" class="year"/>
-                    </v-col>
-                </v-row>
+      <!-- До -->
+      <div class="description">До:</div>
+      <v-row>
+        <v-col cols="4">
+          <v-select
+            label="Месяц"
+            :items="mon_items"
+            item-value="v"
+            item-text="d"
+            v-model="mon_to"
+            @change="set_value"
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-select
+            label="Год"
+            :items="year_items"
+            v-model="year_to"
+            class="year"
+            @change="set_value"
+          />
+        </v-col>
+        <v-col cols="4" class="reset_link">
+          <small v-if="year_to || mon_to">
+            <a href="" @click.prevent="reset(1)">сбросить</a>
+          </small>
+        </v-col>
+      </v-row>
+    </template>
 
-            </v-container>  
-            <div v-if="year || mon"><small><a href="" @click.prevent="reset">сбросить</a></small></div>
-        </template>
-    </div>
+    <!-- Если поле не имеет диапазона -->
+    <template v-else>
+      <v-container>
+        <v-row>
+          <v-col cols="6">
+            <v-select
+              label="Месяц"
+              :items="mon_items"
+              item-value="v"
+              item-text="d"
+              v-model="mon"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-select
+              label="Год"
+              :items="year_items"
+              v-model="year"
+              class="year"
+            />
+          </v-col>
+        </v-row>
+      </v-container>
+      <div v-if="year || mon">
+        <small>
+          <a href="" @click.prevent="reset">сбросить</a>
+        </small>
+      </div>
+    </template>
+  </div>
 </template>
 <script>
 export default {

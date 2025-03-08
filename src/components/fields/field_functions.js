@@ -36,6 +36,7 @@ export function field_update(new_data, self){
 }
 
 export function check_fld(self){
+    console.log('check')
     if(!self.value)
       self.value='';
     let f=self.field;

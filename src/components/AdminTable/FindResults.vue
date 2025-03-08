@@ -195,13 +195,13 @@
                               <td class="text-xs-left text-md-right controls" v-if="!permissions.not_edit || permissions.make_delete">
                                 
                                 
-                                <v-btn small v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
+                                <v-btn size="25" v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
                                   <a :href="edit_link(tr)" @click.prevent="go_to_edit(tr.key)">
-                                    <v-icon  color="primary" small>edit</v-icon>
+                                    <v-icon  color="primary">mdi-pencil</v-icon>
                                   </a>
                                 </v-btn>&nbsp;
-                                <v-btn v-if="permissions.make_delete" @click="delete_dialog(tr.key)" small>
-                                  <v-icon small  color="primary" icon >delete</v-icon>
+                                <v-btn size="25" v-if="permissions.make_delete" @click="delete_dialog(tr.key)" small>
+                                  <v-icon  color="primary" icon >mdi-trash-can</v-icon>
                                 </v-btn>
                               </td>
                             </tr>

@@ -17,7 +17,7 @@
                     :label="field.description"
                     v-model="value"
                     :multiple="field.multiple"
-                    :items="values" item-value="v" item-text="d"
+                    :items="values" item-value="v" item-title="d"
                     :search-input.sync="search"
                     :no-data-text="no_data_text"
                     clearable
@@ -35,7 +35,7 @@
                 <v-autocomplete 
                     :label="field.description"
                     v-model="value"
-                    :items="values" item-value="v" item-text="d"
+                    :items="values" item-value="v" item-title="d"
                     :no-data-text="no_data_text"
                     cache-items
                     clearable
@@ -48,7 +48,7 @@
                 <v-select
                     :label="field.description"
                     v-model="value"
-                    :items="values" item-value="v" item-text="d"
+                    :items="values" item-value="v" item-title="d"
                     :multiple="!field.not_multiple" chips
                     :no-data-text="no_data_text"
                     cache-items

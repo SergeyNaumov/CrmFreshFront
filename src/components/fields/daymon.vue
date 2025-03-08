@@ -1,36 +1,45 @@
 <template>
-    <div>
-        <template v-if="field.read_only">
-          <template v-if="field.value">{{field.value}}</template>
-          <template v-else>-</template>
-        </template>
-        <template v-else>
-          <v-layout row wrap>
-              <v-flex pl-3 md6 xs12 >
-                  <v-autocomplete
-                    v-model="day"
-                    :items="day_list"
-                    no-data-text="недопустимое значение"
-                    label="Выберите день"
-                  />
-                  </v-flex>
-              <v-flex pl-3 md6 xs12 >
-                  <v-select
-                    v-model="mon"
-                    :items="mon_list"
-                    item-value="v"
-                    item-text="d"
-                    label="Выберите месяц"
-                  />
-              </v-flex>
-              <div class="clear" v-show="need_empty"><small>
-                <a href="#" @click.prevent="set_current()">установить текущие значения</a> |
-                <a href="#" @click.prevent="clear()"> очистить</a></small>
-              </div>
-          </v-layout>
-        </template>
+  <div>
+    <!-- Только для чтения -->
+    <template v-if="field.read_only">
+      <template v-if="field.value">{{ field.value }}</template>
+      <template v-else>-</template>
+    </template>
 
-    </div>
+    <!-- Редактируемый режим -->
+    <template v-else>
+      <v-row no-gutters>
+        <!-- Выбор дня -->
+        <v-col cols="12" md="6" class="pl-3">
+          <v-autocomplete
+            v-model="day"
+            :items="day_list"
+            no-data-text="Недопустимое значение"
+            label="Выберите день"
+          />
+        </v-col>
+
+        <!-- Выбор месяца -->
+        <v-col cols="12" md="6" class="pl-3">
+          <v-select
+            v-model="mon"
+            :items="mon_list"
+            item-value="v"
+            item-text="d"
+            label="Выберите месяц"
+          />
+        </v-col>
+
+        <!-- Ссылки для установки текущих значений или очистки -->
+        <v-col cols="12" class="clear" v-show="need_empty">
+          <small>
+            <a href="#" @click.prevent="set_current()">Установить текущие значения</a> |
+            <a href="#" @click.prevent="clear()">Очистить</a>
+          </small>
+        </v-col>
+      </v-row>
+    </template>
+  </div>
 </template>
 <script>
 //import { bus } from '../../main'

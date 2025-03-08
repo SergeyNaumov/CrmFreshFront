@@ -2,7 +2,6 @@
   <div class="is_headapp">
     <!-- Заголовок -->
     <h1>{{ title }}</h1>
-
     <!-- Кнопка "Добавить" -->
     <div v-if="permissions.make_create">
       <v-icon color="primary">mdi-plus</v-icon>&nbsp;
@@ -71,9 +70,9 @@
 
       <!-- Блок фильтров -->
       <v-col cols="12" sm="12" md="4" lg="4" class="mb-2 filters" v-show="SHOW_FILTERS">
-        <v-toolbar @click="SHOW_FILTERS_all = !SHOW_FILTERS_all">
+       <v-toolbar @click="SHOW_FILTERS_all=!SHOW_FILTERS_all">
           <v-app-bar-nav-icon color="primary"></v-app-bar-nav-icon>
-          <!-- Замена v-subheader -->
+
           <div class="text-subtitle-1 font-weight-bold pl-2">Фильтры</div>
         </v-toolbar>
 

@@ -2,12 +2,16 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import mitt from 'mitt'; // Импортируем mitt
 
-import '@mdi/font/css/materialdesignicons.css'; // Импорт Material Design Icons
-import '@fortawesome/fontawesome-free/css/all.css'; // Импорт Font Awesome
-
 import vuetify from './plugins/vuetify'; // Импорт Vuetify из plugins/vuetify.js
+
+
+//import '@fortawesome/fontawesome-free/css/all.css'; // Импорт Font Awesome
+
+
+
+
 import colors from 'vuetify/util/colors'; // Импорт цветов из Vuetify 3
-import 'vuetify/styles'; // Импорт стилей Vuetify
+
 
 import { dynamic_component_loader } from './dynamic_component_loader.js'; // Ваш кастомный загрузчик компонентов
 

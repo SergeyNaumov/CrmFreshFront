@@ -1,99 +1,109 @@
 <template>
-    <div>
-        <div class="description">{{field.description}}:</div>
-        <template v-if="field.range">
-            <v-layout row wrap>
-                <v-flex pl-3 md6 xs12 >
-                    <v-menu
-                        v-model="menu[0]"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        readonly
-                        
-                        min-width="290px"
-                    >
-                    
-                        <template v-slot:activator="{ on }">
+  <div>
+    <!-- Описание поля -->
+    <div class="description">{{ field.description }}:</div>
 
-                            <v-text-field
-                                v-model="field.value_low"
-                                label="С"
-                                prepend-icon="event"
-                                readonly
-                                clearable
-                                v-on="on"
-                                @click="show_time[0]=false"
-                                style="max-width: 250px;"
-                            />
+    <!-- Если поле имеет диапазон дат -->
+    <template v-if="field.range">
+      <v-row no-gutters>
+        <!-- Первая дата/время (начало периода) -->
+        <v-col cols="12" md="6" class="pl-3">
+          <v-menu
+            v-model="menu[0]"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            readonly
+            min-width="290px"
+          >
+            <template #activator="{ props }">
+              <v-text-field
+                v-model="field.value_low"
+                label="С"
+                prepend-icon="mdi-calendar"
+                readonly
+                clearable
+                v-bind="props"
+                @click="show_time[0] = false"
+                style="max-width: 250px;"
+              />
+            </template>
 
-                        
-                        </template>
-                        
-                        <v-date-picker
-                            v-if="!show_time[0]"
-                            first-day-of-week="1" 
-                            locale="ru-Ru"
-                            v-model="dat_value0" @input="select_dat(0)"
-                        />
-                        <v-time-picker 
-                            v-if="show_time[0]"
-                            format="24hr"
-                            v-model="time_value0" 
-                            @input="select_cal(0)"
-                        />
-                        
-                    </v-menu>
-                </v-flex>
-                <v-flex pl-3 md6 xs12 >
-                    <v-menu
-                        v-model="menu[1]"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        readonly
-                        min-width="290px"
-                    >
-                    
-                        <template v-slot:activator="{ on }">
-                         <v-text-field
-                            v-model="field.value_hi"
-                            label="По"
-                            prepend-icon="event"
-                            readonly
-                            clearable
-                            v-on="on"
-                            style="max-width: 250px;"
-                            @click="show_time[1]=false"
-                        />
-                        
-                        
-                        </template>
-                        <v-date-picker
-                            v-if="!show_time[1]"
-                            first-day-of-week="1" 
-                            locale="ru-Ru"
-                            v-model="dat_value1" @input="select_dat(1)"
-                        />
-                        <v-time-picker 
-                            v-if="show_time[1]"
-                            format="24hr"
-                            v-model="time_value1" 
-                            @input="select_cal(1)"
-                        />
-                    </v-menu>
-                </v-flex>
-                <v-flex pl-3 md12 xs12 class="err_select" v-if="err_select">
-                    дата начала периода больше даты его окончания
-                </v-flex>
-            </v-layout>
-        </template>
-        <template v-else>
+            <!-- Выбор даты -->
+            <v-date-picker
+              v-if="!show_time[0]"
+              first-day-of-week="1"
+              locale="ru-RU"
+              v-model="dat_value0"
+              @input="select_dat(0)"
+            />
 
-        </template>
-    </div>
+            <!-- Выбор времени -->
+            <v-time-picker
+              v-if="show_time[0]"
+              format="24hr"
+              v-model="time_value0"
+              @input="select_cal(0)"
+            />
+          </v-menu>
+        </v-col>
+
+        <!-- Вторая дата/время (конец периода) -->
+        <v-col cols="12" md="6" class="pl-3">
+          <v-menu
+            v-model="menu[1]"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            readonly
+            min-width="290px"
+          >
+            <template #activator="{ props }">
+              <v-text-field
+                v-model="field.value_hi"
+                label="По"
+                prepend-icon="mdi-calendar"
+                readonly
+                clearable
+                v-bind="props"
+                @click="show_time[1] = false"
+                style="max-width: 250px;"
+              />
+            </template>
+
+            <!-- Выбор даты -->
+            <v-date-picker
+              v-if="!show_time[1]"
+              first-day-of-week="1"
+              locale="ru-RU"
+              v-model="dat_value1"
+              @input="select_dat(1)"
+            />
+
+            <!-- Выбор времени -->
+            <v-time-picker
+              v-if="show_time[1]"
+              format="24hr"
+              v-model="time_value1"
+              @input="select_cal(1)"
+            />
+          </v-menu>
+        </v-col>
+
+        <!-- Сообщение об ошибке -->
+        <v-col cols="12" class="err_select pl-3" v-if="err_select">
+          Дата начала периода больше даты его окончания
+        </v-col>
+      </v-row>
+    </template>
+
+    <!-- Если поле не имеет диапазона дат -->
+    <template v-else>
+      <!-- Здесь можно добавить логику для одиночного выбора даты/времени -->
+    </template>
+  </div>
 </template>
 <script>
 export default {

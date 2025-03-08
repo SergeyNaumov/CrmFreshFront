@@ -24,7 +24,7 @@
                         </tr>
                     </table>
                 </template>
-                <v-treeview v-else-if="out_tree"
+<!--                 <v-treeview v-else-if="out_tree"
                     item-disabled="read_only"
                     :items="list"
                     :selection-type="selectionType"
@@ -38,7 +38,14 @@
                     selectable
                     hoverable
                     selected-color="primary"
-                />
+                /> -->
+                <tree-view
+                v-else-if="out_tree"
+                :items="list"
+                :search="search"
+                :selected-hash="selected_hash"
+                @change="selected_hash_to_value"
+              />
                 <div v-else>
                     
 
@@ -90,7 +97,9 @@
 </template>
 
 <script>
+import TreeView from "./TreeView.vue";
   export default {
+    components: {TreeView},
     data:function(){
         return {
             search:'',
@@ -115,7 +124,7 @@
             let field=this.field;
             field.value=this.value;
             //this.change_field(field)
-            this.$bus.$emit('change_field',field)
+            this.$bus.emit('change_field',field)
         },
         new_tag(){
             this.new_tag_not_ajax++;
@@ -257,7 +266,7 @@
 
             t.value=new_value
             field.value=t.value
-            this.$bus.$emit('change_field',field)
+            this.$bus.emit('change_field',field)
         },
         init(){ // получаем список элементов дерева
             let t=this

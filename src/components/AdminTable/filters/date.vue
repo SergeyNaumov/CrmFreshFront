@@ -1,112 +1,111 @@
 <template>
-    <div>
-        
-        <div class="description">{{field.description}}:</div>
-        <template v-if="field.range">
-            <v-layout row wrap>
-                <v-flex pl-3 md6 xs12 >
-                    <v-menu
-                        v-model="menu[0]"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        readonly
-                        min-width="290px"
-                    >
-                        <!-- v-model="dat_value0" -->
-                        <template v-slot:activator="{ on }">
-                         <v-text-field
-                            
-                            v-model="show_dat_value0"
-                            label="C"
-                            prepend-icon="event"
-                            readonly
-                            clearable
-                            
-                            v-on="on"
-                            style="max-width: 250px;"
-                        ></v-text-field>
-                        
-                        
-                        </template>
-                        <v-date-picker
-                        first-day-of-week="1" 
-                        locale="ru-Ru"
-                        v-model="dat_value0" @input="select_cal(0)"></v-date-picker>
-                        
-                    </v-menu>
-                </v-flex>
-                <v-flex pl-3 md6 xs12 >
-                    <v-menu
-                        v-model="menu[1]"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        readonly
-                        min-width="290px"
-                    >
-                        <!--  v-model="dat_value1" -->
-                        <template v-slot:activator="{ on }">
-                         <v-text-field
-                            v-model="show_dat_value1"
-                            label="По"
-                            prepend-icon="event"
-                            readonly
-                            clearable
-                            
-                            v-on="on"
-                            style="max-width: 250px;"
-                        ></v-text-field>
-                        
-                        
-                        </template>
-                        <v-date-picker
-                        first-day-of-week="1" 
-                        locale="ru-Ru"
-                        v-model="dat_value1" @input="select_cal(1)"></v-date-picker>
-                    </v-menu>
-                </v-flex>
-                <v-flex pl-3 md12 xs12 class="err_select" v-if="err_select">
-                    дата начала периода больше даты его окончания
-                </v-flex>
-            </v-layout>
-        </template>
-        <template v-else>
+  <div>
+    <!-- Описание поля -->
+    <div class="description">{{ field.description }}:</div>
 
-                    <v-menu
-                        v-model="menu[0]"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        readonly
-                        min-width="290px"
-                    >
-                        <!-- v-model="dat_value0" -->
-                        <template v-slot:activator="{ on }">
-                         <v-text-field
-                            
-                            v-model="show_dat_value0"
-                            :label="field.description"
-                            prepend-icon="event"
-                            readonly
-                            clearable
-                            
-                            v-on="on"
-                            style="max-width: 250px;"
-                        ></v-text-field>
-                        
-                        
-                        </template>
-                        <v-date-picker
-                        first-day-of-week="1" 
-                        locale="ru-Ru"
-                        v-model="dat_value0" @input="select_cal(0)" />
-                    </v-menu>
+    <!-- Если поле имеет диапазон дат -->
+    <template v-if="field.range">
+      <v-row no-gutters>
+        <!-- Первая дата (начало периода) -->
+        <v-col cols="12" md="6" class="pl-3">
+          <v-menu
+            v-model="menu[0]"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            readonly
+            min-width="290px"
+          >
+            <template #activator="{ props }">
+              <v-text-field
+                v-model="show_dat_value0"
+                label="C"
+                prepend-icon="mdi-calendar"
+                readonly
+                clearable
+                v-bind="props"
+                style="max-width: 250px;"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              first-day-of-week="1"
+              locale="ru-RU"
+              v-model="dat_value0"
+              @input="select_cal(0)"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+
+        <!-- Вторая дата (конец периода) -->
+        <v-col cols="12" md="6" class="pl-3">
+          <v-menu
+            v-model="menu[1]"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            readonly
+            min-width="290px"
+          >
+            <template #activator="{ props }">
+              <v-text-field
+                v-model="show_dat_value1"
+                label="По"
+                prepend-icon="mdi-calendar"
+                readonly
+                clearable
+                v-bind="props"
+                style="max-width: 250px;"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              first-day-of-week="1"
+              locale="ru-RU"
+              v-model="dat_value1"
+              @input="select_cal(1)"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+
+        <!-- Сообщение об ошибке -->
+        <v-col cols="12" class="err_select pl-3" v-if="err_select">
+          Дата начала периода больше даты его окончания
+        </v-col>
+      </v-row>
+    </template>
+
+    <!-- Если поле не имеет диапазона дат -->
+    <template v-else>
+      <v-menu
+        v-model="menu[0]"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        transition="scale-transition"
+        offset-y
+        readonly
+        min-width="290px"
+      >
+        <template #activator="{ props }">
+          <v-text-field
+            v-model="show_dat_value0"
+            :label="field.description"
+            prepend-icon="mdi-calendar"
+            readonly
+            clearable
+            v-bind="props"
+            style="max-width: 250px;"
+          ></v-text-field>
         </template>
-    </div>
+        <v-date-picker
+          first-day-of-week="1"
+          locale="ru-RU"
+          v-model="dat_value0"
+          @input="select_cal(0)"
+        ></v-date-picker>
+      </v-menu>
+    </template>
+  </div>
 </template>
 <script>
 export default {

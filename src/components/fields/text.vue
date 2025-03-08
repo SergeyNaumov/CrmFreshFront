@@ -106,7 +106,7 @@
   created(){
     //Vue.component('qr_call', ()=> import('./components/fields/text_subtypes/qr_call.vue'));
     this._field_update=(new_data)=>{
-      field_update(new_data,this)
+      //field_update(new_data,this)
     };
 
     if(!this.parent){
@@ -115,7 +115,7 @@
     }
     // 
     this.value=this.field.value;
-    check_fld(this);
+    //check_fld(this);
 
   },
   beforeDestroy(){
