@@ -60,7 +60,7 @@
               v-model="value"
               :items="values"
               item-value="v"
-              item-text="d"
+              item-title="d"
               :search-input.sync="search"
               :rounded="$theme.rounded"
               no-data-text="Внимание! Следует выбрать значение из списка, иначе оно не будет сохранено"

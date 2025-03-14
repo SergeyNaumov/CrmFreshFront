@@ -70,8 +70,8 @@
                             <th v-for="h in results.headers" :key="h.head_idx"> 
                                 <span v-html="h.h"></span>
                                 <span v-if="h.make_sort" class="sort_button">
-                                  <a href="#" @click.prevent="go_search(page,{priority_sort: [h.n,'asc']})" class="sort_desc" :class="{'bold': (h.sorted=='desc')}"><v-icon color="green" small>keyboard_arrow_down</v-icon></a>
-                                  <a href="#" @click.prevent="go_search(page,{priority_sort: [h.n,'desc']})" class="sort_asc" :class="{'bold': (h.sorted=='asc')}"><v-icon color="red" small>keyboard_arrow_up</v-icon></a>
+                                  <a href="#" @click.prevent="go_search(page,{priority_sort: [h.n,'asc']})" class="sort_desc" :class="{'bold': (h.sorted=='desc')}"><v-icon color="green" size="14">fa-arrow-down</v-icon></a>
+                                  <a href="#" @click.prevent="go_search(page,{priority_sort: [h.n,'desc']})" class="sort_asc" :class="{'bold': (h.sorted=='asc')}"><v-icon color="red" size="14">fa-arrow-up</v-icon></a>
                                   
                                 </span>
                             </th>
@@ -134,7 +134,7 @@
 
                                   <template v-else-if="td.type=='select'">
                                       <v-select 
-                                          v-model="td.value" :items="results.selects[td.name]" item-value="v" item-text="d"
+                                          v-model="td.value" :items="results.selects[td.name]" item-value="v" item-title="d"
                                           @change="change_in_search(tr,td)"
                                       ></v-select>
                                       <div class="saved" :id="td.name+'_'+tr.key"></div>
@@ -195,14 +195,15 @@
                               <td class="text-xs-left text-md-right controls" v-if="!permissions.not_edit || permissions.make_delete">
                                 
                                 
-                                <v-btn size="25" v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
+                                <v-btn size="30" v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
                                   <a :href="edit_link(tr)" @click.prevent="go_to_edit(tr.key)">
-                                    <v-icon  color="primary">mdi-pencil</v-icon>
+                                    <fa size="14" color="primary" icon="fa-pencil" />
                                   </a>
                                 </v-btn>&nbsp;
-                                <v-btn size="25" v-if="permissions.make_delete" @click="delete_dialog(tr.key)" small>
-                                  <v-icon  color="primary" icon >mdi-trash-can</v-icon>
+                                <v-btn   size="30"  v-if="permissions.make_delete" @click="delete_dialog(tr.key)">
+                                  <fa size="14" color="primary" medium icon="trash"/>
                                 </v-btn>
+                                
                               </td>
                             </tr>
                             

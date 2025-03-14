@@ -4,7 +4,7 @@
     <h1>{{ title }}</h1>
     <!-- Кнопка "Добавить" -->
     <div v-if="permissions.make_create">
-      <v-icon color="primary">mdi-plus</v-icon>&nbsp;
+      <v-icon color="primary" class="mb-1">fa-plus</v-icon>&nbsp;
       <a href="" @click.prevent="new_card()">Добавить</a>
     </div>
 
@@ -70,10 +70,12 @@
 
       <!-- Блок фильтров -->
       <v-col cols="12" sm="12" md="4" lg="4" class="mb-2 filters" v-show="SHOW_FILTERS">
-       <v-toolbar @click="SHOW_FILTERS_all=!SHOW_FILTERS_all">
-          <v-app-bar-nav-icon color="primary"></v-app-bar-nav-icon>
+       <v-toolbar >
+          <a href="#" @click="SHOW_FILTERS_all=!SHOW_FILTERS_all">
+            <fa size="16" class="ml-4 mr-5" icon="fa-bars" set="fa"></fa>
+          </a>
 
-          <div class="text-subtitle-1 font-weight-bold pl-2">Фильтры</div>
+          <div class="text-subtitle-1 pl-2">Фильтры</div>
         </v-toolbar>
 
         <div v-if="SHOW_FILTERS_all && filters_groups.length">

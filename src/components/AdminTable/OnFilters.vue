@@ -4,9 +4,11 @@
     <v-card>
       <v-toolbar >
         <!-- <v-app-bar-nav-icon color="primary"></v-app-bar-nav-icon> -->
-        <v-app-bar-nav-icon @click="toggle_filters()" color="primary" ></v-app-bar-nav-icon>
+        
+         <a href="#" @click.prevent="toggle_filters()"><fa size="16" class="ml-4 mr-5" icon="fa-bars" set="fa"></fa></a>
+         Используемые фильтры
 
-        <div>Используемые фильтры</div>
+        
       </v-toolbar>
     </v-card>
 
@@ -16,7 +18,7 @@
         :list="filter_list"
         v-model="filter_list"
         handle=".drag_area"
-        itemKey="name" <!-- Указываем уникальный ключ -->
+        itemKey="name" 
       >
         <template #item="{ element: f, index }">
           <div :key="index">
@@ -146,6 +148,7 @@ export default {
 </script>
 <style lang="scss" scoped>
     @import '@/styles/variables.scss';
+    .v-toolbar__content {background: #fff;}
   html {font-size: 12px;}
   .v-label {font-size: 12px;}
   .onfilter.sortable-ghost{background-color: $lighten4;}
@@ -156,6 +159,7 @@ export default {
     top: 12px;
     z-index: 1;
     width: 100%;
+    
     min-height: 12px;
     padding-left: 3px;
     border-radius: 3px;
@@ -163,14 +167,16 @@ export default {
     background-color: $lighten4;
   }
   .drag_area .v-icon {
-    font-size: 8px;
-    margin: 4px 4px 4px 4px;
-    padding: 3px 3px 3px 4px;
+    font-size: 12px;
+
+    margin: 2px 4px 4px 4px;
+    padding: 10;
     width: 16px;
-    border: 1px solid gray;
-    border-radius: 10px;
+    // border: 1px solid gray;
+    // border-radius: 10px;
     color: $lighten5;
-    background-color: gray;
+    color: gray;
+    
     
   }
 </style>

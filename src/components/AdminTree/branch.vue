@@ -38,11 +38,13 @@
             </v-card>
         </v-dialog>
         <div class="Area">
-            
-        <a href="#" v-if="make_add " @click.prevent="open_dialog_add_form">добавить
-                <span v-if="parent.id"> в "{{parent.header}}" </span>
-                <span v-else> в /</span>
-        </a>
+            <div class="mt-2" v-if="make_add ">
+                <v-icon color="primary" class="mr-1">mdi-plus</v-icon>
+                <a href="#"  @click.prevent="open_dialog_add_form">добавить
+                    <span v-if="parent.id"> в "{{parent.header}}" </span>                
+                
+                </a>
+            </div>
         <div v-if="form.sort">  <!-- USE SORT-->
 
             <draggable
@@ -61,13 +63,13 @@
                         <div class="li_header" :style='{"background":cur_color}'  >
                                 <div class="plus-icon " v-if="form.tree_use && (!form.max_level || (level < form.max_level))" >
                                     <!---->
-                                    <v-icon small color="primary"
+                                    <v-icon size="16" color="primary"
                                         v-if="!shows[l.id]"
                                         @click="show_this(l)"
                                     >
-                                        fa fa-plus
+                                        mdi-plus
                                     </v-icon>
-                                    <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
+                                    <v-icon size="16" color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">mdi-minus</v-icon>
                                 </div>
                                 <div class="branch-header" >
                                     <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
@@ -81,9 +83,9 @@
                                     />
 
                                 </div>
-                                <div class="branch-tools " style="display: block; position: relative; top: -30px; height: 0; margin-bottom: 0; text-align: right; ">
-                                    <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
-                                    <v-icon v-if="make_delete(parent.id,l)" small style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
+                                <div class="branch-tools " style="display: block; ">
+                                    <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" size="16" >mdi-pencil</v-icon></a>&nbsp;
+                                    <v-icon v-if="make_delete(parent.id,l)" size="16" color="primary" @click="del(parent.id,l)">mdi-delete</v-icon>
                                 </div>
                         </div>
                         <template v-if="shows[l.id]">
@@ -190,13 +192,11 @@ export default {
   },
   methods:{
         init(){
-            this.values={}
-            this.child_count=0
-            this.list=[]
-            this.show_edit_form=0
-            this.shows={0:false}
-
-            this.list=this.get_list(this.parent.id)
+            let t=this
+            t.values={}, t.child_count=0, t.list=[]
+            t.show_edit_form=0
+            t.shows={0:false}
+            t.list=this.get_list(this.parent.id)
         },
         upload_header(id, new_header='this is new header'){
             for(let l of this.list){
@@ -461,6 +461,7 @@ div.branch-tools{
     display:inline-block; 
     min-width: 30px;
     margin-bottom: 20px;
+    position: relative; top: -20px; height: 0; margin-bottom: 0; text-align: right;
 }
 div.branch-tools a{text-decoration: none;}
 .ws-nowrap{

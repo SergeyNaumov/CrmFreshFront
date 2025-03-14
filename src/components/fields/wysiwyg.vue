@@ -1,69 +1,71 @@
 <template>      
     <div>
-        <errors :errors="errors" v-show="errors.length"></errors>
-        <template v-show="!errors.length">        
+        
+        <!-- <errors :errors="errors" v-show="errors.length"></errors> -->
+        <template v-if="!errors.length">
+            not errors
             <!-- файловый навигатор -->
             <v-dialog v-model="dialog" min-height="300" max-width="800">
-            <v-card class="filenavigator" style="">
-                <div class="close">
-                    <a href="" @click.prevent="dialog=false"><v-icon color="primary" >fa-window-close</v-icon></a>
-                </div>
-                <v-card-title v-text="create_folder_form?'Новая папка':'Загрузка изображений'" />
-                    <form class="create_folder_form" @submit.prevent="create_folder" v-if="create_folder_form">
-                        <div v-for="(e,idx) in create_folder_errors" :key="'err'+idx" class="err">
-                            {{e}}
-                        </div>
-                        <v-text-field 
-                            v-model="new_folder_name"
-                            label="введите название папки"
-                        />
-                        <v-btn x-small color="primary" @click="create_folder" :disabled="!new_folder_name">создать новую папку</v-btn>
-                        <v-btn x-small @click.prevent="create_folder_form=false; new_folder_name=''" color="error">отмена</v-btn>
-                    </form>
-                    <template v-else>
-                        <div>путь: {{file_path}}</div>
-                        <p class="create_folder_link"><a href="#"  @click.prevent="create_folder_form=!create_folder_form">новая папка</a></p>
-                        <table align="center" class="files">
-                                <tr v-if="file_path!='/'">
-                                    <td >
-                                        <a href="" @click.prevent="folder_up()">...</a>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <template v-for="(f,idx) in file_list" >
-                                    <tr v-if="f.type=='dir'"  :key="f.name">
-                                        <td ><v-icon color="primary" >mdi-folder </v-icon>
-                                            <a href="" @click.prevent="go_to_folder(f.name)">{{f.name}}</a>
-                                        </td>
-                                        <td><v-icon @click.prevent="del(f)">mdi-delete</v-icon></td>
-                                    </tr>
-                                    <tr v-else :key="idx">
-                                        <td  color="primary"><v-icon>insert_drive_file</v-icon> 
-                                        <a href="" @click.prevent="goFileCallBack(f.name,{})">{{f.name}}</a> </td>
-                                        <td><v-icon @click.prevent="del(f)">mdi-delete</v-icon> </td>
-                                    </tr>
-
-                                </template>
-                        </table>
-                        <errors :errors="uploader_errors" v-show="uploader_errors.length"></errors>
-                        <form :id="'tinyupload_'+field.name" enctype="multipart/form-data" class="upload" @submit.prevent="upload()">
-                            <!--<input type="file" name="attach" multiple="multiple"> -->
-                            <v-file-input 
-                                name="attach"
-                                multiple="multiple"
-                                chips
-                                v-model="upload_value"
-                                label="выберите файлы для загрузки"
+                <v-card class="filenavigator" style="">
+                    <div class="close">
+                        <a href="" @click.prevent="dialog=false"><fa color="primary" icon="fa-window-close" /></a>
+                    </div>
+                    <v-card-title v-text="create_folder_form?'Новая папка':'Загрузка изображений'" />
+                        <form class="create_folder_form" @submit.prevent="create_folder" v-if="create_folder_form">
+                            <div v-for="(e,idx) in create_folder_errors" :key="'err'+idx" class="err">
+                                {{e}}
+                            </div>
+                            <v-text-field 
+                                v-model="new_folder_name"
+                                label="введите название папки"
                             />
-                            <v-btn x-small color="primary" @click="upload()">загрузить</v-btn>
+                            <v-btn x-small color="primary" @click="create_folder" :disabled="!new_folder_name">создать новую папку</v-btn>
+                            <v-btn x-small @click.prevent="create_folder_form=false; new_folder_name=''" color="error">отмена</v-btn>
                         </form>
-                    </template>
-            </v-card>
+                        <template v-else>
+                            <div>путь: {{file_path}}</div>
+                            <p class="create_folder_link"><a href="#"  @click.prevent="create_folder_form=!create_folder_form">новая папка</a></p>
+                            <table align="center" class="files">
+                                    <tr v-if="file_path!='/'">
+                                        <td >
+                                            <a href="" @click.prevent="folder_up()">...</a>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <template v-for="(f,idx) in file_list" >
+                                        <tr v-if="f.type=='dir'"  :key="f.name">
+                                            <td ><v-icon color="primary" >mdi-folder </v-icon>
+                                                <a href="" @click.prevent="go_to_folder(f.name)">{{f.name}}</a>
+                                            </td>
+                                            <td><v-icon @click.prevent="del(f)">mdi-delete</v-icon></td>
+                                        </tr>
+                                        <tr v-else :key="idx">
+                                            <td  color="primary"><v-icon>insert_drive_file</v-icon> 
+                                            <a href="" @click.prevent="goFileCallBack(f.name,{})">{{f.name}}</a> </td>
+                                            <td><v-icon @click.prevent="del(f)">mdi-delete</v-icon> </td>
+                                        </tr>
+
+                                    </template>
+                            </table>
+                            <errors :errors="uploader_errors" v-show="uploader_errors.length"></errors>
+                            <form :id="'tinyupload_'+field.name" enctype="multipart/form-data" class="upload" @submit.prevent="upload()">
+                                <!--<input type="file" name="attach" multiple="multiple"> -->
+                                <v-file-input 
+                                    name="attach"
+                                    multiple="multiple"
+                                    chips
+                                    v-model="upload_value"
+                                    label="выберите файлы для загрузки"
+                                />
+                                <v-btn x-small color="primary" @click="upload()">загрузить</v-btn>
+                            </form>
+                        </template>
+                </v-card>
             </v-dialog>
             <!-- / файловый навигатор -->
+             
             <div class="read_only" v-if="field.read_only" v-html="value" /> 
             <template v-else>
-
                 <p><a href="" @click.prevent="edit_mode=!edit_mode" v-text="edit_mode?'в режим просмотра':'в режим редактирования'"></a></p>
                 <div v-show="edit_mode">
                     <field-buttons
@@ -160,7 +162,7 @@ export default {
         this.field.value=this.value;
         this.field.from='field-text component (wysiwyg.vue)'
         if(!this.parent){
-            this.$bus.$emit('change_field',this.field);
+            this.$bus.emit('change_field',this.field);
         }
       },
       file_path(){ // если мы осуществляем навигацию по папкам -- отправляемся за списком файлов
@@ -186,12 +188,12 @@ export default {
         this.edit_mode=this.field.edit_mode
     }
     if(!this.parent){
-      this.$bus.$on('field-update:'+this.field.name,this._field_update )
+      this.$bus.on('field-update:'+this.field.name,this._field_update )
     }
   }, 
   beforeDestroy(){
     if(!this.parent){
-       this.$bus.$off('field-update:'+this.field.name,this._field_update)
+       this.$bus.off('field-update:'+this.field.name,this._field_update)
     }
   },
   mounted(){
@@ -290,7 +292,7 @@ export default {
         ).
         catch(
             err=>{
-                this.errors=['ошибка при вызове файлового навигатора']
+                this.errors=[`ошибка при вызове файлового навигатора ${err}`]
             }
         )
     },
@@ -394,7 +396,8 @@ export default {
             );
         }
         
-        tinymce.baseURL=config.TinyMCE_BaseUrl;
+        tinymce.baseURL='/tinymce'//config.TinyMCE_BaseUrl;
+        console.log('tinymce.baseURL:',tinymce.baseURL)
         const init_instance_callback=function (editor) {
                 editor_object=editor;
                 // ловим изменения в редаеторе и изменяем value компонента:

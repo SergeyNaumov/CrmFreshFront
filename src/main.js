@@ -1,27 +1,31 @@
-import { createApp } from 'vue';
+import { createApp, computed } from 'vue';
 import App from './App.vue';
 import mitt from 'mitt'; // Импортируем mitt
 
 import vuetify from './plugins/vuetify'; // Импорт Vuetify из plugins/vuetify.js
 
-
-//import '@fortawesome/fontawesome-free/css/all.css'; // Импорт Font Awesome
-
-
-
-
-import colors from 'vuetify/util/colors'; // Импорт цветов из Vuetify 3
-
+import { useTheme } from 'vuetify'; // Импортируем useTheme
 
 import { dynamic_component_loader } from './dynamic_component_loader.js'; // Ваш кастомный загрузчик компонентов
 
-//let color_scheme = 'blue'; // Цветовая схема
-//import '@/styles/colors/blue2.scss'; // Импорт SCSS стилей
+
+// begin FA
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons'; // Solid icons
+import { far } from '@fortawesome/free-regular-svg-icons'; // Regular icons
+import { fab } from '@fortawesome/free-brands-svg-icons'; // Brand icons
+library.add(fas, far, fab);
+
+// end FA
+
 
 // Создаём экземпляр приложения Vue 3
 const app = createApp(App);
+// Регистрируем компонент fa для fontawesome
 
-// Создаём шину событий
+app.component('fa', FontAwesomeIcon);
+
 const bus = mitt();
 app.config.globalProperties.$bus = bus;
 
@@ -92,5 +96,6 @@ app.component('GPTAssist', GPTAssist);
 //import Errors from './components/errors';
 //app.component('errors', Errors);
 
+//app.component('font-awesome-icon', FontAwesomeIcon);
 // Подключение Vuetify и монтирование приложения
 app.use(vuetify).mount('#app');

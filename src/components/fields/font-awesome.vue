@@ -3,7 +3,7 @@
         <div>
             <p v-if="field.description"  class="v-label theme--light"><small>{{field.description}}:</small></p>
             <div v-if="selected_icon">
-              <v-icon v-if="selected_icon" color="primary">{{selected_icon}}</v-icon> {{selected_icon}} 
+              <fa v-if="selected_icon" color="primary" :icon="selected_icon"/> {{selected_icon}} 
               <a href="" @click.prevent="load()" v-if="!view_list">выбрать другую</a>
             </div>
             <div v-else>
@@ -25,7 +25,7 @@
                 v-model="cur_struct"
                 label="Набор иконок"
                 item-value="v"
-                item-text="d"
+                item-title="d"
                 @input="list=font_struct[cur_struct];"
               ></v-select>
               <v-text-field v-model="filter" 
@@ -35,7 +35,7 @@
                 <ul>
                   <li v-for="l in filtered_list" :key="l">
                     <!--<a href="" @click.prevent="del(l)">del</a>-->
-                    <v-icon color="primary" small>{{full_icon_name(l)}}</v-icon>&nbsp;<a href="" @click.prevent="select(l)">{{l}}</a> 
+                    <fa color="primary" small :icon="full_icon_name(l)"/>&nbsp;<a href="" @click.prevent="select(l)">{{l}}</a> 
                   </li>
                 </ul>
               </div>
@@ -123,7 +123,7 @@ export default {
       field.value=this.full_icon_name(l);
       this.selected_icon=this.field.value;
       //this.change_field(field);
-      this.$bus.$emit('change_field',field);
+      this.$bus.emit('change_field',field);
       this.view_list=false;
     },
     del(l){

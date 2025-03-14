@@ -1,9 +1,8 @@
 <template>
     <div>
-
         <div class="cur_profile">
           <div style="display: inline-block; min-width: 165px;">
-            <v-avatar size=24><v-icon small color="primary">fa-user-edit</v-icon></v-avatar>
+            <v-avatar size="24"><fa large color="primary" icon="fa-user"/></v-avatar>
             <template v-if="manager.out_manager_card_link">
                 <a :href="manager.link" target="_blank">{{manager.login}}</a>
 

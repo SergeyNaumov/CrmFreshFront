@@ -3,9 +3,9 @@
   <div class="item">
       <template v-if="item.child && item.child.length"> <!-- Родительский пункт меню -->
         <a href="#" @click.prevent="show=!show">
-        <v-icon class="arrow">fa-{{show?'chevron-down':'chevron-right'}}</v-icon>
-        <div class="icon_slot">
-          <v-icon color="primary" x-small>{{item.icon}}</v-icon>
+        <fa size="10px" color="primary" class="arrow mr-1"  :icon="'fa-'+show?'chevron-down':'chevron-right'" />
+        <div class="icon_slot" >
+          <fa color="primary" :icon="item.icon" />
         </div>
         
         <span>{{item.header}}</span></a>
@@ -24,7 +24,7 @@
       <template v-else> <!-- дочерний пункт меню -->
           <a :href="get_link(item)" @click.prevent="go_link(item)">  <!-- get_link(item)   " -->
             <div class="icon_slot" v-if="item.icon"> 
-              <v-icon color="primary" x-small>{{item.icon}}</v-icon>
+              <fa x-small color="primary" :icon="item.icon" />
             </div>
             <span :style="item.style">{{item.header}}</span>
           </a>
@@ -59,7 +59,7 @@ export default {
 <style scoped lang="scss">
 
   @import '@/styles/variables.scss';
-
+  
   a { text-decoration: none; color: black !important;}
   a:hover { color: $primary;}
   a:hover span {text-decoration: underline;}

@@ -3,12 +3,12 @@
       <errors :errors="errors" v-if="errors.length" />
       <v-row  no-gutters class="manager_panel" >
         <v-col class="p1" cols="12" sm="6" md="6" style="padding: 5px;">
-          <!--
-            <a href=""><v-icon small color="primary">fa-user-alt</v-icon></a>
-            <a :href="manager.link">{{manager.name}}</a>
-          -->
           
-            <v-icon small color="primary">fa-user-alt</v-icon>
+            
+            
+          
+          
+            <fa small color="primary" icon="fa-user-alt"/>
             {{manager.name || manager.login}}
             
           
@@ -16,7 +16,7 @@
         </v-col>
 
         <v-col class="p3"  cols="12" sm="6" md="6">
-          <v-icon small color="primary">fa-calendar-alt</v-icon> {{curdate}}
+          <fa size="14" color="primary" icon="fa-calendar-alt"/> {{curdate}}
         </v-col>
       </v-row>
       <v-row>
