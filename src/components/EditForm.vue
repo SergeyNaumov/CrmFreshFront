@@ -67,8 +67,11 @@
                     @click="block_toggle(block)"
                   >
                     <v-toolbar-title>
-                      <v-icon v-if="!block.hide">keyboard_arrow_up</v-icon>
-                      <v-icon v-if="block.hide">keyboard_arrow_down</v-icon>
+                      
+                      <fa small icon="arrow-up" v-if="!block.hide" />
+                      <fa small icon="arrow-down" v-else />
+                      <!-- <v-icon  icon="keyboard_arrow_up"></v-icon>
+                      <v-icon v-if="block.hide">keyboard_arrow_down</v-icon> -->
                       <span>{{ block.description }}</span>
                     </v-toolbar-title>
                     <div class="flex-grow-1"></div>
@@ -458,7 +461,19 @@ methods: {
     .container {max-width: 1200px;}
     .container.onecol {max-width: 1200px;}
     header {margin-top: 1rem; }
-    .v-toolbar__content { background-color: #253a5d !important; }
+    .v-toolbar__content { background-color: #253a5d !important;
+      height: 30px;
+      font-family: Roboto, sans-serif;
+      font-size: 16px;
+      font-weight: 700 !important;
+      position: relative;
+      padding-top: 15px;
+      top: -20px;
+    }
+    .v-toolbar__content svg{
+      font-size: 18px !important;
+      margin-right: 20px;
+    }
     .v-list-item {min-height: 25px !important;}
     .form_header {margin-bottom: 20px;}
 </style>

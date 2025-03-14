@@ -92,11 +92,15 @@ html table.x-sm td {font-size: 8pt !important;}
 .v-selection-control__input::before {
     background-color: $primary !important;
 }
+
 /*
 .v-input__control {
     max-width: 800px !important; 
 }
 */
+// .crm_field{
+//     margin-bottom: 10px;
+// }
 @media only screen and (max-width: 1000px) {
     .form_header {margin-bottom: 20px; font-size: 1.5em;}
 }

@@ -15,7 +15,7 @@
       <!-- Полное поле с описанием -->
       <div v-else>
         <v-row no-gutters v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
-          <v-col cols="12">
+          <v-col cols="12" class="crm_field">
             <div class="description_container" v-if="f.description && !is_default_not_description(f)">
               {{ f.description }}:
             </div>

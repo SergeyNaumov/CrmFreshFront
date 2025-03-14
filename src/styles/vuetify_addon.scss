@@ -37,9 +37,38 @@ svg[x-large]{
     font-size: 12px;
     font-weight: normal;
 }
+
+// стиль label для полей (у стандартных полей)
+.v-label.v-field-label.v-field-label--floating{
+    font-size: 12px !important;
+    font-weight: bold !important;
+    //Roboto, sans-serif
+    color: $primary;
+    margin-left: 0;
+}
+
+// стиль label для полей (у нестандартных полей)
+.description_container{
+    font-family: Roboto, sans-serif;
+    color:#7b889d !important;
+}
+.v-field__field input{ // .v-field__field .v-select__selection
+    // содержимое v-text-а
+    padding-left: 10px !important;
+}
+.v-select__selection {
+    // содержимое select-а
+    position: relative !important;
+    left: -5px;
+}
 textarea.v-field__input {
     // border: 1px solid gray !important;
     resize: vertical;
+}
+// подчёркивание после поля
+.field__outline{ 
+    margin-top: 10px;
+    border-bottom: 1px solid grayscale($color: #383838);
 }
 // .v-field{
 //     margin-bottom: 20px;

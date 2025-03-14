@@ -7,5 +7,6 @@ var config={
     MessengerWS:'ws://localhost:5000/messenger/ws',
     MessengerSignal:'/messenger/sms.ogg',
     
-    TinyMCE_BaseUrl: '/dist/tinymce'
+    TinyMCE_BaseUrl: '/tinymce'
+    //'/dist/tinymce'
 }

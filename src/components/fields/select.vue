@@ -318,6 +318,7 @@ export default {
 }
 </script>
 <style scoped>
+  
   .inline {display: inline-block;}
 
   .color_box {
@@ -331,7 +332,8 @@ export default {
     height: 30px;
     display: inline-block;
     margin: 0px 10px -10px 0px;
-    
+    position: relative;
+    top: -15px;    
     border: 1px solid gray;
     display: inline-block;
   }

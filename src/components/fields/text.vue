@@ -2,8 +2,6 @@
         <div>
           <div v-if="field.before_html" v-html="field.before_html"></div>
           <template v-if="!field.hide">
-            
-
             <template v-if="field.subtype=='color'">
               <div class="color_block">
                   <div class="label">{{field.description}}</div>

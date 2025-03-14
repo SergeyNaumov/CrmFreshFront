@@ -3,7 +3,6 @@
         
         <!-- <errors :errors="errors" v-show="errors.length"></errors> -->
         <template v-if="!errors.length">
-            not errors
             <!-- файловый навигатор -->
             <v-dialog v-model="dialog" min-height="300" max-width="800">
                 <v-card class="filenavigator" style="">
@@ -66,7 +65,14 @@
              
             <div class="read_only" v-if="field.read_only" v-html="value" /> 
             <template v-else>
-                <p><a href="" @click.prevent="edit_mode=!edit_mode" v-text="edit_mode?'в режим просмотра':'в режим редактирования'"></a></p>
+                <p class="mt-2 mb-2"><a href="" @click.prevent="edit_mode=!edit_mode">
+                    <template v-if="edit_mode">
+                        <fa color="primary" icon="fa-eye" class="mr-2"/>к просмотру
+                    </template>
+                    <template v-else>
+                        <fa color="primary" icon="fa-pencil-alt" class="mr-2"/>редактировать 
+                    </template>
+                </a></p>
                 <div v-show="edit_mode">
                     <field-buttons
                         :form="form"
@@ -94,13 +100,16 @@
 
             </template>
         </template>
+        
+        <div class="field__outline"></div>
     </div>
 </template>
 <script>
 // 
 
 // npm install tinymce
-import tinymce from 'tinymce/tinymce';
+//import tinymce from 'tinymce/tinymce';
+
 import field_buttons from './frontend/buttons';
 import { field_update } from './field_functions' 
 let PickerCallBack=false;
@@ -367,7 +376,26 @@ export default {
         this.value=editor.getContent();
     },
     tinymce_init(name){
-        
+    
+        if( !window.tinymce){
+            // Динамически загружаем TinyMCE
+            console.log('loading tinymce')
+            
+            let script = document.createElement('script');
+            script.src = `${config.TinyMCE_BaseUrl}/tinymce.js`; // Путь к tinymce.js
+
+            script.onload = () => {
+                console.log('tinymce loaded! go init...:', window.tinymce)
+                script.src = `${config.TinyMCE_BaseUrl}/langs/ru.js`; // Путь к tinymce.js
+                document.head.appendChild(script);
+                setTimeout(()=>{this.tinymce_init(name)},100)
+                
+                
+            };
+            document.head.appendChild(script);
+            return;
+        }
+        let tinymce=window.tinymce;
         this.read_file_list(); // убрать
         let this_component=this;
         
@@ -396,7 +424,7 @@ export default {
             );
         }
         
-        tinymce.baseURL='/tinymce'//config.TinyMCE_BaseUrl;
+        tinymce.baseURL=config.TinyMCE_BaseUrl;
         console.log('tinymce.baseURL:',tinymce.baseURL)
         const init_instance_callback=function (editor) {
                 editor_object=editor;
@@ -427,7 +455,8 @@ export default {
             init_instance_callback: init_instance_callback,
             
             plugins: [
-                "advlist autolink autosave link image lists charmap print preview hr anchor pagebreak ", // spellchecker
+                // 
+                "advlist autolink autosave  link image lists charmap print preview hr anchor pagebreak ", // spellchecker
                 "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
                 "table  directionality emoticons template  paste  textpattern"
             ], // fullpage
