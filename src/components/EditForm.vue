@@ -63,17 +63,20 @@
                   <v-toolbar
                     color="primary"
                     dark
-                    height="35px"
+                    height="10px"
+                    
                     @click="block_toggle(block)"
                   >
-                    <v-toolbar-title>
+                      <fa  icon="arrow-up" v-if="!block.hide" />
+                      <fa  icon="arrow-down" v-else />
+                      {{ block.description }}
+                    <!-- <v-toolbar-title> -->
                       
-                      <fa small icon="arrow-up" v-if="!block.hide" />
-                      <fa small icon="arrow-down" v-else />
+                      
                       <!-- <v-icon  icon="keyboard_arrow_up"></v-icon>
                       <v-icon v-if="block.hide">keyboard_arrow_down</v-icon> -->
-                      <span>{{ block.description }}</span>
-                    </v-toolbar-title>
+                      
+                    <!-- </v-toolbar-title> -->
                     <div class="flex-grow-1"></div>
                   </v-toolbar>
 
@@ -467,8 +470,9 @@ methods: {
       font-size: 16px;
       font-weight: 700 !important;
       position: relative;
-      padding-top: 15px;
-      top: -20px;
+      padding-left: 15px;
+      padding-top:10px;
+      top: -10px;
     }
     .v-toolbar__content svg{
       font-size: 18px !important;
