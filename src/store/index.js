@@ -1,0 +1,52 @@
+// store.js или store/index.js
+import { createStore } from 'vuex'
+
+export default createStore({
+  state: {
+    // глобальное состояние
+    manager:{}, // менеджер, от которого ведётся работа
+    
+    // для EditForm
+    
+    form: {
+       id:'',
+       title:'',
+       read_only:false,
+       fields:[],
+       config:'',
+    }, 
+    values: {}, // поля формы (для edit_form)
+    // для AdminTree
+    tree:[] 
+
+    // для AdminTable
+  },
+  mutations: {
+    set_field(state,field){
+        state.fields[field.name]=field
+    },
+    set_form(state,form){
+        state.form=form
+    },
+    set_values(state,values){
+        state.values=values
+    },
+    get_field_value(state,name){
+        return state.values[name]
+    }
+  },
+  actions: {
+    // асинхронные операции
+    // async fetchUser({ commit }) {
+    //   const response = await fetch('/api/user')
+    //   const user = await response.json()
+    //   commit('setUser', user)
+    // }
+  },
+  getters: {
+    // вычисляемые свойства
+    // doubleCount(state) {
+    //   return state.count * 2
+    // }
+  }
+})

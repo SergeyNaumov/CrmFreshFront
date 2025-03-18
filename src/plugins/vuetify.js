@@ -3,6 +3,7 @@ import colors from 'vuetify/util/colors';
 import '@/styles/colors/blue2.scss'; // Импорт SCSS стилей
 
 import { createVuetify } from 'vuetify';
+import { ru } from 'vuetify/locale';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { h } from 'vue'; // Импортируем функцию h из Vue
@@ -14,14 +15,19 @@ import '@mdi/font/css/materialdesignicons.min.css';
 
 
 export default createVuetify({
+  locale: {
+    locale: 'ru', // Установите язык на русский
+    messages: { ru }, // Подключите локализацию для русского языка
+  },
   components,
   directives,
   theme: {
+    rounded: false,
     defaultTheme: 'light',
     themes: {
       light: {
         dark: false,
-        rounded:true,
+        rounded:false,
         colors: {
           primary: '#253a5d',
           lighten1: '#5C6BC0',

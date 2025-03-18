@@ -1,10 +1,13 @@
 import { createApp, computed } from 'vue';
 import App from './App.vue';
+import store from './store'
+
 import mitt from 'mitt'; // Импортируем mitt
 
 import vuetify from './plugins/vuetify'; // Импорт Vuetify из plugins/vuetify.js
+import themePlugin from './plugins/theme';
 
-import { useTheme } from 'vuetify'; // Импортируем useTheme
+// import { useTheme } from 'vuetify'; // Импортируем useTheme
 
 import { dynamic_component_loader } from './dynamic_component_loader.js'; // Ваш кастомный загрузчик компонентов
 
@@ -54,9 +57,34 @@ app.config.globalProperties.$isMobile = () => {
 
 // axios
 import axios from 'axios';
-app.config.globalProperties.$http = axios;
+//app.config.globalProperties.$http = axios;
+const apiClient = axios.create({
+  baseURL: '', // Замените на ваш API URL
+  timeout: 10000, // Таймаут запроса
+});
+apiClient.interceptors.response.use(
+  (response) => {
+    // Успешный ответ
+    return response;
+  },
+  (error) => {
+    // Обработка ошибок при получении ответа
+    if (error.response) {
+      // Сервер вернул ошибку (например, 404, 500)
+      console.error(`Ошибка ${error.response.status}:`, error.response.data);
+    } else if (error.request) {
+      // Запрос был отправлен, но ответ не получен
+      console.error('Нет ответа от сервера:', error.request);
+    } else {
+      // Произошла ошибка при настройке запроса
+      console.error('Ошибка:', error.message);
+    }
 
-
+    // Возвращаем ошибку дальше, чтобы компоненты могли её обработать
+    return Promise.reject(error);
+  }
+);
+app.config.globalProperties.$http = apiClient;
 
 // vuedraggable
 import draggable from 'vuedraggable';
@@ -98,4 +126,10 @@ app.component('GPTAssist', GPTAssist);
 
 //app.component('font-awesome-icon', FontAwesomeIcon);
 // Подключение Vuetify и монтирование приложения
-app.use(vuetify).mount('#app');
+window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
+app.use(vuetify);
+app.use(themePlugin); // Подключаем плагин $theme
+
+app.use(store)
+
+app.mount('#app');

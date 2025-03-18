@@ -249,9 +249,6 @@ export function calc_values(self){
     let block=false;
     
     for(let f of self.form.fields){ 
-      /*if(f.not_process){
-        delete values[f.name]; continue;
-      }*/
       
       if(f.error)
         block=true;
@@ -274,6 +271,9 @@ export function calc_values(self){
     }
     
     self.disabled_form=block;
-    self.values=values;
+    //self.values=values;
+    console.log('CALC_VALUES:',values)
+    self.$store.commit('set_values', values);
+
     self.init_color_selects();
 }

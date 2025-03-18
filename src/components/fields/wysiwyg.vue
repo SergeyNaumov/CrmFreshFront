@@ -1,6 +1,5 @@
 <template>      
     <div>
-        
         <!-- <errors :errors="errors" v-show="errors.length"></errors> -->
         <template v-if="!errors.length">
             <!-- файловый навигатор -->
@@ -136,7 +135,6 @@ export default {
             
             inited:false,
             edit_mode:false,
-            value:'',
             dialog:false, // debug
             create_folder_form: false,
             new_folder_name: '',
@@ -184,7 +182,8 @@ export default {
   },
   created(){
 
-    this.value=this.field.value;
+    
+    //this.field.value;
     
     this.read_file_list() // debug
     
@@ -210,7 +209,10 @@ export default {
   },
  
   computed:{
-
+    value(){
+        // если не parent
+        return this.$store.state.values[this.field.name]
+    }
       
   },
   methods: {

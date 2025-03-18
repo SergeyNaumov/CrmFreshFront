@@ -1,5 +1,6 @@
 <template>
     <div>
+        {{ value }}
         <template v-if="field.filter_type && field.filter_type=='checkbox'">
             <v-checkbox 
                 v-model="value"
@@ -79,8 +80,12 @@ export default {
             //v=false
             
         }
+        if(typeof(v)!='object'){
+            v=v?[v]:[]           
+        }
 
-        if(typeof(v)=='string') v=[v]
+
+            
         
         this.value=v;
         

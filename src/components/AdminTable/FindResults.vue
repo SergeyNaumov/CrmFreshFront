@@ -197,11 +197,11 @@
                                 
                                 <v-btn size="30" v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
                                   <a :href="edit_link(tr)" @click.prevent="go_to_edit(tr.key)">
-                                    <fa size="14" color="primary" icon="fa-pencil" />
+                                    <fa size="sm" color="primary" icon="fa-pencil" />
                                   </a>
                                 </v-btn>&nbsp;
                                 <v-btn   size="30"  v-if="permissions.make_delete" @click="delete_dialog(tr.key)">
-                                  <fa size="14" color="primary" medium icon="trash"/>
+                                  <fa size="sm" color="primary" medium icon="trash"/>
                                 </v-btn>
                                 
                               </td>

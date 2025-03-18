@@ -108,6 +108,15 @@
   </div>
 </template>
 <script>
+const formatDate= date=>{
+  if (!date) return ''; // Если дата не определена, возвращаем пустую строку
+
+  const day = String(date.getDate()).padStart(2, '0'); // День (с ведущим нулём)
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяц (с ведущим нулём, +1 потому что месяцы начинаются с 0)
+  const year = date.getFullYear(); // Год
+
+  return `${day}.${month}.${year}`; // Формат dd.mm.yyyy
+}
 export default {
     props:["field",'filter_change'],
     mounted(){
@@ -128,9 +137,11 @@ export default {
         //     return ''
         // },
         err_select(){
-            if(this.dat_value0 && this.dat_value1){
+            let t=this
 
-                if(this.dat_value0.split(/-/).join('')>this.dat_value1.split(/-/).join('')){
+            if(t.dat_value0 && t.dat_value1){
+                //if(t.dat_value0.split(/-/).join('')>t.dat_value1.split(/-/).join('')){
+                if(t.dat_value0>t.dat_value1){
                     return true;
                 }
             }
@@ -174,8 +185,14 @@ export default {
                 filter.value=filter.value_low
             }
             this.filter_change(filter)
-            //console.log('v0:',this.dat_value0)
-            this.show_dat_value0=this.dat_value0.split('-').reverse().join('.')
+            if(this.dat_value0){
+              
+              this.show_dat_value0=formatDate(this.dat_value0) //this.dat_value0.split('-').reverse().join('.')
+            }
+            else{
+              this.show_dat_value0=''
+            }
+            
         },
         dat_value1(){
             let filter=this.field;
@@ -188,7 +205,13 @@ export default {
             }
             
             this.filter_change(filter)
-            this.show_dat_value1=this.dat_value1.split('-').reverse().join('.')
+            if(this.dat_value1){
+              this.show_dat_value1=formatDate(this.dat_value1) //this.dat_value1.split('-').reverse().join('.')
+            }
+            else{
+              this.show_dat_value1=''
+            }
+            
         },
     },
     methods:{
@@ -200,20 +223,20 @@ export default {
             }
             
             if(!f.value.length){
-                this.dat_value0='', this.dat_value1=''
+                this.dat_value0=null, this.dat_value1=null
             }
             if(typeof(f.value) == 'object'){ // this.range
                 if(f.value.length>0){
-                    this.dat_value0=f.value[0]
+                    this.dat_value0=f.value[0] || null
                 }
                 if(f.value.length>1){
-                    this.dat_value1=f.value[1]
+                    this.dat_value1=f.value[1] || null
                 }                
             }
             else{
-                this.dat_value0=f.value
+                this.dat_value0=f.value || null
             }
-            console.log(`this.dat_value0: ${this.dat_value0} this.dat_value1: ${this.dat_value0}`)
+            //console.log(`this.dat_value0: ${this.dat_value0} this.dat_value1: ${this.dat_value0}`)
 
         }
       },
@@ -222,10 +245,10 @@ export default {
         this.menu[idx] = false;
         this.set_need_empty();
         if(idx==0){
-            this.field.value_low=this.dat_value0;
+            this.field.value_low=this.dat_value0 || null;
         }
         else{
-            this.field.value_hi=this.dat_value1;
+            this.field.value_hi=this.dat_value1 || null;
         }
         let values=[]; 
         

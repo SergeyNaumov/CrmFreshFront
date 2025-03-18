@@ -31,7 +31,7 @@
     <v-row v-else>
       <!-- Фильтры и кнопки -->
       <v-col cols="12" lg="12" class="mt-2 mb-2">
-        <v-btn v-if="false" @click="SHOW_FILTERS = !SHOW_FILTERS" size="small">
+        <v-btn v-if="false" @click="SHOW_FILTERS = !SHOW_FILTERS" size="sm">
           <v-icon color="primary">mdi-filter</v-icon>
         </v-btn>
 
@@ -62,7 +62,7 @@
       <!-- Кнопка "Искать" (вверху) -->
       <template v-if="show_find_button_top">
         <v-col cols="12" lg="12" v-show="on_filters && on_filters.length">
-          <v-btn color="primary" size="small" @click.prevent="go_search(1)" id="search_results">
+          <v-btn color="primary" size="sm" @click.prevent="go_search(1)" id="search_results">
             <v-icon>mdi-magnify</v-icon>&nbsp;искать
           </v-btn>
         </v-col>
@@ -72,7 +72,7 @@
       <v-col cols="12" sm="12" md="4" lg="4" class="mb-2 filters" v-show="SHOW_FILTERS">
        <v-toolbar >
           <a href="#" @click="SHOW_FILTERS_all=!SHOW_FILTERS_all">
-            <fa size="16" class="ml-4 mr-5" icon="fa-bars" set="fa"></fa>
+            <fa size="sm" class="ml-4 mr-5" icon="fa-bars" set="fa"></fa>
           </a>
 
           <div class="text-subtitle-1 pl-2">Фильтры</div>
@@ -126,7 +126,7 @@
       <!-- Кнопка "Искать" (внизу) -->
       <template v-if="!show_find_button_top">
         <v-col cols="12" lg="12" v-show="on_filters && on_filters.length">
-          <v-btn color="primary" size="small" @click.prevent="go_search(1)" id="search_results">
+          <v-btn color="primary" size="sm" @click.prevent="go_search(1)" id="search_results">
             <v-icon>mdi-magnify</v-icon>&nbsp;искать
           </v-btn>
         </v-col>

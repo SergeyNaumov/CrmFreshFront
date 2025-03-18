@@ -1,5 +1,6 @@
 <template>
   <v-app id="EditForm">
+    
     <!-- Диалоговое окно для попапов -->
     <v-dialog v-model="popup.show" max-width="500">
       <v-card>
@@ -9,8 +10,8 @@
     </v-dialog>
 
     <div :class="form.wide_form ? 'container_fluid' : 'container'">
-      <pre v-if="0">{{ values }}</pre>
-
+      <pre v-if="1">{{ values }}</pre>
+      
       <!-- Критическая ошибка -->
       <v-card v-if="fatal_errors.length">
         <v-card-title class="headline">Критическая ошибка</v-card-title>
@@ -194,15 +195,15 @@ data:function(){
     fatal_errors:[],
     tabs:[],
     tab:null,
-    form:{
-      id:'',
-      title:'',
-      read_only:false,
-      fields:[],
-      config:'',
-    },
+    // form:{
+    //   id:'',
+    //   title:'',
+    //   read_only:false,
+    //   fields:[],
+    //   config:'',
+    // },
     cols:[],
-    values:{},
+    //values:{},
     valid: false,
     dialog_body:'',
     dialog_header:'',
@@ -213,6 +214,12 @@ data:function(){
   }
 },
 computed:{
+  form(){
+    return this.$store.state.form
+  },
+  values(){
+    return this.$store.state.values
+  },
   width(){
     if(this.form.width){
       return  this.form.width
@@ -300,7 +307,11 @@ methods: {
                             for(let f of data.fields)
                               if(!('hide' in f))
                                 f.hide=false
-                            this.form=data;
+                            
+                            // form->vuex
+                            this.$store.commit('set_form', data);
+
+
                             this.form.read_only=parseInt(this.form.read_only);
                             calc_values(this);
                             

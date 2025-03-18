@@ -1,6 +1,6 @@
 <template>
   <div class="block">
-    <div v-for="f in fields_for_block" :key="f.name + '_1'" class="field">
+    <div v-for="(f,idx) in fields_for_block" :key="'f'+idx" class="field">
       <!-- Только поле без лишнего (для миниатюрных полей) -->
       <template v-if="is_only_field(f)">
         <template v-if="f.before_html" v-html="f.before_html"></template>
@@ -14,8 +14,10 @@
 
       <!-- Полное поле с описанием -->
       <div v-else>
-        <v-row no-gutters v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
+        
+        <v-row class="ma-0" v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
           <v-col cols="12" class="crm_field">
+            
             <div class="description_container" v-if="f.description && !is_default_not_description(f)">
               {{ f.description }}:
             </div>
@@ -31,7 +33,8 @@
         </v-row>
 
         <!-- Поле с разделением на описание и значение -->
-        <v-row no-gutters v-else>
+        <v-row class="ma-0" v-else>
+          
           <v-col cols="12" md="2">
             {{ f.description }}:
           </v-col>
@@ -195,5 +198,6 @@ import FieldPassword from '../fields/password';
   }
   .field_container {padding-left: 0; padding-right: 2rem;}
   div {line-height: 20px;}
-  header.v-toolbar {background-color: $primary !important;}
+  /*header.v-toolbar {background-color: $primary !important;}*/
+  header.v-toolbar { background-color: var(--v-primary-base) !important; }
 </style>

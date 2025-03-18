@@ -1,3 +1,23 @@
+export const formatDate= date=>{
+  if (!date) return ''; // Если дата не определена, возвращаем пустую строку
+
+  const day = String(date.getDate()).padStart(2, '0'); // День (с ведущим нулём)
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяц (с ведущим нулём, +1 потому что месяцы начинаются с 0)
+  const year = date.getFullYear(); // Год
+
+  return `${day}.${month}.${year}`; // Формат dd.mm.yyyy
+}
+
+export const formatDateYMD= date=>{
+  if (!date) return ''; // Если дата не определена, возвращаем пустую строку
+
+  const day = String(date.getDate()).padStart(2, '0'); // День (с ведущим нулём)
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяц (с ведущим нулём, +1 потому что месяцы начинаются с 0)
+  const year = date.getFullYear(); // Год
+
+  return `${year}-${month}-${day}`; // Формат dd.mm.yyyy
+}
+
 export function field_update(new_data, self){
     if(self.value !== new_data.value)
       self.value=new_data.value
@@ -8,7 +28,7 @@ export function field_update(new_data, self){
     //     ()=>{self.error_message=new_data.error_message}
     //   );
     // }
-    //let field=window.EditForm.get_field_by_name(self.field.name) // дёргаем field прямо из формы
+    let field=window.EditForm.get_field_by_name(self.field.name) // дёргаем field прямо из формы
 
     // if('warning_message' in new_data){
     //   self.$nextTick(
@@ -22,12 +42,12 @@ export function field_update(new_data, self){
     if( field_attributes.some(key => key in new_data) ){
       self.$nextTick(
         ()=>{
-          for(let a of ['after_html','before_html','description']){
+          for(let a of ['after_html','before_html','description','value']){
               self[a]=new_data[a] || ''
-              // if(field){
-              //   field[a]=new_data[a] || ''
-              //   console.log(`set field ${field.name} => ${new_data[a]}`)
-              // }
+              if(field){
+                field[a]=new_data[a] || ''
+                 console.log(`set field ${field.name} => ${new_data[a]}`)
+              }
           }
 
         }
