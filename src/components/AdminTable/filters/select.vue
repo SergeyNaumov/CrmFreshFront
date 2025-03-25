@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{ value }}
         <template v-if="field.filter_type && field.filter_type=='checkbox'">
             <v-checkbox 
                 v-model="value"

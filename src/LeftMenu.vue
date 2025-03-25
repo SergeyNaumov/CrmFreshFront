@@ -47,14 +47,8 @@ export default{
             
             let item=e.state
             if(item){
-              //console.log('popstate:',e.state)
-              //this.setMenuItem(item,)
               this.go_link(item,true)
             }
-
-            //s.setMenuItem(item)
-            
-            //console.log('EventListener: ', location.pathname+location.search)
             this.go_link(item,true)
             //go(location.pathname+location.search);
       })
@@ -72,7 +66,9 @@ export default{
             )
         },
         go_link:function(item, not_push_state=false){
-
+            if(!item){
+              return;
+            }
             if(document.body.clientWidth<800)
                this.setDriwer(false);
             console.log('BEFORE:',item)

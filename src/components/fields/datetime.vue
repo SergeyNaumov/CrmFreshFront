@@ -1,16 +1,13 @@
 <template>
     <div>
         <div class="read_only" v-if="field.read_only">
-            <v-text-field 
-              :label="field.description"
-              disabled
-              v-model="value"
-              :rounded="$theme.rounded"
-              hide-details
-            />
+          <div style="margin-left: 14px;">
+          <div class="description_container" v-html="field.description+':'"></div>
+            {{ value_show }}
+          </div>
         </div>
         <template v-else>
-            <div>
+            <div style="position: relative;">
                         <v-menu
                             v-model="menu_date"
                             :close-on-content-click="false"
@@ -18,23 +15,22 @@
                             transition="scale-transition"
                             offset-y
                             
-                            readonly
-                            max-width="350px"
+                            
+                            
                         >
                         
-                            <template v-slot:activator="{ on }">
-                            <v-text-field
-                                v-model="date_show"
-                                label="Дата: ДД.ММ.ГГГГ"
-                                prepend-icon="event"
-                                readonly
-                                v-on="on"
-                                class="inline"
-                                style="max-width: 190px;"
-                            />
+                            <template v-slot:activator="{ props }">
+                              <v-text-field
+                                  v-model="date_show"
+                                  label="Дата: ДД.ММ.ГГГГ"
+                                  prepend-icon="mdi-calendar"
+                                  v-bind="props"
+                                  :rounded="$theme.rounded"
+                                  hide-details
+                              />
                             </template>
                             
-                            <v-date-picker :first-day-of-week="1"  locale="ru-Ru" v-model="date" @input="set_value(); menu_date=false"/>
+                            <v-date-picker :first-day-of-week="1"  locale="ru-Ru" v-model="date" /> <!-- @input="set_value(); menu_date=false" -->
                             
                         </v-menu>
                         
@@ -45,27 +41,9 @@
                                 @change="fix_time"
                                 @keyup="fix_time"
                                 style="max-width: 180px"
-                            ></v-text-field>
+                        />
                 
-                        <!--
-                        <v-menu
-                            v-model="menu_time"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
 
-                            readonly
-                            min-width="290px"
-                        >
-
-                        
-                            <template v-slot:activator="{ on }">
-                            </template>
-                            <v-time-picker format="24hr" v-model="time" @input="select_cal_time()" />
-                            
-                        </v-menu>
-                        -->
 
                         
             </div>
@@ -80,61 +58,29 @@
 </template>
 <script>
 //import { bus } from '../../main'
-import { field_update } from './field_functions'
-
+//import { field_update } from './field_functions'
+//import { of } from 'core-js/core/array'
+import { formatDateYMD, getValueByField, setValueByField } from './field_functions'
 export default {
     props:['form','field','refresh','parent'], // ,'calc_values'
     created(){
-      this.field.value=this.field.value.replace(/^(\d{2})\.(\d{2})\.(\d{4})/,'$3-$2-$1').replace(/\s\s+/,' ').replace(/({\d2}:\d{2})(:\d{2})?/,'$1')
-      if(!/[1-9]/.test(this.field.value)){
-        this.value=''
-      }
-      this.old_value=this.field.value
-      
-      this._field_update=(new_data)=>{field_update(new_data,this)};
-
-      if(!this.parent){
-        this.$bus.on('field-update:'+this.field.name,this._field_update )
-      }
-
-      if(this.field.value){
-        if(this.field.read_only){
-          if(this.field.value)
-            this.value=this.field.value
-          else
-            this.value='не указано'
+      let t=this, v=t.$store.state.values[t.field.name]
+      if(v){
+        let [date, time]=v.split(' ')
+        if(date){
+          t.date=new Date(date)
         }
-        else{
-          let arr=this.field.value.replace(/\s\s+/g,' ').split(' ')
-          
-          if(arr.length==2){
-            this.date=arr[0];
-            this.time=arr[1];
-
-            
-            this.value=this.field.value;
-            
-            
-          }
+        if(time){
+          t.time=time
+          t.fix_time()
         }
-        
-      }
-      else{
-        this.date='', this.time='', this.value='';
-      }
-      this.fix_time()
-      this.set_need_empty()
-    },
-    beforeDestroy(){
-      if(!this.parent){
-        this.$bus.off('field-update:'+this.field.name,this._field_update)
       }
     },
     data:function(){
         return {
             old_value:'',
             value:'',
-            date: '',
+            date: null,
             time: '',
             show_calendar: false,
             menu_date: false,
@@ -145,19 +91,47 @@ export default {
     },
     computed:{
       date_show(){
-        if(this.date)
-          return this.date.split('-').reverse().join('.')
-        return ''
+          let v=getValueByField(this, this.field)
+
+          if(v){
+            let [date,time]=v.split(' ')
+            return date.split('-').reverse().join('.')
+          }
+      },
+
+      value_show(){
+        let v = this.$store.state.values[this.field.name]
+        
+        if(v){
+          let [date,time]=v.split(' ')
+          date=date.split('-').reverse().join('.')
+          if(time){
+            this.time=time
+          }
+          return `${date} ${time}`
+        }
+        else{
+          return '-'
+        }
       }
     },
     watch:{
-      
+      date(v){
+        this.menu_date=false
+        if(v){
+          this.set_value()
+        }
+      },
+      // time(){
+
+      // }
+
     },
     methods:{
-      fix_time(){
-        if(!/[1-9]/.test(this.date)){
-          this.date='', this.time=''
-        }
+      fix_time(){ // исправлено время 
+        // if(!/[1-9]/.test(this.date)){
+        //   this.date=null, this.time=''
+        // }
         let time=this.time
         // '22:5332222'.replace(/[^\d]/g,'').replace(/^(\d{1,4}).*$/,'$1').replace(/^(\d{2})(.*)$/,'$1:$2')
         time=time.replace(/[^\d]/g,'').replace(/^(\d{1,4}).*$/,'$1').replace(/^(\d{2})(.*)$/,'$1:$2')
@@ -167,22 +141,16 @@ export default {
       },
       set_value(){
         this.set_need_empty();
+        let t=this
         
-        this.value=this.date+' '+this.time;
-        let field=this.field;
-        field.value=this.value
-        //console.log(`"${this.old_value}" => "${this.value}"`)
-        if(this.value != this.old_value && !(!/[1-9]/.test(this.value) && !/[1-9]/.test(this.old_value)) ){
-            
-            if(this.parent){
-              this.parent(this.value)
-            }
-            else{
-              this.$bus.emit('change_field', field);
-            }
-            this.old_value=this.value
+        if(t.date && t.time){
+          let new_value=`${formatDateYMD(t.date)} ${t.time}`
+          if(new_value !=t.old_value){
+            setValueByField(t,t.field,new_value)
+          }
+          
         }
-        //bus.$emit('change_field', field)
+        
       },
       select_cal_date(){
         this.menu_date = false;
@@ -202,7 +170,7 @@ export default {
         
         if(this.field.not_clear)
           return false;
-        this.need_empty=this.field.value?true:false
+        this.need_empty=(this.date && this.time)?true:false
       },
       set_now(){
         let d=new Date();
@@ -210,7 +178,7 @@ export default {
         for( let id in values ) {
           values[ id ] = values[ id ].toString().replace( /^([0-9])$/, '0$1' );
         }
-        this.date=d.getFullYear()+'-'+values[ 1 ]+'-'+values[ 0 ];
+        this.date=d;
         this.time=values[2]+':'+values[3]+':'+values[4]
         if(!this.field.not_clear)
           this.need_empty=true
@@ -224,7 +192,5 @@ export default {
   .clear {position: relative; top: -1.5rem;}
   .v-date-picker-title__date {font-size: 16px;}
   .read_only {margin-top: 10px;}
-  .v-input {display: inline-flex;}
-  /*.inline {display: inline-block;}
-  .inline div {display: block;}*/
+
 </style>

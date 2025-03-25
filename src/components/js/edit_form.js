@@ -71,7 +71,7 @@ export function change_field(self,field,not_frontend_process){
     
     self.$bus.emit('field-update:'+field.name,field);
     
-    calc_values(self);
+    //calc_values(self);
     if(!not_frontend_process)
       frontend_process(self,field);
 };
@@ -244,8 +244,8 @@ export  function get_params(self){ // получаем параметры из u
     }
 }
 
-export function calc_values(self){
-    let values={};
+export function save_values_to_store(self){
+    let values={}, fields={};
     let block=false;
     
     for(let f of self.form.fields){ 
@@ -261,19 +261,23 @@ export function calc_values(self){
         } 
       }
       
-      if( f.type!='file'){
+      if( !['file', 'memo','1_to_m','multiconnect','docpack','filter_extend_text'].includes(f.type) ){
         let v=f.value;
         if(v === undefined) v='';
         if(f.type=='checkbox' || f.type=='switch') v=v?1:0;
         
         values[f.name]=v;
+        f.value=v
+        fields[f.name]=f
       }
+      
     }
     
     self.disabled_form=block;
     //self.values=values;
-    console.log('CALC_VALUES:',values)
+
     self.$store.commit('set_values', values);
+    self.$store.commit('set_fields', fields);
 
     self.init_color_selects();
 }

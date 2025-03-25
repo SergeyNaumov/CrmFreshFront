@@ -26,6 +26,36 @@ h1 {font-size: 1.8em;}
 h2 {font-size: 1.4em;}
 .form_header {margin-bottom: 20px;}
 
+// Для нормального отображения datapicker-а
+.v-picker {
+    width: auto !important;
+    max-width: 350px !important; /* Установите нужную ширину */
+    height: auto;
+}
+.v-date-picker-month__day button.text-primary{
+    // если цвета календаря primary, то чтобы текущий день не был $primary на $primary
+    color: #fff !important;
+}
+.v-date-picker-months{
+    height: 600px !important;
+}
+
+// размеры шрифта в полях
+.v-field__input .v-autocomplete__selection-text, .v-field__field input[type=text], .v-input__control textarea, .v-field__input input[type=text]{
+    font-size: 12px !important;
+}
+
+.v-field__field .v-field-label{ // placeholder
+    font-size: 12px;
+}
+.v-select__selection-text {
+    font-size: 12px;
+}
+
+.v-list-item-title {
+    font-size: 12px !important; /* Размер шрифта для пунктов списка */
+  }
+
 table.tbl1 {
     border-collapse: collapse;
     width: 100%;
@@ -34,11 +64,11 @@ input.inp[type=text], select.inp {
     border: 1px solid gray;
     height: calc(2.25rem + 2px);
 }
-select.inp {
-    -webkit-appearance: auto;
-    -moz-appearance: auto;
+// select.inp {
+//     -webkit-appearance: auto;
+//     -moz-appearance: auto;
 
-}
+// }
 button.inp {
     border: 1px solid gray;
     background-color: rgb(239, 239, 239);

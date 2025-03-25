@@ -1,8 +1,8 @@
 <template>
         <div>
-          <div v-if="field.before_html" v-html="field.before_html"></div>
-          <template v-if="!field.hide">
-            <template v-if="field.subtype=='color'">
+          <div v-if="source_field.before_html" v-html="source_field.before_html"></div>
+          <template v-if="!source_field.hide">
+            <template v-if="source_field.subtype=='color'">
               <div class="color_block">
                   <div class="label">{{field.description}}</div>
 
@@ -27,28 +27,29 @@
                 
                 <v-select
                   v-model="current_prefix"
-                  :items="field.prefix_list"
-                  :label="field.prefix_list_header"
+                  :items="source_field.prefix_list"
+                  :label="source_field.prefix_list_header"
                   @input="select_prefix"
                   hide-details
                   :rounded="$theme.rounded"
                 />
               </template>
-              <template v-if="!(field.subtype && field.show_only_subtype)">
+              <template v-if="!(source_field.subtype && source_field.show_only_subtype)">
                   <v-text-field
-                    v-if="field.type=='text' && !field.hide_field"
-                    :label="field.description"
+                    v-if="field.type=='text' && !source_field.hide_field"
+                    :label="source_field.description"
                     v-model="value"
-                    :hint="field.add_description" :placeholder="field.placeholder"
-                    :disabled="!!field.read_only"
+                    :hint="source_field.add_description" :placeholder="source_field.placeholder"
+                    :disabled="!!source_field.read_only"
                     @input="input"
                     @keyup="input"
-                    :clearable="!field.read_only"
+                    :clearable="!source_field.read_only"
                     :style="field.style"
-                    :error-messages="error_message"
+                    :error-messages="source_field.error_message"
                     :rounded="$theme.rounded"
                     hide-details
                     :id="field.name"
+                    v-on:input="$emit('input', $event)"
                   />
                   <div class="popup_list" v-if="show_popup_list">
                     <div class="close"><a href="" @click.prevent="show_popup_list=false">закрыть</a></div>
@@ -76,15 +77,15 @@
                 </template>
                 <div class="add_description" v-if="field.add_description">{{field.add_description}}</div>
                 <div
-                  class="err" v-if="error_message" v-html="error_message"
+                  class="err" v-if="source_field.error_message" v-html="source_field.error_message"
                 />
                 <div
-                  class="err" v-if="warning_message" v-html="warning_message"
+                  class="err" v-if="source_field.warning_message" v-html="source_field.warning_message"
                 />
             </template>
-            <qr_call v-if="field.subtype=='qr_call'" :value="field.value" :field="field"/>
+            <qr_call v-if="field.subtype=='qr_call'" :value="value" :field="source_field"/>
 
-            <div v-if="after_html" v-html="after_html"></div>
+            <div v-if="source_field.after_html" v-html="source_field.after_html"></div>
           </template>
       </div>
 </template>
@@ -95,33 +96,16 @@
 
 
   // end
-  import { field_update,check_fld } from './field_functions'
+  import { field_update, getValueByField, setValueByField } from './field_functions'
   //import QRCode from '../../js/qrcode.min.js'
   import qr_call from './text_subtypes/qr_call';
   
   export default {
   components:{ qr_call },
   created(){
-    //Vue.component('qr_call', ()=> import('./components/fields/text_subtypes/qr_call.vue'));
-    this._field_update=(new_data)=>{
-      //field_update(new_data,this)
-    };
-
-    if(!this.parent){
-      
-      this.$bus.on('field-update:'+this.field.name,this._field_update )
-    }
-    // 
-    this.value=this.field.value;
-    //check_fld(this);
-
-  },
-  beforeDestroy(){
-    if(!this.parent){
-       this.$bus.off('field-update:'+this.field.name,this._field_update)
-    }
-  },
-    
+    let t=this
+    t.value=getValueByField(t)
+  },   
   data:function(){
     return {
       value:'',
@@ -135,26 +119,19 @@
       show_color_picker:false
     }
   },
-  props:['form','field','parent','refresh'],
+  props:['form','field','parent'],
   watch:{
-    field(f){
-      if(f.value!=this.value)
-        this.value=f.value
-    },
-    refresh(){ 
-      this.value=this.field.value;  
-      this.error=this.field.error
-      this.warning_message=this.field.warning_message
-      this.after_html=this.field.after_html
-      this.error_message=this.field.error_message
-    },
-    value(){
-      this.field.value=this.value
-      this.field.from='field-text component (text.vue)'
-      if(!this.parent){
-        this.$bus.emit('change_field',this.field);
+    refresh(r){
+      let nv=getValueByField(this)
+      if(nv!=this.value){
+        this.value=nv 
       }
-      
+    },
+    value(nv){
+      let t=this, ov=getValueByField(t)
+      if(nv != ov){
+        setValueByField(t, t.field, nv)
+      }
     }
   },
   mounted(){
@@ -162,6 +139,18 @@
     //check_fld(this);
   },
   computed:{
+    refresh(){
+      return this.$store.state.refresh
+    },
+    source_field(){
+      let t=this, f=t.field
+      if(f.parent){
+        return 'parent'
+      }
+      return t.$store.state.fields[f.name]
+      
+      
+    },
     show_city_for_address(){
       if('prefix_list' in this.field){
         if(!this.value){
@@ -186,7 +175,7 @@
           this.show_popup_list=false
         },
         input(){
-          check_fld(this);
+          //check_fld(this);
           
           let f=this.field;
           if(f.subtype=='kladr'){

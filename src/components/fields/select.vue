@@ -127,19 +127,11 @@
 </template>
 
 <script>
-import { field_update,check_fld } from './field_functions'
+import { getValueByField, setValueByField } from './field_functions'
 export default {
   
   data:function(){
     return {
-
-        _value: "0", // Начальное значение
-        _values: [
-          { v: "0", d: "выберите значение" },
-          { v: "447", d: "HR" },
-          { v: "452", d: "IT" },
-        ],
-
       value:'0',
       values:[],
       regexp_rules:[],
@@ -152,32 +144,25 @@ export default {
   },
   props:['form','field','parent','name_parent_field','refresh'],
   watch:{
-        value(){
-          this.field.value=this.value
-          // этот костыль нужен для того, чтобы можно было поменять значение извне
+        value(nv){
+          let t=this, ov=getValueByField(t)
+          
 
-          check_fld(this);
-          // this.display=false
-          setTimeout(
-            ()=>{
-              
-                  let s = this.get_search_from_values()
-                  if(s){
-                    this.search=s 
-                  }                
-              
-            },200
-          )
-          if(this.parent){
-            this.parent(this.field)
+          if(ov!=nv){
+            setValueByField(t,t.field,nv)
+            setTimeout(
+              ()=>{
+                
+                    let s = this.get_search_from_values()
+                    if(s){
+                      this.search=s 
+                    }                
+                
+              },200
+            )
           }
-          else{
-            this.$bus.emit('change_field',this.field);
-          }          
         },
-        refresh(){ 
-            this.value=this.field.value+'';  
-        },
+
         search(v){
           if(v && v.length>2){
             this.load_autocomplete(v)
@@ -191,19 +176,8 @@ export default {
 
   created(){
     let t=this
-    t._field_update=(new_data)=>{
-      field_update(new_data,t)
-    };
-
-    if(!t.parent){
-      
-      this.$bus.on(`field-update:${t.field.name}`,t._field_update )
-    }
-    else{
-      console.log('parent:',parent)
-    }
-
-    t.value=t.field.value?t.field.value.toString():'';
+    let v=getValueByField(t)
+    t.value=v?v.toString():'';
 
     t.values=t.field.values;
     if(t.values && t.values.length==1 && Array.isArray(t.values[0])){
@@ -214,7 +188,7 @@ export default {
       v.v=v.v.toString()
     }
     //this.change_field();
-    check_fld(t);
+    //check_fld(t);
   },
   mounted(){
     

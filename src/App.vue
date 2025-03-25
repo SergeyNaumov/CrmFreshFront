@@ -34,17 +34,16 @@
           />
         </v-navigation-drawer>
 
-        <v-app-bar app>
+        <v-app-bar app class="mainapp">
+          
           <v-app-bar-nav-icon  @click="drawer = !drawer">
-            <fa color="white" size="14" icon="fa-bars"/>
+            <fa color="white" size="sm" icon="fa-bars"/>
           </v-app-bar-nav-icon>
-          <div class="app_title">
-            <fa  color="white" size="14" icon="fa-home"/>&nbsp;
+          <div class="app_title" >
+            <fa  color="white" icon="fa-home"/>&nbsp;
             <div style="position: relative; top: 3px; display: inline-block;"><a href="/" style="color: #fff;">{{ title }}</a></div>
           </div>
-          <v-app-bar-title>
 
-          </v-app-bar-title>
 
           <Messenger :config="app_components.navigator" :manager="manager" />
         </v-app-bar>
@@ -307,6 +306,10 @@ export default {
   }
   .v-application .error {background-color: white !important;}
   $color-pack: false;
+
+  .mainapp .v-toolbar__content {
+    background-color: $primary;
+  }
   /* настройка полосы прокрутки */
   ::-webkit-scrollbar {
       width: 8px;

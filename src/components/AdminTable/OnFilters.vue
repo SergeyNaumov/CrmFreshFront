@@ -16,7 +16,6 @@
     <form @submit.prevent="go_search(1)" autocomplete="new-password" v-if="SHOW_FILTERS_on">
       <draggable
         :list="filter_list"
-        
         handle=".drag_area"
         itemKey="name" 
       > <!-- v-model="filter_list"-->

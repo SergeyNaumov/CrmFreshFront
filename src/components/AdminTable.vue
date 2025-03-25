@@ -4,12 +4,13 @@
     <h1>{{ title }}</h1>
     <!-- Кнопка "Добавить" -->
     <div v-if="permissions.make_create">
-      <v-icon color="primary" class="mb-1">fa-plus</v-icon>&nbsp;
+      <v-icon color="primary" size="30" class="mb-1">mdi-plus</v-icon>
+       <!-- <fa icon="fa-plus" big class="mr-1"/> -->
       <a href="" @click.prevent="new_card()">Добавить</a>
     </div>
 
     <!-- Плагины поиска -->
-    <p v-if="0"><a href="">Загрузка / сохранение фильтров</a></p>
+    <p><a href="">Загрузка / сохранение фильтров</a></p>
     <div v-if="search_plugin" class="search_plugin">
       <div v-for="(sp, idx) in search_plugin" :key="'sp' + idx">
         <v-icon color="primary">{{ sp.icon }}</v-icon>
@@ -38,14 +39,14 @@
         <v-col cols="12" lg="12" class="mt-2 mb-2">
           <template v-if="true">
             <!-- Ссылки -->
-            <div class="links" v-if="true">
+            <div class="links" v-if="search_links.length">
               <div v-for="l in search_links" :key="l.link">
                 <a :href="l.link" :target="l.target">{{ l.description }}</a>
               </div>
             </div>
 
             <!-- Логи -->
-            <div class="log" v-if="log">
+            <div class="log" v-if="log.length">
               <pre v-if="typeof log === 'string'">{{ log }}</pre>
               <pre v-else v-for="(l, i) in log" :key="'log' + i">{{ l }}</pre>
             </div>
@@ -70,6 +71,7 @@
 
       <!-- Блок фильтров -->
       <v-col cols="12" sm="12" md="4" lg="4" class="mb-2 filters" v-show="SHOW_FILTERS">
+       <v-card>
        <v-toolbar >
           <a href="#" @click="SHOW_FILTERS_all=!SHOW_FILTERS_all">
             <fa size="sm" class="ml-4 mr-5" icon="fa-bars" set="fa"></fa>
@@ -77,6 +79,7 @@
 
           <div class="text-subtitle-1 pl-2">Фильтры</div>
         </v-toolbar>
+        </v-card>
 
         <div v-if="SHOW_FILTERS_all && filters_groups.length">
           <div v-for="(fg, idx) in filters_groups" class="filters_groups" :key="fg.description">
@@ -126,7 +129,7 @@
       <!-- Кнопка "Искать" (внизу) -->
       <template v-if="!show_find_button_top">
         <v-col cols="12" lg="12" v-show="on_filters && on_filters.length">
-          <v-btn color="primary" size="sm" @click.prevent="go_search(1)" id="search_results">
+          <v-btn color="primary" small @click.prevent="go_search(1)" id="search_results">
             <v-icon>mdi-magnify</v-icon>&nbsp;искать
           </v-btn>
         </v-col>
@@ -602,6 +605,11 @@ export default {
   .is_headapp h1 {margin-bottom: 20px;;} 
   div.errors {margin: 3rem;}
   div.errors .error {background-color: #ffffff !important;  color: red;}
+  .v-label--clickable {
+    // размеры названий чекбоксов в списке фильтров
+    font-size: 12px !important;
+    padding-left: 5px;
+  }
   .filters_groups{
     padding-top: 1rem;
     padding-left: 1rem;

@@ -16,7 +16,7 @@
         </v-col>
 
         <v-col class="p3"  cols="12" sm="6" md="6">
-          <fa size="14" color="primary" icon="fa-calendar-alt"/> {{curdate}}
+          <fa color="primary" icon="fa-calendar-alt"/> {{curdate}}
         </v-col>
       </v-row>
       <v-row>

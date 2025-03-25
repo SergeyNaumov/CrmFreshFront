@@ -7,14 +7,15 @@ export default createStore({
     manager:{}, // менеджер, от которого ведётся работа
     
     // для EditForm
-    
+    refresh:0,
     form: {
        id:'',
        title:'',
        read_only:false,
        fields:[],
        config:'',
-    }, 
+    },
+    fields:{},
     values: {}, // поля формы (для edit_form)
     // для AdminTree
     tree:[] 
@@ -30,6 +31,12 @@ export default createStore({
     },
     set_values(state,values){
         state.values=values
+    },
+    set_fields(state,fields){
+      state.fields=fields
+    },
+    update_field(state,field){
+      state.fields[field.name]=field
     },
     get_field_value(state,name){
         return state.values[name]

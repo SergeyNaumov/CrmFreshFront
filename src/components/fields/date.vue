@@ -1,56 +1,51 @@
 <template>
     <div v-if="!field.hide">
       <template v-if="field.read_only">
-            <v-text-field 
-              :label="field.description"
-              disabled
-              v-model="value_show"
-              :rounded="$theme.rounded"
-              hide-details
-            />
+        <div style="margin-left: 14px;">
+          <div class="description_container" v-html="field.description+':'"></div>
+            {{ value_show }}
+        </div>
+
+
         </template>
         
-        <template v-else>
-          
-          value: {{ source_value }} <br>
-          menuX: {{ menuX}}
-          menuY: {{ menuY}}
+        <div style="position: relative;" v-else>
           <v-menu
             v-model="menu"
-            :close-on-content-click="true"
+            :close-on-content-click="false"
             :nudge-right="40"
             transition="scale-transition"
             offset-y
-            min-width="290px"
-            nudge-right="300px"
-            
-            
-          >
+            readonly
+          > 
           
-            <template v-slot:activator="{ on, attrs }">             
+            <template v-slot:activator="{ props }">             
               <!-- "need_empty?'event':''" -->
               <v-text-field
                 v-model="value_show"
                 :label="field.description"
-                :prepend-icon='event'
+                prepend-icon="mdi-calendar"
                 readonly
-                @click.prevent="handleClick($event)"
-                v-bind="attrs"
-                v-on="on"
+                v-bind="props"
+                
                 :rounded="$theme.rounded"
                 hide-details
-              ></v-text-field>
+                
+              > 
+              <!-- @click.prevent="handleClick($event)" -->
+                               </v-text-field> <!---->
             </template>
             <v-date-picker
               first-day-of-week="1" 
               locale="ru-Ru"
               v-model="value" 
-              @input="select_cal()">
-            </v-date-picker>
+              color="primary"
+              /> <!--@input="select_cal()"-->
+            
 
           </v-menu> 
           
-        </template>
+        </div>
         <div class="clear" v-show="need_empty"><small><a href="#" @click.prevent="clear()"> очистить</a></small></div>
         <div class="err" v-if="error_message" v-html="error_message"></div>
         <div class="err" v-if="warning_message" v-html="warning_message"></div>
@@ -58,16 +53,17 @@
     </div>
 </template>
 <script>
-import { formatDate, formatDateYMD, field_update,check_fld } from './field_functions'
+import { formatDate, formatDateYMD, field_update, getValueByField, setValueByField } from './field_functions'
 
 export default {
     props:['form','field','parent'], // ,'calc_values'
     computed:{
-      source_value(){
-        return this.$store.state.values[this.field.name]
-      },
       value_show(){
-        let v=this.value
+        let v=getValueByField(this,this.field) 
+        if(v){
+          v=v.replace(/\s\d{2}:.+$/,'').split('-').reverse().join('.')
+        }
+        return v?v:''
         if(!v){
           v=''
         }
@@ -76,7 +72,7 @@ export default {
           //v=v.replace(/\s\d{2}:\d{2}:\d{2}/,'')
           
         }
-
+        console.log(this.field.name,' => ',v)
         if(v)
           return v.split('-').reverse().join('.')
         return ''
@@ -85,24 +81,17 @@ export default {
     watch:{
       value(nv){
         // сохраняем новое значение в store
+        let t=this, ov=getValueByField(t,t.field)
         nv = nv?formatDateYMD(nv):''
-        if(this.$store.state.values[this.field.name] != nv){
-          this.$store.state.values[this.field.name]=nv
+        
+        if(ov != nv){
+          setValueByField(t,t.field, nv)
         }
-        
+        t.set_need_empty()
+        t.menu=false
 
-        // if(nv!=this.value){
-        //   console.log('changed!')
-        // }
-      }
-      // field(){
-      //   if(this.field.value){
-      //     this.value=new Date(this.field.value)
-      //   }
-        
-      //   //console.log('watch_value: ',this.value)
-      //   this.after_html=this.field.after_html
-      // }
+      },
+
     },
     created(){
       // .replace нужен для того, чтобы пофиксить время, которого быть не должно
@@ -110,41 +99,15 @@ export default {
       let value=this.field.value.replace(/[T\s][\d:]+$/,'')
       this.value=value?new Date(value):null
 
-      //console.log('datevalue:',this.value)
-      this._field_update=(new_data)=>{
-        console.log('field_update0:',new_data)
-        if(new_data.value){
-          //new_data.value=formatDateYMD(new_data.value)
-        }
-        else{
-          new_data.value=null
-        }
-        console.log('field_update1:',new_data.value)
-        field_update(new_data,this)
-      };
-      if(!this.parent){
-        this.$bus.on('field-update:'+this.field.name,this._field_update )
-      }
       
       if(!/[1-9]/.test(this.value) || !/^\d{4}-\d{2}-\d{2}/.test(this.value)){
         this.value=null
       }
-      if(this.parent){
-        //console.log(this.value)
-      }
-      else{
-       this.$bus.on('field-update:'+this.field.name,this._field_update )
-
-
-      }
+      
       // убрал, потому что из-за него криво отправляло из change_in_search
       //check_fld(this);
     },
-    umounted(){
-      if(!this.parent){
-       //this.$bus.off('field-update:'+this.field.name,this._field_update)
-      }
-    },
+    
     mounted(){
       this.set_need_empty()
     },
@@ -163,45 +126,30 @@ export default {
         }
     },
     methods:{
-      handleClick(event) {
-        // Получаем координаты клика
-        this.menuX = event.clientX;
-        this.menuY = event.clientY;
-
-        // Открываем меню
-        this.menu = true;
-      },
-      select_cal(){
-        //this.calc_values();
-        console.log('select_cal')
+      handleClick() {
         this.menu = false;
-        this.set_need_empty();
-        let field=this.field;
-        field.value=formatDateYMD(this.value)
-        if(this.parent){
-          //console.log('date save:', this.value)
-          this.parent(this.value)
-        }
-        else{
-          //this.$bus.emit('change_field', field);
-          console.log(`set value ${this.field.name} ${field_value}`)
-          //this.$store.state.values[this.field.name]=field.value
-        }
-        
+
       },
       clear(){
         this.value=null;
-        this.select_cal();
+
       },
-      set_need_empty:function(){
+      set_need_empty(){
         this.need_empty=(!this.field.read_only && this.value)?true:false
       }
     }
 }
 </script>
 <style scoped>
-  .select_cal {margin-top: 1rem;}
+  /* .select_cal {margin-top: 1rem;}
   .select_cal {transition: background 0.3s ease, color 0.2s linear;}
-  .clear {position: relative; top: -15px;}
+  .clear {position: relative; top: -15px;} */
   /*.v-input__control {width: 150px;}*/
+  .v-menu__content {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  transform: none !important;
+  z-index: 1000 !important;
+}
 </style>

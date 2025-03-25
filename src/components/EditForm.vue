@@ -171,7 +171,7 @@
 import { 
   on_dependence, change_field,save_field_1_to_m, 
   frontend_button_process,
-  frontend_process, get_cgi_params, get_params, calc_values
+  frontend_process, get_cgi_params, get_params, save_values_to_store
 } from './js/edit_form.js'
 
 
@@ -233,7 +233,7 @@ created(){
   // Для того, чтобы можно было обратиться к объекту EditForm
   window.EditForm=this
 
-  calc_values(this);
+  // save_values_to_store(this);
   this._change_field=(field,not_frontend_process)=>{
 
     change_field(this,field,not_frontend_process)
@@ -245,16 +245,16 @@ created(){
   this._frontend_button_process=(field,button_name,success_function)=>{
     frontend_button_process(this,field,button_name,success_function)
   }
-  this.$bus.on('change_field', this._change_field);
-  this.$bus.on('save_field_1_to_m',this._save_field_1_to_m);
-  this.$bus.on('frontend_button_process',this._frontend_button_process);
+  //this.$bus.on('change_field', this._change_field);
+  //this.$bus.on('save_field_1_to_m',this._save_field_1_to_m);
+  //this.$bus.on('frontend_button_process',this._frontend_button_process);
 
   this.Init();
 },
 beforeDestroy(){
-  this.$bus.off('change_field',this._change_field);
-  this.$bus.off('save_field_1_to_m',this._save_field_1_to_m);
-  this.$bus.off('frontend_button_process',this._frontend_button_process);
+  //this.$bus.off('change_field',this._change_field);
+  //this.$bus.off('save_field_1_to_m',this._save_field_1_to_m);
+  //this.$bus.off('frontend_button_process',this._frontend_button_process);
 },
 watch:{
   errors(){
@@ -313,7 +313,7 @@ methods: {
 
 
                             this.form.read_only=parseInt(this.form.read_only);
-                            calc_values(this);
+                            save_values_to_store(this);
                             
                            
                             this.cols=data.cols;

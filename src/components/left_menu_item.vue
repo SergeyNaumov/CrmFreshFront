@@ -3,7 +3,7 @@
   <div class="item">
       <template v-if="item.child && item.child.length"> <!-- Родительский пункт меню -->
         <a href="#" @click.prevent="show=!show">
-        <fa size="10px" color="primary" class="arrow mr-1"  :icon="'fa-'+show?'chevron-down':'chevron-right'" />
+        <fa color="primary" class="arrow mr-1"  :icon="'fa-'+show?'chevron-down':'chevron-right'" />
         <div class="icon_slot" >
           <fa color="primary" :icon="item.icon" />
         </div>
