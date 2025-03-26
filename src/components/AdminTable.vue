@@ -610,6 +610,10 @@ export default {
     font-size: 12px !important;
     padding-left: 5px;
   }
+  .filter_block .v-label{
+    color: rgba(0, 0, 0, .6);
+  }
+  
   .filters_groups{
     padding-top: 1rem;
     padding-left: 1rem;

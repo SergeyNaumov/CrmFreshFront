@@ -199,5 +199,6 @@ import FieldPassword from '../fields/password';
   .field_container {padding-left: 0; padding-right: 2rem;}
   div {line-height: 20px;}
   /*header.v-toolbar {background-color: $primary !important;}*/
+  .v-toolbar__content {padding-top: 0 !important;}
   header.v-toolbar { background-color: var(--v-primary-base) !important; }
 </style>

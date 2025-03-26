@@ -65,7 +65,7 @@ export function field_update(new_data, self){
 export const check_fld=(self, value)=>{
     
     let f=self.field, error=false, error_message=''
-    if(!value){
+    if(value==undefined){
       value=getValueByField(self)
     }
     
@@ -153,13 +153,14 @@ export const getValueByField=(self,field=null)=>{
 }
 
 export const setValueByField=(self,field,value)=>{
+  // console.log('setValueByField:',value);
   if(field.parent){
 
   }
   else{
     let ov=self.$store.state.values[field.name]
     if(ov!=value){
-      ov=value
+      //ov=value
       value=check_fld(self,value)
       //console.log('ov: ',ov,' nv: ',value)
       if(ov!=value){

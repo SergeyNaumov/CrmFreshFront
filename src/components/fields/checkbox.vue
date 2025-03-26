@@ -16,7 +16,7 @@
 
 <script>
   // import { bus } from '../../main'
-  import { field_update,check_fld } from './field_functions'
+  import { getValueByField, setValueByField } from './field_functions'
   export default {
     //attributes:['after_html','before_html','description'], // чтобы не было реактивным
     data:function(){
@@ -25,18 +25,12 @@
             value:false
         }
     },
-    props:['form','field','parent','refresh'],
+    props:['form','field','parent'],
 
     created(){   
 
-        this._field_update=(new_data)=>{
-          field_update(new_data,this)
-        }
-        if(!this.parent){
-          this.$bus.on('field-update:'+this.field.name,this._field_update )
-        }
         this.value=(this.field.value || parseInt(this.field.value))?true:false
-        check_fld(this);
+
         
     },
     beforeDestroy(){
@@ -45,25 +39,32 @@
         }
     },
     watch:{
-        refresh(){
-            this.value=(this.field.value || parseInt(this.field.value))?true:false
-            this.after_html=this.field.after_html
+        refresh(r){
+            let nv=getValueByField(this)?true:false
+            if(nv!=this.value){
+                this.value=nv 
+            }
         },
         field(){
             this.value=(this.field.value || parseInt(this.field.value))?true:false
             this.after_html=this.field.after_html
         },
-        // value(v){
-        //       v=(v || parseInt(v))?true:false
-        //       this.field.value=v
-        //       this.field.from='field-checkbox component (checkbox.vue)'
-        //       if(!this.parent){
-        //         bus.$emit('change_field',this.field);
-        //       }
+        // value(nv){
+        //     let t=this, ov=getValueByField(t)?true:false
+        //     if(nv != ov){
+        //         setValueByField(t, t.field, nv?1:0)
+        //     }
         // }
 
     },
     computed:{
+        source_field(){
+            let t=this, f=t.field
+            if(f.parent){
+                return 'parent'
+            }
+            return t.$store.state.fields[f.name]
+        },
         disabled(){
             let form=this.form, field=this.field
             /*if(!form){
@@ -76,19 +77,17 @@
     },
     methods: {
         change_field(f){
-            f.value=this.value;
-            this.after_html=this.field.after_html
-            if(this.parent){
-                this.parent({value:f.value,error:f.error,name:this.field.name})
-            }      
-            else{ // обработчик основной формы
-                this.$bus.emit('change_field', f);
-            }
+            let t=this, ov=getValueByField(t)?true:false
+            //console.log('change_field:',t.value)
+            //if(t.value != ov){
+            setValueByField(t, t.field, t.value?1:0)
+            //}
+            
             
         }
     }
   }
 </script>
 <style scoped>
-  .v-input {font-size: 12px;}
+  /* .v-input {font-size: 12px;} */
 </style>

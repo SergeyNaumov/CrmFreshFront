@@ -138,7 +138,25 @@ html table.x-sm td {font-size: 8pt !important;}
 .v-selection-control__input::before {
     background-color: $primary !important;
 }
-
+// пагинация
+.v-pagination__list .v-pagination__item .v-btn{
+    background: rgb(250, 250, 250) !important;
+    margin: 0px 15px 0px 15px !important;
+    width: auto !important;
+    // height: 30px;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    padding: 5px;
+}
+.v-pagination__prev .v-btn, .v-pagination__next .v-btn{
+    margin: 0;
+}
+.v-pagination__list .v-pagination__item .v-btn[aria-current="true"]{
+    background: $primary !important;
+    color: $text_on_primary!important;
+}
+.v-pagination__list .v-pagination__item .v-btn.v-btn--disabled{
+    background: none !important;
+}
 /*
 .v-input__control {
     max-width: 800px !important; 
@@ -149,4 +167,8 @@ html table.x-sm td {font-size: 8pt !important;}
 // }
 @media only screen and (max-width: 1000px) {
     .form_header {margin-bottom: 20px; font-size: 1.5em;}
+    .v-pagination__list .v-pagination__item .v-btn{
+        background: rgb(250, 250, 250) !important;
+        margin: 0px 2px 0px 2px !important;
+    }
 }

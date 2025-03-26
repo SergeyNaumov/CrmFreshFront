@@ -148,8 +148,6 @@
         return 'parent'
       }
       return t.$store.state.fields[f.name]
-      
-      
     },
     show_city_for_address(){
       if('prefix_list' in this.field){

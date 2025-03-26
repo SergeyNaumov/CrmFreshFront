@@ -22,7 +22,9 @@
         <template #item="{ element: f, index }">
           <div :key="index">
             <div class="drag_area">
-              <v-icon>fa-arrows-up-down</v-icon>
+              <div class="icon-circle">
+                <fa  x-small icon="fa-arrows-up-down" color="white"/>
+              </div>
             </div>
             <v-card class="pa-2 mt-0 mb-3 onfilter" outlined>
               <div v-if="dynamic_component(f)">
@@ -154,7 +156,7 @@ export default {
   .onfilter.sortable-ghost{background-color: $lighten4;}
   .drag_area{
     display: inline-block;   color: $primary;
-      
+    background-color: $lighten4;  
       position: relative;
       top: 12px;
       z-index: 1;
@@ -162,17 +164,19 @@ export default {
       
       min-height: 12px;
       padding-left: 3px;
-      border-radius: 3px;
       
-      background-color: $lighten4;
+      
+      
   }
-  .drag_area .v-icon {
+  .drag_area .icon-circle {
+    border-radius: 10px;
+    
     font-size: 12px;
+    background-color: gray;
+    margin: 5px;
+    height: 20px;
+    text-align: center;
+    width: 20px;
 
-    margin: 2px 4px 4px 4px;
-    padding: 10;
-    width: 16px;
-    color: $lighten5;
-    color: gray;    
   }
 </style>

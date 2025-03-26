@@ -6,36 +6,36 @@
         <pre v-else v-for="(l,idx) in (results.log)" :key="'l'+idx">{{l}}</pre>
       </div>
       <div v-if="explain_query" v-html="sql_format(explain_query)"></div>
-  <v-dialog v-model="dialog" max-width="500">
-      <v-card>
-        <v-card-title  class="headline">{{dialog_header}}</v-card-title>
+      <v-dialog v-model="dialog" max-width="500">
+          <v-card>
+            <v-card-title  class="headline">{{dialog_header}}</v-card-title>
 
-        <v-card-text>
-          {{dialog_body}}
-          <template v-if="log.length">
-            <b>обратитесь к разработчику: </b>
-            <pre v-for="l in (log)" v-bind:key="l.index" v-text="l"></pre>
-          </template>
-          <template v-if="errors.length">
-              <ul class="errors">
-                <li v-for="e in errors" v-bind:key="e.idx">{{e}}</li>
-              </ul>
-          </template>
-          
-        </v-card-text>
+            <v-card-text>
+              {{dialog_body}}
+              <template v-if="log.length">
+                <b>обратитесь к разработчику: </b>
+                <pre v-for="l in (log)" v-bind:key="l.index" v-text="l"></pre>
+              </template>
+              <template v-if="errors.length">
+                  <ul class="errors">
+                    <li v-for="e in errors" v-bind:key="e.idx">{{e}}</li>
+                  </ul>
+              </template>
+              
+            </v-card-text>
 
-        <v-card-actions v-if="dialog_type=='delete_dialog'">
-          <div class="flex-grow-1"></div>
-          <v-btn color="primary darken-1" text @click="delete_element()">Да</v-btn>
-          <v-btn color="red darken-1" text  @click="dialog=false; dialog_type=''">Нет</v-btn>
-        </v-card-actions>
-        <v-card-actions v-else>
-          <div class="flex-grow-1"></div>
-          <v-btn color="primary darken-1" text @click="dialog=false; dialog_type=''">Ок</v-btn>
-        </v-card-actions>
-      </v-card>
+            <v-card-actions v-if="dialog_type=='delete_dialog'">
+              <div class="flex-grow-1"></div>
+              <v-btn color="primary darken-1" text @click="delete_element()">Да</v-btn>
+              <v-btn color="red darken-1" text  @click="dialog=false; dialog_type=''">Нет</v-btn>
+            </v-card-actions>
+            <v-card-actions v-else>
+              <div class="flex-grow-1"></div>
+              <v-btn color="primary darken-1" text @click="dialog=false; dialog_type=''">Ок</v-btn>
+            </v-card-actions>
+          </v-card>
 
-  </v-dialog>
+      </v-dialog>
       <pre v-if="0">{{selected_ids}}</pre>
       <div sm12 md12 lg12 class="mt-5 text-left" v-if="results.headers">
             <!--<h2 class="subheadling mb-2">Результаты поиска</h2>-->
@@ -47,7 +47,7 @@
                     
                     <div class="text-xs-left"><u>Найдено записей: {{results.count_total}}</u></div>
                     <div class="text-xs-left">
-                      <v-pagination v-if="results.count_pages>1" :length="results.count_pages" v-model="page"></v-pagination>
+                      <v-pagination class="mt-8 mb-5" v-if="results.count_pages>1" :total-visible="5" :length="results.count_pages" v-model="page"></v-pagination>
                     </div>
                     <div class="results_wrap">
 
@@ -211,7 +211,7 @@
                       </table>
                     </div>
                     <div class="text-xs-left" v-if="results.count_pages>1">
-                      <v-pagination :length="results.count_pages" v-model="page"></v-pagination>
+                      <v-pagination class="mt-8 mb-2" :total-visible="5" :length="results.count_pages" v-model="page"></v-pagination>
                     </div>
               </template>
               <template v-else-if="!finding">
@@ -286,17 +286,17 @@ export default {
 <style scope lang="scss">
 @import '@/styles/variables.scss';
 .errors {color: $error;}
-.theme--light.v-pagination{
+// .theme--light.v-pagination{
   
   
-}
-  .theme--light.v-pagination .v-pagination__item{
-    width: auto;
-    font-size: 0.9rem;
-    min-width: 5px;
+// }
+//   .theme--light.v-pagination .v-pagination__item{
+//     width: auto;
+//     font-size: 0.9rem;
+//     min-width: 5px;
     
-  }
-  .v-pagination__item {font-size: 14px; width: 15px;}
+//   }
+//   .v-pagination__item {font-size: 14px; width: 15px;}
  .memo_item{
    font-size: 0.9rem ;
  }
