@@ -1,12 +1,11 @@
 <template>
-    <div class="multiconnect">
-
+    <div class="multiconnect">       
         <errors :errors="errors"/>
-        
-        <template>
+        <template v-if="1">
                 <div v-if="field.fast_search">
                     <v-text-field label='быстрый поиск' v-model="search" flat hide-details/>
                 </div>
+                
                 <template v-if="field.subtype=='table'">
                     <table class="mini" v-if="Object.keys(selected_hash).length">
 
@@ -39,15 +38,18 @@
                     hoverable
                     selected-color="primary"
                 /> -->
+                
                 <tree-view
                 v-else-if="out_tree"
                 :items="list"
                 :search="search"
                 :selected-hash="selected_hash"
+                :toggleNode="toggleNode"
+                :expanded="expanded"
                 @change="selected_hash_to_value"
               />
                 <div v-else>
-                    
+
 
                     <div v-if="field.make_add" v-show="show_adding_form">
                         <a href="" @click.prevent="show_adding_form=true" v-if="!show_adding_form">добавить</a>
@@ -98,6 +100,7 @@
 
 <script>
 import TreeView from "./TreeView.vue";
+import { getValueByField, setValueByField } from './field_functions'
   export default {
     components: {TreeView},
     data:function(){
@@ -114,7 +117,8 @@ import TreeView from "./TreeView.vue";
             new_tag_exists: false,
             new_tag_checked: false, // если мы проверили на существование или не существование тэга в базе -- true
             //new_tag_items:[{v:1,d:'1'},{v:2,d:'2'},{v:3,d:'3'}],
-            tag_list:[]
+            tag_list:[],
+            expanded: {} // раскрытые ветки
         }
     },
     props:['form','field'],
@@ -122,9 +126,11 @@ import TreeView from "./TreeView.vue";
         value(){ // автосохранение
 
             let field=this.field;
-            field.value=this.value;
+            // field.value=this.value;
             //this.change_field(field)
-            this.$bus.emit('change_field',field)
+            //this.$bus.emit('change_field',field)
+            //this.selected_hash_to_value()
+            setValueByField(this,field,this.value)
         },
         new_tag(){
             this.new_tag_not_ajax++;
@@ -218,7 +224,9 @@ import TreeView from "./TreeView.vue";
     },
 
     methods: {
-
+        toggleNode(id) { // открываем или скрываем ветку
+            this.expanded[id]=this.expanded[id]?false:true
+        },
         value_to_selected_hash(){
             let t=this
 
@@ -266,7 +274,7 @@ import TreeView from "./TreeView.vue";
 
             t.value=new_value
             field.value=t.value
-            this.$bus.emit('change_field',field)
+            //this.$bus.emit('change_field',field)
         },
         init(){ // получаем список элементов дерева
             let t=this
@@ -287,9 +295,9 @@ import TreeView from "./TreeView.vue";
                         t.list=D.list;
 
                         t.value=D.value;
-                        if(!t.out_tree) // если выводим как список -- инитим хэш включенных
-                            t.value_to_selected_hash();
-
+                        //if(!t.out_tree) // если выводим как список -- инитим хэш включенных
+                        t.value_to_selected_hash();
+                        setValueByField(t,t.field,t.value)
                         
                     }
                     t.errors=D.errors;

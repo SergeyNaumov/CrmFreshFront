@@ -53,7 +53,7 @@
     </div>
 </template>
 <script>
-import { formatDate, formatDateYMD, field_update, getValueByField, setValueByField } from './field_functions'
+import { formatDate, formatDateYMD, getValueByField, setValueByField } from './field_functions'
 
 export default {
     props:['form','field','parent'], // ,'calc_values'
