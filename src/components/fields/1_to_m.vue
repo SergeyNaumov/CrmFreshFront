@@ -1,15 +1,12 @@
 <template>
       <div>
-
+        
         <one_to_m_form 
           :form="form"
           :field="field"
-          :refresh="refresh"
-          :dialog="dialog"
-          :set_dialog="set_dialog"
           :values="values"
           :upload_values="upload_values"
-        />
+        /> <!--:dialog="dialog"-->
 
         <!-- multiload -->     
         <template v-if="dialog_multiload"> <!-- v-if для очистки формы-->
@@ -40,31 +37,31 @@
           </template>
 
           <template v-else>
-            <a href="" v-if="!dialog" class="create" @click.prevent="open_new_dialog()">добавить</a>
+            <a href="" class="create" @click.prevent="open_new_dialog()">добавить</a>
           </template>
           
           <template v-if="multiload_name">
             | 
             <a href=""  @click.prevent="start_dialog_multiload"> загрузить несколько файлов</a>
           </template>
-          <a href="" v-if="dialog" @click.prevent="dialog=false"> скрыть</a>
+          <a href="" v-if="dialog" @click.prevent="close_dialog()"> скрыть</a>
         </template>
         <slide v-if="1"
-          :values="values"
           :field="field"
           :form="form"
           :upload_values="upload_values"
-          />
+          /> 
       </div>
 </template>
 
 <script>
   import Slide from './1_to_m/slide';
   import one_to_m_form from './1_to_m/form';
-  
+  import { init_store } from './1_to_m/methods.js'  
 
 
   export default {
+    props:['form','field'],
     components:{
        'slide':Slide,
        'one_to_m_form': one_to_m_form
@@ -75,31 +72,26 @@
     return {
       child_id: null,
       id:undefined,
-      dialog:false,
-      values:[],
+      
+      
       save_action:'',
       refresh:0,
       // загрузка нескольких файлов
       dialog_multiload: false
     }
   },
-  props:['form','field'],
+  computed:{
+
+  },
+  
   created(){
     let t=this
-    this.$bus.on( // обновление значений в 1_to_m
-      '1_to_m:upload_values:'+this.field.name,
-      values=>{
-        //console.log('opload_values:',values);
-        this.upload_values(values)
-      }
-    );
+    init_store(t)
 
 
-
-    if(!t.field.values)
-        t.field.values=[];
     //this.create_edit_fields();
-    t.values=t.field.values;
+    //t.values=t.field.values;
+
     
     
   },
@@ -132,7 +124,16 @@
         hash[f.name]=f
       }
       return hash;
-    }
+    },
+    values(){ // values берём из store
+      return this.$store.state.one_to_m[this.field.name].values
+    },
+    dialog(){
+        if(!this.field || !this.field.name || !this.$store.state.one_to_m[this.field.name]){
+          return false
+        }
+        return this.$store.state.one_to_m[this.field.name].dialog
+    },
 
   },
   methods: {
@@ -140,7 +141,8 @@
       return link.replace('<%form.id%>',this.form.id).replace('<%id%>',id)
     },
     set_dialog(d){
-      this.dialog=d
+      //this.dialog=d
+      this.$store.state.one_to_m[this.field.name].dialog=d
     },
     // reload_1_to_m(){  // Обновляем все значения в 1_to_m
     //   let t=this, f=t.field;
@@ -161,13 +163,17 @@
       
     // },
     upload_values(new_values){
-      this.values=new_values;
+      //this.values=new_values;
       let f=this.field;
-      f.values=new_values;
-      this.refresh++
+      this.$store.state.one_to_m[this.field.name].values=new_values
+      //f.values=new_values;
+      //this.refresh++
     },
     open_new_dialog(){
-      this.$bus.emit('1_to_m_open_new_dialog:'+this.field.name);
+      //this.$bus.emit('1_to_m_open_new_dialog:'+this.field.name);
+      this.$store.state.one_to_m[this.field.name].dialog=true
+      this.$store.state.one_to_m[this.field.name].save_action='insert'
+
     },
     // множественная загрузка файлов
     start_dialog_multiload(){ // диалог для множественной загрузки файлов

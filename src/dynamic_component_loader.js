@@ -18,6 +18,9 @@ export const dynamic_component_loader = (app) => {
   app.component('VideoList', defineAsyncComponent(() => import('./components/VideoList/VideoList')));
   app.component('Schedule', defineAsyncComponent(() => import('./components/Schedule/Schedule')));
   app.component('Messenger', defineAsyncComponent(() => import('./components/Messenger/Messenger')));
+  app.component('email', defineAsyncComponent(() => import('./components/fields/text_subtypes/email')));
+  app.component('qr_call', defineAsyncComponent(() => import('./components/fields/text_subtypes/qr_call')));
+  
 
   // Остальные компоненты
   app.component('field-select', defineAsyncComponent(() => import('./components/fields/select')));

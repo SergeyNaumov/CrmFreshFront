@@ -1,7 +1,8 @@
 <template>
     <!-- slide -->
     <div>
-      <div v-if="values && values.length">      
+
+      <div v-if="list && list.length">      
         <v-dialog v-model="del_errors_out" max-width="500">
         <v-card class="one_to_m" >
             <v-card-title  class="headline">
@@ -13,84 +14,36 @@
         </v-card>
         </v-dialog> 
         <!-- view type: list -->
-        <template v-if="field.view_type=='list'">
-            <v-layout>
 
+        <div v-if="field.view_type=='list'" >
+            
               <draggable
                 v-model="list"
-                tag="div"
-                :itemKey="'id'" <!-- Указываем уникальное поле -->
+                tag="v-row"
+                :options="{'group':'g'+field.name}"
+                
+                
+                :itemKey="field.table_id" <!-- без этого комментария не работает сортировка (хз)-->
+                :draggable="field.sort ? true : false"
                 @end="move_end"
-                :draggable="field.sort ? '.v-card' : false"
               >
+              
                 <template #item="{ element: v }">
-                  <v-card class="one_to_m one_to_m_list" :key="v.id">
-                    <!-- Перебор заголовков -->
-                    <template v-for="(h, hidx) in field.headers" :key="hidx">
-                      <div v-if="v[h.name] && fields_hash[h.name]">
-                        <template v-if="h.change_in_slide">
-                          <change_in_slide
-                            :refresh="cur_refresh"
-                            :form="form"
-                            :field="field"
-                            :name="h.name"
-                            :cur_id="v.id"
-                            :values="v"
-                          />
-                        </template>
-                        <template v-else>
-                          <span class="h">{{ h.description }}:</span>
-                          <template v-if="h.type === 'file'">
-                            <span v-html="download_file_block(h, ch_id(v), v[h.name + '_filename'], v)"></span>
-                            <template v-if="field.headers.length > 1">
-                              <!-- Выводим ссылку "удалить", если есть другие поля -->
-                              <a
-                                v-if="v[h.name + '_filename'] && !child_field_read_only(h.name)"
-                                href=""
-                                @click.prevent="del_file(h.name, ch_id(v))"
-                              >
-                                Удалить
-                              </a>
-                            </template>
-                          </template>
-                          <template v-else>
-                            <!-- Цветовой квадрат -->
-                            <template v-if="h.type === 'text' && h.subtype === 'color'">
-                              <div
-                                class="color_squire"
-                                :style="{ 'background-color': get_value_for_slide(h, v) }"
-                              ></div>
-                            </template>
-                            <template v-else-if="h.type === 'text' && h.subtype">
-                              <template v-if="h.subtype === 'qr_call'">
-                                <qr_call :value="get_value_for_slide(h, v)" :field="h" :for_slide="true" />
-                              </template>
-                              <template v-else-if="h.subtype === 'email'">
-                                <email :value="get_value_for_slide(h, v)" :field="h" :for_slide="true" />
-                              </template>
-                            </template>
-                            <template v-else>
-                              {{ get_value_for_slide(h, v) }}
-                            </template>
-                          </template>
-                        </template>
-                      </div>
-                    </template>
-
-                    <!-- Управление элементом -->
-                    <div class="controls">
-                      <v-icon size="small" class="edit" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">
-                        mdi-pencil
-                      </v-icon>
-                      <v-icon size="small" color="primary" v-if="make_delete" @click="del(v)">
-                        mdi-delete
-                      </v-icon>
-                    </div>
-                  </v-card>
+                  <v-col cols="12" sm="6" md="4">
+                  <slide_card
+                    :field="field"
+                    :v="v"
+                    :open_edit_dialog="open_edit_dialog"
+                    :del="del"
+                    :make_delete="make_delete"
+                    :get_value_for_slide="get_value_for_slide"
+                  />
+                </v-col>
                 </template>
+              
               </draggable>
-            </v-layout>
-        </template>
+            
+        </div>
         
         <!-- view type: default -->
 
@@ -102,17 +55,26 @@
                     <th ></th>
                 </tr>
             </thead>
+            <!-- :itemKey="ch_id"  Указываем уникальное поле  -->
+
             <draggable
                 v-model="list"
                 tag="tbody"
-                :itemKey="ch_id" <!-- Указываем уникальное поле -->
-                @end="move_end"
+                :options="{'group':'g'+field.name}"
+                @change="move_end"
+
+                :itemKey="field.table_id" <!--   Указываем уникальное поле  -->
+                
+                @start="move_start"
                 :draggable="field.sort ? 'tr' : false"
+                @end="move_end"
               >
                 <template #item="{ element: v }">
-                  <tr :key="ch_id(v)">
+                  <tr :key="ch_id(v)" :id="'srt-'+field.name+ch_id(v)">
+                    <td>{{ v.id }}</td>
                     <!-- Перебор заголовков -->
                     <td v-for="h in field.headers" :key="h.name">
+                      
                       <template v-if="h.change_in_slide">
                         <change_in_slide
                           :refresh="cur_refresh"
@@ -139,10 +101,14 @@
                           <template v-else>-</template>
                         </span>
                         <span v-else>
+                          
+                          <!-- цветной квадрат если требуется -->
                           <template v-if="h.type === 'text' && h.subtype === 'color'">
                             <div class="color_squire" :style="{ 'background-color': get_value_for_slide(h, v) }"></div>&nbsp;
                           </template>
+
                           <span v-html="get_value_for_slide(h, v)"></span>
+                          
                         </span>
                       </template>
                     </td>
@@ -167,43 +133,50 @@
 </template>
 <script>
 import ChangeInSlide from './ChangeInSlide';
-import qr_call from '../text_subtypes/qr_call';
-import email from '../text_subtypes/email';
-
+//import qr_call from '../text_subtypes/qr_call';
+//import email from '../text_subtypes/email';
+import {create_edit_fields} from './methods';
+import slide_card from './slide_card';
 export default {
     components:{
        'change_in_slide': ChangeInSlide,
-       'qr_call': qr_call,
-       'email': email
+       //'qr_call': qr_call,
+       //'email': email,
+       'slide_card':slide_card
     },
-    props:["form","values","field","upload_values"],
+    props:["form","field","upload_values"],
     data(){
         return {
             del_errors:[],
             del_errors_out:false, // выводить ошибку при операциях с 1_to_m (удаление)
-            list:[], 
+            list:[], // значения держим в слайде, чтобф можно было сортировать
             cur_fields:[],
             cur_refresh:0
         }
     },
     watch:{
         values(){
-            this.cur_refresh++;
-            this.list=this.values;
-            //Math.random();
+          this.list=this.values
         },
-        field(){
-            console.log('refresh field in slide');
-        }
     },
 
 
     computed:{
-        fields_hash(){
+        values(){
+          let t=this
+          return t.$store.state.one_to_m[t.field.name].values
+        },
+        fields(){
+            //let t=this
+            //return t.$store.state.one_to_m[t.field.name].fields
+            //return store.fields
             let h={}
-            for(let f of this.cur_fields){
-                h[f.name]=true
+            if(this.field && this.field.fields &&this.field.fields.length ){
+              for(let f of this.field.fields){
+                  h[f.name]=true
+              }
             }
+            
             return h
         },
         colors_primary(){
@@ -223,29 +196,29 @@ export default {
     },
 
     created(){
-        let field=this.field
-        this.list=this.values;
-        this.cur_fields=this.field.fields // нужно для того, чтобы можно было обновить
+        let t=this
+        t.list=t.values
+       // this.cur_fields=this.field.fields // нужно для того, чтобы можно было обновить
 
-        this.$bus.on( // обновление полей в 1_to_m
-            `1_to_m/slide_${field.name}:update_fields`,this._update_fields
-        )
+        // this.$bus.on( // обновление полей в 1_to_m
+        //     `1_to_m/slide_${field.name}:update_fields`,this._update_fields
+        // )
 
-        this.$bus.on(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
+        // this.$bus.on(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
 
 
     },
     beforeDestroy(){
         let field=this.field
-        this.$bus.off( // обновление полей в 1_to_m
-            `1_to_m/slide_${field.name}:update_fields`,this._update_fields
-        )
-        this.$bus.off(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
+        // this.$bus.off( // обновление полей в 1_to_m
+        //     `1_to_m/slide_${field.name}:update_fields`,this._update_fields
+        // )
+        //this.$bus.off(`1_to_m_slide:${this.field.name}_reload`,this.reload_slide);
     },
     methods:{
         _update_fields(fields){
             this.cur_fields=fields
-            console.log('fields:',fields)
+            
 
         },
         reload_slide(D){ // обновляем данные в слайде
@@ -253,22 +226,36 @@ export default {
             this.list=D.values
         },
         open_edit_dialog(v){
-            this.$bus.emit( // событие передаём в 1_to_m_form
-                '1_to_m_open_edit_dialog:'+this.field.name,
-                v
-            );
+            let t=this
+            create_edit_fields(t)
+
+            let store=t.$store.state.one_to_m[t.field.name]
+            store.dialog=true
+            store.save_action='update'
+            store.id=v[t.field.table_id]
+            
+            for(let name in store.fields){
+              store.fields[name].value=v[name]
+              
+            }
+            
+            
+
         },
         ch_id(v){ // возвращает id-шник записи
             return v[this.field.table_id]
         },
+        move_start(){
+          
+        },
         move_end(){
-            let sort_hash={};
-            let i=1;
-            for(let v of this.list){
-                sort_hash[this.ch_id(v)]=i++;
+            
+            let t=this, sort_hash={}, i=1;
+            for(let v of t.list){
+                sort_hash[t.ch_id(v)]=i++;
             }
             this.$http.post(
-                BackendBase+'/1_to_m/sort/'+this.form.config+'/'+this.field.name+'/'+this.form.id,
+                `${BackendBase}/1_to_m/sort/${t.form.config}/${t.field.name}/${t.form.id}`,
                 {
                     sort_hash:sort_hash
                 }
@@ -280,6 +267,7 @@ export default {
             )
         },
         get_value_for_slide(h,values){
+          
             let type=h.type;
             let name=h.name;
             let value=values[name];
@@ -291,7 +279,9 @@ export default {
             }
             else{
                 if(type=='select_from_table' || type=='select_values'){
-                    let cf=this.get_field_by_name(name);
+                    let fields=this.$store.state.one_to_m[this.field.name].fields
+                    
+                    let cf=fields[name];
                     if(!cf)
                         return 'не найдено поле '+name
                     return this.get_header_from_select(cf,value)
@@ -299,10 +289,7 @@ export default {
             }
         },
         get_field_by_name(name){
-            for(let f of this.cur_fields)
-                if(f.name==name)
-                    return f
-            return undefined
+            return this.$store.state.one_to_m[this.field.name].fields || undefined
         },
         get_header_from_select(cf,value){
             for(let v of cf.values){
@@ -417,6 +404,7 @@ export default {
     .tool a {text-decoration: none;}
     .v-icon.edit {margin-right: 10px; }
     .v-card.one_to_m {display: inline-block; margin-right: 15px; padding-right: 40px; padding-bottom: 20px;}
+    .one_to_m_list {min-width: 200px; min-height: 100px;}
     .one_to_m_list .controls {margin-top: 5px !important;   margin-bottom: 5px; display: none;}
     
     .one_to_m_list:hover .controls{display: block;}

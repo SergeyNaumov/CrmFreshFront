@@ -1,13 +1,12 @@
 <template>
   <div>
-
-
     <!-- tree -->
-    <template v-if="!field.hide">
-      <div v-if="before_html" v-html="before_html"></div>
-
+    <template v-if="!source_field.hide">
+      <div v-if="source_field.before_html" v-html="source_field.before_html"></div>
+      
       <!-- Если используется древовидная структура -->
       <template v-if="field.tree_use">
+        
         <v-select
           :items="values"
           item-value="v"
@@ -17,6 +16,7 @@
           :rounded="$theme.rounded"
           :hint="field.add_description"
           hide-details
+          @update:modelValue="input"
 
         />
       </template>
@@ -40,6 +40,7 @@
               :hint="field.add_description"
               :disabled="!!field.read_only || !!form.read_only"
               class="color_select"
+              @update:modelValue="input"
               :error-messages="error_message"
               hide-details
               :rounded="$theme.rounded"
@@ -52,7 +53,7 @@
 
           <!-- С автозаполнением -->
           <template v-if="field.autocomplete">
-
+            
             <v-autocomplete
               :name="'x' + Math.random()"
               autocomplete="off"
@@ -67,14 +68,15 @@
               cache-items
               clearable
               hide-details
+              @update:modelValue="input"
             />
           </template>
 
           <!-- Без автозаполнения -->
           <template v-else>
-
+            
             <template v-if="values.length > 15">
-
+              
               <v-autocomplete
                 :label="field.description"
                 v-model="value"
@@ -90,17 +92,14 @@
                 :disabled="!!field.read_only"
                 clearable
                 hide-details
+                @update:modelValue="input"
 
               >
-<!--                      <template #selection="{ item }">
-                      {{ item.raw.d }}
-                    </template>
-                    <template #item="{ item }">
-                      <div>{{ item.raw.d }}</div>
-                    </template> -->
+
               </v-autocomplete>
             </template>
             <template v-else>
+
               <v-select
                 :label="field.description"
                 :items="values"
@@ -111,7 +110,9 @@
                 v-model="value"
                 :disabled="!!field.read_only || !!form.read_only"
                 :rounded="$theme.rounded"
+                @update:modelValue="input"
                 hide-details
+                v-on:input="$emit('input', $event)"
               />
             </template>
           </template>
@@ -119,9 +120,9 @@
       </template>
 
       <!-- Сообщения об ошибках и предупреждения -->
-      <div v-if="error_message" class="error_msg">{{ error_message }}</div>
-      <div v-if="warning_message" class="err">{{ warning_message }}</div>
-      <div v-if="after_html" v-html="after_html"></div>
+      <div v-if="source_field.error_message" class="error_msg">{{ source_field.error_message }}</div>
+      <div v-if="source_field.warning_message" class="err">{{ source_field.warning_message }}</div>
+      <div v-if="source_field.after_html" v-html="source_field.after_html"></div>
     </template>
   </div>
 </template>
@@ -134,52 +135,42 @@ export default {
     return {
       value:'0',
       values:[],
-      regexp_rules:[],
-      error_message:'',
-      warning_message:'',
-      after_html:'',
-      before_html:'',
       search:'' // для autocomplete
     }
   },
-  props:['form','field','parent','name_parent_field','refresh'],
+  props:['form','field', 'save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'],
   watch:{
         value(nv){
           let t=this, ov=getValueByField(t)
-          
-
-          if(ov!=nv){
-            setValueByField(t,t.field,nv)
-            setTimeout(
-              ()=>{
-                
-                    let s = this.get_search_from_values()
-                    if(s){
-                      this.search=s 
-                    }                
-                
-              },200
-            )
+          if(nv != ov){
+            setValueByField(t, t.field, nv)
           }
         },
-
+        source_field(f){
+          setTimeout(
+            ()=>{
+              this.value=this.source_field.value
+            },100
+          )
+          
+        },
         search(v){
           if(v && v.length>2){
             this.load_autocomplete(v)
           }
         },
-        field(){
-          this.value=this.field.value+''; 
-          //this.values=this.field.values;
-        }
+        // field(){
+        //   this.value=this.field.value+''; 
+        //   //this.values=this.field.values;
+        // }
   },
 
   created(){
     let t=this
     let v=getValueByField(t)
     t.value=v?v.toString():'';
-
-    t.values=t.field.values;
+    console.log('field select:', t.value)
+    t.values=(t.field && t.field.values)?t.field.values:[];
     if(t.values && t.values.length==1 && Array.isArray(t.values[0])){
       // это костыль, отловить не смог, но в select-е 1_to_m values оборачивается внутрь []
       t.values=t.values[0]
@@ -199,7 +190,17 @@ export default {
       // let style=(f.style)?f.style:{}
       // style['border-top:']='3px solid '+f.background_color;
       //return style;
-    }
+    },
+    refresh(){
+      return this.$store.state.refresh
+    },
+    source_field(){
+      let t=this, f=t.field
+      if(typeof t.get_source_field=='function'){  
+        return t.get_source_field(f.name)
+      }
+      return t.$store.state.fields[f.name]
+    },
 
   },
   methods: {
@@ -253,41 +254,13 @@ export default {
       }
 
     },
-
-    change_field(field){
-      let f=this.field;
-      this.error_message='', f.error_message=''
-      this.regexp_check();
-      
-      f.error=this.error_message?true:false;
-      f.value=this.value;
-      //console.log({CF: f});
-      if(!f.error){
-        if(this.parent)
-            this.parent({value:f.value,error:f.error,name:f.name})
-        else
-          this.$bus.emit('change_field',f)
-      }
-    },
-    regexp_check(){
-      console.log('regexp check')
-      let f=this.field;
-      if(f.regexp_rules){
-        let i=0, error_message='';
-        while(i<f.regexp_rules.length){
-          let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
-          console.log('rule: ',rule)
-          let test=eval(rule+'.test(this.value)');
-          
-          if(!test)
-            error_message=msg;
-          
-          i=i+2;
-        }
-        this.error_message=error_message;
-        
-      }
+    input(){
+      let t=this, f=this.field
+      console.log('input:',t.value)
+      t.value=setValueByField(t, t.field, t.value)
+      console.log('new_value:',t.value)
     }
+
   }
 }
 </script>

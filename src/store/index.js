@@ -17,6 +17,14 @@ export default createStore({
     },
     fields:{},
     values: {}, // поля формы (для edit_form)
+    one_to_m:{
+      /* [name]: {
+        dialog: false, // диалоговое окно формы
+        fields:{} // поля формы добавления / редактирования
+        form_values: {} // значения полей формы добавления / редактирования
+      }
+      */
+    },
     // для AdminTree
     tree:[] 
 
@@ -40,9 +48,16 @@ export default createStore({
     },
     get_field_value(state,name){
         return state.values[name]
-    }
+    },
+    one_to_m_updateList(state, obj ){
+      // обновляем значения слайда (при сортировке)
+      console.log('new_list:', obj)
+      state.one_to_m[obj.name].values=obj.value
+    },
+
   },
   actions: {
+
     // асинхронные операции
     // async fetchUser({ commit }) {
     //   const response = await fetch('/api/user')

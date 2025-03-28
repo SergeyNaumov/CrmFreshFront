@@ -69,7 +69,6 @@ export const check_fld=(self, value)=>{
       value=getValueByField(self)
     }
     
-    
     /*
       error -- есть ошибка
       error_message -- сообщение об ошибке
@@ -79,7 +78,9 @@ export const check_fld=(self, value)=>{
               let i=0;
               while(i<f.replace_rules.length){
                 let rule=f.replace_rules[i], rep=f.replace_rules[i+1];
+
                 eval('value=value.replace('+rule+",'"+rep+"')");                
+                
                 i+=2;
               }
     }
@@ -103,24 +104,22 @@ export const check_fld=(self, value)=>{
     }
 
 
-
+    f.error_message=error_message
+    f.error=error
           //if(f.error !== old_error || ){
-    if(self.parent){
-      // с этим нужно будет разобраться
-      // self.parent({
-      //   from:'field_functions.js',
-      //   'name':f.name,
-      //   'value':self.value,
-      //   'error':error,
-      //   'error_message':error_message
-      // })
+    if(typeof self.save_field_to_store=='function'){
+      let f=self.field
+      f.value=value
+      self.save_field_to_store(f)
+    }
+    if(typeof self.save_to_store=='function'){
+      self.save_to_store({field: f, value: f.value, from:'check_fld'})
               
     }
     else{
       //f.value=self.value 
-      f.error_message=error_message
-      f.error=error
-      f.not_parent=true
+
+      
       self.$store.state.fields[f]
 
       //console.log('new value:',value)
@@ -143,41 +142,62 @@ export const getValueByField=(self,field=null)=>{
   if(!field){
     field=self.field
   }
+  if(!field){
+    console.log('critical field_functions.js:getValueByField self:',self)
+    return 'CRITICAL'
+  }
+  //console.log(field.name)
+  if(typeof self.get_value_by_field=='function'){
+    
+    return self.get_value_by_field(field.name)
 
-  if(field.parent){
     //this.$store.state.values[this.field.name]
   }
   else{
+    //console.log('not_1_to_m:',self)
+    //console.log('values:', self.$store.state.values)
+    
     return self.$store.state.values[field.name]
   }
 }
 
 export const setValueByField=(self,field,value)=>{
-  // console.log('setValueByField:',value);
-  if(field.parent){
-
+  // self -- компонент поля (field-text, field.select и т.д.)
+  let ov
+  console.log('input:', value, field.name)
+  if(typeof self.get_value_by_field=='function'){
+    ov=self.get_value_by_field(field.name)
+    
   }
   else{
-    let ov=self.$store.state.values[field.name]
-    if(ov!=value){
-      //ov=value
-      value=check_fld(self,value)
-      //console.log('ov: ',ov,' nv: ',value)
-      if(ov!=value){
-        
-        if(field.parent){
-      
-        }
-        else{
-          //console.log('save to storage: ',value, 'refresh_value: ',self.$store.state.refresh)
-          
-          self.$store.state.values[field.name]=value
-          self.$store.state.refresh=self.$store.state.refresh+1
-        }
-      }
-    }
-
+    ov=self.$store.state.values[field.name]
   }
-
+    //if(ov!=value)
+  
+      //ov=value
+  let before_check_value=value
+  value=check_fld(self,value)
+  //console.log('ov: ',ov,'bf:',before_check_value, ' nv: ',value)
+  if(ov!=value || before_check_value!=value){
+      
+      
+      
+        
+        //console.log('save to storage: ',value, 'refresh_value: ',self.$store.state.refresh)
+        
+        if(typeof self.save_to_store == 'function'){ // сохраняем в свой  store
+          //console.log('save to parent sub:',{field:field, value:value})
+          //self.save_to_store({field:field, value:value})
+        }
+        else{ // сохраняем в стандартный store формы
+          //console.log('save to store:',value)
+          self.$store.state.values[field.name]=value
+          
+        }
+        return value
+        self.$store.state.refresh=self.$store.state.refresh+1
+        
+  }
+  return ov
 
 }

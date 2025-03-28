@@ -1,8 +1,8 @@
 <template>
+    
     <v-dialog class="one_to_m_form" justify="center" v-model="in_dialog" id="is_dialog">
-
+      
       <v-card class="one_to_m">
-
         <div class="close">
             <v-icon @click="in_dialog=false" style="text-align: right">mdi-close</v-icon>
         </div>
@@ -11,58 +11,41 @@
             <template v-if="save_action=='insert'">Создание элемента</template>
             <template v-if="save_action=='update'">Редактирование элемента</template>
           </div>
-
-
         </div>
-
-          <div v-for="cf in field.fields" :key="cf.name">
-
-            <template v-if="edit_fields[cf.name] && (cf.type=='text' || cf.type=='textarea')">
+        <div v-for="cf in field.fields" :key="cf.name">
+            
+            <template v-if="fields[cf.name]">
+            
               
-              <field-text
-                :field="edit_fields[cf.name]"
-                :parent="parent_sub"
-                :refresh="cur_refresh"
-                :error-messages="error_messages[cf.name]"
+              <field-text v-if="(cf.type=='text' || cf.type=='textarea')"
+                :field="fields[cf.name]"
+                :save_to_store="save_to_store"
+                :save_field_to_store="save_field_to_store"
+                :get_value_by_field="get_value_by_field"
+                :get_source_field="get_source_field"
               />
 
-            </template>
-            
-            
-            <template v-else-if="cf.type=='select_from_table' || cf.type=='select_values'">
-               
-                <field-select
-                  :field="edit_fields[cf.name]"
-                  :parent="parent_sub"
-                  :name_parent_field="field.name"
-                  :refresh="cur_refresh"
+              <field-select v-else-if="cf.type=='select_from_table' || cf.type=='select_values'"
                   :form="form"
-                />
-                
-                <!--
-                <v-autocomplete v-if="cf.autocomplete"
-                    :label="cf.description"
-                    :items="cf.values"
-                    filled
-                    item-value="v"
-                    item-text="d"
-                    no-data-text="ничего не найдено"
-                    v-model="edit_fields[cf.name].value"
-                />
-                -->
-            </template>
-            <template v-else-if="cf.type=='checkbox' || cf.type=='switch'">
-                <field-checkbox 
+                  :field="fields[cf.name]"
+                  :save_to_store="save_to_store"
+                  :save_field_to_store="save_field_to_store"
+                  :get_value_by_field="get_value_by_field"
+                  :get_source_field="get_source_field"
+              />
+            
+<!--             
+              <field-checkbox 
+                  v-else-if="cf.type=='checkbox' || cf.type=='switch'"
                   :form="form"
-                  :field="edit_fields[cf.name]" 
-                  :parent="parent_sub"
+                  :field="fields[cf.name]" 
+                  :save_to_store="save_to_store"
                   :refresh="cur_refresh"
-                />
-            </template>
-            <template v-else-if="cf.type=='file'">
-              <form enctype="multipart-form/data"  class="upload_file" :id="'upload_'+cf.name">
+              />
+                        
+              <form v-else-if="cf.type=='file'" enctype="multipart-form/data"  class="upload_file" :id="'upload_'+cf.name" >
                 <input type="file">
-              </form>
+              </form> -->
             </template>
           </div>
           
@@ -75,7 +58,7 @@
           <v-btn color="primary" 
             v-if="(!form.read_only && !field.read_only)"
             :disabled="form_disabled"
-            @click="save(edit_fields,save_action)" small>Сохранить
+            @click="save(save_action)" small>Сохранить
           </v-btn>
           <div v-if="form_disabled" class="err">перед сохранением исправьте ошибки</div>
           
@@ -83,49 +66,83 @@
     </v-dialog>
 </template>
 <script>
+import { create_edit_fields } from './methods.js'  
 export default {
-    props:["form","dialog","field","change_one_to_m","set_dialog",
+    props:["field","change_one_to_m",
       "values","upload_values",
-    ],
+    ], /* "dialog", */
     data(){
         return {
-            edit_fields:{},
+            //edit_fields:{}, // сюда сохраняются данные формы
+            
             error_messages:{},
             form_disabled:false,
             cur_refresh:0,
             in_dialog:false,
-            fields:{},
-            save_action:'',
+            //fields:{},
+            //save_action:'',
             dialog_errors:[],
             id:null
         }
     },
+    computed:{
+      dialog(){
+        if(!this.field || !this.field.name || !this.$store.state.one_to_m[this.field.name]){
+          return false
+        }
+        return this.$store.state.one_to_m[this.field.name].dialog
+      },
+      fields(){
+        return this.$store.state.one_to_m[this.field.name].fields
+      },
+      save_action(){ // action для формы
+        return this.$store.state.one_to_m[this.field.name].save_action
+      },
+      form(){
+        return this.$store.state.form
+      }
+      
+    },
 
     created(){
-      
-      
-      this.create_edit_fields();
-      // событие открывания формы редактирования вызывается из слайда
-      this.$bus.on('1_to_m_open_edit_dialog:'+this.field.name,
-        v=>{this.open_edit_dialog(v)}
-      );
-      // открываем окно для создания нового элемента (из 1_to_m по кнопке "добавить")
-      this.$bus.on('1_to_m_open_new_dialog:'+this.field.name,
-        ()=>{
-          this.open_new_dialog()}
-      )
+      let t=this
+      //create_edit_fields(t);
     },
     watch:{
-        field(){
-          this.create_edit_fields
+        // field(){
+        //   this.create_edit_fields
+        // },
+        dialog(v){ // когда открывается окно -- инитим fields
+            //this.in_dialog=this.dialog;
+            let t=this
+            if(t.save_action=='insert'){
+              // очищаем форму
+              create_edit_fields(t);  
+            }
+            t.in_dialog=t.dialog
+
         },
-        dialog(){ // когда открывается окно -- инитим fields
-            this.in_dialog=this.dialog;
-            this.fields=this.edit_fields
+        save_action(a){
+          if(a=='insert'){
+            // когда открывается новая форма -- пересоздаём fields
+            // в других случаях -- нет
+            let t=this
+            create_edit_fields(t);
+            t.$store.state.one_to_m[t.field.name].id=null
+          }
+          
         },
-        in_dialog(){
-            this.dialog_errors=[]
-            //this.set_dialog(this.in_dialog)
+        in_dialog(v){
+            let t=this
+            if(v){
+              //console.log('in_dialog:',t.in_dialog, v)
+              
+              t.dialog_errors=[]
+            }
+            // сохраняем в store
+            t.$store.state.one_to_m[t.field.name].dialog=v
+            
+            
         },
         cur_refresh(){
           this.form_disabled=false
@@ -154,90 +171,31 @@ export default {
 
             this.change_one_to_m()
         },
-        get_child_by_name(field,name){
-          for(let f of field.fields)
-            if(f.name==name)
-              return f
-          return false
-        },
-        
-        parent_sub(obj){ // для элементов fields/* правила сохранения
+        get_value_by_field(name){
+          let t=this
           
+          return t.$store.state.one_to_m[t.field.name].fields[name].value
+          //this.fields[name].value
+        },
+        save_field_to_store(field){
+          let t=this
+          t.$store.state.one_to_m[t.field.name].fields[field.name]=field
+          //console.log('safe_field_to_store:',t.$store.state.one_to_m[t.field.name].fields[obj.field.name])
+        },
+        save_to_store(obj){ // для элементов fields/* правила сохранения
+          let t=this
           //console.log('obj:',obj)
-          let value=obj.value;
-          if(obj.type=='checkbox' || obj.type=='switch'){
-            value=value?1:0
-          }
           
-          for(let attr of ['error','error_message','value']){
-            
-            if(attr=='error_message'){
-              this.error_messages[obj.name]=obj.error_message
-              
-            }
-            if(obj[attr]!==undefined){
-
-              this.edit_fields[obj.name][attr]=obj[attr]
-              
-            }
-            
-          }
-          if(obj.name=='phone'){
-            //console.log('OBJ:',obj)
-          }
-
-          this.cur_refresh=Math.random()
-
+          t.$store.state.one_to_m[t.field.name].fields[obj.field.name].value=obj.value
+          //console.log('save_to_store:',t.$store.state.one_to_m[t.field.name].fields[obj.field.name].value)
         },
-        open_new_dialog(){ // Форма для добавления
-          this.create_edit_fields();
-          this.cur_refresh=Math.random();
-          this.save_action='insert'; this.in_dialog=true;
-          this.id=undefined;
-          if(this.multiload_name){
-              let upload_selector=document.querySelector('form.upload_file');
-              if(upload_selector){
-                upload_selector.reset();
-              }
-          }
-        },
-        open_edit_dialog(d){ // открываем форму для редактирования
-          //this.create_edit_fields();
+        get_source_field(name){
+          let t=this
           
-          this.cur_refresh=Math.random();
-          this.id=d[this.field.table_id];
-          for(let f of this.field.fields){
-            if(this.edit_fields[f.name]){
-              this.edit_fields[f.name].value=d[f.name]
-            }
-          }
-          this.save_action='update';
-          this.new_values={};
-          let i=0;
-          this.in_dialog=true;
+          return t.$store.state.one_to_m[t.field.name].fields[name]
         },
-        create_edit_fields(){
-          for(let f of this.field.fields){        
-            if(/^(file|text|textarea|checkbox|switch|select|select_from_table|select_values)$/.test(f.type)){
-              if(f.type=='select_from_table' || f.type=='select_values'){ // преобразование типов
-                for(let v of this.field.values){
-                  if(!v[f.name]) v[f.name]=''
-                  v[f.name]=v[f.name].toString();
-                }
-              }
-              let new_fld={};
-              Object.assign(new_fld,f);
-              
-              if(f.type=='text' || f.type=='textarea'){
-                new_fld.value='';
-              }
-              else{
-                new_fld.value=0;
-              }
-              this.edit_fields[f.name]=new_fld;
-            }
-          }
-        },
+
+ 
         save_files(values){
           let cur_id=values[this.field.table_id];
           for(let f of this.field.fields){
@@ -276,36 +234,38 @@ export default {
             }
           }
         },
-        save(edit_fields,save_action){
-          let new_values={};
+        save(save_action){
+          let t=this, new_values={}, fields=t.fields;
           //проверяем, прикрепили ли файлы 
+          let store=t.$store.state.one_to_m[t.field.name]
           
-          
+          let parent_id=this.form.id
           for(let f of this.field.fields){
-            if(edit_fields[f.name]){
+            if(fields[f.name]){
               let v
               if(f.type=='checkbox'){
-                v=edit_fields[f.name].value?1:0
+                v=fields[f.name].value?1:0
               }
               else{
-                v=edit_fields[f.name].value;  
+                v=fields[f.name].value;  
               }
-
               new_values[f.name]=v;
             }
           }
-
-          let url='';
+          
+          let url='', config=this.form.config;
           //console.log('save_action: '+save_action);
           if(save_action=='insert')
-            url=BackendBase+'/1_to_m/insert/'+this.form.config+'/'+this.field.name+'/'+this.form.id
+            url=`${BackendBase}/1_to_m/insert/${config}/${this.field.name}/${this.form.id}`
           else if(save_action=='update')
-            url=BackendBase+'/1_to_m/update/'+this.form.config+'/'+this.field.name+'/'+this.form.id+'/'+this.id
+            url=`${BackendBase}/1_to_m/update/${config}/${this.field.name}/${t.form.id}/${store.id}`
           else{
-            //console.error('not set save_action');
+            console.error('not set save_action');
             return; 
           }
-          //console.log('fk:',this.field.foreign_key, ' parent_id:',this.values )
+
+          //return
+
           this.$http.post(
             url,
             {
@@ -323,50 +283,21 @@ export default {
                     this.id=D.id
 
                   
-                  // В слайде после сохранения заставляем перечитать этот 1_to_m
-                  setTimeout(
-                    ()=>{
-                      console.log(`emit: 1_to_m:upload_values:${this.field.name}`)
-                      //console.log(this.field.values)
-                      this.$bus.emit(
-                      `1_to_m:upload_values:${this.field.name}`,
-                      this.field.values
-                      )
-                    },
-                    500
-                  )
+                  // // В слайде после сохранения заставляем перечитать этот 1_to_m
+                  // setTimeout(
+                  //   ()=>{
+                  //     //console.log(`emit: 1_to_m:upload_values:${this.field.name}`)
+                  //     this.$store.state.one_to_m[this.field.name].list=
+                  //     //console.log(this.field.values)
+                  //     // this.$bus.emit(
+                  //     // `1_to_m:upload_values:${this.field.name}`,
+                  //     // this.field.values
+                  //     // )
+                  //   },
+                  //   500
+                  // )
                   
-                  /*
-                  let values=D.values;
-                  for(let cf of this.field.fields){ // преобразование типов для select_from_table и select_values
-                    if(cf.type=='select_values' || cf.type=='select_from_table')
-                      values[cf.name]=values[cf.name].toString();
-                  }
-                  if(save_action=='insert'){
-                    
-                    
-                    // !!! здесь нужно сделать преобразование типов для select_from_table и select_values
-                    
-                    let values_new=[];
-                    for(let v of this.values){
-                      values_new.push(v)
-                    }
-                    values_new.push(D.values); // D.values
-                    
-                    
-                  }
-                  else if(save_action=='update'){
-                    let values_new=[];
-                    let table_id=this.field.table_id;
-                    for(let v of this.values){
-                        if(v[table_id]==values[table_id])
-                          values_new.push(values)
-                        else
-                          values_new.push(v)
-                    }
-                    this.upload_values(values_new);
-                  }
-                  */
+
                   this.upload_values(D.values);
 
                   let obj=[]; obj[this.field.table_id]=this.id;

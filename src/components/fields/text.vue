@@ -1,5 +1,6 @@
 <template>
         <div>
+          
           <div v-if="source_field.before_html" v-html="source_field.before_html"></div>
           <template v-if="!source_field.hide">
             <template v-if="source_field.subtype=='color'">
@@ -96,7 +97,7 @@
 
 
   // end
-  import { field_update, getValueByField, setValueByField } from './field_functions'
+  import { getValueByField, setValueByField } from './field_functions'
   //import QRCode from '../../js/qrcode.min.js'
   import qr_call from './text_subtypes/qr_call';
   
@@ -109,23 +110,28 @@
   data:function(){
     return {
       value:'',
-      current_prefix:'',
-      error_message:'',
-      warning_message:'',
-      after_html:'',
+      current_prefix:'',      
       go_save:0,
       show_popup_list:false,
       popup_list:[],
       show_color_picker:false
     }
   },
-  props:['form','field','parent'],
+  props:['form','field',
+    'save_to_store',
+    'save_field_to_store',
+    'get_source_field','get_value_by_field'
+  ],
+  
   watch:{
     refresh(r){
       let nv=getValueByField(this)
       if(nv!=this.value){
         this.value=nv 
       }
+    },
+    source_field(f){
+      this.value=f.value
     },
     value(nv){
       let t=this, ov=getValueByField(t)
@@ -144,8 +150,8 @@
     },
     source_field(){
       let t=this, f=t.field
-      if(f.parent){
-        return 'parent'
+      if(typeof t.get_source_field=='function'){  
+        return t.get_source_field(f.name)
       }
       return t.$store.state.fields[f.name]
     },
@@ -175,7 +181,11 @@
         input(){
           //check_fld(this);
           
-          let f=this.field;
+          
+          let t=this, f=this.field
+          
+          
+          
           if(f.subtype=='kladr'){
             this.kladr_request()
           }
@@ -183,25 +193,8 @@
             this.dadata_address_request()
           }
 
+          setValueByField(t, t.field, t.value)
           
-          if(this.parent){
-            this.parent({
-              from:'field-text component (text.vue), metod input',
-              value:this.value,
-              error:f.error,
-              name:f.name,
-              error_message:f.error_message
-            },
-            )
-            if(f.error_message!=this.error_message){
-              this.error_message=f.error_message
-            }
-          }      
-          else{ // обработчик основной формы
-            
-            f.value=this.value;
-            this.$bus.emit('change_field', f);
-          }
 
         },
         dadata_address_request(){
