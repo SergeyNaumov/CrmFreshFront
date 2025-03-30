@@ -56,7 +56,7 @@
 import { formatDate, formatDateYMD, getValueByField, setValueByField } from './field_functions'
 
 export default {
-    props:['form','field','parent'], // ,'calc_values'
+    props:['form','field', 'save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'], // ,'calc_values'
     computed:{
       value_show(){
         let v=getValueByField(this,this.field) 
@@ -64,18 +64,6 @@ export default {
           v=v.replace(/\s\d{2}:.+$/,'').split('-').reverse().join('.')
         }
         return v?v:''
-        if(!v){
-          v=''
-        }
-        if(v && /\s\d{2}:\d{2}:\d{2}/.test(v)){
-          v=formatDate(v)
-          //v=v.replace(/\s\d{2}:\d{2}:\d{2}/,'')
-          
-        }
-        console.log(this.field.name,' => ',v)
-        if(v)
-          return v.split('-').reverse().join('.')
-        return ''
       }
     },
     watch:{
@@ -91,12 +79,19 @@ export default {
         t.menu=false
 
       },
+      // refresh(){
+      //       let nv=getValueByField(this)?true:false
+      //       if(nv!=this.value){
+      //           this.value=nv 
+      //       }
+      //   },
 
     },
     created(){
       // .replace нужен для того, чтобы пофиксить время, которого быть не должно
       
-      let value=this.field.value.replace(/[T\s][\d:]+$/,'')
+      let value=getValueByField(this) || ''
+      value=value.replace(/[T\s][\d:]+$/,'')
       this.value=value?new Date(value):null
 
       

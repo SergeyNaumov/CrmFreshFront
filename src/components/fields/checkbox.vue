@@ -25,7 +25,7 @@
             value:false
         }
     },
-    props:['form','field','parent'],
+    props:['form','field', 'save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'],
 
     created(){   
 
@@ -39,7 +39,7 @@
         }
     },
     watch:{
-        refresh(r){
+        refresh(){
             let nv=getValueByField(this)?true:false
             if(nv!=this.value){
                 this.value=nv 
@@ -48,6 +48,20 @@
         field(){
             this.value=(this.field.value || parseInt(this.field.value))?true:false
             this.after_html=this.field.after_html
+        },
+        value(nv){
+          let t=this, ov=getValueByField(t)
+          if(nv != ov){
+            setValueByField(t, t.field, nv)
+          }
+        },
+        source_field(f){
+          setTimeout(
+            ()=>{
+              this.value=this.source_field.value
+            },100
+          )
+          
         },
         // value(nv){
         //     let t=this, ov=getValueByField(t)?true:false

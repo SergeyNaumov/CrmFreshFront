@@ -7,6 +7,7 @@
           </div>
         </div>
         <template v-else>
+            <div class="description_container" v-html="field.description+':'"></div>
             <div style="position: relative;">
                         <v-menu
                             v-model="menu_date"
@@ -62,9 +63,9 @@
 //import { of } from 'core-js/core/array'
 import { formatDateYMD, getValueByField, setValueByField } from './field_functions'
 export default {
-    props:['form','field','refresh','parent'], // ,'calc_values'
+    props:['form','field', 'save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'], // ,'calc_values'
     created(){
-      let t=this, v=t.$store.state.values[t.field.name]
+      let t=this, v=getValueByField(this) || ''
       if(v){
         let [date, time]=v.split(' ')
         if(date){
@@ -92,7 +93,6 @@ export default {
     computed:{
       date_show(){
           let v=getValueByField(this, this.field)
-
           if(v){
             let [date,time]=v.split(' ')
             return date.split('-').reverse().join('.')
@@ -116,6 +116,14 @@ export default {
       }
     },
     watch:{
+      value(nv){
+        let t=this, ov=getValueByField(t,t.field)
+        nv = t.date?formatDateYMD(nv):''
+        
+        if(ov != nv){
+          setValueByField(t,t.field, nv)
+        }
+      },
       date(v){
         this.menu_date=false
         if(v){
@@ -142,8 +150,8 @@ export default {
       set_value(){
         this.set_need_empty();
         let t=this
-        
-        if(t.date && t.time){
+        console.log('set value')
+        if(t.date){
           let new_value=`${formatDateYMD(t.date)} ${t.time}`
           if(new_value !=t.old_value){
             setValueByField(t,t.field,new_value)

@@ -12,6 +12,7 @@
             <template v-if="save_action=='update'">Редактирование элемента</template>
           </div>
         </div>
+        <pre v-if="0">{{ fields }}</pre> 
         <div v-for="cf in field.fields" :key="cf.name">
             
             <template v-if="fields[cf.name]">
@@ -34,18 +35,48 @@
                   :get_source_field="get_source_field"
               />
             
-<!--             
+
               <field-checkbox 
                   v-else-if="cf.type=='checkbox' || cf.type=='switch'"
                   :form="form"
-                  :field="fields[cf.name]" 
+                  :field="fields[cf.name]"
                   :save_to_store="save_to_store"
-                  :refresh="cur_refresh"
+                  :save_field_to_store="save_field_to_store"
+                  :get_value_by_field="get_value_by_field"
+                  :get_source_field="get_source_field"
               />
-                        
+              <field-date
+                  v-else-if="cf.type=='date'"
+                  :form="form"
+                  :field="fields[cf.name]"
+                  :save_to_store="save_to_store"
+                  :save_field_to_store="save_field_to_store"
+                  :get_value_by_field="get_value_by_field"
+                  :get_source_field="get_source_field"
+              />
+              <field-datetime
+                  v-else-if="cf.type=='datetime'"
+                  :form="form"
+                  :field="fields[cf.name]"
+                  :save_to_store="save_to_store"
+                  :save_field_to_store="save_field_to_store"
+                  :get_value_by_field="get_value_by_field"
+                  :get_source_field="get_source_field"
+              />
+              <!-- <field-file
+                  v-else-if="cf.type=='file'"
+                  :form="form"
+                  :id="'upload-'+field.name"
+                  :field="fields[cf.name]"
+                  :save_to_store="save_to_store"
+                  :save_field_to_store="save_field_to_store"
+                  :get_value_by_field="get_value_by_field"
+                  :get_source_field="get_source_field"
+              />         -->
               <form v-else-if="cf.type=='file'" enctype="multipart-form/data"  class="upload_file" :id="'upload_'+cf.name" >
+                <div class="description_container">{{ cf.description }}: </div>
                 <input type="file">
-              </form> -->
+              </form>
             </template>
           </div>
           
@@ -187,7 +218,8 @@ export default {
           //console.log('obj:',obj)
           
           t.$store.state.one_to_m[t.field.name].fields[obj.field.name].value=obj.value
-          //console.log('save_to_store:',t.$store.state.one_to_m[t.field.name].fields[obj.field.name].value)
+          //t.$store.state.one_to_m[t.field.name].fields[obj.field.name]=obj.field
+          console.log('save_to_store:',t.$store.state.one_to_m[t.field.name].fields[obj.field.name].value)
         },
         get_source_field(name){
           let t=this
@@ -197,14 +229,16 @@ export default {
 
  
         save_files(values){
-          let cur_id=values[this.field.table_id];
+          let t=this, store=t.$store.state.one_to_m[t.field.name]
+          let cur_id=store.id
+          console.log('values:',values)
           for(let f of this.field.fields){
             if(f.type=='file'){
               
               let formData = new FormData();
               let file = document.querySelector('#upload_'+f.name+' input[type=file]' );
               //let form=document.getElementById('upload_'+f.name);
-              if(file.files.length){ // файлы выбраны
+              if(file && file.files.length){ // файлы выбраны
                 //formData.append(f.name, file.files[0]);
                 formData.append('attach', file.files[0]);
                 this.$http.post(BackendBase+'/1_to_m/upload_file/'+this.form.config+'/'+this.field.name+'/'+f.name+'/'+this.form.id+'/'+cur_id, formData, {
@@ -236,8 +270,9 @@ export default {
         },
         save(save_action){
           let t=this, new_values={}, fields=t.fields;
-          //проверяем, прикрепили ли файлы 
           let store=t.$store.state.one_to_m[t.field.name]
+          //проверяем, прикрепили ли файлы 
+          
           
           let parent_id=this.form.id
           for(let f of this.field.fields){

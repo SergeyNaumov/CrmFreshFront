@@ -1,8 +1,8 @@
 <template>
     <!-- slide -->
     <div>
-
-      <div v-if="list && list.length">      
+        <pre v-if="0">{{ list[0] }}</pre>
+        <div v-if="list && list.length">      
         <v-dialog v-model="del_errors_out" max-width="500">
         <v-card class="one_to_m" >
             <v-card-title  class="headline">
@@ -46,13 +46,13 @@
         </div>
         
         <!-- view type: default -->
-
-        <template v-else>
+        
+        <template v-else>          
             <table class="one_to_m">
             <thead>
                 <tr>
                     <th v-for="h in field.headers" :key="h.name">{{h.description}}</th>
-                    <th ></th>
+                    <th>&nbsp;</th>
                 </tr>
             </thead>
             <!-- :itemKey="ch_id"  Указываем уникальное поле  -->
@@ -71,7 +71,6 @@
               >
                 <template #item="{ element: v }">
                   <tr :key="ch_id(v)" :id="'srt-'+field.name+ch_id(v)">
-                    <td>{{ v.id }}</td>
                     <!-- Перебор заголовков -->
                     <td v-for="h in field.headers" :key="h.name">
                       
@@ -88,15 +87,13 @@
                       <template v-else>
                         <span v-if="h.type === 'file'">
                           <span v-html="download_file_block(h, ch_id(v), v[h.name + '_filename'], v)"></span>
+                          
                           <template v-if="field.headers.length > 1">
                             <!-- Выводим ссылку "удалить", если есть другие поля -->
-                            <a
-                              v-if="v[h.name + '_filename'] && !child_field_read_only(h.name)"
-                              href=""
-                              @click.prevent="del_file(h.name, ch_id(v))"
-                            >
-                              Удалить
-                            </a>
+                            <template v-if="v[h.name + '_filename'] && !child_field_read_only(h.name)">
+                                |
+                                <a href="" @click.prevent="del_file(h.name, ch_id(v))">удалить</a>
+                            </template>
                           </template>
                           <template v-else>-</template>
                         </span>
@@ -106,7 +103,7 @@
                           <template v-if="h.type === 'text' && h.subtype === 'color'">
                             <div class="color_squire" :style="{ 'background-color': get_value_for_slide(h, v) }"></div>&nbsp;
                           </template>
-
+                          
                           <span v-html="get_value_for_slide(h, v)"></span>
                           
                         </span>
@@ -277,6 +274,21 @@ export default {
             else if(type=='checkbox' || type=='switch'){
                 return parseInt(value)?'да':'нет'
             }
+            else if(type=='date'){
+                if(value){
+                    return value.split('-').reverse().join('.')
+                }
+                else{
+                    return '-'
+                }
+            }
+            else if(type=='datetime'){
+                if(value){
+                    value=value.replace('T',' ').replace(/^(\d{4})-(\d{2})-(\d{2})/,'$1.$2.$3')
+                }
+                
+                return value
+            }
             else{
                 if(type=='select_from_table' || type=='select_values'){
                     let fields=this.$store.state.one_to_m[this.field.name].fields
@@ -289,7 +301,7 @@ export default {
             }
         },
         get_field_by_name(name){
-            return this.$store.state.one_to_m[this.field.name].fields || undefined
+            return this.$store.state.one_to_m[this.field.name].fields[name] || undefined
         },
         get_header_from_select(cf,value){
             for(let v of cf.values){

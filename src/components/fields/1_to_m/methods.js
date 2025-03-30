@@ -27,7 +27,7 @@ export const create_edit_fields=t=>{
     // }
 
     for(let f of t.field.fields){        
-      if(/^(file|text|textarea|checkbox|switch|select|select_from_table|select_values)$/.test(f.type)){
+      if(/^(file|text|textarea|checkbox|switch|date|datetime|select|select_from_table|select_values)$/.test(f.type)){
         if(f.type=='select_from_table' || f.type=='select_values'){ // преобразование типов
           for(let v of t.field.values){
             if(!v[f.name]) v[f.name]=''

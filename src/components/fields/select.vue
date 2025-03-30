@@ -121,7 +121,7 @@
 
       <!-- Сообщения об ошибках и предупреждения -->
       <div v-if="source_field.error_message" class="error_msg">{{ source_field.error_message }}</div>
-      <div v-if="source_field.warning_message" class="err">{{ source_field.warning_message }}</div>
+      <div v-if="source_field.warning_message" class="warning">{{ source_field.warning_message }}</div>
       <div v-if="source_field.after_html" v-html="source_field.after_html"></div>
     </template>
   </div>

@@ -62,6 +62,16 @@ export function field_update(new_data, self){
     } 
 }
 
+export const save_field_to_store=(t,field)=>{
+  console.log('t:',t,'field:',field)
+  if(typeof t.save_field_to_store=='function'){
+    t.save_field_to_store(field)
+  }
+  else{
+    t.$store.state.fields[field.name]=field
+  }
+}
+
 export const check_fld=(self, value)=>{
     
     let f=self.field, error=false, error_message=''
@@ -177,25 +187,28 @@ export const setValueByField=(self,field,value)=>{
       //ov=value
   let before_check_value=value
   value=check_fld(self,value)
-  //console.log('ov: ',ov,'bf:',before_check_value, ' nv: ',value)
+  //console.log('output:',value)
+  
   if(ov!=value || before_check_value!=value){
       
       
-      
+    //console.log('ov: ',ov,'bf:',before_check_value, ' nv: ',value)    
         
         //console.log('save to storage: ',value, 'refresh_value: ',self.$store.state.refresh)
         
         if(typeof self.save_to_store == 'function'){ // сохраняем в свой  store
-          //console.log('save to parent sub:',{field:field, value:value})
-          //self.save_to_store({field:field, value:value})
+          
+          self.save_to_store({field:field, value:value})
         }
         else{ // сохраняем в стандартный store формы
-          //console.log('save to store:',value)
+          
           self.$store.state.values[field.name]=value
           
         }
-        return value
+        // REFRESH нужен! без него value не обновляется в полях
         self.$store.state.refresh=self.$store.state.refresh+1
+        return value
+        
         
   }
   return ov

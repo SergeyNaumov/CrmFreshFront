@@ -1,6 +1,5 @@
 <template>
         <div>
-          
           <div v-if="source_field.before_html" v-html="source_field.before_html"></div>
           <template v-if="!source_field.hide">
             <template v-if="source_field.subtype=='color'">
@@ -56,9 +55,10 @@
                     <div class="close"><a href="" @click.prevent="show_popup_list=false">закрыть</a></div>
                     <div class="item" v-for="(p,idx) in popup_list" :key="'popup'+idx" @click="set_new_value(p.header)">{{p.header}}</div>
                   </div>
-
+                  
                   <v-textarea
                     @input="input"
+                    @keyup="input"
                     v-if="field.type=='textarea'"
                     :disabled="!!field.read_only"
                     v-model="value"
@@ -67,21 +67,22 @@
                     :auto-grow="true"
                     :clearable="true"
                     :rounded="$theme.rounded"
+                    v-on:input="$emit('input', $event)"
                   />
-                  <template v-if="field.values && field.values.length">
-                    варианты:
-                    <span v-for="v in field.values" :key="v.v">
+                  <template v-if="source_field.values && source_field.values.length">
+                    варианты: ({{ source_field.name }})
+                    <span v-for="v in source_field.values" :key="v.v">
                       <a href="" @click.prevent="set_new_value(v.v)" >{{ v.d }}</a>&nbsp;
                     </span>
                   </template>
 
                 </template>
-                <div class="add_description" v-if="field.add_description">{{field.add_description}}</div>
+                <div class="add_description" v-if="source_field.add_description">{{source_field.add_description}}</div>
                 <div
                   class="err" v-if="source_field.error_message" v-html="source_field.error_message"
                 />
                 <div
-                  class="err" v-if="source_field.warning_message" v-html="source_field.warning_message"
+                  class="warning" v-if="source_field.warning_message" v-html="source_field.warning_message"
                 />
             </template>
             <qr_call v-if="field.subtype=='qr_call'" :value="value" :field="source_field"/>
@@ -131,7 +132,10 @@
       }
     },
     source_field(f){
-      this.value=f.value
+      if(f.value!=this.value){
+        this.value=f.value
+      }
+      
     },
     value(nv){
       let t=this, ov=getValueByField(t)
@@ -181,8 +185,8 @@
         input(){
           //check_fld(this);
           
-          
-          let t=this, f=this.field
+
+          let t=this, f=t.field
           
           
           
@@ -193,7 +197,7 @@
             this.dadata_address_request()
           }
 
-          setValueByField(t, t.field, t.value)
+          //setValueByField(t, t.field, t.value)
           
 
         },

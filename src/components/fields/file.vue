@@ -1,8 +1,9 @@
 <template>
   <div class="root_element">
+    <pre v-if="0">{{ source_field }}</pre>
     <!-- Только для чтения -->
     <template v-if="field.read_only">
-      <a :href="download_link" :download="orig_filename" v-if="field.begin_value">Скачать</a>
+      <a :href="download_link" :download="orig_filename" v-if="loaded_value">Скачать</a>
     </template>
 
     <!-- Редактируемый режим -->
@@ -11,18 +12,19 @@
         Загрузка: <!-- Способы загрузки файла -->
         <span v-for="l in load_methods" :key="l.loader" class="file_loader_item">
           <v-icon size="small" color="primary">{{ l.icon }}</v-icon>&nbsp;
-          <template v-if="img_loader === l.loader">
+          <template v-if="img_loader==l.loader">
             {{ l.header }}
           </template>
           <template v-else>
-            <a href="" @click.prevent="img_loader = l.loader">{{ l.header }}</a>
+            <a href="" @click.prevent="set_img_loader(l.loader)">{{ l.header }}</a>
           </template>
         </span>
+        <span v-if="img_loader"><a href="" @click.prevent="set_img_loader('')">X</a></span>
       </div>
 
       <div class="img_loader" v-if="img_loader">
         <!-- Загрузка из буфера обмена -->
-        <div v-if="img_loader === 'clipboard'">
+        <div v-if="img_loader == 'clipboard'">
           <p>
             В том случае, если в буфере обмена содержится изображение, Вы можете вставить его.<br>
             Данное изображение будет загружено в виде PNG-файла.
@@ -38,7 +40,7 @@
         </div>
 
         <!-- Загрузка из файла -->
-        <div v-if="img_loader === 'file'">
+        <div v-if="img_loader == 'file'">
           Выберите файл для загрузки:
           <v-file-input
             :accept="field.accept"
@@ -52,7 +54,7 @@
         </div>
 
         <!-- Загрузка из URL -->
-        <div v-if="img_loader === 'from_link'">
+        <div v-if="img_loader == 'from_link'">
           <input type="text" class="new_file_url" v-model="extent_file_link" placeholder="Укажите ссылку, по которой сейчас находится файл">
           <v-btn :disabled="!extend_file_link_ok" @click.prevent="load_link_from_url">Ок</v-btn>
         </div>
@@ -61,7 +63,8 @@
       </div>
 
       <!-- Просмотр загруженного изображения -->
-      <div v-if="begin_value && !imgSrc" class="show_loaded">
+
+      <div v-if="loaded_value && !imgSrc" class="show_loaded">
         <div v-if="!show_loaded">
           <v-icon size="small" v-if="is_img" @click.prevent="show_loaded = true" class="show">mdi-eye</v-icon>
           <!-- Удалять разрешаем только тогда, когда фото не обязательно -->
@@ -96,7 +99,7 @@
         <div class="not_accepted" v-else>
           <b>Не все изображения подтверждены</b>
           <a href="" v-if="false" @click.prevent="accept_all">Подтвердить сразу всё</a>&nbsp;
-          <a href="" v-if="begin_value" @click.prevent="imgSrc = ''; field_error_check()">Отмена</a>
+          <a href="" v-if="loaded_value" @click.prevent="imgSrc = ''; field_error_check()">Отмена</a>
         </div>
 
         <v-row no-gutters style="margin-top: 20px;">
@@ -120,7 +123,8 @@
     </template>
 
     <template v-if="false">{{ value }}</template>
-    <div class="err">{{ err_str }}</div>
+    <div class="err" v-if="source_field.error_message" v-html="source_field.error_message"/>
+    <div class="warning" v-if="source_field.warning_message" v-html="source_field.warning_message"/>
   </div>
 </template>
 <script>
@@ -128,43 +132,79 @@ import { Cropper } from 'vue-advanced-cropper'
 //import { bus } from '../../main'
 // https://norserium.github.io/vue-advanced-cropper/
 // https://norserium.github.io/vue-advanced-cropper/introduction/getting-started.html
+import { getValueByField, setValueByField, save_field_to_store } from './field_functions'
+
 export default {
-    created(){
-      this.$bus.on('file:'+this.field.name, begin_value=>{
-        this.begin_value=begin_value,
-        document.getElementById(this.field.name+'_attach').value='',
-        this.imgSrc='';
-      });
-    },
+
     components: { Cropper},
-    props:['form','field'],
+    props:['form','field','save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'],
     computed:{
+      source_field(){
+        let t=this, f=t.field
+        if(typeof t.get_source_field=='function'){  
+          return t.get_source_field(f.name)
+        }
+        return t.$store.state.fields[f.name]
+      },
+      loaded_value(){ // загруженный в данный момент файл (вместо begin_value)
+        let t=this, f=t.field
+        if(typeof t.get_source_field=='function'){  
+          f=t.get_source_field(f.name)
+        }
+        else{
+          f=t.$store.state.fields[f.name]
+        }
+        return f.loaded_value
+      },
+      img_loader(){
+        
+        let t=this, f=t.field
+        if(!f){
+          return ''
+        }
+        if(typeof t.get_source_field=='function'){  
+          f=t.get_source_field(f.name)
+        }
+        else{
+          f=t.$store.state.fields[f.name]
+        }
+        return f.img_loader_value?f.img_loader_value:''
+      },
       img_path(){ 
         // если ранее загруженное фото является изображением
         //  -- возвращаем путь к этому изображению
-        if(/\.(jpg|png|svg|gif)/i.test(this.begin_value)){
+        if(/\.(jpg|jpeg|png|svg|gif)/i.test(this.loaded_value)){
             return this.download_link
-            //return BaseUrl+this.field.filedir.replace(/^\.\//,'')+'/'+this.begin_value;
-            //return full_name;
-
         }
         return '';
       },
       is_img(){
-        return /^.+\.(jpe?g|png|wepb|gif|svg)$/i.test(this.begin_value)
+        return /^.+\.(jpe?g|png|wepb|gif|svg)$/i.test(this.loaded_value)
       },
       orig_filename(){
-        if(this.begin_value){
-          return this.field.keep_orig_filename?this.begin_value.split(';').pop():this.begin_value
+        if(this.loaded_value){
+          return this.field.keep_orig_filename?this.loaded_value.split(';').pop():this.loaded_value
         }
         return ''
 
       },
       download_link(){
-        let filedir=BaseUrl+this.field.filedir.replace(/^\./,'')
-        let saved_filename=''
-        if(this.field.begin_value){
-          saved_filename=this.field.keep_orig_filename?this.begin_value.split(';').shift():this.begin_value
+        let t=this, saved_filename='', f=t.source_field
+        
+        if(!f){
+          return ''
+        }
+        if(!f || !f.filedir){
+          let f=t.source_field
+          f.error_message='не указан filedir!'
+          t.update_field(f)
+          
+          return
+
+        }
+        let filedir=`${BaseUrl}${t.source_field.filedir.replace(/^\./,'')}`
+        if(t.loaded_value){
+          saved_filename=t.field.keep_orig_filename?t.loaded_value.split(';').shift():t.loaded_value
         }
         let download_link=filedir+'/'+saved_filename
         download_link=download_link.replace('//','/')
@@ -179,18 +219,17 @@ export default {
 
     },
     watch:{
-
+      loaded_value(){
+        this.imgSrc=''
+      }
     },
     data:function(){
         return {
-            begin_value: '',
             show_loaded: false, // показать ранее загруженное фото
             imgSrc:'',
             orig_name:'', // оригинальное имя файла
             cropImage:null,
             all_accept:false,
-            err_str:'',
-            img_loader:'',
             //new_image_url:'https://damion.club/uploads/posts/2022-02/1643959008_61-damion-club-p-ptitsa-sekretar-zhivotnie-68.jpg',
             clipboard_error:'', // ошибка при вставке из буфера картинки
             clipboard_success:'',
@@ -213,9 +252,11 @@ export default {
       this.field_error_check()
     },
     methods:{
+      update_field(field){
+        save_field_to_store(this,field)
+      },
       init(){ // читаем field.resize и на его основе собираем crops (правила ресайзов)
         let field=this.field;
-        this.begin_value=field.begin_value;
         this.crops=[];
         if(field.resize){
           for(let r of field.resize){
@@ -227,11 +268,17 @@ export default {
         //this.crops=arr;
         
       },
+      set_img_loader(v){
+        console.log('set_img_loader:',v)
+        let t=this, f=t.source_field
+        f.img_loader_value=v
+        t.update_field(f)
+      },
       field_error_check(){
         let t=this
-        let field=t.field;
-        if(field.required && !t.imgSrc && !t.begin_value){
-          t.err_str='Файл обязателен для загрузки'
+        let field=t.source_field;
+        if(field.required && !t.imgSrc && !t.loaded_value){
+          field.error_message='Файл обязателен для загрузки'
           field.error=true;
         }
         else if(field.crops){
@@ -261,7 +308,7 @@ export default {
           field.error=false;
         
         field.value=t.get_value();
-        this.$bus.emit('change_field',field);
+        //this.$bus.emit('change_field',field);
 
       },
       get_value(){
@@ -358,23 +405,25 @@ export default {
         return true
       },
       start_crop_already_loaded(){
-        let full_name=this.field.filedir+'/'+this.begin_value;       
-        this.orig_name=this.begin_value;
+        let full_name=this.field.filedir+'/'+this.loaded_value;
+        this.orig_name=this.loaded_value;
         this.imgSrc=BaseUrl+full_name.replace(/^\.\//,'/');
       },
       remove(){ // удаляем текущее фото с сервера
         // получить с сервера загруженное ранее фото для кропа
-        this.$http.post(
-          BackendBase+'/edit-form/'+this.form.config+'/'+this.form.id,
+        let t=this, f=t.source_field
+        t.$http.post(
+          `${BackendBase}/edit-form/${t.form.config}/${t.form.id}`,
           {
             action:'delete_file',
-            name: this.field.name
+            name: t.field.name
           }
         ).then(
           r=>{
             let R=r.data;
             if(R.success){
-              this.begin_value='';
+              f.loaded_value=''
+              save_field_to_store(t,f)
             }
             this.errors=R.errors
           }

@@ -10,7 +10,7 @@
     </v-dialog>
 
     <div :class="form.wide_form ? 'container_fluid' : 'container'">
-      <pre v-if="1">{{ values }}</pre>
+      <pre v-if="0">{{ $store.state.one_to_m.f7 }}</pre>
       
       <!-- Критическая ошибка -->
       <v-card v-if="fatal_errors.length">
@@ -285,9 +285,9 @@ methods: {
                     cgi_params: get_cgi_params()
                   }
                 ).then(response=>{
-                        let data=response.data;
+                        let data=response.data, t=this
                         if(data.log)
-                            this.log=data.log
+                            t.log=data.log
                         
                         if(data.redirect && data.redirect!=location.pathname){
                           localStorage.setItem('link_prev_login',location.href)
@@ -299,7 +299,7 @@ methods: {
                         if(data.success){
 
                             if(data.title){
-                              this.title=data.title;
+                              t.title=data.title;
                               document.title=this.title.replace(/<.+?>/g,' ')
                             }
 
@@ -309,29 +309,19 @@ methods: {
                                 f.hide=false
                             
                             // form->vuex
-                            this.$store.commit('set_form', data);
+                            t.$store.commit('set_form', data);
 
 
-                            this.form.read_only=parseInt(this.form.read_only);
+                            t.form.read_only=parseInt(this.form.read_only);
                             save_values_to_store(this);
                             
                            
-                            this.cols=data.cols;
+                            t.cols=data.cols;
 
-                            this.init_tabs(data)
+                            t.init_tabs(data)
 
                             
-                            for(let f of this.form.fields){
-                              if(f.type=='file' && f.value){
-                                f.begin_value=f.value, f.value=''
-                              }
-                              
-                              if(f.type=='checkbox' || f.type=='switch'){
-                                f.value=parseInt(f.value)?1:0;
-                                this.values[f.name]=f.value
-                              }
-
-                            }
+                           
                         }
                         // Динамический javascript
                         if(data.javascript){
@@ -410,17 +400,17 @@ methods: {
           },
           // Загрузка файлов в форму
           save_files(){
-            
-            for(let f of this.form.fields){
-              if(f.type === 'file'){
-                
-              }
-              if(f.type=='file' && f.value) {
+            let t=this
+            for(let name in t.$store.state.fields){
+              // берём все данные из store
+              let f=t.$store.state.fields[name]
+              console.log()
+              if(f && f.type=='file' && f.value) {
                 this.$http.post(
                   BackendBase+'/edit-form/'+this.params.config+'/'+ this.form.id,
                   {
                     action:'upload_file',
-                    name: f.name,
+                    name: name,
                     value:f.value,
                   }
                 ).then(
@@ -428,7 +418,11 @@ methods: {
                       let R=r.data;
                       this.errors=R.errors;
                       if(R.success){
-                        this.$bus.emit('file:'+f.name,R.value);
+                        // после загрузки файла, устанавливаем в store begin_value
+                        console.log('loaded_value:',R.value)
+                        t.$store.state.fields[f.name].loaded_value=R.value
+                        t.$store.state.fields[f.name].img_loader_value=''
+                        //this.$bus.emit('file:'+f.name,R.value);
                       }
                     }
                 ).catch(

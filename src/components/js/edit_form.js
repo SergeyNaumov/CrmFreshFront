@@ -261,20 +261,30 @@ export function save_values_to_store(self){
         } 
       }
       
-      if( !['file', 'memo','1_to_m','multiconnect','docpack','filter_extend_text'].includes(f.type) ){
+      if( !['memo','1_to_m','multiconnect','docpack','filter_extend_text'].includes(f.type) ){
         let v=f.value;
         if(v === undefined) v='';
         if(f.type=='checkbox' || f.type=='switch') v=v?1:0;
         
+        if(f.type=='file'){
+          f.loaded_value=f.value?f.value:''
+          f.value=''
+          f.img_loader_value='' // способ загрузки, тоже будет в store
+        }        
         values[f.name]=v;
         f.value=v
         fields[f.name]=f
+
       }
+
       
+
     }
+
+
     
+    // блокировка формы при ошибках    
     self.disabled_form=block;
-    //self.values=values;
 
     self.$store.commit('set_values', values);
     self.$store.commit('set_fields', fields);
