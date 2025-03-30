@@ -1,5 +1,7 @@
 <template>
+  <pre v-if="0">{{ source_field }}</pre>
   <div class="root_element">
+    <div class="description_container" v-html="field.description+':'"></div>
     <pre v-if="0">{{ source_field }}</pre>
     <!-- Только для чтения -->
     <template v-if="field.read_only">
@@ -44,7 +46,7 @@
           Выберите файл для загрузки:
           <v-file-input
             :accept="field.accept"
-            :id="field.name + '_attach'"
+            :id="id_file_field?id_file_field:field.name+'_attach'"
             @change="run_cropper"
             :label="`Выберите файл для загрузки в поле ${field.description}`"
             :rounded="$theme.rounded"
@@ -137,7 +139,7 @@ import { getValueByField, setValueByField, save_field_to_store } from './field_f
 export default {
 
     components: { Cropper},
-    props:['form','field','save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'],
+    props:['form','field','save_field_to_store','save_to_store', 'get_value_by_field','get_source_field','id_file_field','remove_file'],
     computed:{
       source_field(){
         let t=this, f=t.field
@@ -264,12 +266,12 @@ export default {
             this.crops.push({description:r.description || '', width:sz[0],height:sz[1],data:'',accept:0})
           }
         }
-        console.log('crops:',this.crops)
+        //console.log('crops:',this.crops)
         //this.crops=arr;
         
       },
       set_img_loader(v){
-        console.log('set_img_loader:',v)
+        //console.log('set_img_loader:',v)
         let t=this, f=t.source_field
         f.img_loader_value=v
         t.update_field(f)
@@ -292,7 +294,8 @@ export default {
           
         
         if(field.max_size){
-          let file = document.getElementById(t.field.name+'_attach').files[0];
+          let id_file_field=t.id_file_field?t.id_file_field:t.field.name+'_attach'
+          let file = document.getElementById(id_file_field).files[0];
           if(file !== undefined){
             if(parseInt(field.max_size)< parseInt(file.size)){
               field.error=t;
@@ -335,7 +338,9 @@ export default {
         this.imgSrc=''; this.field_error_check();
       },
       run_cropper(){
-        let file = document.getElementById(this.field.name+'_attach').files[0];
+        let t=this
+        let id_file_field=t.id_file_field?t.id_file_field:t.field.name+'_attach'
+        let file = document.getElementById(id_file_field).files[0];
         
         { // если нужно кропить if(1 || this.crops.length)
           if(file){
@@ -412,22 +417,28 @@ export default {
       remove(){ // удаляем текущее фото с сервера
         // получить с сервера загруженное ранее фото для кропа
         let t=this, f=t.source_field
-        t.$http.post(
-          `${BackendBase}/edit-form/${t.form.config}/${t.form.id}`,
-          {
-            action:'delete_file',
-            name: t.field.name
-          }
-        ).then(
-          r=>{
-            let R=r.data;
-            if(R.success){
-              f.loaded_value=''
-              save_field_to_store(t,f)
-            }
-            this.errors=R.errors
-          }
-        )
+        if(t.remove_file){ // если есть своя функция удаляния -- выполняем её
+          t.remove_file(t)
+        }
+        else{
+              t.$http.post(
+              `${BackendBase}/edit-form/${t.form.config}/${t.form.id}`,
+              {
+                action:'delete_file',
+                name: t.field.name
+              }
+            ).then(
+              r=>{
+                let R=r.data;
+                if(R.success){
+                  f.loaded_value=''
+                  save_field_to_store(t,f)
+                }
+                this.errors=R.errors
+              }
+            )
+        }
+
 
         
       },
@@ -437,7 +448,7 @@ export default {
         navigator.clipboard.read().then((data) => {
         if (data && data.length && data[0].types) {
           let types=data[0].types
-          console.log('data[0]:',types, (types.includes('image/png')), (types.includes('text/html')) )
+          //console.log('data[0]:',types, (types.includes('image/png')), (types.includes('text/html')) )
           if(types.includes('image/png')){
               data[0].getType("image/png").then((blob) => {
               let reader = new FileReader();

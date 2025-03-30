@@ -152,7 +152,7 @@ export default {
         let t=this
         console.log('set value')
         if(t.date){
-          let new_value=`${formatDateYMD(t.date)} ${t.time}`
+          let new_value=t.time?`${formatDateYMD(t.date)} ${t.time}`:`${formatDateYMD(t.date)} 00:00:00`
           if(new_value !=t.old_value){
             setValueByField(t,t.field,new_value)
           }

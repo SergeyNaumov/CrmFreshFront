@@ -1,8 +1,8 @@
 <template>
     <!-- slide -->
     <div>
-        <pre v-if="0">{{ list[0] }}</pre>
-        <div v-if="list && list.length">      
+        <pre v-if="0">{{ values[0] }}</pre>
+        <div v-if="values && values.length">      
         <v-dialog v-model="del_errors_out" max-width="500">
         <v-card class="one_to_m" >
             <v-card-title  class="headline">
@@ -18,7 +18,7 @@
         <div v-if="field.view_type=='list'" >
             
               <draggable
-                v-model="list"
+                v-model="values"
                 tag="v-row"
                 :options="{'group':'g'+field.name}"
                 
@@ -47,7 +47,8 @@
         
         <!-- view type: default -->
         
-        <template v-else>          
+        <template v-else>    
+                
             <table class="one_to_m">
             <thead>
                 <tr>
@@ -58,7 +59,7 @@
             <!-- :itemKey="ch_id"  Указываем уникальное поле  -->
 
             <draggable
-                v-model="list"
+                v-model="values"
                 tag="tbody"
                 :options="{'group':'g'+field.name}"
                 @change="move_end"
@@ -95,7 +96,7 @@
                                 <a href="" @click.prevent="del_file(h.name, ch_id(v))">удалить</a>
                             </template>
                           </template>
-                          <template v-else>-</template>
+                          
                         </span>
                         <span v-else>
                           
@@ -146,23 +147,32 @@ export default {
         return {
             del_errors:[],
             del_errors_out:false, // выводить ошибку при операциях с 1_to_m (удаление)
-            list:[], // значения держим в слайде, чтобф можно было сортировать
+            //list:[], // значения держим в слайде, чтобф можно было сортировать
             cur_fields:[],
             cur_refresh:0
         }
     },
     watch:{
-        values(){
-          this.list=this.values
-        },
+
     },
 
 
     computed:{
-        values(){
-          let t=this
-          return t.$store.state.one_to_m[t.field.name].values
+        values: {
+            get() {
+            return this.$store.state.one_to_m[this.field.name].values || [];
+            },
+            set(value) {
+                this.$store.commit('updateOneToMValues', {
+                    fieldName: this.field.name,
+                    values: value
+                });
+            }
         },
+        // values(){
+        //   let t=this
+        //   return t.$store.state.one_to_m[t.field.name].values
+        // },
         fields(){
             //let t=this
             //return t.$store.state.one_to_m[t.field.name].fields
@@ -194,7 +204,7 @@ export default {
 
     created(){
         let t=this
-        t.list=t.values
+        //t.list=t.values
        // this.cur_fields=this.field.fields // нужно для того, чтобы можно было обновить
 
         // this.$bus.on( // обновление полей в 1_to_m
@@ -220,7 +230,7 @@ export default {
         },
         reload_slide(D){ // обновляем данные в слайде
             this.cur_fields=D.field.fields
-            this.list=D.values
+            //this.list=D.values
         },
         open_edit_dialog(v){
             let t=this
@@ -232,8 +242,12 @@ export default {
             store.id=v[t.field.table_id]
             
             for(let name in store.fields){
+              let f=store.fields[name]
               store.fields[name].value=v[name]
-              
+              if(f.type=='file'){
+                //store.fields[name].value=v[name]
+                f.loaded_value=v[name]
+              }
             }
             
             
@@ -248,7 +262,7 @@ export default {
         move_end(){
             
             let t=this, sort_hash={}, i=1;
-            for(let v of t.list){
+            for(let v of t.values){
                 sort_hash[t.ch_id(v)]=i++;
             }
             this.$http.post(
@@ -363,19 +377,19 @@ export default {
                 )
         },
         download_file_block(h,child_id,orig_name,v){
-            let child_name=h.name
+            let t=this, child_name=h.name
             
             //let link=BackendBase+'/1_to_m/download/'+this.form.config+'/'+this.field.name+'/'+child_name+'/'+this.form.id+'/'+child_id+'/'+orig_name;
             let link=v.preview_img
             
             //let cf=this.fields[child_name];
             let cf=this.get_field_by_name(child_name);
-              
+            
             let desc='скачать'; let view=0;
 
             if(!orig_name)
                     return ''
-
+            console.log('v:',v)
             if(this.make_view(link)){
                 desc='просмотреть';
                 

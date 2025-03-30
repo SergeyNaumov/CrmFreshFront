@@ -165,6 +165,7 @@
     upload_values(new_values){
       //this.values=new_values;
       let f=this.field;
+      console.log('new_values:',new_values)
       this.$store.state.one_to_m[this.field.name].values=new_values
       //f.values=new_values;
       //this.refresh++

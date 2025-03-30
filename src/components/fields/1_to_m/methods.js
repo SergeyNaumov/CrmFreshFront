@@ -3,6 +3,7 @@ export const init_store=t=>{
     let fields={}
     for(let f of t.field.fields){
         fields[f.name]=f
+
     }
     t.$store.state.one_to_m[t.field.name]={
         // для формы

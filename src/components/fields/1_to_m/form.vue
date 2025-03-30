@@ -63,16 +63,17 @@
                   :get_value_by_field="get_value_by_field"
                   :get_source_field="get_source_field"
               />
-              <!-- <field-file
+              <field-file
                   v-else-if="cf.type=='file'"
                   :form="form"
-                  :id="'upload-'+field.name"
+                  :id_file_field="'upload_'+field.name+'_'+cf.name"
                   :field="fields[cf.name]"
                   :save_to_store="save_to_store"
                   :save_field_to_store="save_field_to_store"
                   :get_value_by_field="get_value_by_field"
                   :get_source_field="get_source_field"
-              />         -->
+                  :remove_file="remove_file"
+              />        
               <form v-else-if="cf.type=='file'" enctype="multipart-form/data"  class="upload_file" :id="'upload_'+cf.name" >
                 <div class="description_container">{{ cf.description }}: </div>
                 <input type="file">
@@ -185,7 +186,8 @@ export default {
             }
             
           }
-        }
+        },
+
 
     },
 
@@ -228,23 +230,28 @@ export default {
         },
 
  
-        save_files(values){
+        save_files(obj, loopback){
           let t=this, store=t.$store.state.one_to_m[t.field.name]
           let cur_id=store.id
-          console.log('values:',values)
+          //console.log('values:',values)
           for(let f of this.field.fields){
             if(f.type=='file'){
               
               let formData = new FormData();
-              let file = document.querySelector('#upload_'+f.name+' input[type=file]' );
+              console.log('#upload_'+t.field.name+'_'+f.name)
+              let file = document.querySelector('#upload_'+t.field.name+'_'+f.name); // ' input[type=file]'
               //let form=document.getElementById('upload_'+f.name);
-              if(file && file.files.length){ // файлы выбраны
+              //let value=
+              //continue
+              console.log('save_files / file:',file)
+              if(file){ // файлы выбраны
                 //formData.append(f.name, file.files[0]);
                 formData.append('attach', file.files[0]);
                 this.$http.post(BackendBase+'/1_to_m/upload_file/'+this.form.config+'/'+this.field.name+'/'+f.name+'/'+this.form.id+'/'+cur_id, formData, {
                     headers: {'Content-Type': 'multipart/form-data'}
                 }).then(
                   response=>{
+                    loopback()
                     if(response.data.success){
                         /*values[f.name+'_filename']=response.data.file_info.orig_name;
                         //values[f.name+'_filename']=file.files[0]['name'];
@@ -266,15 +273,16 @@ export default {
                 )
               }
             }
+            else{
+              loopback()
+            }
           }
         },
         save(save_action){
           let t=this, new_values={}, fields=t.fields;
           let store=t.$store.state.one_to_m[t.field.name]
           //проверяем, прикрепили ли файлы 
-          
-          
-          let parent_id=this.form.id
+
           for(let f of this.field.fields){
             if(fields[f.name]){
               let v
@@ -312,33 +320,23 @@ export default {
                 
                 let D=response.data;
                 if(D.success){
+                  this.save_files(obj,
+                    ()=>{
+                      this.in_dialog=false; 
+                    }
+                  );
+
                   
-                  this.in_dialog=false; 
                   if(!this.id)
                     this.id=D.id
 
-                  
-                  // // В слайде после сохранения заставляем перечитать этот 1_to_m
-                  // setTimeout(
-                  //   ()=>{
-                  //     //console.log(`emit: 1_to_m:upload_values:${this.field.name}`)
-                  //     this.$store.state.one_to_m[this.field.name].list=
-                  //     //console.log(this.field.values)
-                  //     // this.$bus.emit(
-                  //     // `1_to_m:upload_values:${this.field.name}`,
-                  //     // this.field.values
-                  //     // )
-                  //   },
-                  //   500
-                  // )
-                  
 
                   this.upload_values(D.values);
 
                   let obj=[]; obj[this.field.table_id]=this.id;
                   
-                  this.save_files(obj);
-                  this.add_form=false;
+                  
+                  //this.add_form=false;
                   new_values={};
                 }
                 else
@@ -348,6 +346,45 @@ export default {
 
 
 
+        },
+        remove_file(self){ //для удаления файла в компоненте file 
+          let t=this, store=t.$store.state.one_to_m[t.field.name]
+          let cur_id=store.id
+
+          
+          let child_name=self.field.name
+
+          
+          //       this.del_errors = [];
+          t.$http.get(`${BackendBase}/1_to_m/delete_file/${t.form.config}/${t.field.name}/${child_name}/${t.form.id}/${cur_id}`).then(
+                    response=>{
+                        let D=response.data;
+                        if(D && D.success){
+                            let new_values=[];
+                            for(let v of this.values){
+                                if(cur_id == v[this.field.table_id]){
+                                  v[child_name+'_filename']=''
+                                  v[child_name]=''
+                                }
+
+
+                                new_values.push(v);
+                            }
+                            
+                            let source_field=t.get_source_field(child_name)
+                            console.log('source_field:',source_field)
+                            source_field.loaded_value=''
+                            source_field.img_loader_value=''
+                            store.fields[source_field]
+                            t.save_field_to_store(source_field)
+
+                            t.upload_values(new_values)
+                        }
+                        //this.start_dialog_errors(D.errors);
+
+                    }
+          )
+          
         }
   } // end methods
 }

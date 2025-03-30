@@ -159,7 +159,7 @@ import FieldPassword from '../fields/password';
             return true
           if(field.type=='multiconnect')
             return false
-          if(/^(1_to_1_)?(wysiwyg|memo|1_to_m|password|file|datetime|code)$/.test(field.type))
+          if(/^(1_to_1_)?(wysiwyg|memo|1_to_m|password|datetime|code)$/.test(field.type))
             return false
           return true
           //(field.not_description && );

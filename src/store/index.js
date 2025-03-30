@@ -49,11 +49,11 @@ export default createStore({
     get_field_value(state,name){
         return state.values[name]
     },
-    one_to_m_updateList(state, obj ){
-      // обновляем значения слайда (при сортировке)
-      console.log('new_list:', obj)
-      state.one_to_m[obj.name].values=obj.value
-    },
+    updateOneToMValues(state, payload) {
+      if (state.one_to_m[payload.fieldName]) {
+        state.one_to_m[payload.fieldName].values = payload.values;
+      }
+    }
 
   },
   actions: {

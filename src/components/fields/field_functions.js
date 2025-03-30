@@ -63,7 +63,6 @@ export function field_update(new_data, self){
 }
 
 export const save_field_to_store=(t,field)=>{
-  console.log('t:',t,'field:',field)
   if(typeof t.save_field_to_store=='function'){
     t.save_field_to_store(field)
   }
