@@ -110,7 +110,7 @@
 //import tinymce from 'tinymce/tinymce';
 
 import field_buttons from './frontend/buttons';
-import { field_update } from './field_functions' 
+import { field_update } from '../js/field_functions' 
 let PickerCallBack=false;
 function show_hide_tox(mode){
     mode=mode?'visible':'hidden';

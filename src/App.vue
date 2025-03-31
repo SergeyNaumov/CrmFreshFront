@@ -34,12 +34,13 @@
           />
         </v-navigation-drawer>
 
-        <v-app-bar app class="mainapp">
+        <v-app-bar app class="mainapp" :elevation="0">
           
-          <v-app-bar-nav-icon  @click="drawer = !drawer">
-            <fa color="white" size="sm" icon="fa-bars"/>
-          </v-app-bar-nav-icon>
+
           <div class="app_title" >
+            <v-app-bar-nav-icon  @click="drawer = !drawer" >
+              <fa color="white" size="sm" icon="fa-bars"/>
+            </v-app-bar-nav-icon>
             <fa  color="white" icon="fa-home"/>&nbsp;
             <div style="position: relative; top: 3px; display: inline-block;"><a href="/" style="color: #fff;">{{ title }}</a></div>
           </div>
@@ -48,7 +49,7 @@
           <Messenger :config="app_components.navigator" :manager="manager" />
         </v-app-bar>
 
-        <v-main>
+        <v-main class="mt-5">
           <div class="fill-height" fluid>
             <errors :errors="errors" />
 
@@ -335,51 +336,15 @@ export default {
     vertical-align: bottom;
   }
   .app_title a {text-decoration: none;}
-  /*.v-toolbar__title { }
 
-  header .v-toolbar__title .v-icon {color: #fff; position: relative; top: -2px; margin-right: 10px;}
-  header .v-toolbar__title a {color: #fff; text-decoration: none;}*/
   .not_underline {text-decoration: none;}
 
   
   .v-application .err  {background: #fff0; background-color: #fff0;  color: red; margin-bottom: 5px;}
   .v-application .succ  {background: #fff; background-color: #fff !important;  color: green; margin-bottom: 5px;}
   
-//   .v-select-list .v-list-item__title {font-size: 12px;}
-  
- 
-//   input, .v-select__selections [type=text] {font-size: 12px !important;}
-//   .v-list-item__content, .v-select__slot {font-size: 12px;}
-//   .v-label, .v-input {font-size: 12px !important; margin-bottom: 10px;}
+  // header.mainapp .v-app-bar .v-toolbar__content {height: 87px !important;}
 
-//   .v-field--variant-filled .v-field__overlay {
-//     background-color: #fff;
-//   }
-//  .v-field--rounded .v-input__control {
-//     border: 1px solid black; 
-//     padding-left: 3px;
-//     border-radius: 5px !important;
-//     margin-top: 4px;
-    
-//   }
-
-//   .v-input__slot .v-label--active {
-//     font-weight: bold;
-//     border-bottom: 1px solid white;
-//     background-color: white;
-//   }
-//   .v-input__prepend-outer {width: 50px;}
-//   img.logo {max-height: 50px;  margin: 0px 20px 0 0;}
-//   .v-toolbar__title .header {text-align: center;vertical-align: top; margin-top: 8px;  display: inline-block;}
-
-//   textarea.v-field__input{
-//     border: 1px solid gray;
-//     line-height: 1.1rem !important;
-//   }
-
-//   .v-textarea .v-input__slot{
-//     padding:  0 5px !important;
-//   }
 
   @media only screen and (max-width: 800px) {
     img.logo {height: 20px; ; margin: 0;}

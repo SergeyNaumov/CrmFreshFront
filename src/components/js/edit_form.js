@@ -106,26 +106,7 @@ export function save_field_1_to_m(self,data){
 
 }
 
-export function frontend_result_process(self,result,proc_name){
-    if(result){
-      let i=0; 
 
-      //console.log('proc_name:',proc_name)
-      while(i<result.length){
-        let name=result[i], obj=result[i+1]
-        let dep_field=on_dependence(self,name,obj,(proc_name==name));
-        //console.log('name:', name, obj)
-        let f=window.EditForm.get_field_by_name(name)
-        if(f){
-          f.description=obj['description']
-        }
-        if(obj.jscode){
-          eval(obj.jscode)
-        }
-        i+=2;
-      }
-    }
-}
 export const frontend_button_process=(self,f,button,success_function)=>{
   if(button.ajax){
     
@@ -151,65 +132,7 @@ export const frontend_button_process=(self,f,button,success_function)=>{
   }
 
 }
-export function frontend_process(self,f){
-  return
-    //console.log('frontend_process: ',f)
-    if(!f.frontend) return;
 
-    let front=f.frontend;
-
-    if(front.fields_dependence){
-      let dep;
-      eval('dep='+front.fields_dependence);
-      let result=dep(self.values)
-      frontend_result_process(self,result,f.name);
-    }
-    let timeout=600
-    if(front.ajax){
-      let a=front.ajax;
-      if(a.timeout)
-        timeout=a.timeout
-      if(!f.ajax_cnt) f.ajax_cnt=0;
-      f.ajax_cnt++
-      
-      setTimeout(
-        ()=>{
-              
-              f.ajax_cnt--;
-              if(!f.ajax_cnt && !f.error){
-                  let ajax_url=BackendBase+'/ajax/'+self.params.config+'/'+a.name
-                  self.$http.post(
-                    ajax_url,
-                    {values:self.values,id:self.form.id}
-                  ).then(
-                    r=>{
-                      let d=r.data;
-                      if(d.success){
-                        if(f.not_parent){
-
-                        }
-                        frontend_result_process(self,d.result,f.name);
-                        //console.log('result_process:',f, d.result)
-                      }
-                      if(d.errors.length)
-                        alert(d.errors[0])
-                      
-
-                      
-                    }
-                  ).catch(
-                    e=>{
-                      alert('frontend_process (ajax field_name: '+f.name+' url: '+ajax_url+'): '+e)
-                    }
-                  )
-              };
-        },
-        timeout
-      )
-
-    }
-    
-  }
 
 export function get_cgi_params(){
     let data=location.search.replace(/^\?/,'');

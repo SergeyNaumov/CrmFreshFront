@@ -100,7 +100,7 @@
 
 <script>
 import TreeView from "./TreeView.vue";
-import { getValueByField, setValueByField } from './field_functions'
+import { getValueByField, setValueByField } from '../js/field_functions'
   export default {
     components: {TreeView},
     data:function(){

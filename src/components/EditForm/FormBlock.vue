@@ -159,7 +159,7 @@ import FieldPassword from '../fields/password';
             return true
           if(field.type=='multiconnect')
             return false
-          if(/^(1_to_1_)?(wysiwyg|memo|1_to_m|password|datetime|code)$/.test(field.type))
+          if(/^(1_to_1_)?(wysiwyg|memo|1_to_m|password|code)$/.test(field.type))
             return false
           return true
           //(field.not_description && );
@@ -198,7 +198,12 @@ import FieldPassword from '../fields/password';
   }
   .field_container {padding-left: 0; padding-right: 2rem;}
   div {line-height: 20px;}
-  /*header.v-toolbar {background-color: $primary !important;}*/
-  .v-toolbar__content {padding-top: 0 !important;}
+  
+  /* Шапка у блоков (высота и тень) */
+  form .v-toolbar__content {padding-top: 0 !important; height: 30px !important; border-radius: 3px;
+      -webkit-box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12);
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12)
+  }
   header.v-toolbar { background-color: var(--v-primary-base) !important; }
+  
 </style>

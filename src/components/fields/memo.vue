@@ -3,52 +3,59 @@
       
       <errors :errors="errors" v-if="errors.length"></errors>
       <template v-if="id">
+
             <v-progress-circular indeterminate color="primary" v-if="loading"></v-progress-circular>
             <template v-else>
-              <div v-if="!data.length">
-                &lt;комментарии отсутствуют&gt;
-              </div>
-              <v-card v-else class="memo"  :class="{'is_in_results':is_in_results}">
+              <div class="d-flex">
+                    <v-icon class="mt-1 mr-2">mdi-text-box-edit-outline</v-icon>
+                    <div class="flex-grow-1">
+                      
+                      <div v-if="!data.length">
+                        &lt;комментарии отсутствуют&gt;
+                      </div>
+                      <v-card v-else class="memo"  :class="{'is_in_results':is_in_results}">
 
-                
-                <div v-for="(l,idl) in data" :key="'l'+idl" class="memo_str">
-                    <div v-if="l.edit_on" class="edit_on">
-                      <v-textarea v-model="l.message" class="" :rows="1" 
-                        :label="'Измените комментарий:'"
-                        :auto-grow="true"
-                        :clearable="true"
-                        :autofocus="true">
-                      </v-textarea>
-                          <v-btn color="primary"  @click="update(l)" small>Внести изменения</v-btn>
-                          <v-btn color="red"  @click="edit(l,false)" small>Отмена</v-btn>
-                    </div>
+                        
+                        <div v-for="(l,idl) in data" :key="'l'+idl" class="memo_str">
+                            <div v-if="l.edit_on" class="edit_on">
+                              <v-textarea v-model="l.message" class="" :rows="1" 
+                                :label="'Измените комментарий:'"
+                                :auto-grow="true"
+                                :clearable="true"
+                                :autofocus="true">
+                              </v-textarea>
+                                  <v-btn color="primary"  @click="update(l)" small>Внести изменения</v-btn>
+                                  <v-btn color="red"  @click="edit(l,false)" small>Отмена</v-btn>
+                            </div>
 
-                    <div v-else class="memo_item">
-                      <div>
-                        <span class="date" :style="l.style">{{l.date}}</span>&nbsp;
-                        <span class="user_name" :style="l.style">{{l.user_name}}:</span>&nbsp;
-                        <span class="message" v-html="to_html(l.message)"></span>
-                        <div v-if=" (l.make_edit || l.make_delete)">
-                          <v-icon v-if="l.make_edit" small @click="edit(l,true)">edit</v-icon>
-                          <v-icon v-if="l.make_delete" small @click="del(l,idl)">delete</v-icon>
+                            <div v-else class="memo_item">
+                              <div>
+                                <span class="date" :style="l.style">{{l.date}}</span>&nbsp;
+                                <span class="user_name" :style="l.style">{{l.user_name}}:</span>&nbsp;
+                                <span class="message" v-html="to_html(l.message)"></span>
+                                <div v-if=" (l.make_edit || l.make_delete)">
+                                  <v-icon v-if="l.make_edit" small @click="edit(l,true)">edit</v-icon>
+                                  <v-icon v-if="l.make_delete" small @click="del(l,idl)">delete</v-icon>
+                                </div>
+                              </div>
+                            </div>
                         </div>
+                      </v-card>
+
+                      <div v-if="!form.read_only && !field.read_only" class="new_comment">
+                          <v-btn color="primary" v-if="!view_adding_block" @click="view_adding_block=1" x-small>Новый комментарий</v-btn>
+                          <div v-if="view_adding_block" class="adding_block pt-1">
+                            <v-textarea v-model="adding_value" class="" :rows="1"
+                              :label="'Введите комментарий'"
+                              :auto-grow="true"
+                              :clearable="true"
+                              @keydown="handleKeyDown"
+                              :autofocus="true">
+                            </v-textarea>
+                            <v-btn color="primary"  @click="add()" x-small>Сохранить</v-btn> <v-btn color="red"  @click="view_adding_block=false" x-small>Отмена</v-btn>
+                          </div>
                       </div>
                     </div>
-                </div>
-              </v-card>
-
-              <div v-if="!form.read_only && !field.read_only" class="new_comment">
-                  <v-btn color="primary" v-if="!view_adding_block" @click="view_adding_block=1" x-small>Новый комментарий</v-btn>
-                  <div v-if="view_adding_block" class="adding_block pt-1">
-                    <v-textarea v-model="adding_value" class="" :rows="1"
-                      :label="'Введите комментарий'"
-                      :auto-grow="true"
-                      :clearable="true"
-                      @keydown="handleKeyDown"
-                      :autofocus="true">
-                    </v-textarea>
-                    <v-btn color="primary"  @click="add()" x-small>Сохранить</v-btn> <v-btn color="red"  @click="view_adding_block=false" x-small>Отмена</v-btn>
-                  </div>
               </div>
             </template>
       </template>

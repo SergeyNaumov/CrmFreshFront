@@ -1,5 +1,6 @@
 <template>
   <div>
+    <v-icon></v-icon>
     <!-- tree -->
     <template v-if="!source_field.hide">
       <div v-if="source_field.before_html" v-html="source_field.before_html"></div>
@@ -52,24 +53,26 @@
         <template v-else>
 
           <!-- С автозаполнением -->
+          <!--  -->
           <template v-if="field.autocomplete">
-            
             <v-autocomplete
-              :name="'x' + Math.random()"
-              autocomplete="off"
-              :label="field.description"
+              :label="field.description"  
               v-model="value"
               :items="values"
+              :attrs="{ autocomplete: 'new-password' }"
+              placeholder="Введите что-нибудь для автозаполнения"
               item-value="v"
               item-title="d"
-              :search-input.sync="search"
+              v-model:search="search"
               :rounded="$theme.rounded"
               no-data-text="Внимание! Следует выбрать значение из списка, иначе оно не будет сохранено"
               cache-items
+              variant="filled"
               clearable
               hide-details
-              @update:modelValue="input"
-            />
+              :prepend-icon="field.icon"
+            /> 
+            <!-- @update:modelValue="input" -->
           </template>
 
           <!-- Без автозаполнения -->
@@ -83,6 +86,7 @@
                 :items="values"
                 item-value="v"
                 item-title="d"
+                
                 :search-input.sync="search"
                 :rounded="$theme.rounded"
                 no-data-text="Не выбрано"
@@ -92,28 +96,31 @@
                 :disabled="!!field.read_only"
                 clearable
                 hide-details
-                @update:modelValue="input"
+                :autocomplete="false"
+                :prepend-icon="field.icon"
+              />
+              <!-- @update:modelValue="input" -->
 
-              >
-
-              </v-autocomplete>
+              
             </template>
             <template v-else>
-
               <v-select
                 :label="field.description"
                 :items="values"
                 :style="field.style"
                 item-value="v"
                 item-title="d"
+                
                 no-data-text="Не выбрано"
                 v-model="value"
                 :disabled="!!field.read_only || !!form.read_only"
                 :rounded="$theme.rounded"
-                @update:modelValue="input"
+                
                 hide-details
                 v-on:input="$emit('input', $event)"
+                :prepend-icon="field.icon"
               />
+              <!-- @update:modelValue="input" -->
             </template>
           </template>
         </template>
@@ -128,7 +135,7 @@
 </template>
 
 <script>
-import { getValueByField, setValueByField } from './field_functions'
+import { getValueByField, setValueByField,frontend_process } from '../js/field_functions'
 export default {
   
   data:function(){
@@ -140,8 +147,10 @@ export default {
   },
   props:['form','field', 'save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'],
   watch:{
-        value(nv){
-          let t=this, ov=getValueByField(t)
+        value(){
+          let t=this, ov=getValueByField(t), nv=t.value
+
+          console.log('nv:',nv)
           if(nv != ov){
             setValueByField(t, t.field, nv)
           }
@@ -156,7 +165,9 @@ export default {
         },
         search(v){
           if(v && v.length>2){
+            console.log('LOAD Autocomplete')
             this.load_autocomplete(v)
+            //frontend_process
           }
         },
         // field(){
@@ -166,17 +177,28 @@ export default {
   },
 
   created(){
-    let t=this
+
+    let t=this, f=t.field
     let v=getValueByField(t)
+    
+
     t.value=v?v.toString():'';
     console.log('field select:', t.value)
     t.values=(t.field && t.field.values)?t.field.values:[];
+
     if(t.values && t.values.length==1 && Array.isArray(t.values[0])){
       // это костыль, отловить не смог, но в select-е 1_to_m values оборачивается внутрь []
       t.values=t.values[0]
     }
+    
     for(let v of t.values){
       v.v=v.v.toString()
+    }
+    if(f.autocomplete){
+      t.values=[]
+      if(!t.value || t.value=='0'){
+        t.value=''
+      }
     }
     //this.change_field();
     //check_fld(t);
@@ -257,6 +279,7 @@ export default {
     input(){
       let t=this, f=this.field
       console.log('input:',t.value)
+      console.log('search:',t.search)
       t.value=setValueByField(t, t.field, t.value)
       console.log('new_value:',t.value)
     }

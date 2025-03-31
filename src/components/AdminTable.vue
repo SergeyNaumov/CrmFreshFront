@@ -2,15 +2,26 @@
   <div class="is_headapp">
     <!-- Заголовок -->
     <h1>{{ title }}</h1>
+    <load-save-filters 
+                  :filters="filters"
+                  :config="params.config"
+                  :go_search="go_search"
+                  :on_filters="on_filters"
+                  :init_on_filters="init_on_filters"
+                  class="mt-2 mb-4"
+    />
+
+
     <!-- Кнопка "Добавить" -->
     <div v-if="permissions.make_create">
-      <v-icon color="primary" size="30" class="mb-1">mdi-plus</v-icon>
-       <!-- <fa icon="fa-plus" big class="mr-1"/> -->
-      <a href="" @click.prevent="new_card()">Добавить</a>
+      <v-btn @click.prevent="new_card()" size="small" style="margin: 0;" color="primary">добавить</v-btn>
+     
+      <!-- <v-icon color="primary" size="x-large" class="mb-1 mr-2">mdi-plus</v-icon>  
+      <a href="" @click.prevent="new_card()">Добавить</a> -->
     </div>
 
     <!-- Плагины поиска -->
-    <p><a href="">Загрузка / сохранение фильтров</a></p>
+    
     <div v-if="search_plugin" class="search_plugin">
       <div v-for="(sp, idx) in search_plugin" :key="'sp' + idx">
         <v-icon color="primary">{{ sp.icon }}</v-icon>
@@ -185,13 +196,15 @@ import {
   get_cgi_params
 } from './js/edit_form.js'
 
+import LoadSaveFilters from './AdminTable/LoadSaveFilters';
 import OnFilters from './AdminTable/OnFilters';
 import FindResults from './AdminTable/FindResults';
 export default {
   name:'admin-table',
   components:{
     'on-filters':OnFilters,
-    'find-results':FindResults
+    'find-results':FindResults,
+    'load-save-filters': LoadSaveFilters
   },
   props:['params','is_headapp'],
   data () {
@@ -294,7 +307,8 @@ export default {
         }
       );
     },
-    init_on_filters(on_filters){
+    init_on_filters(on_filters, search_on_load=false){
+      this.on_filters=[]
       
       if(!on_filters || !on_filters.length){
         
@@ -319,16 +333,30 @@ export default {
             //this.filter_toggle(field);
             if(f.value){
               field.value=f.value
-            
+              console.log(`set value: ${f.name} ${f.value}`)
               
             }
           }
 
           
         }
-        this.get_on_filters()
+        
+        
       }
+      // Это нужно, чтобы фильтры верно отобразились посли инициализации
+      this.SHOW_FILTERS_on=false
+      setTimeout(
+          ()=>{
+            this.get_on_filters()
+            this.SHOW_FILTERS_on=true
+            if (search_on_load){
+                    this.go_search(1);
 
+            }
+          },
+          100
+      )
+      
       
     },
     Init(){
@@ -395,14 +423,11 @@ export default {
                     }
                   }
 
-                  t.init_on_filters(D.on_filters);
+                  t.init_on_filters(D.on_filters, D.search_on_load);
 
 
                   
-                  if (D.search_on_load){
-                    t.go_search(1);
 
-                  }
                   if(D.redirect && D.redirect!=location.pathname){
                     localStorage.setItem('link_prev_login',location.href);
                     location.href=D.redirect;
@@ -577,7 +602,6 @@ export default {
       window.open(`${BaseUrl}edit_form/${this.params.config.replace(/\?.*$/,'')}${cgi}`);
     },
     filter_change(filter){
-
       for(let f of this.on_filters){
         if(f.name==filter.name){
           f.value=filter.value

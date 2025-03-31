@@ -40,10 +40,10 @@
               <span class="role">{{manager.login}}</span>
             </template>
           </div>
-          <v-btn class="logout ml-1" @click.prevent="link_telegram" ml-1 x-small>
+          <v-btn class="logout ml-2 mr-2" @click.prevent="link_telegram" x-small>
                 <div :class="{tg_indicator_on: manager.telegram_id , tg_indicator_off: !manager.telegram_id }" ></div> Telegram
           </v-btn>
-          &nbsp;
+          
           <v-btn x-small class="logout" @click.prevent="logout()">выйти</v-btn>
           
         </div>
@@ -173,6 +173,7 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
   .tg_indicator_on {
     background-color: green;
     display: inline-block;
@@ -192,9 +193,9 @@ export default{
   .left_menu {
     margin-top: 10px;    
   }
-    @import '@/styles/variables.scss';
+    
   .cur_profile {
-    height: 65px;
+    height: 90px;
     border-bottom: 1px solid gray;
     padding: 10px 0 10px 0;
     background-color: $darken1;

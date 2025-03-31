@@ -1,11 +1,22 @@
 <template>
     <div v-if="!field.hide">
       <template v-if="field.read_only">
-        <div style="margin-left: 14px;">
+        <!-- <div style="margin-left: 14px;">
           <div class="description_container" v-html="field.description+':'"></div>
             {{ value_show }}
-        </div>
-
+        </div> -->
+          <v-text-field
+                  class="ml-4"
+                  v-model="value_show"
+                  :label="field.description"
+                  prepend-icon="mdi-calendar"
+                  disabled
+                  v-bind="props"
+                  
+                  :rounded="$theme.rounded"
+                  hide-details
+                  
+          /> 
 
         </template>
         
@@ -39,6 +50,7 @@
               first-day-of-week="1" 
               locale="ru-Ru"
               v-model="value" 
+              
               color="primary"
               /> <!--@input="select_cal()"-->
             
@@ -53,7 +65,7 @@
     </div>
 </template>
 <script>
-import { formatDate, formatDateYMD, getValueByField, setValueByField } from './field_functions'
+import { formatDate, formatDateYMD, getValueByField, setValueByField } from '../js/field_functions'
 
 export default {
     props:['form','field', 'save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'], // ,'calc_values'

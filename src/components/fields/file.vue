@@ -134,7 +134,7 @@ import { Cropper } from 'vue-advanced-cropper'
 //import { bus } from '../../main'
 // https://norserium.github.io/vue-advanced-cropper/
 // https://norserium.github.io/vue-advanced-cropper/introduction/getting-started.html
-import { getValueByField, setValueByField, save_field_to_store } from './field_functions'
+import { getValueByField, setValueByField, save_field_to_store } from '../js/field_functions'
 
 export default {
 

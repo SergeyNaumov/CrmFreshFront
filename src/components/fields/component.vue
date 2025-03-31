@@ -1,6 +1,6 @@
 <template>
     <div>
-     <pre v-if="field.name=='stat'">
+     <pre v-if="0 && field.name=='stat'">
             {{field}}
     </pre>
         <errors :errors="errors"/>
@@ -30,7 +30,7 @@ export default {
     },
     methods:{
         load_template(){
-            console.log('load_template: ',this.field.template)
+
             if(this.field.template){
                 this.load_file('template', ()=>{
                     console.log('load template ok')

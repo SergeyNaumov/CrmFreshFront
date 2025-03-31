@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import { field_update,check_fld } from './field_functions'
+  import { field_update,check_fld } from '../js/field_functions'
     export default {
   // created(){
   //   let f=this.field;

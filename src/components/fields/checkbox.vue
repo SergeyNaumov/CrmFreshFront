@@ -16,7 +16,7 @@
 
 <script>
   // import { bus } from '../../main'
-  import { getValueByField, setValueByField } from './field_functions'
+  import { getValueByField, setValueByField } from '../js/field_functions'
   export default {
     //attributes:['after_html','before_html','description'], // чтобы не было реактивным
     data:function(){

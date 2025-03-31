@@ -50,6 +50,7 @@
                     hide-details
                     :id="field.name"
                     v-on:input="$emit('input', $event)"
+                    :prepend-icon="field.icon"
                   />
                   <div class="popup_list" v-if="show_popup_list">
                     <div class="close"><a href="" @click.prevent="show_popup_list=false">закрыть</a></div>
@@ -68,6 +69,7 @@
                     :clearable="true"
                     :rounded="$theme.rounded"
                     v-on:input="$emit('input', $event)"
+                    :prepend-icon="field.icon"
                   />
                   <template v-if="source_field.values && source_field.values.length">
                     варианты: ({{ source_field.name }})
@@ -98,7 +100,7 @@
 
 
   // end
-  import { getValueByField, setValueByField } from './field_functions'
+  import { getValueByField, setValueByField } from '../js/field_functions'
   //import QRCode from '../../js/qrcode.min.js'
   import qr_call from './text_subtypes/qr_call';
   

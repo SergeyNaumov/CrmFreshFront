@@ -1,6 +1,5 @@
 <template>
   <v-app id="EditForm">
-    
     <!-- Диалоговое окно для попапов -->
     <v-dialog v-model="popup.show" max-width="500">
       <v-card>
@@ -47,15 +46,24 @@
         <!-- Заголовок формы -->
         <h1 color="primary" class="form_header" v-html="form.title" />
 
-        <form autocomplete="off">
+        <form 
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+        >
+
+
           <v-row>
             <!-- Колонки и блоки -->
             <template v-if="cols.length">
               <v-col
                 v-for="c in cols"
                 :key="c.idx"
-                :cols="12 / Math.floor(cols.length)"
-              >
+                sm="12"
+                :md="12 / Math.floor(cols.length)"
+              > 
+               
                 <v-card
                   v-for="block in c"
                   :key="block.name"
@@ -68,8 +76,12 @@
                     
                     @click="block_toggle(block)"
                   >
-                      <fa  icon="arrow-up" v-if="!block.hide" />
-                      <fa  icon="arrow-down" v-else />
+                      <!-- <fa  icon="arrow-up" v-if="!block.hide" />
+                      <fa  icon="arrow-down" v-else /> -->
+                      <span class="pr-3">
+                        <v-icon v-if="!block.hide">mdi-chevron-up</v-icon>
+                        <v-icon v-else>mdi-chevron-down</v-icon>
+                      </span>
                       {{ block.description }}
                     <!-- <v-toolbar-title> -->
                       
@@ -80,25 +92,27 @@
                     <!-- </v-toolbar-title> -->
                     <div class="flex-grow-1"></div>
                   </v-toolbar>
-
-                  <div v-show="!block.hide" pb-1>
-                    <form-block
-                      :block_name="block.name"
-                      :form="form"
-                      :save="save"
-                      :values="values"
-                    ></form-block>
-                    <v-col cols="12" lg="12" class="text-lg-center">
-                      <v-btn
-                        color="primary"
-                        v-if="!form.read_only && !block.not_save_button"
-                        :disabled="disabled_form"
-                        @click="save()"
-                      >
-                        Сохранить
-                      </v-btn>
-                    </v-col>
-                  </div>
+                  <v-expand-transition>
+                      <div v-show="!block.hide" pb-1>
+                        <form-block
+                          :block_name="block.name"
+                          :form="form"
+                          :save="save"
+                          :values="values"
+                        ></form-block>
+                        
+                        <v-col cols="12" lg="12" class="text-lg-center">
+                          <v-btn
+                            color="primary"
+                            v-if="!form.read_only && !block.not_save_button"
+                            :disabled="disabled_form"
+                            @click="save()"
+                          >
+                            Сохранить
+                          </v-btn>
+                        </v-col>
+                      </div>
+                  </v-expand-transition>
                 </v-card>
               </v-col>
             </template>
@@ -462,7 +476,7 @@ methods: {
     
     .v-application {line-height: 1;}  
     body {font-size: 14px; margin: 20px;}
-    
+    h1 {line-height: 2rem;}    
     div.field {margin: 0 20px;}
     
     button {margin: 1rem;}

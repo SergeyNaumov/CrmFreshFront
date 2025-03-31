@@ -1,7 +1,7 @@
 <template>
 
     <!-- Карта для slide:list-->
-    <v-card class="one_to_m one_to_m_list" :key="v.id">
+    <v-card class="one_to_m one_to_m_list flex-grow-1 " :key="v.id">
     <!-- Перебор заголовков 
         v -- это элемент списка list 
         h -- заголовок
@@ -9,11 +9,8 @@
                     
                      
         <div v-for="(h, hidx) in field.headers" :key="hidx">
-                
-                <div v-if="v[h.name] ">
-
-                
-                            <template v-if="h.change_in_slide">
+                <div v-if="v[h.name] " class="mt-1">
+                    <template v-if="h.change_in_slide">
                             <change_in_slide
                                 :refresh="cur_refresh"
                                 :form="form"
@@ -22,14 +19,13 @@
                                 :cur_id="v.id"
                                 :values="v"
                             />
-                            </template>
+                    </template>
                     
-                            <template v-else>
-                            <span class="h">{{ h.description }}:</span>
-                            <template v-if="h.type === 'file'">
-                                <span v-html="download_file_block(h, ch_id(v), v[h.name + '_filename'], v)"></span>
-                                <template v-if="field.headers.length > 1">
-                                
+                    <template v-else>
+                        <span class="h">{{ h.description }}:</span>
+                        <template v-if="h.type === 'file'">
+                            <span v-html="download_file_block(h, ch_id(v), v[h.name + '_filename'], v)"></span>
+                            <template v-if="field.headers.length > 1">    
                                 <a
                                     v-if="v[h.name + '_filename'] && !child_field_read_only(h.name)"
                                     href=""
@@ -37,33 +33,38 @@
                                 >
                                     Удалить
                                 </a>
-                                </template>
                             </template>
-                            <template v-else>
+                        </template>
+                        
+                        <template v-else>
 
-                                <template v-if="h.type === 'text' && h.subtype === 'color'">
-                                <div
-                                    class="color_squire"
-                                    :style="{ 'background-color': get_value_for_slide(h, v) }"
-                                ></div>
-                                </template>
-                                <template v-else-if="h.type === 'text' && h.subtype">
-                                <template v-if="h.subtype === 'qr_call'">
-                                    <qr_call :value="get_value_for_slide(h, v)" :field="h" :for_slide="true" />
-                                </template>
-                                <template v-else-if="h.subtype === 'email'">
-                                    <email :value="get_value_for_slide(h, v)" :field="h" :for_slide="true" />
-                                </template>
-                                </template>
-                                <div v-else v-html="get_value_for_slide(h, v)">
-                                </div>
-                            </template>
-                            </template>
+                            <template v-if="h.type === 'text' && h.subtype === 'color'">
+                                    <div
+                                        class="color_squire"
+                                        :style="{ 'background-color': get_value_for_slide(h, v) }"
+                                    ></div>
+                                    </template>
+                                    <template v-else-if="h.type === 'text' && h.subtype">
+                                        <template v-if="h.subtype === 'qr_call'">
+                                            <qr_call
+                                                :value="get_value_for_slide(h, v)"
+                                                :field="h"
+                                                :for_slide="true" 
+                                            />
+                                        </template>
+                                        <template v-else-if="h.subtype === 'email'">
+                                            <email :value="get_value_for_slide(h, v)" :field="h" :for_slide="true" />
+                                        </template>
+                                    </template>
+                                    <div class="inline" v-else v-html="get_value_for_slide(h, v)">
+                                    </div>
+                        </template>
+                    </template>
                             
                 </div>
                         
         </div>
-        <v-card-actions>
+        <v-card-actions style="margin-top: auto;">
             <v-icon size="small" class="edit" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">
             mdi-pencil
             </v-icon>
@@ -71,10 +72,6 @@
             mdi-delete
             </v-icon>
         </v-card-actions>
-        <!-- Управление элементом -->
-        <div class="controls">
-            
-        </div>
     </v-card>
 
 </template>

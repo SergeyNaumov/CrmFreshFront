@@ -29,7 +29,8 @@
               >
               
                 <template #item="{ element: v }">
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="field.cols" :sm="field.sm_cols" :md="field.md_cols" class="d-flex">
+                    
                   <slide_card
                     :field="field"
                     :v="v"
