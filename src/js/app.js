@@ -17,7 +17,6 @@ const get_headapp_for_vue=(url)=>{
 
 }
 export const get_headapp=s=>{
-
     let url=location.pathname;
     let hash=location.hash, set_headapp=true
     
@@ -64,6 +63,12 @@ export const get_headapp=s=>{
             let arr=url.match(/^\/edit[\-_]form\/([^\/]+)\/(\d+)$/)
             headapp='edit-form';
             headapp_params={config:arr[1],id:arr[2],action:'edit'};
+        }
+        else if(/^\/history\/([^\/]+)\/(\d+)$/.test(url)){
+            let arr=url.match(/^\/history\/([^\/]+)\/(\d+)$/)
+            
+            headapp='history';
+            headapp_params={config:arr[1],id:arr[2],action:'show'};
         }
         else if(/^\/transfere[\-_]cards\/([^\/]+)$/.test(url)){
             let arr=url.match(/^\/transfere[\-_]cards\/([^\/]+)$/)

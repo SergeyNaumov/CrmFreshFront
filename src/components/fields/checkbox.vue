@@ -3,7 +3,11 @@
     <div v-if="!field.hide">
         <!-- <pre v-if="field.name=='prez_order'">{{field}}</pre> -->
         <template v-if="field.type=='checkbox' || field.type=='1_to_1_checkbox'">
-            <v-checkbox  :label="field.description" :disabled="disabled" color="primary" v-model="value" @change="change_field(field)" hide-details></v-checkbox>
+            <v-checkbox  
+                :label="field.description"
+                :disabled="disabled" color="primary"
+                v-model="value" @change="change_field(field)" hide-details
+            />
             
         </template>
         <template v-else-if="field.type=='switch'">
@@ -33,11 +37,7 @@
 
         
     },
-    beforeDestroy(){
-        if(!this.parent){
-           this.$bus.off('field-update:'+this.field.name,this._field_update)
-        }
-    },
+
     watch:{
         refresh(){
             let nv=getValueByField(this)?true:false

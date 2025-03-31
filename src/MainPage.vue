@@ -21,8 +21,8 @@
       </v-row>
       <v-row>
         
-        <v-col  v-for="(c,idx) in list_components" :cols="c.cols" :key="`maincomponent_${idx}`">
-          
+        <v-col  v-for="(c,idx) in list_components" :key="`maincomponent_${idx}`">
+          c: {{ c }}
           <component :is="c.component"  />
           
         </v-col>

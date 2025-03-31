@@ -1,13 +1,10 @@
 <template>
-  <div>
 
-    <div v-if="0" style="height: 300px; color: black; background: #000;">
-      <i class="fas fa-bars"  style="color: white"></i>
-      
-  <!-- Или -->
+<div>
 
-    </div>
+
     <v-app v-if="headapp">
+
         <component v-show="headapp" v-bind:is="headapp" is_headapp="1" :params="headapp_params"></component>
     </v-app>
      
@@ -51,6 +48,12 @@
 
         <v-main class="mt-5">
           <div class="fill-height" fluid>
+
+            <div v-if="0" style="height: 100px;">
+      MenuItem: {{ MenuItem }}
+      MenuItemParams: {{ MenuItemParams }}
+
+    </div>
             <errors :errors="errors" />
 
             <pre v-if="0">{{MenuItem}}</pre>

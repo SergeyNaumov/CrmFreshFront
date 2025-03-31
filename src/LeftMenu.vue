@@ -61,6 +61,8 @@
     </div>    
 </template>
 <script>
+import { toRaw } from 'vue';
+
 import left_menu_item from './components/left_menu_item';
 export default{
     components:{
@@ -73,7 +75,7 @@ export default{
         }
     },
     created(){
-      addEventListener("popstate",(e)=>{
+      window.addEventListener("popstate",(e)=>{
             
             let item=e.state
             if(item){
@@ -99,6 +101,7 @@ export default{
             )
       },
       go_link:function(item, not_push_state=false){
+            item=toRaw(item)
             if(!item){
               return;
             }
@@ -116,8 +119,9 @@ export default{
               }
               this.setMenuItem(item)
               if(!not_push_state){
-               
-                //history.pushState(item, item.header, this.get_link(item))
+                console.log('item:',item, 'header:',item.header, 'link:', this.get_link(item) )
+                //history.pushState(state, item.header, this.get_link(item));
+                history.pushState(item, item.header, this.get_link(item))
               }
             }
 

@@ -133,10 +133,13 @@
                                   </template>
 
                                   <template v-else-if="td.type=='select'">
-                                      <v-select 
-                                          v-model="td.value" :items="results.selects[td.name]" item-value="v" item-title="d"
+                                    <v-select 
+                                        style="display: inline-block;  width: calc(100% - 50px); "
+                                          v-model="td.value" :items="results.selects[td.name]" item-value="v" item-text="d"
                                           @change="change_in_search(tr,td)"
+                                           density="compact"
                                       ></v-select>
+                                      <!-- <div v-if="get_color_value(tr,td)" style="position: relative; top: 11px; border: 1px solid gray; margin-left: 10px; display: inline-block; height: 10px; width: 10px;" :style="{background: get_color_value(tr,td)}"></div> -->
                                       <div class="saved" :id="td.name+'_'+tr.key"></div>
                                       <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </template>

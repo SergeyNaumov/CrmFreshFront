@@ -116,6 +116,19 @@ export default {
           return f
       }
     },
+    get_color_value(tr,td){
+      let field=this.get_field_by_name(td.name)
+      if(field){
+        for(let v of field.values){
+          if(td.value==v.v){
+            return v.c
+          }
+        }
+        
+      }
+      return ''
+      //console.log(' td: ',td,'field:',field)
+    },
     save_in_search(tr,td){
       let v=td.value;
 
