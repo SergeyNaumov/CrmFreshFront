@@ -170,76 +170,32 @@ export default {
         field(){
             this.init_filter()
         },
-        // show_dat_value0(){
-            
-        //     if(!this.show_dat_value0)
-        //         this.dat_value0=''
-        // },
-        // show_dat_value1(){
-            
-        //     if(!this.show_dat_value1)
-        //         this.dat_value1=''
-        // },
-        // dat_value0(){
-        //     let t=this, filter=t.field;
-        //     filter.value_low==t.dat_value0;
-        //     //filter.value=[filter.value_low,filter.value_hi]
-        //     if(filter.range){
-        //         filter.value=[filter.value_low,filter.value_hi]
-        //     }
-        //     else{
-        //         filter.value=filter.value_low
-        //     }
-        //     this.filter_change(filter)
-        //     if(this.dat_value0){
-              
-        //       this.show_dat_value0=formatDate(this.dat_value0) //this.dat_value0.split('-').reverse().join('.')
-        //     }
-        //     else{
-        //       this.show_dat_value0=''
-        //     }
-            
-        // },
-        // dat_value1(){
-        //     let t=this, filter=t.field;
-        //     filter.value_hi=t.dat_value;
-        //     if(filter.range){
-        //         filter.value=[filter.value_low,filter.value_hi]
-        //     }
-        //     else{
-        //         filter.value=filter.value_low
-        //     }
-            
-        //     this.filter_change(filter)
-        //     if(this.dat_value1){
-        //       this.show_dat_value1=formatDate(this.dat_value1) //this.dat_value1.split('-').reverse().join('.')
-        //     }
-        //     else{
-        //       this.show_dat_value1=''
-        //     }
-            
-        // },
+
     },
     methods:{
       init_filter(){
-        let f=this.field
+        let t=this, f=t.field
         if('value' in f){
             
             if(!f.value.length){
-                this.dat_value0=null, this.dat_value1=null
+                t.dat_value0=null, this.dat_value1=null
+            }
+            if(typeof(f.value)=='string'){
+              t.dat_value0=f.value?new Date(f.value):null  
+              return 
             }
             if(typeof(f.value) == 'object'){ // this.range
                 if(f.value.length>0){
-                  this.dat_value0=f.value[0]?new Date(f.value[0]):null  
-                  this.dat_value0=null
+                  t.dat_value0=f.value[0]?new Date(f.value[0]):null  
+                  t.dat_value0=null
                     
                 }
                 if(f.value.length>1){
-                    this.dat_value1=f.value[1]?new Date(f.value[1]):null  
+                    t.dat_value1=f.value[1]?new Date(f.value[1]):null  
                 }                
             }
             else{
-                this.dat_value0=f.value || null
+                t.dat_value0=f.value || null
             }
             //console.log(`this.dat_value0: ${this.dat_value0} this.dat_value1: ${this.dat_value0}`)
 
@@ -250,18 +206,24 @@ export default {
         let t=this, f=t.field
         t.menu[idx] = false;
         t.set_need_empty();
-        
-        if(idx==0){
-          
-          f.value_low=t.dat_value0?formatDateYMD(t.dat_value0):'';
-          // t.show_dat_value0=formatDate(t.dat_value0)
+        if(f.range){
+          if(idx==0){
+            
+            f.value_low=t.dat_value0?formatDateYMD(t.dat_value0):'';
+            // t.show_dat_value0=formatDate(t.dat_value0)
+          }
+          else{
+            f.value_hi=t.dat_value1?formatDateYMD(t.dat_value1):'';
+            // f.show_dat_value1=t.dat_value1?formatDate(t.dat_value1):'';
+          }
+          f.value=[f.value_low,f.value_hi]; 
+
         }
         else{
-          f.value_hi=t.dat_value1?formatDateYMD(t.dat_value1):'';
-          // f.show_dat_value1=t.dat_value1?formatDate(t.dat_value1):'';
+          f.value=t.dat_value0?formatDateYMD(t.dat_value0):'';
         }
         
-        f.value=[f.value_low,f.value_hi]; 
+        
         console.log('select_cal:',f.value)
         t.filter_change(f)
         

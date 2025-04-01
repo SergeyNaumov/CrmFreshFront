@@ -66,21 +66,25 @@ export default {
   },
   created(){
     this.filter_list=this.on_filters
-    setTimeout(
-        ()=>{
-            document.querySelector('#on_filters').addEventListener('keydown', e=>{
-              if (e.keyCode === 13) {
-                // можете делать все что угодно со значением текстового поля
-                console.log('press enter in on_filters');
-                this.go_search(1)
-              }
-            });
-        },
-        100
-    )
-
 
   },
+  mounted() {
+      // Это нужно для того, чтобы работал Enter в фильтрах
+      const container = document.querySelector('#on_filters');
+      if (!container) return;
+
+      container.addEventListener('keydown', (e) => {
+        // Проверяем, что событие произошло на input/textarea
+        if ((e.target.matches('input') || e.target.matches('textarea')) && e.key === 'Enter') {
+          e.preventDefault();
+          this.go_search(1);
+        }
+      });
+  },
+  beforeUnmount() {
+    const container = document.querySelector('#on_filters');
+    container?.removeEventListener('keydown', this.handleKeyDown);
+  } ,
   watch:{
     config(){
       this.refresh=Math.random()

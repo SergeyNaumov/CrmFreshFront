@@ -1,5 +1,6 @@
 <template>
     <div>
+      {{field.value}} {{ date }}
         <div class="read_only" v-if="field.read_only">
           <div style="margin-left: 14px;">
           <div class="description_container" v-html="field.description+':'"></div>
@@ -7,9 +8,9 @@
           </div>
         </div>
         <template v-else>
-            <div class="description_container" v-html="field.description+':'"></div>
-            <div style="display: flex; align-items: center; gap: 16px; position: relative; " >
-                      
+            <div v-if="field.description" class="description_container"  v-html="field.description+':'"></div>
+            <v-row style="max-width: 450px; ">
+              <v-col sm="12" :md="br?12:6">
                         <v-menu
                             v-model="menu_date"
                             :close-on-content-click="false"
@@ -24,7 +25,7 @@
                             <template v-slot:activator="{ props }">
                               <v-text-field
                                   v-model="date_show"
-                                  style="max-width: 180px; "
+                                  style="width: 180px; "
                                   label="Дата: ДД.ММ.ГГГГ"
                                   prepend-icon="mdi-calendar"
                                   v-bind="props"
@@ -38,18 +39,20 @@
                             <v-date-picker :first-day-of-week="1"  locale="ru-Ru" v-model="date" /> <!-- @input="set_value(); menu_date=false" -->
                             
                         </v-menu>
-                      
+              </v-col>
+              <v-col sm="12" md="6">
                         <v-text-field
                                 v-model="time"
                                 label="Время: ЧЧ:MM"
                                 prepend-icon="mdi-clock-outline"
                                 @change="fix_time"
                                 @keyup="fix_time"
-                                style="margin-left: 20px; position: relative; top: 10px; max-width: 180px;"
+                                style="width: 180px;"
                                 
                         />
+                </v-col>
  
-            </div>
+            </v-row>
             <div class="clear">
                 <template>
                   <small v-show="need_empty"><a href="#" @click.prevent="clear()"> очистить</a></small>&nbsp;
@@ -65,7 +68,7 @@
 //import { of } from 'core-js/core/array'
 import { formatDateYMD, getValueByField, setValueByField } from '../js/field_functions'
 export default {
-    props:['form','field', 'save_field_to_store','save_to_store', 'get_value_by_field','get_source_field'], // ,'calc_values'
+    props:['form','field', 'save_field_to_store','save_to_store', 'get_value_by_field','get_source_field','br'], // ,'calc_values'
     created(){
       let t=this, v=getValueByField(this) || ''
       if(v){
@@ -152,9 +155,10 @@ export default {
       set_value(){
         this.set_need_empty();
         let t=this
-        console.log('set value')
-        if(t.date){
-          let new_value=t.time?`${formatDateYMD(t.date)} ${t.time}`:`${formatDateYMD(t.date)} 00:00:00`
+        //console.log('set value')
+        let fd=formatDateYMD(t.date)
+        if(t.date && fd){
+          let new_value=t.time?`${fd} ${t.time}`:`${fd} 00:00:00`
           if(new_value !=t.old_value){
             setValueByField(t,t.field,new_value)
           }
@@ -200,7 +204,7 @@ export default {
 <style scoped>
   .select_cal {margin-top: 1rem;}
   .select_cal {transition: background 0.3s ease, color 0.2s linear;}
-  .clear {position: relative; top: 0rem;}
+  /* .clear {position: relative; top: 0rem;} */
   .v-date-picker-title__date {font-size: 16px;}
   .read_only {margin-top: 10px;}
 

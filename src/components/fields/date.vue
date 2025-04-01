@@ -1,4 +1,5 @@
 <template>
+    
     <div v-if="!field.hide">
       <template v-if="field.read_only">
         <!-- <div style="margin-left: 14px;">
@@ -38,7 +39,6 @@
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="props"
-                
                 :rounded="$theme.rounded"
                 hide-details
                 
@@ -72,6 +72,7 @@ export default {
     computed:{
       value_show(){
         let v=getValueByField(this,this.field) 
+        v=v.replace(/[T\s][\d:]+$/,'')
         if(v){
           v=v.replace(/\s\d{2}:.+$/,'').split('-').reverse().join('.')
         }

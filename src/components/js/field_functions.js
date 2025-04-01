@@ -11,10 +11,15 @@ export const formatDate= date=>{
 }
 
 export const formatDateYMD= date=>{
+  
   if (!date) return ''; // Если дата не определена, возвращаем пустую строку
+  if(!date || date=='Invalid Date'){
+    return ''
+  }
   if(typeof(date)=='string'){
     return date
   }
+
   const day = String(date.getDate()).padStart(2, '0'); // День (с ведущим нулём)
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяц (с ведущим нулём, +1 потому что месяцы начинаются с 0)
   const year = date.getFullYear(); // Год

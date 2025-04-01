@@ -30,7 +30,7 @@ h2 {font-size: 1.4em;}
 // Для нормального отображения datapicker-а
 .v-picker {
     width: auto !important;
-    max-width: 350px !important; /* Установите нужную ширину */
+    max-width: 400px !important; /* Установите нужную ширину */
     height: auto;
 }
 .v-date-picker-month__day button.text-primary{
@@ -158,6 +158,9 @@ html table.x-sm td {font-size: 8pt !important;}
 }
 .v-pagination__list .v-pagination__item .v-btn.v-btn--disabled{
     background: none !important;
+}
+.v-toolbar__content {
+    height: 90px !important;
 }
 /*
 .v-input__control {

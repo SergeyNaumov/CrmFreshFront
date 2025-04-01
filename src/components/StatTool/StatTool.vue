@@ -2,15 +2,16 @@
     <div class="is_headapp">
       <h1>{{title}}</h1>
       <errors :errors="errors"/>
-      <pre v-if="0">
-        {{filters_hash}}
+      <pre v-if="1">
+        {{filters}}
 
       </pre>
       <div style="border: 1px solid gray; margin: 10px; padding: 10px;" v-if="log_filters.length">
         <pre >{{log_filters}}</pre>
       </div>
       <div v-for="f in filters" class="filter">
-          <filter-date :field="f" :filter_change="filter_change" v-if="f.type=='date'"/>
+          
+          <filter-date :field="f" :filter_change="filter_change" v-if="f.type=='date'"/> 
           <filter-select :field="f" :filter_change="filter_change" v-if="f.type=='select'"/>
           <filter-text :field="f" :filter_change="filter_change"
             :config="params.config"
@@ -30,41 +31,8 @@
         <pre >{{log_search}}</pre>
       </div>
 
-        <div class="results" v-if="show_results">
-          <template v-if="result_type=='columns'">
-            <!-- Вывод результатов колонками -->
 
-              <v-row>
-                <v-col v-for="(col,idx) in columns" :key="'col'+idx">
-                  <div v-for="d in col">
-                    <field-accordion v-if="d.type=='accordion'" :field="d"/>
-                    <div v-if="d.type=='html'" v-html="d.body"></div>
-                    <div style="position: relative; display: inline-block;" v-if="d.type=='chart'">
-                      <field-chart  :field="d" />
-                    </div>
-                  </div>
-                </v-col>
-              </v-row>
-
-          </template>
-          <template v-else>
-            <template v-if="list.length">
-              <div v-for="d in list">
-                <field-accordion v-if="d.type=='accordion'" :field="d"/>
-                <div v-if="d.type=='html'" v-html="d.body"></div>
-                <div style="position: relative; display: inline-block;" v-if="d.type=='chart'">
-                  <field-chart  :field="d" />
-                </div>
-              </div>
-            </template>
-            <template v-else>
-              
-              <p>ничего не найдено</p>
-            </template>
-          </template>
-        </div>
-
-      
+      <stat-tool-result v-if="show_results" :source_list="list" :source_columns="columns" :params="params"/>
     </div>
 </template>
 <script>
@@ -74,7 +42,7 @@
 
 
 
-let t
+
 import { 
   get_cgi_params
 } from '../js/edit_form.js'
@@ -97,6 +65,12 @@ export default {
      log_filters:[],
      log_search:[],
      finding:false,
+     popup_links:{
+      show:false,
+      title:'',
+      body:''
+     },
+     result_refresh:1
     }),
     mounted(){
       this.init()
@@ -104,6 +78,7 @@ export default {
     watch:{
      
       params(){
+        console.log('change params')
         this.init()
       }
 
@@ -112,10 +87,8 @@ export default {
     methods: {
 
       init(){
-        t=this
-        for(let f of this.filters){
-          t.filters_hash[f.name]=f.value
-        }
+        let t=this
+
         t.$http.post(
           `${BackendBase}/stat-tool/${t.params.config}`,
           {cgi_params: get_cgi_params()}
@@ -128,7 +101,12 @@ export default {
                 return ;
             }
             if(d.success){
+              t.list=[] ; t.show_results=false
               t.filters=d.filters, t.title=d.title
+
+              for(let f of this.filters){
+                t.filters_hash[f.name]=f.value
+              }
               if(d.javascript){
                 eval(d.javascript)
               }
@@ -151,12 +129,46 @@ export default {
         //console.log(filter.value)
         //console.log(this.filters_hash)
       },
+      init_results(){ // инициализация результатов
+        let t=this
+        //console.log('init_results core!')
+        // обрабатываем ссылки для popup-ов
+        let popup_links=document.querySelectorAll('.crm-popup')
+        //console.log('popup_links:',popup_links)
+        popup_links.forEach(link=>{
+          console.log('link:',link)
+          let url=`${BackendBase}/stat-tool/${t.params.config}`
+          let data_json=link.getAttribute('data-json')
+          if(data_json){
+            data_json=JSON.parse(data_json)
+          }
+          link.onclick = event => {
+            event.preventDefault()
+            t.$http.post(
+              url,{cgi_params:data_json}
+            ).then(
+              r=>{
+                let d=r.data
+                t.popup_links.show=true
+                t.popup_links.title=d.header
+                t.popup_links.body=d.body
+                t.result_refresh+=1
+              }
+            )
+          }
+
+        })
+
+        t.result_refresh+=1
+
+      },
       search(){ // поиск
-          this.finding=true
-          this.show_results=false
+          let t=this
+          t.finding=true
+          t.show_results=false
           let query=[] // query совместимо с поиском в admin_table
 
-          for(let f of this.filters){
+          for(let f of t.filters){
             let values=t.filters_hash[f.name] || ''
 
 
@@ -174,6 +186,7 @@ export default {
             let d=r.data
             if(d.success){
               t.result_type=d.result_type || ''
+              console.log('d:',d)
               if(t.result_type=='columns'){
                 t.list=[]
                 t.columns=d.columns, t.show_results=true
@@ -182,18 +195,22 @@ export default {
                 t.list=d.list, t.show_results=true
               }
 
+              t.show_results=false
+              setTimeout(()=>{t.show_results=true},10)
+              t.result_refresh+=1
+
               if(d.log){
                 t.log_search=d.log
               }
 
             }
             t.errors=d.errors
-            this.finding=false
+            t.finding=false
           }
         ).catch(
           e=>{
             t.errors=[`ошибка при поиске: ${e}`]
-            this.finding=false
+            t.finding=false
           }
         )
       }

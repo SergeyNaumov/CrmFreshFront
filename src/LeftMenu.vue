@@ -76,8 +76,9 @@ export default{
     },
     created(){
       window.addEventListener("popstate",(e)=>{
-            
+            console.log('e:',e)
             let item=e.state
+            console.log('item:',item)
             if(item){
               this.go_link(item,true)
             }

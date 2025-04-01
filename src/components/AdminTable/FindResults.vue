@@ -89,7 +89,7 @@
                               <td  v-for="(td,td_index) in tr.data" :key="td.td_index" :data-label="results.headers[td_index]['h']+':'">
                                 
                                 <div class="field">
-
+                                  
                                   <template v-if="typeof(td.value)=='object'">
                                     
                                     <div v-if="td.value.before_html" v-html="td.value.before_html" />
@@ -114,6 +114,7 @@
                                         
                                         v-model="td.value"
                                         @input="change_in_search(tr,td)"
+                                        @keyup="change_in_search(tr,td)"
                                         class="change_in_search"
                                       />
                                     <div class="saved" :id="td.name+'_'+tr.key"></div>
@@ -121,24 +122,31 @@
                                   </template>
 
                                   <template v-else-if="td.type=='font-awesome'">
-                                    <v-icon>{{td.value}}</v-icon>
+                                    <fa :icon="td.value"/>
                                   </template>
 
                                   <template v-else-if="td.type=='textarea'">
-                                    <v-textarea @input="change_in_search(tr,td)"  
+                                    <v-textarea @update:modelValue="change_in_search(tr,td)"
                                       v-model="td.value" :auto-grow="true" :clearable="true">      
                                     </v-textarea>
                                     <div class="saved" :id="td.name+'_'+tr.key"></div>
                                     <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </template>
 
-                                  <template v-else-if="td.type=='select'">
-                                    <v-select 
-                                        style="display: inline-block;  width: calc(100% - 50px); "
-                                          v-model="td.value" :items="results.selects[td.name]" item-value="v" item-text="d"
-                                          @change="change_in_search(tr,td)"
+                                  <template v-else-if="td.type=='select'"  >
+                                    
+                                      <div
+                                        v-if="get_color_value(tr,td)"
+                                        class="colored_select_div"
+                                      :style="{background: get_color_value(tr,td)}"/>
+                                      
+                                      <v-select 
+                                        style="display: inline-block; position: relative; top: 12px; width: calc(100% - 50px); "
+                                          v-model="td.value" :items="results.selects[td.name]" item-value="v" item-title="d"
+                                          @update:modelValue="change_in_search(tr,td)"
+                                          @change=""
                                            density="compact"
-                                      ></v-select>
+                                      />
                                       <!-- <div v-if="get_color_value(tr,td)" style="position: relative; top: 11px; border: 1px solid gray; margin-left: 10px; display: inline-block; height: 10px; width: 10px;" :style="{background: get_color_value(tr,td)}"></div> -->
                                       <div class="saved" :id="td.name+'_'+tr.key"></div>
                                       <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
@@ -151,12 +159,14 @@
                                   </div>
                                   
                                   <template v-if="td.type=='date'">
+                                      
                                       <field-date
                                         :field="td" 
                                         :form="{read_only:0}"
                                         style="width: 200px;"
-                                        :parent="(value)=>{
-                                          td.value=value;
+                                        :get_value_by_field="(name)=>{return td.value}"
+                                        :save_to_store="(obj)=>{
+                                          td.value=obj.value;
                                           change_in_search(tr,td)
                                         }"
                                       />
@@ -166,14 +176,23 @@
                                       <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </template>
                                   <template v-if="td.type=='datetime'">
-
+                                    
                                       <field-datetime
                                         :field="td" 
-                                        :form="{}"
-                                        style="width: 200px;"
-                                        :parent="(value)=>{
-                                          td.value=value; 
-                                          change_in_search(tr,td)
+                                        :br="true"
+                                        :get_value_by_field="(name)=>{
+                                          return td.value.replace(/(\d{2}).(\d{2})\.(\d{4})/, '$3-$2-$2').replace(/(\d{2}:\d{2}):\d{2}/,'$1')
+                                        }"
+                                        :save_to_store="(obj)=>{
+                                          obj.value=obj.value.replace(/(\d{2}).(\d{2})\.(\d{4})/, '$3-$2-$2').replace(/(\d{2}:\d{2}):\d{2}/,'$1')
+                                          let td_value=td.value.replace(/(\d{2}).(\d{2})\.(\d{4})/, '$3-$2-$2').replace(/(\d{2}:\d{2}):\d{2}/,'$1')
+                                          if(td_value!=obj.value){
+                                            
+                                            console.log(`td.value: ${td_value}, obj.value=${obj.value}`)
+                                            td.value=obj.value;
+                                            change_in_search(tr,td)
+                                          }
+                                          
                                         }"
                                       />
 
@@ -198,13 +217,15 @@
                               <td class="text-xs-left text-md-right controls" v-if="!permissions.not_edit || permissions.make_delete">
                                 
                                 
-                                <v-btn size="30" v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
-                                  <a :href="edit_link(tr)" @click.prevent="go_to_edit(tr.key)">
-                                    <fa size="sm" color="primary" icon="fa-pencil" />
+                                <v-btn size="small" class="mr-2" @click="go_to_edit(tr.key)">
+                                  <a :href="edit_link(tr)" @click.prevent="">
+                                    <fa medium color="primary" icon="fa-pencil" />
                                   </a>
-                                </v-btn>&nbsp;
-                                <v-btn   size="30"  v-if="permissions.make_delete" @click="delete_dialog(tr.key)">
-                                  <fa size="sm" color="primary" medium icon="trash"/>
+                                </v-btn>
+                                
+                                
+                                <v-btn   size="small"  v-if="permissions.make_delete" @click="delete_dialog(tr.key)">
+                                  <fa medium color="primary"  icon="trash"/>
                                 </v-btn>
                                 
                               </td>
@@ -374,11 +395,19 @@ export default {
 
 .application .theme--light.v-icon, .theme--light .sort_desc .v-icon {color: red;}
 */
-.results td .saved {color: green; font-weight: bold;}
+.results td .saved {color: green; font-weight: bold; font-size: 8pt;}
 .results td .err {color: red; font-weight: bold;}
 .results td.multi_action {padding-left: 10px;}
 .sort_button a {text-decoration: none; white-space: nowrap;}
 .controls a {text-decoration: none;}
+.colored_select_div{
+      position: relative; top: -15px;
+      border: 1px solid gray;
+      margin-right: 10px;
+      display: inline-block;
+      height: 20px; width: 20px;
+      border-radius: 3px;
+}
 @media only screen and (max-width: 1000px) {
     .results thead {
         display: none;

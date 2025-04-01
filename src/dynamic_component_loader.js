@@ -20,7 +20,10 @@ export const dynamic_component_loader = (app) => {
   app.component('Messenger', defineAsyncComponent(() => import('./components/Messenger/Messenger')));
   app.component('email', defineAsyncComponent(() => import('./components/fields/text_subtypes/email')));
   app.component('qr_call', defineAsyncComponent(() => import('./components/fields/text_subtypes/qr_call')));
-  
+
+  // инструмент статистики
+	app.component('stat-tool-result', defineAsyncComponent(()=> import('./components/StatTool/StatToolResult')));
+	app.component('stat-tool', defineAsyncComponent(()=> import('./components/StatTool/StatTool')));
 
   // Остальные компоненты
   app.component('field-select', defineAsyncComponent(() => import('./components/fields/select')));
