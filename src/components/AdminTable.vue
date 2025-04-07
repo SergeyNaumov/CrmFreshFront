@@ -594,9 +594,12 @@ export default {
         else{
           cgi+='&'
         }
-        cgi+=`${k}=${cgi_params[k]}`
+        if(k  && cgi_params[k])
+          cgi+=`${k}=${cgi_params[k]}`
       }
-
+      if(cgi=='?' || cgi=='&'){
+        cgi=''
+      }
       window.open(`${BaseUrl}edit_form/${this.params.config.replace(/\?.*$/,'')}${cgi}`);
     },
     filter_change(filter){

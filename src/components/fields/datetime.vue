@@ -147,6 +147,7 @@ export default {
         // '22:5332222'.replace(/[^\d]/g,'').replace(/^(\d{1,4}).*$/,'$1').replace(/^(\d{2})(.*)$/,'$1:$2')
         time=time.replace(/[^\d]/g,'').replace(/^(\d{1,4}).*$/,'$1').replace(/^(\d{2})(.*)$/,'$1:$2')
         time=time.replace(/^[3-9]/,'2').replace(/^2[4-9]/,'23').replace(/:[6-9]/,':5')
+        
         this.time=time
         this.set_value()
       },
@@ -155,8 +156,12 @@ export default {
         let t=this
         //console.log('set value')
         let fd=formatDateYMD(t.date)
+        let time=t.time
+        time=time.replace(/^(\d{2}:\d{2})$/,'$1:00')
+
         if(t.date && fd){
-          let new_value=t.time?`${fd} ${t.time}`:`${fd} 00:00:00`
+          let new_value=time?`${fd} ${time}`:`${fd} 00:00:00`
+          console.log('new_value:',new_value)
           if(new_value !=t.old_value){
             setValueByField(t,t.field,new_value)
           }

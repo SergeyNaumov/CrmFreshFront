@@ -48,7 +48,7 @@
                         <v-text-field v-model="name_new_filter" hide-details label="Укажите имя для нового фильтра фильтра"/>
                     </v-col>
                     <v-col cols="4">
-                        <v-btn small v-if="name_new_filter" @click.prevent="save_filter"><v-icon x-small >fa fa-save</v-icon>&nbsp;Сохранить</v-btn>
+                        <v-btn small cv-if="name_new_filter" @click.prevent="save_filter"><fa small icon="fa-save" />&nbsp;Сохранить</v-btn>
                     </v-col>
                 </template>
                 <template v-else>

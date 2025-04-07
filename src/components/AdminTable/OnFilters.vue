@@ -14,6 +14,7 @@
 
     <!-- Форма для фильтров -->
     <form @submit.prevent="go_search(1)" autocomplete="new-password" v-if="SHOW_FILTERS_on">
+      <pre v-if="0">{{ on_filters }}</pre>
       <draggable
         :list="filter_list"
         handle=".drag_area"
@@ -133,8 +134,10 @@ export default {
             case 'file':
             case 'select':
             case 'date':
+            case 'time':
             case 'datetime':
             case 'yearmon':
+            case 'daymon':
             case 'memo':
             case 'in_ext_url':
             case 'multiconnect':

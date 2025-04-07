@@ -9,7 +9,7 @@
     </v-dialog>
 
     <div :class="form.wide_form ? 'container_fluid' : 'container'">
-      <pre v-if="0">{{ $store.state.one_to_m.f7 }}</pre>
+      <pre v-if="1">{{ $store.state.values }}</pre>
       
       <!-- Критическая ошибка -->
       <v-card v-if="fatal_errors.length">
@@ -185,9 +185,9 @@
 import { 
   on_dependence, change_field,save_field_1_to_m, 
   frontend_button_process,
-  frontend_process, get_cgi_params, get_params, save_values_to_store
+  get_cgi_params, get_params, save_values_to_store
 } from './js/edit_form.js'
-
+//import  {frontend_process} from './js/field_functions.js'
 
 
 export default {

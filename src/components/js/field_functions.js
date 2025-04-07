@@ -91,7 +91,7 @@ export function frontend_result_process(self,result,proc_name){
   }
 }
 
-const frontend_process=(self,loopback)=>{
+export const frontend_process=(self,loopback)=>{
   let f=self.field
   console.log('frontend_process: ',f)
   return 

@@ -175,6 +175,38 @@
                                       <div class="saved" :id="td.name+'_'+tr.key"></div>
                                       <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </template>
+                                  <template v-if="td.type=='time'">
+                                     <field-time
+                                        :field="{name:td.name, value: td.value}" 
+                                        :get_value_by_field="(name)=>{
+                                          if(!td.value){
+                                            td.value=''
+                                          }
+                                          return td.value.replace(/^(\d{2}):(\d{2})$/, '$1:$2:00')
+                                        }"
+                                        :save_to_store="(obj)=>{
+                                          
+                                          if(/^\d{2}:\d{2}(:\d{2})?$/.test(obj.value) || !obj.value){
+                                            obj.value=obj.value.replace(/^(\d{2}):(\d{2})$/, '$1:$2:00')
+                                            let td_value=td.value.replace(/^(\d{2}):(\d{2})$/, '$1:$2:00').replace(/^(\d):/,'0$1:')
+                                            if(!td.value){
+                                              td.value=''
+                                            }
+                                            
+                                            if(td_value!=obj.value){
+                                              
+                                              
+                                              td.value=obj.value;
+                                              change_in_search(tr,td)
+                                            }
+                                          }
+
+                                          
+                                        }"
+                                      />
+                                      <div class="saved" :id="td.name+'_'+tr.key"></div>
+                                      <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
+                                  </template>
                                   <template v-if="td.type=='datetime'">
                                     
                                       <field-datetime
@@ -195,8 +227,6 @@
                                           
                                         }"
                                       />
-
-                                      
                                       <div class="saved" :id="td.name+'_'+tr.key"></div>
                                       <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   
@@ -307,143 +337,5 @@ export default {
   methods: FindResultsMethods
 };
 </script>
-<style scope lang="scss">
-.errors {color: $error;}
-// .theme--light.v-pagination{
-  
-  
-// }
-//   .theme--light.v-pagination .v-pagination__item{
-//     width: auto;
-//     font-size: 0.9rem;
-//     min-width: 5px;
-    
-//   }
-//   .v-pagination__item {font-size: 14px; width: 15px;}
- .memo_item{
-   font-size: 0.9rem ;
- }
- .memo_item .registered{
-   color: #3f51b5;
- }
-
- .memo_item .user{
-   color: red;
- }
-.results_wrap{
-  
-  overflow-x: auto;
-  /*max-width: 1200px;*/
-  margin: 0 auto;
-}
-
-
-.results{
-  border-collapse: collapse;
-  width: 100%;
-
-  margin: 10px 0;
-}
-
-.results th{
-  font-weight: bold;
-}
-.results td.controls, .results th.controls{
-  width: 120px;
-  vertical-align: middle;
-  /*text-align: center;*/
-}
-.results td.controls button {
-  margin: 0
-}
-
-.results tr:nth-child(2n+1) {
-  background: $lighten5;
-} 
-/*.results tr.header {
-  
-  
-  
-  
-  
-}*/
-.results td, table.results th {
-  padding: 1rem; border: 1px solid gray;
-
-}
-
-.results td {
-    position: relative;
-    text-align: left;
-    vertical-align: middle;
-    padding: 3px;;
-}
-
-.results td .field{
-  margin: 0 0.5rem;  
-}
-
-
-.application a {text-decoration: none;}
-.application a.sort_asc .theme--light.v-icon {color: green;}
-.application a.sort_desc .theme--light.v-icon {color: red;}
-.application a.bold .theme--light.v-icon {font-weight: bold;}
-/*
-.application .theme--light.v-icon, .theme--light a.sort_asc .v-icon {color: green;}
-.application .theme--light.v-icon, .theme--light .bold .v-icon {font-weight: bold;}
-
-.application .theme--light.v-icon, .theme--light .sort_desc .v-icon {color: red;}
-*/
-.results td .saved {color: green; font-weight: bold; font-size: 8pt;}
-.results td .err {color: red; font-weight: bold;}
-.results td.multi_action {padding-left: 10px;}
-.sort_button a {text-decoration: none; white-space: nowrap;}
-.controls a {text-decoration: none;}
-.colored_select_div{
-      position: relative; top: -15px;
-      border: 1px solid gray;
-      margin-right: 10px;
-      display: inline-block;
-      height: 20px; width: 20px;
-      border-radius: 3px;
-}
-@media only screen and (max-width: 1000px) {
-    .results thead {
-        display: none;
-    }
-    
-    .results td{
-      display: block;
-      border: none;
-      margin-top: 10px;
-      padding: 10px;
-      
-    }
-    .results td .field{
-      margin: 0 0;  
-      padding: 10px 0;
-      border-bottom: 1px dotted $primary;
-    }
-    .results td.controls{
-      width: 100%;
-      padding-bottom: 2rem;
-      border-bottom: 1px solid $primary;
-    }
-    /*.results td:first-child{border-top: 2px solid gray;}*/
-    .results td:last-child{border-bottom: 3px solid $primary;}
-
-
-
-    .results td:before{
-      content: attr(data-label);
-      /*position: absolute;*/
-      font-weight: bold;
-      color: $primary;
-      text-decoration: underline;
-      
-    }
-
-    
-
-}
+<style src="./result_objects/find_results.scss" scope lang="scss">
 </style>

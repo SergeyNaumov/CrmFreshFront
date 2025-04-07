@@ -128,4 +128,4 @@ export default {
     font-size: 12px;
     font-weight: 700; 
 }
-</style>ds
+</style>

@@ -12,8 +12,6 @@
                   :label="field.description"
                   prepend-icon="mdi-calendar"
                   disabled
-                  v-bind="props"
-                  
                   :rounded="$theme.rounded"
                   hide-details
                   

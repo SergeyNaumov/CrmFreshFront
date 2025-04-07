@@ -490,7 +490,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-  @import '@/styles/variables.scss';
   .root_element {
     border-bottom: 1px solid gray;
   }

@@ -52,6 +52,7 @@ export const dynamic_component_loader = (app) => {
   app.component('filter-multiconnect', defineAsyncComponent(() => filterComponents['./components/AdminTable/filters/multiconnect.vue']()));
   app.component('filter-memo', defineAsyncComponent(() => filterComponents['./components/AdminTable/filters/memo.vue']()));
   app.component('filter-yearmon', defineAsyncComponent(() => filterComponents['./components/AdminTable/filters/yearmon.vue']()));
+  app.component('filter-daymon', defineAsyncComponent(() => filterComponents['./components/AdminTable/filters/daymon.vue']()));
   app.component('filter-datetime', defineAsyncComponent(() => filterComponents['./components/AdminTable/filters/datetime.vue']()));
   app.component('filter-time', defineAsyncComponent(() => filterComponents['./components/AdminTable/filters/time.vue']()));
   app.component('filter-date', defineAsyncComponent(() => filterComponents['./components/AdminTable/filters/date.vue']()));

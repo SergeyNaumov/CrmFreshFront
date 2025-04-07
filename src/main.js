@@ -7,6 +7,8 @@ import mitt from 'mitt'; // Импортируем mitt
 import vuetify from './plugins/vuetify'; // Импорт Vuetify из plugins/vuetify.js
 import themePlugin from './plugins/theme';
 
+import VueTheMask from 'vue-the-mask';
+
 // import { useTheme } from 'vuetify'; // Импортируем useTheme
 
 import { dynamic_component_loader } from './dynamic_component_loader.js'; // Ваш кастомный загрузчик компонентов
@@ -121,7 +123,7 @@ app.component('GPTAssist', GPTAssist);
 window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
 app.use(vuetify);
 app.use(themePlugin); // Подключаем плагин $theme
-
+app.use(VueTheMask);
 app.use(store)
 
 app.mount('#app');

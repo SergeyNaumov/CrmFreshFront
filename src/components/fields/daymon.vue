@@ -15,6 +15,7 @@
             v-model="day"
             :items="day_list"
             no-data-text="Недопустимое значение"
+            prepend-icon="mdi-calendar-today"
             label="Выберите день"
           />
         </v-col>
@@ -25,7 +26,8 @@
             v-model="mon"
             :items="mon_list"
             item-value="v"
-            item-text="d"
+            item-title="d"
+            prepend-icon="mdi-calendar-month"
             label="Выберите месяц"
           />
         </v-col>
@@ -33,7 +35,7 @@
         <!-- Ссылки для установки текущих значений или очистки -->
         <v-col cols="12" class="clear" v-show="need_empty">
           <small>
-            <a href="#" @click.prevent="set_current()">Установить текущие значения</a> |
+            <a href="#" @click.prevent="set_current()">Установить текущую дату значения</a> |
             <a href="#" @click.prevent="clear()">Очистить</a>
           </small>
         </v-col>
@@ -42,27 +44,27 @@
   </div>
 </template>
 <script>
-//import { bus } from '../../main'
+import { getValueByField, setValueByField } from '../js/field_functions'
 export default {
     props:['form','field'],
     computed:{
       day_list(){
-        let list=[];
+        let list=[], max_cnt=31;
         if(!this.mon){
-          return [];
+          //return [];
         }
         else{
-          // я  ф  м  а  м  и 
+          // я  ф  м  а  м  и ...
           const cnt_mas=[31,29,31,30,31,30,31,31,30,31,30,31];
-          let max_cnt=cnt_mas[this.mon-1];
-          while(this.day>max_cnt){
-            this.day--
-          }
-          for(let i=0;i<=max_cnt;i++){
-            list.push(i);
-          }
-          return list;
+          max_cnt=cnt_mas[this.mon-1];
         }
+        while(this.day>max_cnt){
+            this.day--
+        }
+        for(let i=0;i<=max_cnt;i++){
+          list.push(i);
+        }
+        return list;
       }
     },
     watch:{
@@ -87,7 +89,20 @@ export default {
         return {
             day: '',
             mon: '',
-            mon_list:[{v:1,d:'Январь'},{v:2,d:'Февраль'},{v:3,d:'Март'},{v:4,d:'Апрель'},{v:5,d:'Май'},{v:6,d:'Июнь'},{v:7,d:'Июль'},{v:8,d:'Август'},{v:9,d:'Сентябрь'},{v:10,d:'Октябрь'},{v:11,d:'Ноябрь'},{v:12,d:'Декабрь'}]
+            mon_list:[
+              {v:1,d:'Январь'},
+              {v:2,d:'Февраль'},
+              {v:3,d:'Март'},
+              {v:4,d:'Апрель'},
+              {v:5,d:'Май'},
+              {v:6,d:'Июнь'},
+              {v:7,d:'Июль'},
+              {v:8,d:'Август'},
+              {v:9,d:'Сентябрь'},
+              {v:10,d:'Октябрь'},
+              {v:11,d:'Ноябрь'},
+              {v:12,d:'Декабрь'}
+          ]
         }
     },
     methods:{
@@ -104,10 +119,17 @@ export default {
         this.mon=dt.getMonth()+1, this.day=dt.getDate();
       },
       save(){
-        let field=this.field;
-        field.value=( (this.day>9)?this.day:'0'+this.day )+'-'+( (this.mon>9)?this.mon:'0'+this.mon );
-        //this.change_field(field);
-        this.$bus.$emit('change_field',field)
+        let t=this, f=t.field
+        let value=( (t.day>9)?t.day:'0'+this.day )+'-'+( (t.mon>9)?t.mon:'0'+this.mon );
+        f.value=value
+        if(/\d{2}-\d{2}/.test(value)){
+          setValueByField(t,f, value || '')
+        }
+        
+        //let field=this.field;
+        // field.value=( (this.day>9)?this.day:'0'+this.day )+'-'+( (this.mon>9)?this.mon:'0'+this.mon );
+        // //this.change_field(field);
+        // this.$bus.$emit('change_field',field)
       },
       
     }
