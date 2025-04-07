@@ -107,10 +107,10 @@ const menu_params_parse=list=>{
   return list
 }
 //import EditForm from './components/EditForm';
-import MainPage from './MainPage';
-import LeftMenu from './LeftMenu';
+import MainPage from './MainPage.vue';
+import LeftMenu from './LeftMenu.vue';
 import { get_headapp } from './js/app';
-
+import { resolveComponent } from 'vue';
 
 export default {
         components:{
@@ -119,7 +119,7 @@ export default {
           
         },
         data: () => ({
-          logo_url:process.env.BASE_URL+'logo.png',
+          logo_url:'/logo.png',
           drawer:true, // вкл / выкл левое меню
           active:{},
           dialog:false,
@@ -279,9 +279,10 @@ export default {
 
           load_component(component){
               if(component=='table')
-                return 'table_component'
+                component='admin-table'
 
               return component;
+              
           }
         },
 
@@ -299,8 +300,6 @@ export default {
 }
 </script>
 <style lang="scss">
-@import '@/styles/main.scss'; 
-@import '@/styles/vuetify_addon.scss'; 
   footer {
     color: #fff !important;
     z-index: 2000;

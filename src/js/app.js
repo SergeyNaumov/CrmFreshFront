@@ -20,10 +20,10 @@ export const get_headapp=s=>{
     let url=location.pathname;
     let hash=location.hash, set_headapp=true
     
-    if(url != process.env.BASE_URL){
-        url=url.replace(process.env.BASE_URL,'/')
-    }
-    
+    //if(url != process.env.BASE_URL){
+    //    url=url.replace(process.env.BASE_URL,'/')
+    //}
+    //url='/'
     
     if(/^\/src:(.+)/.test(url)){
         

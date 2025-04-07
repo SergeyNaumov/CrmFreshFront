@@ -192,15 +192,13 @@
 </template>
 
 <script>
-import { 
-  get_cgi_params
-} from './js/edit_form.js'
+import { get_cgi_params } from './js/edit_form.js'
 
 import LoadSaveFilters from './AdminTable/LoadSaveFilters';
 import OnFilters from './AdminTable/OnFilters';
 import FindResults from './AdminTable/FindResults';
 export default {
-  name:'admin-table',
+  name:'AdminTable',
   components:{
     'on-filters':OnFilters,
     'find-results':FindResults,
@@ -625,7 +623,6 @@ export default {
 }
 </script>
 <style lang="scss">
-  @import '@/styles/variables.scss';
   .is_headapp h1 {margin-bottom: 20px;;} 
   div.errors {margin: 3rem;}
   div.errors .error {background-color: #ffffff !important;  color: red;}

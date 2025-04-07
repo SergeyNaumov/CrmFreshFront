@@ -53,7 +53,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-	@import '@/styles/main.scss'; 
 	.header {
 	    padding: 5px;
 	    background-color: $lighten2;

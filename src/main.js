@@ -32,20 +32,7 @@ app.component('fa', FontAwesomeIcon);
 const bus = mitt();
 app.config.globalProperties.$bus = bus;
 
-// Настройка цветовой схемы
-// let main_color = colors[color_scheme];
-// let color_set = {
-//   primary: '#253a5d',
-//   lighten1: main_color.lighten1,
-//   lighten2: main_color.lighten2,
-//   lighten3: main_color.lighten3,
-//   lighten4: main_color.lighten4,
-//   lighten5: main_color.lighten5,
-// };
 
-// // Глобальные свойства и методы
-// app.config.globalProperties.$color = main_color;
-// app.config.globalProperties.$theme = color_set;
 app.config.globalProperties.$theme = {
   rounded: true // или другое значение
 };
@@ -93,32 +80,37 @@ app.component('draggable', draggable);
 // Динамическая загрузка компонентов
 dynamic_component_loader(app);
 
+// import Password from '../fields/password';
+
 // Регистрация компонентов
-import FormBlock from './components/EditForm/FormBlock';
+import FormBlock from './components/EditForm/FormBlock.vue';
 app.component('form-block', FormBlock);
 
-import TextField from './components/fields/text';
+import PasswordField from './components/fields/password.vue';
+app.component('field-password', PasswordField);
+
+import TextField from './components/fields/text.vue';
 app.component('field-text', TextField);
 
-import InExtUrlField from './components/fields/in_ext_url';
+import InExtUrlField from './components/fields/in_ext_url.vue';
 app.component('field-in_ext_url', InExtUrlField);
 
-import DateField from './components/fields/date';
+import DateField from './components/fields/date.vue';
 app.component('field-date', DateField);
 
-import TimeField from './components/fields/time';
+import TimeField from './components/fields/time.vue';
 app.component('field-time', TimeField);
 
-import DateTimeField from './components/fields/datetime';
+import DateTimeField from './components/fields/datetime.vue';
 app.component('field-datetime', DateTimeField);
 
-import YearMonField from './components/fields/yearmon';
+import YearMonField from './components/fields/yearmon.vue';
 app.component('field-yearmon', YearMonField);
 
-import DayMonField from './components/fields/daymon';
+import DayMonField from './components/fields/daymon.vue';
 app.component('field-daymon', DayMonField);
 
-import GPTAssist from './components/GPTAssist/GPTAssist';
+import GPTAssist from './components/GPTAssist/GPTAssist.vue';
 app.component('GPTAssist', GPTAssist);
 
 //import Errors from './components/errors';

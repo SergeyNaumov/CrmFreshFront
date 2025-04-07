@@ -102,7 +102,7 @@
   // end
   import { getValueByField, setValueByField } from '../js/field_functions'
   //import QRCode from '../../js/qrcode.min.js'
-  import qr_call from './text_subtypes/qr_call';
+  import qr_call from './text_subtypes/qr_call.vue';
   
   export default {
   components:{ qr_call },
@@ -275,12 +275,12 @@
   }
 </script>
 <style scoped lang="scss">
-  @import '@/styles/variables.scss';
+  @use '@/styles/variables';
   .v-input {font-size: 14px;}
   .popup_list {position: relative; border: 1px solid gray; border-radius: 5px;}
   
   .popup_list div.item {padding: 2px 5px; border-bottom: 1px dotted gray; font-size: 0.8rem;}
-  .popup_list div.item:hover {background:$primary;}
+  .popup_list div.item:hover {background: $primary;}
   .popup_list .close {text-align: right;}
   .label {
     left: 0px; right: auto; font-size: 11px !important;

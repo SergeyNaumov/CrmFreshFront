@@ -81,7 +81,7 @@
 
 <script>
 
-import { bus } from '/src/main' // для передачи по шине значения поля в форму
+//import { bus } from '/src/main' // для передачи по шине значения поля в форму
 
 import { init_websocket } from './functions.js'
 export default {

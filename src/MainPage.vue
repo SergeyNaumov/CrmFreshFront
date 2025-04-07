@@ -56,10 +56,10 @@
 
 
 //import Vue from 'vue'
-import BirthDays from './components/BirthDays';
-import Notifications from './components/Notifications';
+import BirthDays from './components/BirthDays.vue';
+import Notifications from './components/Notifications.vue';
 //import LinkTelegram from './components/MP/LinkTelegram';
-import ManagerLoad from './components/MP/ManagerLoad';
+import ManagerLoad from './components/MP/ManagerLoad.vue';
 
 export default {
   components: {
@@ -116,9 +116,7 @@ export default {
 
 }
 </script>
-<style scope lang="scss">
-  @import '@/styles/variables.scss';
-  
+<style scope lang="scss"> 
   .main {
     height: 100%;
     padding: 20px;

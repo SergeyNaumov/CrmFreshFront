@@ -69,7 +69,7 @@
 
 <script>
   
-  import { bus } from '../../main'
+  //import { bus } from '../../main'
   export default {
     data:function(){
       return {
@@ -263,7 +263,6 @@
   }
 </script>
 <style scoped lang="scss">
-  @import '@/styles/variables.scss';
   .memo {
     border: 1px solid gray; min-height: 50px;
     padding: 0;

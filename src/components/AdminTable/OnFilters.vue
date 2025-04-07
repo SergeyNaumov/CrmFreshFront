@@ -153,7 +153,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  @import '@/styles/variables.scss';
   .v-toolbar__content {background: #fff;}
   html {font-size: 12px;}
   .v-label {font-size: 12px;}

@@ -1,25 +1,10 @@
-@import './colors/blue2.scss';
-// .v-btn,
-// .v-card,
-// .v-sheet {
-//   border-radius: 8px; // Глобальное значение для закруглений
-// }
+@use 'variables' as *;
 
-// .v-btn.rounded-sm {
-//   border-radius: 4px; // Переопределение для малого закругления
-// }
-
-// .v-btn.rounded-lg {
-//   border-radius: 12px; // Переопределение для большого закругления
-// }
 .v-text-field {
     border-radius: 2px !important; /* Установите нужное значение */
 }
-$theme-colors: (
-  primary: $primary
-);
-$error: red;
-$text_on_primary: #fff;
+
+
 
 .warning {color: #fe7b00; font-weight: bold;}
 // Форма

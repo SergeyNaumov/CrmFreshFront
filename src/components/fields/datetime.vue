@@ -1,6 +1,5 @@
 <template>
     <div>
-      {{field.value}} {{ date }}
         <div class="read_only" v-if="field.read_only">
           <div style="margin-left: 14px;">
           <div class="description_container" v-html="field.description+':'"></div>
@@ -41,17 +40,16 @@
                         </v-menu>
               </v-col>
               <v-col sm="12" md="6">
-                        <v-text-field
-                                v-model="time"
-                                label="Время: ЧЧ:MM"
-                                prepend-icon="mdi-clock-outline"
-                                @change="fix_time"
-                                @keyup="fix_time"
-                                style="width: 180px;"
-                                
-                        />
-                </v-col>
- 
+                  <v-text-field
+                          v-model="time"
+                          label="Время: ЧЧ:MM"
+                          prepend-icon="mdi-clock-outline"
+                          @change="fix_time"
+                          @keyup="fix_time"
+                          style="width: 180px;"
+                          
+                  />
+              </v-col>
             </v-row>
             <div class="clear">
                 <template>

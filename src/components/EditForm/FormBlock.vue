@@ -73,11 +73,11 @@
 </template>
 
 <script>
-import FieldPassword from '../fields/password';
+//import FieldPassword from '../fields/password';
 
    export default {
       components:{
-        'field-password':FieldPassword
+        //'field-password':FieldPassword
       },
       name:'form-block',
       data:function(){

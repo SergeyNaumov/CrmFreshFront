@@ -115,7 +115,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-	@import '@/styles/main.scss'; 
 	.chat_window{
 	    position: absolute;
 	    text-align: left;

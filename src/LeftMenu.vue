@@ -63,7 +63,7 @@
 <script>
 import { toRaw } from 'vue';
 
-import left_menu_item from './components/left_menu_item';
+import left_menu_item from './components/left_menu_item.vue';
 export default{
     components:{
       'left_menu_item':left_menu_item
@@ -178,7 +178,7 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+
   .tg_indicator_on {
     background-color: green;
     display: inline-block;
@@ -206,6 +206,7 @@ export default{
     background-color: $darken1;
     display: table;
     width: 100%;
+    height: 90px;
     
   }
   .cur_profile a{
@@ -217,6 +218,10 @@ export default{
     display: block;
     color: #fff;
     margin: 0px 0 10px 10px;
+  }
+  .cur_profile .v-btn {
+    margin-top: 0;
+    margin-bottom: 0;
   }
   .cur_profile .v-avatar {background-color: white; font-size: 8px; margin: 10px;}
   .cur_profile .v-icon {color :#fff;  }

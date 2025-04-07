@@ -308,7 +308,6 @@ export default {
 };
 </script>
 <style scope lang="scss">
-@import '@/styles/variables.scss';
 .errors {color: $error;}
 // .theme--light.v-pagination{
   

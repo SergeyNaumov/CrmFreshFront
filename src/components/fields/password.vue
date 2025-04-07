@@ -49,12 +49,7 @@
                 
                 
             </template>
-
-            
-
         </div>
-       
-
     </div>
 </template>
 
