@@ -1,12 +1,9 @@
 <template>
     <div :style="field.style" >
-                
                  <canvas class="diagramm"
                   :width="width" 
                   :height="height"
                   :id="id"
-
-
                 />
                       
                 
@@ -58,9 +55,9 @@
                     data[i]=parseInt(data[i])
                 }
                 console.log('subtype: ',f.type)
-                if(!f.subtype){
-                    f.subtype='circle'
-                }
+                f.subtype='bar'
+                
+
                 if(f.subtype=='circle'){
                         let myChart = new Chart(ctx, {
                             type: 'doughnut',
@@ -110,6 +107,31 @@
                                     }
                                 }
                             }
+                        })
+                }
+                else if(f.subtype == 'bar'){
+                        let myChart = new Chart(ctx, {
+                            type: 'bar',
+                            //label:'xxx',
+                            data: {
+
+                                labels: labels,
+                                datasets: [{
+                                    label: f.description || '',
+                                    data: data,
+                                    backgroundColor: f.colors || [ '#00e676','#e91e63','orange', 'blue', 'green', 'yellow', 'red'],
+                                    borderWidth: 0.5 ,
+                                    //borderColor: '#ddd'
+                                }]
+                            },
+                            options: f.chart_options
+                            // options: f.chart_options || {
+                            //     scales: {
+                            //       y: {
+                            //         beginAtZero: true
+                            //       }
+                            //     }
+                            // },
                         })
                 }
            }

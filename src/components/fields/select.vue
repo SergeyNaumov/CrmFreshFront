@@ -172,6 +172,7 @@ export default {
   created(){
     let t=this
     t._field_update=(new_data)=>{
+      console.log('select_fiel_update:',new_data)
       field_update(new_data,t)
     };
 

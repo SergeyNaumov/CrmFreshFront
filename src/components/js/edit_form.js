@@ -44,7 +44,11 @@ export function on_dependence(self, name,obj,not_frontend_process){
         
         if('before_html' in obj)
           f.before_html=obj.before_html
+        //console.log('change_field: ',f)
         bus.$emit('change_field',f,not_frontend_process);
+        
+        //bus.$emit(`field-update:${f.name}`,f);
+        
       }
         
     }

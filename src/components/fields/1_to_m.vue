@@ -30,7 +30,8 @@
 
         
         <template v-if="!form.id">
-          <p>Данный блок можно редактировать только после создания основной карты</p>
+          <SlideForNew :form="form" :field="field" v-if="form.action == 'new'"/>
+          <p v-else>legacy action: {{form.action}} Данный блок можно редактировать только после создания основной карты</p>
         </template>
         
         <template v-else-if="make_create">
@@ -62,12 +63,13 @@
   import { bus } from '../../main'
   import Slide from './1_to_m/slide';
   import one_to_m_form from './1_to_m/form';
-  
+  import SlideForNew from './1_to_m/slide_for_new';
 
 
   export default {
     components:{
        'slide':Slide,
+       'SlideForNew': SlideForNew,
        'one_to_m_form': one_to_m_form
     },
   // опции

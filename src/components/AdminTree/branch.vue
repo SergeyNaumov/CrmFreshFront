@@ -318,9 +318,9 @@ export default {
         get_edit_link(key){
             let url='', UrlPrefix=config.UrlPrefix
             if(this.form.card_format && this.form.card_format == 'old')
-                url=UrlPrefix+'/edit_form.pl?config='+config+'&action=edit&id='+key;            
+                url='/edit_form.pl?config='+config+'&action=edit&id='+key;            
             else
-                url=UrlPrefix+'/edit_form/'+this.form.config+'/'+key
+                url=UrlPrefix.replace(/\/$/,'')+'/edit_form/'+this.form.config+'/'+key
             return url
         },
         go_to_edit(key){

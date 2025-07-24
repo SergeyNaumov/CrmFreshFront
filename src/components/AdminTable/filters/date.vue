@@ -226,6 +226,7 @@ export default {
             this.field.value_low=this.dat_value0;
         }
         else{
+            this.field.value_low=this.dat_value0;
             this.field.value_hi=this.dat_value1;
         }
         let values=[]; 

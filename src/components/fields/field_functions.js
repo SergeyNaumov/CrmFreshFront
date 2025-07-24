@@ -35,6 +35,9 @@ export function field_update(new_data, self){
         }
       );
     } 
+    if(new_data.values){
+      self.values=new_data.values
+    }
 }
 
 export function check_fld(self){
