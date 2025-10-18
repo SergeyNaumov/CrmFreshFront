@@ -257,6 +257,12 @@
           this.id=this.form_id;
           this.init()
         }
+      },
+      form_id(){
+        if(this.id!=this.form_id){
+          this.id=this.form_id;
+          this.init()
+        }
         
       }
     }
