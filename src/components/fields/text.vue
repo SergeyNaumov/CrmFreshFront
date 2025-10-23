@@ -1,6 +1,13 @@
 <template>
         <div>
+
+
           <div v-if="field.before_html" v-html="field.before_html"></div>
+          <field-buttons
+              :form="form"
+              :field="field"
+              :after_update="updateContent"
+          />
           <template v-if="!field.hide">
             
 
@@ -47,7 +54,7 @@
                     @keyup="input"
                     :clearable="!field.read_only"
                     :style="field.style"
-                    :error-messages="error_message"
+                    :error-messages="field.error_message"
                     :rounded="$theme.rounded"
                     hide-details
                     :id="field.name"
@@ -78,10 +85,10 @@
                 </template>
                 <div class="add_description" v-if="field.add_description">{{field.add_description}}</div>
                 <div
-                  class="err" v-if="error_message" v-html="error_message"
+                  class="err" v-if="field.error_message" v-html="field.error_message"
                 />
                 <div
-                  class="err" v-if="warning_message" v-html="warning_message"
+                  class="err" v-if="field.warning_message" v-html="field.warning_message"
                 />
             </template>
             <qr_call v-if="field.subtype=='qr_call'" :value="field.value" :field="field"/>
@@ -101,9 +108,13 @@
   import { bus } from '../../main'
   //import QRCode from '../../js/qrcode.min.js'
   import qr_call from './text_subtypes/qr_call';
-  
+  import field_buttons from './frontend/buttons';
+
   export default {
-  components:{ qr_call },
+  components:{
+    qr_call: qr_call,
+    'field-buttons':field_buttons
+  },
   created(){
     //Vue.component('qr_call', ()=> import('./components/fields/text_subtypes/qr_call.vue'));
     this._field_update=(new_data)=>{
@@ -179,6 +190,13 @@
 
   },
   methods: {
+        set_text(text){ // писалась для отправки текста из GPT
+
+            this.value=text
+        },
+        updateContent(){
+
+        },
         select_prefix(){
           if(this.current_prefix){
             this.value=this.current_prefix+', '

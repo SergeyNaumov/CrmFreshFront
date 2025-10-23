@@ -38,7 +38,7 @@
                                 :disabled="!!field.read_only || !!form.read_only"
                                 class="color_select"
                                 autocomplete
-                                :error-messages="error_message"
+                                :error-messages="field.error_message"
 
                                 hide-details
                                 :rounded="$theme.rounded"
@@ -106,7 +106,7 @@
                     </template>
                 </template>
             </template>
-            <div v-if="error_message" class="error_msg">{{error_message}}</div>
+            <div v-if="field.error_message" class="error_msg">{{field.error_message}}</div>
             <div v-if="warning_message" class="err" >{{warning_message}}</div>     
             <div v-if="after_html" v-html="after_html"></div>
       </template>

@@ -24,7 +24,6 @@
                 >
                 
                     <v-card class="one_to_m one_to_m_list"  v-for="(v,vi) in list" :key="v[vi]"> <!--:style="{'background-color': $color.secondary}"-->
-
                         <template v-for="(h,hidx) in field.headers">
                             <div :key="h[hidx]" v-if="v[h.name] && fields_hash[h.name] ">
                                 <template v-if="h.change_in_slide">
@@ -32,8 +31,9 @@
                                 </template>
                                 <template v-else>
                                     
-                                    <span class="h">{{h.description}}:</span> 
+                                    <span class="h">{{h.description}}:</span>
                                     <template v-if="h.type=='file'"> 
+
                                         <span v-html="download_file_block(h,ch_id(v),v[h.name+'_filename'],v)"></span>
                                         <template v-if="field.headers.length>1"> <!-- выводим эту ссылку если помимо файла есть другие поля -->
                                             <a v-if="v[h.name+'_filename'] && !child_field_read_only(h.name)" href="" @click.prevent="del_file(h.name,ch_id(v))">удалить</a>
@@ -335,7 +335,7 @@ export default {
             
             //let link=BackendBase+'/1_to_m/download/'+this.form.config+'/'+this.field.name+'/'+child_name+'/'+this.form.id+'/'+child_id+'/'+orig_name;
             let link=v.preview_img
-            
+            //console.log('v: ',v)
             //let cf=this.fields[child_name];
             let cf=this.get_field_by_name(child_name);
               
@@ -343,7 +343,7 @@ export default {
 
             if(!orig_name)
                     return ''
-
+            console.log('link: ',link, 'make_view: ',this.make_view(link))
             if(this.make_view(link)){
                 desc='просмотреть';
                 
@@ -357,7 +357,7 @@ export default {
         },
         make_view(f){
             // возвращает true, если файл можно просмотреть в браузере
-            return /\.(jpg|png|gif|gpeg|webp)$/i.test(f)
+            return /\.(jpg|png|gif|jpeg|webp)$/i.test(f)
             
         },
         start_dialog_errors(errors){

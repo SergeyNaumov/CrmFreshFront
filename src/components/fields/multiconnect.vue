@@ -2,7 +2,9 @@
     <div class="multiconnect">
 
         <errors :errors="errors"/>
-        
+        <pre v-if="0">
+            {{list_searched}}
+        </pre>
         <template>
                 <div v-if="field.fast_search">
                     <v-text-field label='быстрый поиск' v-model="search" flat hide-details/>
@@ -40,11 +42,12 @@
                     selected-color="primary"
                 />
                 <div v-else>
-                    
-
-                    <div v-if="field.make_add" v-show="show_adding_form">
+                    <div v-if="field.make_add">
                         <a href="" @click.prevent="show_adding_form=true" v-if="!show_adding_form">добавить</a>
                         <a href="" @click.prevent="show_adding_form=false"  v-if="show_adding_form">отменить</a>
+                    </div>
+                    <div v-show="show_adding_form">
+
                         <v-text-field label='новый тэг' v-model="new_tag" />
                         <div class="tag_list">
                             
@@ -61,14 +64,18 @@
 
                     </div>
                     <v-container>
+
                         <template v-if="field.view_only_selected">
+
                             <v-row>
-                                <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" v-show="selected_hash[l.id]" :key="'l'+idx">
+                                <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" v-if="selected_hash[l.id]" :key="'l'+idx">
                                     <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()"></v-checkbox>
                                 </v-col>
                             </v-row>
+
                         </template>
                         <template v-else>
+
                             <v-row>
                                 <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" :key="'l'+idx">
                                     <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()" />
@@ -269,8 +276,8 @@
                     id:t.form.id?t.form.id:undefined
                 }
             ).then(
-                response=>{
-                    let D=response.data;
+                r=>{
+                    let D=r.data;
                     if(D.success){
                         // преобразование типов (с числами ошибка)
                         for(let i in D.list){
