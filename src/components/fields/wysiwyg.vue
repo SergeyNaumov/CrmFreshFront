@@ -429,19 +429,19 @@ export default {
                 return Math.random()
             }
         }
-        let contentCss = [];
-        if (this.field.style) {
-            if (Array.isArray(this.field.style)) {
-                contentCss = this.field.style;
-            } else if (typeof this.field.style === 'string') {
-                contentCss = [this.field.style];
-            }
-        }
+        // let contentCss = [];
+        // if (this.field.style) {
+        //     if (Array.isArray(this.field.style)) {
+        //         contentCss = this.field.style;
+        //     } else if (typeof this.field.style === 'string') {
+        //         contentCss = [this.field.style];
+        //     }
+        // }
         // опции по умолчанию
         let init_options={
             selector:'#'+name+'.mce',
             // content_css:'/tinymce.css', // -- собственный файл стилей
-            content_css: contentCss.length > 0 ? contentCss : [], // добавляем стили
+            // content_css: contentCss.length > 0 ? contentCss : [], // добавляем стили
             browser_spellcheck: true,
             relative_urls : false,
             init_instance_callback: init_instance_callback,
@@ -490,7 +490,9 @@ export default {
                             }
                             //console.log('TEMPLATES2:',init_options.templates)
                         }
-
+                        // if(contentCss.length){
+                        //     init_options.content_css=contentCss                            
+                        // }
                         init(init_options)
 
 
