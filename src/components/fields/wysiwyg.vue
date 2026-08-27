@@ -410,17 +410,38 @@ export default {
         }
         // функция инициализации (вызывается после ajax-а с получением опций tinymce)
         const init=(options)=>{
+            // if (this.field.style && Array.isArray(this.field.style) && this.field.style.length) {
+            //     // Если есть уже существующий content_css, объединяем
+            //     console.log('content_css:',content_css)
+            //     if (options.content_css) {
+            //         if (Array.isArray(options.content_css)) {
+            //             options.content_css = [...options.content_css, ...this.field.style];
+            //         } else {
+            //             options.content_css = [options.content_css, ...this.field.style];
+            //         }
+            //     } else {
+            //         options.content_css = this.field.style;
+            //     }
+            // }
             tinymce.init(options);
             tinymce.EditorManager.init({});
             tinymce.activeEditor.getRnd=function(){
                 return Math.random()
             }
         }
-        
+        let contentCss = [];
+        if (this.field.style) {
+            if (Array.isArray(this.field.style)) {
+                contentCss = this.field.style;
+            } else if (typeof this.field.style === 'string') {
+                contentCss = [this.field.style];
+            }
+        }
         // опции по умолчанию
         let init_options={
             selector:'#'+name+'.mce',
             // content_css:'/tinymce.css', // -- собственный файл стилей
+            content_css: contentCss.length > 0 ? contentCss : [], // добавляем стили
             browser_spellcheck: true,
             relative_urls : false,
             init_instance_callback: init_instance_callback,
@@ -441,7 +462,7 @@ export default {
             file_picker_callback : svBrowser,
             paste_data_images: true,
             image_advtab: true,
-            extended_valid_elements: '@[itemscope|itemprop|itemtype|itemref|content],img[*],time[*],div[*|class|data-resultsUrl|data-newWindow|data-queryParameterName],span[*],strong[*],td[*],tr[*],p[*],small[*],a[*|download],ul[*],li[*],em[*],script[type|src],article[*],header[*],meta[itemprop|itemtype|itemref|itemscope|content],iframe[src|style|width|height|scrolling|marginwidth|marginheight|frameborder|allowfullscreen],object[width|height|classid|codebase|embed|param],param[name|value],embed[param|src|type|width|height|flashvars|wmode],a[*]',
+            extended_valid_elements: 'i[*],@[itemscope|itemprop|itemtype|itemref|content],img[*],time[*],div[*|class|data-resultsUrl|data-newWindow|data-queryParameterName],span[*],strong[*],td[*],tr[*],p[*],small[*],a[*|download],ul[*],li[*],em[*],script[type|src],article[*],header[*],meta[itemprop|itemtype|itemref|itemscope|content],iframe[src|style|width|height|scrolling|marginwidth|marginheight|frameborder|allowfullscreen],object[width|height|classid|codebase|embed|param],param[name|value],embed[param|src|type|width|height|flashvars|wmode],a[*]',
             valid_children: '+a[div|p|img|span  ]'
         }
         
