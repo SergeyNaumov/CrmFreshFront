@@ -3,18 +3,20 @@
         <!-- tree -->
         <template v-if="!field.hide">
           <div v-if="before_html" v-html="before_html"></div>
+          
           <template v-if="field.tree_use">
-
-            <v-select
-              :items="values"
-              item-value="v"
-              item-text="d"
+            <v-autocomplete
+              autocomplete="true"
+              :items="values" item-value="v" item-text="d"
+              :search-input.sync="search"
+              
               v-model="value"
               :label="field.description"
               class="input-group--focused"
               :rounded="$theme.rounded"
               :hint="field.add_description"
               hide-details
+              
             /> <!--@input="change_field(field)"-->
           </template>
               
@@ -38,7 +40,7 @@
                                 :disabled="!!field.read_only || !!form.read_only"
                                 class="color_select"
                                 autocomplete
-                                :error-messages="field.error_message"
+                                :error-messages="error_message"
 
                                 hide-details
                                 :rounded="$theme.rounded"
@@ -47,7 +49,7 @@
                 </template>
                 
                 <template v-else>  
-                  
+                    
                     <template v-if="field.autocomplete">
 
                       <v-autocomplete 
@@ -68,7 +70,7 @@
 
                       <!-- not colored (p) select -->
                       <template v-if="values.length>15">
-                        
+                      
                       <v-autocomplete 
                           
 
@@ -106,7 +108,7 @@
                     </template>
                 </template>
             </template>
-            <div v-if="field.error_message" class="error_msg">{{field.error_message}}</div>
+            <div v-if="error_message" class="error_msg">{{error_message}}</div>
             <div v-if="warning_message" class="err" >{{warning_message}}</div>     
             <div v-if="after_html" v-html="after_html"></div>
       </template>

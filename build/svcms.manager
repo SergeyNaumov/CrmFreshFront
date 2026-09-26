@@ -1,7 +1,6 @@
 #!/bin/bash
 npm run build_svcms
-basedir="/mnt/stg_w01/var/www/svcms/manager/frontend/"
-#echo "$basedir/css"
+basedir="/mnt/stg_w01/var/www/svcms-async/manager/frontend/"
 check=${#basedir}
 if [ $check -ge 10 ]
 then
