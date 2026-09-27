@@ -11,6 +11,7 @@ import axios from 'axios'
 
 import { dynamic_component_loader } from './dynamic_component_loader.js'
 import { schemes, getScheme } from './theme/schemes.js'
+import router from './router'
 
 import '@fontsource/inter/400.css'
 import '@fontsource/inter/600.css'
@@ -195,4 +196,5 @@ import Errors from './components/errors.vue'
 app.component('errors', Errors)
 
 app.use(vuetify)
+app.use(router)
 app.mount('#app')

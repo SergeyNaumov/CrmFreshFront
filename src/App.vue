@@ -1,11 +1,12 @@
 <template>
   <v-defaults-provider :defaults="$schemeDefaults">
-    <v-app v-if="headapp">
-
-        <component v-show="headapp" v-bind:is="headapp" is_headapp="1" :params="headapp_params"></component>
+    <!-- full-screen layout (без меню) -->
+    <v-app v-if="isBlank">
+      <router-view />
     </v-app>
-     
-  <v-app id="inspire" v-else>
+
+    <!-- shell layout (меню + контент) -->
+    <v-app id="inspire" v-else>
         <v-dialog v-model="dialog" app>
             <v-card>
               <v-card-title  class="text-h5">{{dialog_header}}</v-card-title>
@@ -27,12 +28,10 @@
           />
         </v-navigation-drawer>
 
-        <v-app-bar app  > <!--color="darken1"-->
-          
+        <v-app-bar app  >
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title >
             <a href="/"><v-icon size="small">fa fa-home</v-icon>&nbsp; {{title}}</a>
-            <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
           </v-toolbar-title>
           <Messenger v-if="false" :config="app_components.navigator" :manager="manager"/>
         </v-app-bar>
@@ -40,33 +39,15 @@
         <v-main>
           <div class="fill-height" fluid>
             <errors :errors="errors" />
-            <!-- vuecomponent -->
-            <pre v-if="0">{{MenuItem}}</pre>
-
-            <template v-if="MenuItem.type == 'vue'">
-              <component 
-                :is="load_component(MenuItem.value)"
-                :params="MenuItemParams"
-                style="margin-bottom: 20px;"
-              />
-            </template>
-
-            <!-- iframe -->
-            <template v-if="MenuItem.type=='src'">
-              <iframe  style="width: 100%; height: 100%; border: none;" :src="MenuItem.value"></iframe>
-            </template>
-            
+            <router-view />
           </div>
-
         </v-main>
         <v-footer class="app-footer" app>
           <span :style="{color: 'rgb(var(--v-theme-text-on-primary))'}" >&copy; {{copyright}}
             | <a :href="m.url" :target="m.target" v-for='(m,idx) in bottom_menu' :style="{color: 'rgb(var(--v-theme-text-on-primary))'}">{{m.header}}</a>
           </span>
-          
         </v-footer>
   </v-app>
-      
   </v-defaults-provider>
 </template>
 
@@ -74,7 +55,6 @@
 let self=null
 const menu_params_parse=list=>{
   for(let m of list){
-  
       if(m.params && typeof(m.params)=='string'){
         try {
           m.params=JSON.parse(m.params)
@@ -87,21 +67,17 @@ const menu_params_parse=list=>{
       if(m.child.length){
         m.child=menu_params_parse(m.child)
       }
-    
   }
   return list
 }
-//import EditForm from './components/EditForm';
+
 import MainPage from './MainPage';
 import LeftMenu from './LeftMenu';
-import { get_headapp } from './js/app';
-
 
 export default {
         components:{
           'mainpage':MainPage,
           'left_menu':LeftMenu,
-          
         },
         data: () => ({
           logo_url:import.meta.env.BASE_URL+'logo.png',
@@ -116,39 +92,28 @@ export default {
           title:'',
           MenuItem:{type:'vue',value:'mainpage'},
           MenuItemParams:{},
-          headapp:'',
-          headapp_params:{},
           errors:[],
           manager:{},
           app_components:{}
         }),
-        mounted () {
-           //console.log('app_messenger:',Messenger)
+        computed: {
+           route(){ return this.$route },
+           isBlank(){ return this.$route.meta && this.$route.meta.blank === true },
         },
         created(){
-          
-          //let 
           self=this
-          
           window.app=this
           window.toggle=(sel)=>{
             let el=document.querySelector(sel)
             if(el){
-              console.log('display: ',el.style.display)
               el.style.display=(el.style.display=='none')?'':'none'
             }
             return false
           }
 
-          get_headapp(self)
-          window.onhashchange=e=>{
-            get_headapp(self);
-          }
-          
-          if(!this.headapp){
+          if(!this.isBlank){
             this.$http.get(BackendBase+'/startpage').then(
               r=>{
-                
                 let D=r.data;
 
                 if(D.bottom_menu)
@@ -156,13 +121,11 @@ export default {
 
                 if(D.redirect && D.redirect!=location.pathname){
                   localStorage.setItem('link_prev_login',location.href)
-
                   location.href=D.redirect;
                   return ;
                 }
-                
+
                 if(D.success){
-                    //this.left_menu=D.left_menu,
                     if(D.left_menu_controller)
                       this.load_menu(D.left_menu_controller)
                     if(D.left_menu)
@@ -177,10 +140,10 @@ export default {
                     }
                 }
                 this.$nextTick(()=>{
-                    this.copyright=D.copyright, document.title=this.title=D.title;              
+                    this.copyright=D.copyright, document.title=this.title=D.title;
                 });
                 this.errors=D.errors;
-                
+
               }
             ).catch(e => {
               this.dialog_header='Ошибка сети';
@@ -196,12 +159,10 @@ export default {
                 let D=r.data;
                 if(D.success){
                   this.left_menu=menu_params_parse(D.left_menu)
-                  //this.left_menu=D.left_menu
-                  get_headapp(this);
                 }
                 else{
                   this.errors=D.errors
-                } 
+                }
               }
             )
           },
@@ -218,34 +179,25 @@ export default {
             }
             else
               return ''
-            
           },
           setMenuItemParams(v){
             this.MenuItemParams=v
           },
-
           setDriwer(v){
             this.drawer=v
           },
           setMenuItem(v){
-            console.log('St')
             this.MenuItem=v
           },
-
           set_active_manager_menu(params){
-
             let element=params.element;
             let config=params.config?params.config:'';
-
             let menu=params.menu?params.menu:this.left_menu
-            
+
             for(let m of menu){
               if(m.type && m.type=='vue' && m.value && m.value==element){
                 m.isActive=true;
                 if(params.parent){
-                  
-                  //m.model=true;
-                  
                   params.parent['model']=true;
                   return true;
                 }
@@ -253,33 +205,12 @@ export default {
               }
               if(m.child && m.child.length>0){
                 if(this.set_active_manager_menu({element:element,config:config,parent:m,menu:m.child})){
-                  
-                  m.model=true;
+                   m.model=true;
                 }
-                
               }
             }
             return false;
           },
-
-          load_component(component){
-              if(component=='table')
-                return 'table_component'
-
-              return component;
-          }
-        },
-
-        computed: {
-           imageHeight () {
-             switch (this.$vuetify.display.name) {
-               case 'xs': return '220px'
-               case 'sm': return '400px'
-               case 'md': return '500px'
-               case 'lg': return '600px'
-               case 'xl': return '800px'
-             }
-           }
         }
 }
 </script>
@@ -313,22 +244,19 @@ export default {
   header .v-toolbar-title a {color: rgb(var(--v-theme-text-on-primary)) !important; text-decoration: none;}
   .not_underline {text-decoration: none;}
 
-  
   .v-application .err  {background: #fff0; background-color: #fff0;  color: red; margin-bottom: 5px;}
   .v-application .succ  {background: #fff; background-color: #fff !important;  color: green; margin-bottom: 5px;}
-  
+
   .v-select-list .v-list-item-title {font-size: 12px;}
-  
- 
+
   input, .v-field__input {font-size: 12px !important;}
   .v-list-item-title, .v-field__input {font-size: 12px;}
   .v-label, .v-input {font-size: var(--app-font-label) !important; margin-bottom: 10px;}
   .v-field--rounded .v-field {
-    border: 1px solid black; 
+    border: 1px solid black;
     padding-left: 3px;
     border-radius: 5px !important;
     margin-top: 4px;
-    
   }
 
   .v-field-label--floating {

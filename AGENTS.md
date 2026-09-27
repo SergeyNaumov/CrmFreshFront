@@ -44,12 +44,13 @@ npm run build_svcms                 # mode svcms,   base /manager/
 vite.config.js                 # base по mode, alias @ и vue (runtime compiler), output js/css/fonts
 index.html                     # корневой (Vite); configure.js + иконки + BaseUrl/BackendBase
 src/
-  main.js                      # createApp: bus(mitt), Vuetify, $http, icon set, глобальные компоненты
-  App.vue                      # shell или headapp, меню/контент/iframe
-  js/app.js                    # URL-роутинг headapp
-  dynamic_component_loader.js  # ленивая регистрация компонентов
+  main.js                      # createApp: bus(mitt), Vuetify, $http, icon set, router, глобальные компоненты
+  router/index.js              # vue-router: /vue/* (shell) и /* (full-screen), alias'ы
+  App.vue                      # layout по route.meta.blank: shell (меню) или full-screen
+  js/app.js                    # legacy get_headapp (не используется, для совместимости)
+  dynamic_component_loader.js  # ленивая регистрация компонентов (поля)
   LeftMenu.vue, MainPage.vue
-  components/                  # EditForm, AdminTable, AdminTree, StatTool, Messenger, fields, ...
+  components/                  # EditForm, AdminTable, AdminTree, StatTool, Messenger, fields, FallbackRoute, ...
   styles/                      # main.scss, variables.scss, colors/
 public/
   configure.js                 # config.BackendBase / MessengerWS / TinyMCE_BaseUrl

@@ -44,22 +44,6 @@ export default{
         }
     },
     created(){
-      addEventListener("popstate",(e)=>{
-            
-            let item=e.state
-            if(item){
-              //console.log('popstate:',e.state)
-              //this.setMenuItem(item,)
-              this.go_link(item,true)
-            }
-
-            //s.setMenuItem(item)
-            
-            //console.log('EventListener: ', location.pathname+location.search)
-            this.go_link(item,true)
-            //go(location.pathname+location.search);
-      })
-      
     },
     methods:{
         logout(){
@@ -76,24 +60,23 @@ export default{
 
             if(document.body.clientWidth<800)
                this.setDriwer(false);
-            console.log('BEFORE:',item)
+
             if(item && item.type=='newtab'){
               window.open(item.value, '_blank');
               window.focus();
-            }
-            else{
-
-              if(item.params){
-                this.setMenuItemParams(item.params);
-              }
-              this.setMenuItem(item)
-              if(!not_push_state){
-               
-                history.pushState(item, item.header, this.get_link(item))
-              }
+              return;
             }
 
-            console.log('CUR_STATE: ',window.history)
+            let link = this.get_link(item);
+            if(!link) return;
+
+            this.setMenuItemParams(item.params || {});
+            this.setMenuItem(item);
+
+            if(not_push_state)
+              this.$router.replace(link);
+            else
+              this.$router.push(link);
         },
         get_link(item){
             let params={};
@@ -129,14 +112,7 @@ export default{
                   return UrlPrefix+'/vue/table/'+params.config
             }
             if(item.type=='src'){
-              
-              if(item.id){
-                return UrlPrefix+'/src:'+item.value
-              }
-              else{
-                return item.value
-              }
-              
+              return UrlPrefix+'/src:'+item.value
             }
 
             return ''

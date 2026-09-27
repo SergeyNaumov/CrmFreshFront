@@ -337,7 +337,11 @@ methods: {
                 }
                 if(this.form.id){
                   this.save_files();
-                  window.history.pushState(null, document.title, BaseUrl+'edit_form/'+this.params.config+'/'+this.form.id);
+                  try {
+                    this.$router.replace('/edit_form/'+this.params.config+'/'+this.form.id);
+                  } catch (e) {
+                    window.history.pushState(null, document.title, BaseUrl+'edit_form/'+this.params.config+'/'+this.form.id);
+                  }
                 }
                 this.Init()
               }
