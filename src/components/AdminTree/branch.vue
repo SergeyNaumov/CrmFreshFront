@@ -83,7 +83,7 @@
                                 
                             </div>
                             <div class="branch-tools">
-                                <a :href="get_edit_link(l.id)" @click.prevent="edit_in_new_tab(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
+                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
                                 <v-icon v-if="make_delete(parent.id,l)" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
                     </div>
@@ -125,7 +125,7 @@
                                 />
                             </div>
                             <div class="branch-tools float-right">
-                                <a :href="get_edit_link(l.id)" @click.prevent="edit_in_new_tab(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
+                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
                                 <v-icon v-if="make_delete(parent.id,l)" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
                         </div>
