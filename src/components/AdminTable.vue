@@ -82,7 +82,8 @@
                   {{filters_values}}
                   <hr>
                 </template>
-                  <on-filters :filters="filters"
+                  <on-filters :key="config_key"
+                    :filters="filters"
                     :config="params.config"
                     :go_search="go_search"
                     :on_filters="on_filters"
@@ -180,6 +181,8 @@ export default {
       SHOW_FILTERS:true,
       SHOW_FILTERS_on: true,
       SHOW_FILTERS_all: true,
+      config_key: 0,
+      last_config: '',
       title:"",
       log:[],
       errors:[],
@@ -217,9 +220,13 @@ export default {
     this.Init();
   },
   watch:{
-    params(v){
-
-      if(v.config){
+    params(v, old){
+      if(v && v.config && (!old || v.config !== old.config)){
+        // смена config: сбрасываем состояние фильтров и ремаунтим дочерние компоненты
+        this.config_key++
+        this.ORDER = 0
+        this.on_filters = []
+        this.init_color_selects && this.init_color_selects()
         this.Init()
       }
     },
