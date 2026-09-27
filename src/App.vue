@@ -60,8 +60,8 @@
 
         </v-main>
         <v-footer class="app-footer" app>
-          <span class="text-white" >&copy; {{copyright}}
-            | <a :href="m.url" :target="m.target" v-for='(m,idx) in bottom_menu' style="color: white;">{{m.header}}</a>
+          <span :style="{color: 'rgb(var(--v-theme-text-on-primary))'}" >&copy; {{copyright}}
+            | <a :href="m.url" :target="m.target" v-for='(m,idx) in bottom_menu' :style="{color: 'rgb(var(--v-theme-text-on-primary))'}">{{m.header}}</a>
           </span>
           
         </v-footer>
@@ -309,8 +309,8 @@ export default {
   h1 {color: rgb(var(--v-theme-primary));}
   h2 {color: rgb(var(--v-theme-primary));}
   .v-toolbar-title {font-size: 1rem; color: rgb(var(--v-theme-text-on-primary)); font-weight: bold; vertical-align: bottom;}
-  header .v-toolbar-title .v-icon {color: #fff !important; position: relative; top: -2px; margin-right: 10px;}
-  header .v-toolbar-title a {color: #fff !important; text-decoration: none;}
+  header .v-toolbar-title .v-icon {color: rgb(var(--v-theme-text-on-primary)) !important; position: relative; top: -2px; margin-right: 10px;}
+  header .v-toolbar-title a {color: rgb(var(--v-theme-text-on-primary)) !important; text-decoration: none;}
   .not_underline {text-decoration: none;}
 
   
