@@ -53,67 +53,10 @@
                     </v-dialog>
 
                     <h1 color="primary" class="form_header" v-html="form.title"/>
-                    <form autocomplete="off">
-                    <v-row >
-
-                        <template v-if="cols.length"> <!-- Колонки, блоки -->
-                          <!--  -->
-                            <v-col class="pl-3" :md="12/Math.floor(cols.length)" cols="12" v-for="c in cols" :key="c.idx">
-
-                            <v-card class="block" v-for="block in c" :key="block.name">
-                                <v-toolbar color="primary" dark height="35px" @click="block_toggle(block)">
-                                    <v-toolbar-title >
-                                        <v-icon v-if="!block.hide">keyboard_arrow_up</v-icon> 
-                                        <v-icon v-if="block.hide">keyboard_arrow_down</v-icon>
-                                        <span >{{block.description}} </span>
-                                    </v-toolbar-title>
-                                    <div class="flex-grow-1"></div>
-                                </v-toolbar>
-
-                                <div v-show="!block.hide" pb-1>
-                                    <form-block :block_name="block.name" :form="form"  :save="save" :values="values"></form-block>
-                                    <v-col cols="12" lg="12" class="text-lg-center">
-
-                                    <v-btn color="primary" v-if="!form.read_only && !block.not_save_button" :disabled="disabled_form" @click="save()">Сохранить</v-btn> 
-                                    </v-col>
-                                </div>
-                                
-                            </v-card>
-
-                            </v-col>
-                        </template>
-                        <template v-else-if="tabs.length"> <!-- Табы -->
-                              <v-tabs v-model="tab">
-                                <v-tab v-for="(tab,idx) in tabs" :key="'tab'+idx" :style="tab.style" v-html="tab.description"/>
-
-                              </v-tabs>
-                              <v-col md="12" >
-                              <v-card style="width: 100%;">
-                                <v-window v-model="tab" >
-                                  <v-window-item v-for="(tab,idx) in tabs" :key="'tabitm'+idx">
-                                    <form-block :block_name="tab.name" :form="form"  :save="save" :values="values"></form-block>
-                                  </v-window-item>
-                                </v-window>
-                              </v-card>
-                              </v-col>
-                              
-                        </template>
-                        <template v-else> 
-                            <v-col md="12" >
-
-                            <v-card style="padding: 1rem 0;">
-
-                                <form-block :block_name="''" :form="form"  :save="save" :values="values"></form-block>
-                                <v-col cols="12" lg="12" class="text-lg-center">
-                                
-                                <v-btn color="primary" v-if="!form.read_only" :disabled="disabled_form" @click="save()">Сохранить</v-btn> 
-                                </v-col>
-                            </v-card>
-                            </v-col>
-
-                        </template>
-                    </v-row>
-                    </form>
+                    <FormBody
+                        :form="form" :cols="cols" :tabs="tabs"
+                        :values="values" :save="save" :disabled_form="disabled_form"
+                    />
             
         </template>
       </div>
@@ -123,51 +66,29 @@
   .container_fluid {margin-left: 20px; margin-right: 20px;}
 </style>
 <script>
-import { bus } from '../main'
-
-import { 
-  on_dependence, change_field,save_field_1_to_m, 
-  frontend_button_process,
-  frontend_process, get_cgi_params, get_params, calc_values
-} from './js/edit_form.js'
-
-
+import { get_cgi_params, get_params } from './js/edit_form.js'
+import FormBody from './EditForm/FormBody.vue'
+import form_controller from './EditForm/form_controller.js'
 
 export default {
 
 // опции
   name:'edit-form',
-
+  components:{ FormBody },
+  mixins:[form_controller],
 data:function(){
   return {
     popup:{ // для вызова извне: window.EditForm.popup='текст сообщения'
       show: false,
       header:'',
       body:''
-    }, 
-    log:[],
-    title:'',
-    errors:[],
-    disabled_form: false,
-    fatal_errors:[],
-    tabs:[],
-    tab:null,
-    form:{
-      id:'',
-      title:'',
-      read_only:false,
-      fields:[],
-      config:'',
     },
-    cols:[],
-    values:{},
     valid: false,
     dialog_body:'',
     dialog_header:'',
     dialog: false,
     save_window:false,
-    pagination: {},
-    params:{config:''}
+    pagination: {}
   }
 },
 computed:{
@@ -179,33 +100,8 @@ computed:{
   },
 
 },
-//props:['params'],
 created(){
-  // Для того, чтобы можно было обратиться к объекту EditForm
-  window.EditForm=this
-
-  calc_values(this);
-  this._change_field=(field,not_frontend_process)=>{
-
-    change_field(this,field,not_frontend_process)
-  }
-  let self=this;
-  this._save_field_1_to_m=(data)=>{
-    save_field_1_to_m(self,data)
-  }
-  this._frontend_button_process=(field,button_name,success_function)=>{
-    frontend_button_process(this,field,button_name,success_function)
-  }
-  bus.$on('change_field', this._change_field);
-  bus.$on('save_field_1_to_m',this._save_field_1_to_m);
-  bus.$on('frontend_button_process',this._frontend_button_process);
-
   this.Init();
-},
-beforeUnmount(){
-  bus.$off('change_field',this._change_field);
-  bus.$off('save_field_1_to_m',this._save_field_1_to_m);
-  bus.$off('frontend_button_process',this._frontend_button_process);
 },
 watch:{
   errors(){
@@ -214,129 +110,19 @@ watch:{
   }
 },
 methods: {
-          init_tabs(d){
-            if('tabs' in d && d.tabs.length){
-              let i=0
-              for(let t of d.tabs){
-                t.active=i?false:true
-                i++
-              }
-              this.tabs=d.tabs
-            }
-          },
-          get_form_self(){
-            return this
-          },
           Init(){
             let url=get_params(this);
             if(url){
-                this.$http.post(
-                  url,
-                  {
-                    cgi_params: get_cgi_params()
-                  }
-                ).then(response=>{
-                        let data=response.data;
-                        if(data.log)
-                            this.log=data.log
-                        
-                        if(data.redirect && data.redirect!=location.pathname){
-                          localStorage.setItem('link_prev_login',location.href)
-
-                          location.href=data.redirect;
-                          return ;
-                        }
-     
-                        if(data.success){
-
-                            if(data.title){
-                              this.title=data.title;
-                              document.title=this.title.replace(/<.+?>/g,' ')
-                            }
-
-                            // для реактивности
-                            for(let f of data.fields)
-                              if(!('hide' in f))
-                                f.hide=false
-                            this.form=data;
-                            this.form.read_only=parseInt(this.form.read_only);
-                            calc_values(this);
-                            
-                           
-                            this.cols=data.cols;
-
-                            this.init_tabs(data)
-
-                            
-                            for(let f of this.form.fields){
-                              if(f.type=='file' && f.value){
-                                f.begin_value=f.value, f.value=''
-                              }
-                              
-                              if(f.type=='checkbox' || f.type=='switch'){
-                                f.value=parseInt(f.value)?1:0;
-                                this.values[f.name]=f.value
-                              }
-
-                            }
-                        }
-                        // Динамический javascript
-                        if(data.javascript){
-                          eval(data.javascript)
-                        }
-                        
-                        // Статический javascript
-                        if(data.javascript_static){
-                          for(let src of data.javascript_static){
-                            let script = document.createElement('script')
-                            script.src=src
-                            document.head.appendChild(script)
-                          }
-                        }
-                        this.fatal_errors=data.errors;
-                        
-                    }).catch(e => {
-                        this.fatal_errors=[e]
-                    })
-            }
-          },
-          init_color_selects(){
-            for(let field of this.form.fields){
-              if(field.type=='select'){
-                for(let v of field.values){
-                  if(v.v==field.value){
-                    if(v['c'])
-                      field.background_color=v.c;
-                  }
-                }
-              }
+              this.load_form(url, get_cgi_params(), { redirect:true, document_title:true })
             }
           },
           save () {
-            let data={}, t=this
-            let url=BackendBase+'/edit-form/'+this.params.config+(this.form.id?('/'+this.form.id):'');
-            t.errors=[]; t.log=[];
-            
-            t.$http.post(url,{
-              action:this.form.id?'update':'insert',
-              id:this.form.id,
-              values:this.values,
-              cgi_params: get_cgi_params()
-            }).then(response=>{
-              let R=response.data;
-              if(R.log)
-                this.log=R.log
-              
-              this.errors=R.errors;
+            this.save_form(get_cgi_params()).then(R=>{
+              if(!R) return
               if(R.success){
                 this.dialog_header='Изменения сохранены';
-                //this.dialog_body='Изменения успешно сохранены! Вы можете продолжить работу или закрыть карточку'; 
-                this.dialog_body=''; 
-                if(R.id){
-                  this.form.id=R.id;
-                }
+                this.dialog_body='';
                 if(this.form.id){
-                  this.save_files();
                   try {
                     this.$router.replace('/edit_form/'+this.params.config+'/'+this.form.id);
                   } catch (e) {
@@ -352,43 +138,7 @@ methods: {
               if(!this.errors.length){
                 setTimeout(()=>{this.dialog=false},500)
               }
-              
-            }).catch(
-              e=>{
-                this.errors=['Произошла ошибка при сохранении!: '+e]
-              }
-            )
-          },
-          // Загрузка файлов в форму
-          save_files(){
-            
-            for(let f of this.form.fields){
-              if(f.type === 'file'){
-                
-              }
-              if(f.type=='file' && f.value) {
-                this.$http.post(
-                  BackendBase+'/edit-form/'+this.params.config+'/'+ this.form.id,
-                  {
-                    action:'upload_file',
-                    name: f.name,
-                    value:f.value,
-                  }
-                ).then(
-                    r=>{
-                      let R=r.data;
-                      this.errors=R.errors;
-                      if(R.success){
-                        bus.$emit('file:'+f.name,R.value);
-                      }
-                    }
-                ).catch(
-                    e=>{
-                      this.errors=['Ошибка при сохранении файла '+f.description+': '+e]
-                    }
-                )
-              }
-            }
+            })
           },
           window_close(){
             window.open('', '_self', '');
@@ -396,22 +146,7 @@ methods: {
           },
           exists_opener(){
             return window.opener
-          },
-          block_toggle(block){
-            block.hide=!block.hide
-            if(!block.hide && block.on_show){
-              eval(block.on_show)
-            }
-          },
-          get_field_by_name(name){
-            for(let f of this.form.fields){
-              if(f.name==name){
-                return f
-              }
-            }
-
           }
-          // 1_to_m-end
         }, // end-methods
 }
 </script>

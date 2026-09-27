@@ -49,7 +49,7 @@ export default {
                     ()=>{this.success=false},500
                 )
             }
-            bus.$emit('frontend_button_process',this.field,button,success_function);
+            this.emitFrontendButton(this.field,button,success_function);
         }
     }
 }

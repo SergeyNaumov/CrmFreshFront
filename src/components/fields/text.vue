@@ -48,7 +48,7 @@
                     v-if="field.type=='text' && !field.hide_field"
                     :label="field.description"
                     v-model="value"
-                    :hint="field.add_description" :placeholder="field.placeholder"
+                    :placeholder="field.placeholder"
                     :disabled="!!field.read_only"
                     @input="input"
                     @keyup="input"
@@ -70,10 +70,10 @@
                     :disabled="!!field.read_only"
                     v-model="value"
                     :label="field.description"
-                    :hint="field.add_description"
                     :auto-grow="true"
                     :clearable="true"
                     :rounded="$theme.rounded"
+                    hide-details
                   />
                   <template v-if="field.values && field.values.length">
                     варианты:
@@ -88,12 +88,12 @@
                   class="err" v-if="field.error_message" v-html="field.error_message"
                 />
                 <div
-                  class="err" v-if="field.warning_message" v-html="field.warning_message"
+                  class="warn" v-if="field.warning_message" v-html="field.warning_message"
                 />
             </template>
             <qr_call v-if="field.subtype=='qr_call'" :value="field.value" :field="field"/>
 
-            <div v-if="after_html" v-html="after_html"></div>
+            <div v-if="after_html || field.after_html" v-html="after_html || field.after_html"></div>
           </template>
       </div>
 </template>
@@ -166,7 +166,7 @@
       this.field.value=this.value
       this.field.from='field-text component (text.vue)'
       if(!this.parent){
-        bus.$emit('change_field',this.field);
+        this.emitChange(this.field);
       }
       
     }
@@ -234,7 +234,7 @@
           else{ // обработчик основной формы
             
             f.value=this.value;
-            bus.$emit('change_field', f);
+            this.emitChange(f);
           }
 
         },

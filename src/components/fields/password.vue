@@ -78,7 +78,7 @@
            if(!this.form.id){ // если это новая карта -- закидываем в values
                 let field=this.field
                 field.value=this.new_password
-                bus.$emit('change_field', field)
+                this.emitChange(field)
            }
        } 
     },

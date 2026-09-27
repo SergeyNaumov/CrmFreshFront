@@ -7,14 +7,25 @@
 | Файл | Роль |
 |---|---|
 | `src/components/EditForm.vue` | контейнер формы, `name:'edit-form'`; табы/колонки/блоки, save, файлы |
+| `src/components/EditForm/form_controller.js` | mixin: загрузка/сохранение формы, `provide('formController')`, bus-мост |
+| `src/components/EditForm/FormBody.vue` | presentational-тело формы (cols/tabs/blocks), общее для EditForm и модалки |
 | `src/components/EditForm/FormBlock.vue` | блок формы; рендерит поля (type → глобальный компонент) |
 | `src/components/EditForm/DynamicLoader.vue` | динамический `import('../fields/'+type)` (практически не используется) |
+| `src/components/fields/field_access.js` | глобальный mixin: `this.emitChange/emitSaveField1ToM/emitFrontendButton` через inject или bus |
 | `src/components/js/edit_form.js` | бизнес-логика: зависимости, изменение/сохранение полей, ajax, CGI |
 | `src/components/fields/*` | реализации полей (см. `fields.md`) |
 
 `dynamic_component_loader.js` регистрирует `edit-form` как `import('./components/EditForm')` → резолвится в `EditForm.vue`.
 
-## Загрузка формы (`EditForm.vue: Init`)
+## Scoped-контроллер и изоляция форм
+
+- `form_controller.js` — общий mixin. Даёт `provide('formController')` с методами `changeField/saveField1ToM/runFrontendButton/getField`; поля (через глобальный mixin `fields/field_access.js`) берут контроллер через `inject` и вызывают методы напрямую.
+- Это изолирует формы: одновременно смонтированные контроллеры (EditForm, Const, `AdminTree/FormInBranch`) не перехватывают события друг друга.
+- Пока не все поля переведены, а также для серверного `javascript_static`, сохраняется **bus-мост** в `created` контроллера (`change_field`/`save_field_1_to_m`/`frontend_button_process`) и `window.bus`.
+- `AdminTree/FormInBranch.vue` (при `changed_in_tree`) — та же форма, что EditForm, но в `v-dialog`: тот же mixin + `FormBody`, `prop tree_form` — объект дерева, `item` — редактируемый узел.
+
+
+## Загрузка формы (`EditForm.vue: Init` → `form_controller.js: load_form`)
 
 1. `get_params(self)` (`edit_form.js:229`) парсит `location.pathname`:
    - `/edit_form/<config>/<id>` → `POST BackendBase/edit-form/<config>/<id>`

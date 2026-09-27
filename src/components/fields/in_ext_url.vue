@@ -1,21 +1,24 @@
 <template>
         <div>
           <template v-if="!field.hide">
-            
+            <div v-if="field.before_html" v-html="field.before_html"></div>
             <v-text-field 
               v-bind:label="field.description"
               v-model="value"
-              :hint="field.add_description" :placeholder="field.placeholder"
+              :placeholder="field.placeholder"
               :readonly="!!field.read_only"
               @input="input"
               @keyup="input"
               clearable
               :style="field.style"
               :rounded="$theme.rounded"
-              :error-messages="error_message"
+              :error-messages="error_message || field.error_message"
               hide-details
             />
-            
+            <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+            <div class="err" v-if="error_message || field.error_message" v-html="error_message || field.error_message"/>
+            <div class="warn" v-if="field.warning_message" v-html="field.warning_message"/>
+            <div v-if="field.after_html" v-html="field.after_html"></div>
           </template>
       </div>
 </template>
@@ -44,7 +47,7 @@
   watch:{
     field(f){
       if(f.value!=this.value)
-        this.value=v
+        this.value=f.value
     },
     refresh(){ 
       this.value=this.field.value;  
@@ -65,7 +68,7 @@
       f.value='';
       this.value=''
     } 
-    bus.$emit('change_field', f);
+    this.emitChange(f);
     
        
   },
@@ -89,7 +92,7 @@
           }      
           else{ // обработчик основной формы
             f.value=this.value;
-            bus.$emit('change_field', f);
+            this.emitChange(f);
           }
           
         },

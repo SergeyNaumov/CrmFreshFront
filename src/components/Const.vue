@@ -136,6 +136,13 @@ let t
 import { bus } from '../main'
 export default {
         props:["params"],
+        provide(){
+          return {
+            formController:{
+              changeField:(field)=>this.change(field)
+            }
+          }
+        },
         data: () => ({
           cur_tab:0,
           tabs:[],

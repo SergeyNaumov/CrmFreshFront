@@ -2,6 +2,7 @@
     <div class="multiconnect">
 
         <errors :errors="errors"/>
+        <div v-if="field.before_html" v-html="field.before_html"></div>
         <pre v-if="0">
             {{list_searched}}
         </pre>
@@ -45,7 +46,7 @@
                     </div>
                     <div v-show="show_adding_form">
 
-                        <v-text-field label='новый тэг' v-model="new_tag" />
+                        <v-text-field label='новый тэг' v-model="new_tag" hide-details/>
                         <div class="tag_list">
                             
                             <span v-show="0">{{value}}</span> <!-- без этого не работает добавление тэгов. ХЗ почему -->
@@ -87,6 +88,10 @@
 
                 </div>
 
+        <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+        <div class="err" v-if="field.error_message" v-html="field.error_message"/>
+        <div class="warn" v-if="field.warning_message" v-html="field.warning_message"/>
+        <div v-if="field.after_html" v-html="field.after_html"></div>
     </div>
 
 </template>
@@ -118,7 +123,7 @@
             let field=this.field;
             field.value=this.value;
             //this.change_field(field)
-            bus.$emit('change_field',field)
+            this.emitChange(field)
         },
         new_tag(){
             this.new_tag_not_ajax++;
@@ -260,7 +265,7 @@
 
             t.value=new_value
             field.value=t.value
-            bus.$emit('change_field',field)
+            this.emitChange(field)
         },
         init(){ // получаем список элементов дерева
             let t=this

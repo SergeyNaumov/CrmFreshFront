@@ -37,13 +37,52 @@
                 </v-card-actions>  
             </v-card>
         </v-dialog>
-        <div class="Area">
+        <div class="Area" :class="{'flat-list': form && !form.tree_use && !form.sort}">
             
         <a href="#" v-if="make_add " @click.prevent="open_dialog_add_form">добавить
                 <span v-if="parent.id"> в "{{parent.header}}" </span>
                 <span v-else> в /</span>
         </a>
-        <div v-if="form.sort">  <!-- USE SORT-->
+        <template v-if="is_galery"> <!-- GALLERY -->
+            <draggable
+                :id="'p-'+parent.id"
+                tag="div"
+                class="gallery"
+                :style="gallery_style"
+                :list="list"
+                item-key="id"
+                :group="'g'+parent.id"
+                ghost-class="gallery_ghost"
+                :disabled="!form.sort"
+                @end="move_end"
+            >
+                <template #item="{ element: l }">
+                <div class="gallery_item" :id="'li-'+l.id">
+                    <div class="gallery_card">
+                        <div class="gallery_photo_wrap">
+                            <img v-if="l.photo" :src="photo_url(l)" class="gallery_photo" :alt="l.header">
+                            <div v-else class="gallery_photo gallery_no_photo">нет фото</div>
+                        </div>
+                        <div class="gallery_title">
+                            <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
+                        </div>
+                        <div class="gallery_tools" v-if="!form.read_only || make_delete(parent.id,l)">
+                            <a v-if="!form.read_only" :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" size="small">edit</v-icon></a>
+                            <v-icon v-if="make_delete(parent.id,l)" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
+                        </div>
+                    </div>
+                    <FormInBranch
+                        :tree_form="form"
+                        :item="l"
+                        :close_edit_form="close_edit_form"
+                        :upload_header="upload_header"
+                        v-if="show_edit_form==l.id"
+                    />
+                </div>
+                </template>
+            </draggable>
+        </template>
+        <div v-else-if="form.sort">  <!-- USE SORT-->
             <draggable
                 :id="'p-'+parent.id"
                 tag="ul"
@@ -74,7 +113,7 @@
                                 <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
                                 <template v-if="l.childs && form.tree_use && l.childs.length>0">&nbsp;({{l.childs.length}})</template>
                                 <FormInBranch
-                                    :form="form"
+                                    :tree_form="form"
                                     :item="l"
                                     :close_edit_form="close_edit_form"
                                     :upload_header="upload_header"
@@ -83,7 +122,7 @@
                                 
                             </div>
                             <div class="branch-tools">
-                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
+                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>
                                 <v-icon v-if="make_delete(parent.id,l)" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
                     </div>
@@ -117,7 +156,7 @@
                                 <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
                                 <template v-if="l.childs && l.childs.length>0 && form.tree_use">({{l.childs.length}})</template>
                                 <FormInBranch
-                                    :form="form"
+                                    :tree_form="form"
                                     :item="l"
                                     :close_edit_form="close_edit_form"
                                     :upload_header="upload_header"
@@ -125,7 +164,7 @@
                                 />
                             </div>
                             <div class="branch-tools float-right">
-                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
+                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>
                                 <v-icon v-if="make_delete(parent.id,l)" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
                         </div>
@@ -328,6 +367,12 @@ export default {
                 url=UrlPrefix.replace(/\/$/,'')+'/edit_form/'+this.form.config+'/'+key
             return url
         },
+        photo_url(l){
+            if(!l || !l.photo)
+                return ''
+            let p=/^(https?:)?\//.test(l.photo)?l.photo:('/'+l.photo)
+            return (BaseUrl||'').replace(/\/$/,'')+p
+        },
         edit_in_new_tab(key){
             window.open( this.get_edit_link(key) );
         },
@@ -389,6 +434,16 @@ export default {
       },
       make_add(){
         return (!this.form.not_create && (!this.form.max_level || (parseInt(this.form.max_level) >= parseInt(this.level)) ))
+      },
+      is_galery(){
+        let vt=this.form && this.form.view_type
+        return vt=='gallery' || vt=='galery'
+      },
+      gallery_style(){
+        let cols=parseInt(this.form && this.form.cols)
+        if(cols>0)
+          return {gridTemplateColumns:'repeat('+cols+', minmax(0, 1fr))'}
+        return {}
       }
   },
   created(){
@@ -435,10 +490,24 @@ export default {
 .li_header {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     border: 1px solid #E8EAF6; border-radius: 10px; width: 85%; max-width: 1000px; padding: 0.5rem;
     margin-bottom: 0.5rem;
     margin-top: 0.5rem;
+}
+/* Плоский список (без дерева): строки-разделители вместо "коробок" */
+.Area.flat-list ul > li .li_header {
+    border: none;
+    border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    border-radius: 0;
+    width: 100%;
+    padding: 0.55rem 0.25rem;
+    margin-bottom: 0;
+    margin-top: 0;
+    transition: background-color .15s ease;
+}
+.Area.flat-list ul > li .li_header:hover {
+    background-color: rgba(var(--v-theme-primary), 0.05);
 }
 .li_empty{
     /*border: 1.5px solid deepskyblue;*/
@@ -468,9 +537,11 @@ div.branch-tools{
     min-width: 30px;
     display: inline-flex;
     align-items: center;
+    gap: 10px;
     margin-bottom: 0;
 }
-div.branch-tools a{text-decoration: none;}
+div.branch-tools a{text-decoration: none; display: inline-flex; align-items: center;}
+div.branch-tools .v-icon {cursor: pointer;}
 .ws-nowrap{
     display: flex;
     align-items: center;
@@ -517,5 +588,86 @@ ul[aria-grabbed="true"] .li_header .li_header{
     .li_empty{
         min-width: 230px;
     }
+}
+
+/* Галерейный вид (form.view_type == 'gallery') */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 1rem;
+    padding: 0.5rem 0;
+    min-height: 40px;
+}
+.gallery_item {
+    min-width: 0;
+}
+.gallery_card {
+    position: relative;
+    border: 1px solid #E8EAF6;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow .15s ease;
+}
+.gallery_card:hover {
+    box-shadow: 0 2px 10px rgba(0,0,0,.14);
+}
+.gallery_photo_wrap {
+    aspect-ratio: 4 / 3;
+    background: #f5f5f5;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gallery_photo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+.gallery_no_photo {
+    color: #9e9e9e;
+    font-size: 0.8rem;
+}
+.gallery_title {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.85rem;
+    line-height: 1.25;
+    flex: 1 1 auto;
+}
+.gallery_title a {
+    text-decoration: none;
+    color: inherit;
+}
+.gallery_tools {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 3px 6px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.85);
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+.gallery_card:hover .gallery_tools {
+    opacity: 1;
+}
+.gallery_tools a {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+.gallery_tools .v-icon {
+    cursor: pointer;
+}
+.gallery_ghost {
+    opacity: .4;
 }
 </style>

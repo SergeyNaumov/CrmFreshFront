@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div v-if="field.before_html" v-html="field.before_html"></div>
         <div class="read_only" v-if="field.read_only">
             <v-text-field 
               :label="field.description"
@@ -31,6 +32,7 @@
                                 v-bind="props"
                                 class="inline"
                                 style="max-width: 190px;"
+                                hide-details
                             />
                             </template>
                             
@@ -45,6 +47,7 @@
                                 @update:model-value="fix_time"
                                 @keyup="fix_time"
                                 style="max-width: 180px"
+                                hide-details
                             ></v-text-field>
                 
                         <!--
@@ -74,6 +77,10 @@
                 <small><a href="" @click.prevent="set_now()">текущая дата и время</a></small>
             </div>
         </template>
+        <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+        <div class="err" v-if="field.error_message" v-html="field.error_message"/>
+        <div class="warn" v-if="field.warning_message" v-html="field.warning_message"/>
+        <div v-if="field.after_html" v-html="field.after_html"></div>
     </div>
 </template>
 <script>
@@ -176,7 +183,7 @@ export default {
               this.parent(this.value)
             }
             else{
-              bus.$emit('change_field', field);
+              this.emitChange(field);
             }
             this.old_value=this.value
         }

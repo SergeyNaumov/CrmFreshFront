@@ -42,14 +42,15 @@
           </v-menu>
           
         </template>
+        <div v-if="field.before_html" v-html="field.before_html"></div>
         <div class="clear" v-show="need_empty"><small><a href="#" @click.prevent="clear()"> очистить</a></small></div>
         <div
-          class="err" v-if="error_message" v-html="error_message"
+          class="err" v-if="field.error_message" v-html="field.error_message"
         />
         <div
-          class="err" v-if="warning_message" v-html="warning_message"
+          class="warn" v-if="field.warning_message" v-html="field.warning_message"
         />
-        <div v-if="after_html" v-html="after_html"></div>
+        <div v-if="after_html || field.after_html" v-html="after_html || field.after_html"></div>
     </div>
 </template>
 <script>
@@ -134,7 +135,7 @@ export default {
           this.parent(this.value)
         }
         else{
-          bus.$emit('change_field', field);
+          this.emitChange(field);
         }
         
       },

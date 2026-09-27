@@ -199,7 +199,7 @@
                                   <a :href="edit_link(tr)" @click.prevent="go_to_edit(tr.key)">
                                     <v-icon  color="primary" size="small">edit</v-icon>
                                   </a>
-                                </v-btn>&nbsp;
+                                </v-btn>
                                 <v-btn v-if="permissions.make_delete" @click="delete_dialog(tr.key)" size="small">
                                   <v-icon size="small"  color="primary" >delete</v-icon>
                                 </v-btn>
@@ -319,6 +319,9 @@ export default {
 }
 .results td.controls button {
   margin: 0
+}
+.results td.controls button + button {
+  margin-left: 10px;
 }
 
 .results tr:nth-child(2n+1) {

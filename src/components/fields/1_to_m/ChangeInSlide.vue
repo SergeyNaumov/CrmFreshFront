@@ -95,7 +95,7 @@ export default {
               ()=>{
                     go_save--;
                     if(go_save==0){
-                        bus.$emit('save_field_1_to_m',{
+                        this.emitSaveField1ToM({
                             field:this.field.name,
                             subfield:this.name,
                             id:this.cur_id,

@@ -2,7 +2,7 @@
     <div > 
         <!-- tree -->
         <template v-if="!field.hide">
-          <div v-if="before_html" v-html="before_html"></div>
+          <div v-if="field.before_html" v-html="field.before_html"></div>
           
           <template v-if="field.tree_use">
             <v-autocomplete
@@ -107,9 +107,10 @@
                     </template>
                 </template>
             </template>
-            <div v-if="error_message" class="error_msg">{{error_message}}</div>
-            <div v-if="warning_message" class="err" >{{warning_message}}</div>     
-            <div v-if="after_html" v-html="after_html"></div>
+            <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+            <div v-if="error_message || field.error_message" class="err">{{error_message || field.error_message}}</div>
+            <div v-if="field.warning_message" class="warn">{{field.warning_message}}</div>     
+            <div v-if="after_html || field.after_html" v-html="after_html || field.after_html"></div>
       </template>
     </div>
 </template>
@@ -153,7 +154,7 @@ export default {
             this.parent(this.field)
           }
           else{
-            bus.$emit('change_field',this.field);
+            this.emitChange(this.field);
           }          
         },
         refresh(){ 
@@ -271,7 +272,7 @@ export default {
         if(this.parent)
             this.parent({value:f.value,error:f.error,name:f.name})
         else
-          bus.$emit('change_field',f)
+          this.emitChange(f)
       }
     },
     regexp_check(){

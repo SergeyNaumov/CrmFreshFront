@@ -2,6 +2,7 @@
     
     <div v-if="!field.hide">
         <!-- <pre v-if="field.name=='prez_order'">{{field}}</pre> -->
+        <div v-if="field.before_html" v-html="field.before_html"></div>
         <template v-if="field.type=='checkbox' || field.type=='1_to_1_checkbox'">
             <v-checkbox  :label="field.description" :disabled="disabled" color="primary" v-model="value" @update:model-value="change_field(field)" hide-details></v-checkbox>
             
@@ -10,7 +11,10 @@
             <v-switch  :label="field.description" color="primary" :disabled="disabled"  v-model="value" @update:model-value="change_field(field)" hide-details></v-switch>
         </template>
         
-        <div v-if="after_html" v-html="after_html"></div>
+        <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+        <div class="err" v-if="field.error_message" v-html="field.error_message"/>
+        <div class="warn" v-if="field.warning_message" v-html="field.warning_message"/>
+        <div v-if="after_html || field.after_html" v-html="after_html || field.after_html"></div>
     </div>
 </template>
 
@@ -82,7 +86,7 @@
                 this.parent({value:f.value,error:f.error,name:this.field.name})
             }      
             else{ // обработчик основной формы
-                bus.$emit('change_field', f);
+                this.emitChange(f);
             }
             
         }

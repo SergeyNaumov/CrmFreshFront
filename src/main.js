@@ -157,6 +157,9 @@ app.component('draggable', draggable)
 
 dynamic_component_loader(app)
 
+import field_access from './components/fields/field_access'
+app.mixin(field_access)
+
 import FormBlock from './components/EditForm/FormBlock'
 app.component('form-block', FormBlock)
 

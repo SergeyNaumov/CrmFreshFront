@@ -58,6 +58,8 @@
 
 - `AdminTree.vue`, `AdminTree/{branch.vue,__item.vue,FormInBranch.vue}`.
 - `branch.vue` — рекурсивный `nested-draggable` (`vuedraggable`).
+- `changed_in_tree`: клик по названию/карандашу открывает модалку `FormInBranch` (тот же form-engine: `form_controller.js` + `FormBody.vue`, полный набор полей). Проп `tree_form` — объект дерева, `item` — узел.
+- `view_type=='gallery'` (бэк также принимает `galery`): `branch.vue` рисует плоскую галерею «фото + название» (`el.photo` из `admin-tree`, кнопки edit/delete по hover). Перетаскивание всей карточки включается только при `form.sort`, иначе Sortable `disabled`.
 - `eval(D.javascript)` в `AdminTree.vue:115`.
 
 ## Прочие точки API

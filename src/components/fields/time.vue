@@ -1,5 +1,6 @@
 <template>
     <div>        
+        <div v-if="field.before_html" v-html="field.before_html"></div>
         <template v-if="field.read_only">
           <template v-if="field.value">{{field.value}}</template>
           <template v-else>-</template>
@@ -22,6 +23,7 @@
                 prepend-icon="event"
                 readonly
                 v-bind="props"
+                hide-details
               ></v-text-field>
               
               
@@ -34,6 +36,10 @@
           
         </template>
         <div class="clear" v-show="need_empty"><small><a href="#" @click.prevent="clear()"> очистить</a></small></div>
+        <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+        <div class="err" v-if="field.error_message" v-html="field.error_message"/>
+        <div class="warn" v-if="field.warning_message" v-html="field.warning_message"/>
+        <div v-if="field.after_html" v-html="field.after_html"></div>
     </div>
 </template>
 <script>
@@ -60,7 +66,7 @@ export default {
         this.menu = false;
         this.set_need_empty();
         //this.change_field(this.field);
-        bus.$emit('change_field',this.field);
+        this.emitChange(this.field);
       },
       clear(){
         this.field.value='';

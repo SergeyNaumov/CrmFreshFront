@@ -247,6 +247,26 @@ export default {
   .v-application .err  {background: #fff0; background-color: #fff0;  color: red; margin-bottom: 5px;}
   .v-application .succ  {background: #fff; background-color: #fff !important;  color: green; margin-bottom: 5px;}
 
+  /* Сообщения поля: держим сразу под контролом, без больших отступов */
+  .v-application .field .err,
+  .v-application .field .warn {
+    margin: 2px 0 0;
+    padding: 0;
+    line-height: 1.25;
+    font-size: var(--app-font-help);
+    background: transparent;
+  }
+  .v-application .field .warn {color: #b26a00;}
+  .v-application .field .add_description {
+    margin: 2px 0 0;
+    color: rgba(var(--v-theme-on-surface), 0.65);
+    font-size: var(--app-font-help);
+    line-height: 1.25;
+  }
+  .v-application .field .v-input--error {margin-bottom: 0 !important;}
+  .v-application .block .field {margin: 0 0 var(--app-space-field) 0;}
+  .v-application .block .field .v-input {margin-bottom: 0;}
+
   .v-select-list .v-list-item-title {font-size: 12px;}
 
   input, .v-field__input {font-size: 12px !important;}

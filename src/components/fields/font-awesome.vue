@@ -1,6 +1,7 @@
 <template>
         
         <div>
+            <div v-if="field.before_html" v-html="field.before_html"></div>
             <p v-if="field.description"  class="v-label"><small>{{field.description}}:</small></p>
             <div v-if="selected_icon">
               <v-icon v-if="selected_icon" color="primary">{{selected_icon}}</v-icon> {{selected_icon}} 
@@ -40,6 +41,10 @@
                 </ul>
               </div>
             </div>
+            <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+            <div class="err" v-if="field.error_message" v-html="field.error_message"/>
+            <div class="warn" v-if="field.warning_message" v-html="field.warning_message"/>
+            <div v-if="field.after_html" v-html="field.after_html"></div>
         </div>
 </template>
 
@@ -123,7 +128,7 @@ export default {
       field.value=this.full_icon_name(l);
       this.selected_icon=this.field.value;
       //this.change_field(field);
-      bus.$emit('change_field',field);
+      this.emitChange(field);
       this.view_list=false;
     },
     del(l){

@@ -123,7 +123,7 @@ export function check_fld(self){
       f.error_message=error_message
       f.error=error
       f.not_parent=true
-      bus.$emit('change_field', f);  
+      self.emitChange(f);  
     }
           //}
 

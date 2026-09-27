@@ -268,7 +268,7 @@ export default {
           field.error=false;
         
         field.value=t.get_value();
-        bus.$emit('change_field',field);
+        this.emitChange(field);
 
       },
       get_value(){
@@ -431,7 +431,7 @@ export default {
         field.value={
           external_link:this.extent_file_link
         }
-        bus.$emit('change_field',field);
+        this.emitChange(field);
       }
     }
 }

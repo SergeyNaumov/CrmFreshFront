@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div v-if="field.before_html" v-html="field.before_html"></div>
         <template v-if="field.read_only">
           <template v-if="field.value">{{field.value}}</template>
           <template v-else>-</template>
@@ -12,6 +13,7 @@
                     :items="year_list"
                     autocomplete
                     label="Выберите год"
+                    hide-details
                   />
                   </v-col>
               <v-col class="pl-3" md="6" cols="12" >
@@ -21,6 +23,7 @@
                     item-value="v"
                     item-title="d"
                     label="Выберите месяц"
+                    hide-details
                   />
               </v-col>
           </v-row>
@@ -31,6 +34,10 @@
             <a href="#" @click.prevent="clear()"> очистить</a>
           </small>
         </div>
+        <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+        <div class="err" v-if="field.error_message" v-html="field.error_message"/>
+        <div class="warn" v-if="field.warning_message" v-html="field.warning_message"/>
+        <div v-if="field.after_html" v-html="field.after_html"></div>
     </div>
 </template>
 <script>
@@ -107,7 +114,7 @@ export default {
         let field=this.field;
         field.value=this.value;
         //this.change_field(field);
-        bus.$emit('change_field',field)
+        this.emitChange(field)
       },
       set_current(){
         this.year=get_cur_year(), this.mon=get_cur_mon();

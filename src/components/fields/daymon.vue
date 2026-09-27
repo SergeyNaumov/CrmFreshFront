@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div v-if="field.before_html" v-html="field.before_html"></div>
         <template v-if="field.read_only">
           <template v-if="field.value">{{field.value}}</template>
           <template v-else>-</template>
@@ -12,6 +13,7 @@
                     :items="day_list"
                     no-data-text="недопустимое значение"
                     label="Выберите день"
+                    hide-details
                   />
                   </v-col>
               <v-col class="pl-3" md="6" cols="12" >
@@ -21,6 +23,7 @@
                     item-value="v"
                     item-title="d"
                     label="Выберите месяц"
+                    hide-details
                   />
               </v-col>
               <div class="clear" v-show="need_empty"><small>
@@ -30,6 +33,10 @@
           </v-row>
         </template>
 
+        <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
+        <div class="err" v-if="field.error_message" v-html="field.error_message"/>
+        <div class="warn" v-if="field.warning_message" v-html="field.warning_message"/>
+        <div v-if="field.after_html" v-html="field.after_html"></div>
     </div>
 </template>
 <script>
@@ -98,7 +105,7 @@ export default {
         let field=this.field;
         field.value=( (this.day>9)?this.day:'0'+this.day )+'-'+( (this.mon>9)?this.mon:'0'+this.mon );
         //this.change_field(field);
-        bus.$emit('change_field',field)
+        this.emitChange(field)
       },
       
     }

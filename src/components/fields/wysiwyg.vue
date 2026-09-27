@@ -115,8 +115,6 @@ function show_hide_tox(mode){
     }  
 }
 
-let editor_object=false;
-let inited={};
 export default {
     name:'field-wysiwyg',
     components:{
@@ -127,6 +125,8 @@ export default {
             
             inited:false,
             edit_mode:false,
+            init_started:false,
+            tiny_editor:null,
             value:'',
             dialog:false, // debug
             create_folder_form: false,
@@ -162,7 +162,7 @@ export default {
         this.field.value=this.value;
         this.field.from='field-text component (wysiwyg.vue)'
         if(!this.parent){
-            bus.$emit('change_field',this.field);
+            this.emitChange(this.field);
         }
       },
       file_path(){ // если мы осуществляем навигацию по папкам -- отправляемся за списком файлов
@@ -192,9 +192,15 @@ export default {
     }
   }, 
   beforeUnmount(){
+    this._isUnmounted=true
     if(!this.parent){
        bus.$off('field-update:'+this.field.name,this._field_update)
     }
+    if(this.tiny_editor || tinymce.get(this.field.name)){
+       try{ tinymce.remove(this.tiny_editor || tinymce.get(this.field.name)) }catch(e){}
+       this.tiny_editor=null
+    }
+    this.init_started=false
   },
   mounted(){
       
@@ -222,8 +228,8 @@ export default {
         }
     },*/
     updateContent(){
-        if(editor_object){
-            editor_object.setContent(this.value)
+        if(this.tiny_editor){
+            this.tiny_editor.setContent(this.value)
         }
     },
     create_folder(){
@@ -379,26 +385,35 @@ export default {
             this_component.dialog=true;
 
         }
-        if(inited[name]){
+        if(this.tiny_editor || this.init_started){
 
             return 
         }
-            
-        inited[name]=true;
 
         if(!document.querySelector('#'+this.field.name+'.mce')){
             setTimeout(
                 function(){
-
-                    this_component.tinymce_init(name)
+                    if(!this_component._isUnmounted)
+                        this_component.tinymce_init(name)
                 },
                 50
             );
+            return
         }
-        
+
+        // Чистим возможные "мёртвые" редакторы (после закрытия модалки),
+        // иначе TinyMCE 5 падает в purgeDestroyedEditor на init.
+        let stale=tinymce.get(name);
+        if(stale){
+            try{ tinymce.remove(stale) }catch(e){}
+        }
+
+        this.init_started=true;
+
         tinymce.baseURL=config.TinyMCE_BaseUrl;
         const init_instance_callback=function (editor) {
-                editor_object=editor;
+                this_component.tiny_editor=editor;
+                this_component.init_started=false;
                 // ловим изменения в редаеторе и изменяем value компонента:
                 editor.on('keyup', function (e) {
                     this_component.value=editor.getContent();
@@ -410,6 +425,8 @@ export default {
         }
         // функция инициализации (вызывается после ajax-а с получением опций tinymce)
         const init=(options)=>{
+            if(this_component._isUnmounted) return
+
             // if (this.field.style && Array.isArray(this.field.style) && this.field.style.length) {
             //     // Если есть уже существующий content_css, объединяем
             //     console.log('content_css:',content_css)
@@ -424,9 +441,10 @@ export default {
             //     }
             // }
             tinymce.init(options);
-            tinymce.EditorManager.init({});
-            tinymce.activeEditor.getRnd=function(){
-                return Math.random()
+            if(tinymce.activeEditor){
+                tinymce.activeEditor.getRnd=function(){
+                    return Math.random()
+                }
             }
         }
         // let contentCss = [];
