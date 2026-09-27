@@ -631,7 +631,7 @@ export default {
   .filter_block .v-label { margin-bottom: 0 !important; }
   .filter_block .v-input__details { display: none; }
   .filter_block {padding: 5px; 
-    border: 1px solid var(--app-tint);
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
   
   }
   .filters_groups .filter_block {padding: 8px 0px;}

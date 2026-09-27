@@ -327,23 +327,36 @@ export default {
   div.item{
     vertical-align: top; padding: 10px;
     font-size: 11pt;
-    border-top: 1px solid gray;
-    border-bottom: 1px solid gray;
+    border-top: 1px solid rgba(var(--v-theme-on-surface), 0.24);
+    border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.24);
   }
-  div.item:nth-child(odd) {background-color: #f1f1f1;}
+  div.item:nth-child(odd) {background-color: rgba(var(--v-theme-on-surface), 0.04);}
   div.header {text-align: center;
     padding: 20px;
   }
-  input[type=text] {
+  div.item input[type=text] {
+    display: block;
+    margin-top: 4px;
     padding: 5px;
-    border-radius: 3px;
-    border: 1px solid rgb(192, 192, 192); width: 100%;}
-  textarea {
+    border-radius: var(--app-radius-field);
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.24);
+    max-width: 720px;
+    width: 100%;
+  }
+  div.item textarea {
+    display: block;
+    margin-top: 4px;
     padding: 5px;
-    width: 100%; height: auto;
-    border-radius: 3px;
+    width: 100%;
+    max-width: 720px;
+    border-radius: var(--app-radius-field);
     height: 100px;
-    border: 1px solid rgb(192, 192, 192) !important;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.24) !important;
+  }
+  div.item .v-field,
+  div.item .v-file-input,
+  div.item .tox-tinymce {
+    max-width: 720px;
   }
   .add_description {
     margin-top: 10px;
