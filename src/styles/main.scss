@@ -4,7 +4,7 @@
 }
 
 /* Дизайн-токены (значения по умолчанию; схема переопределяет через JS) */
-.v-application {
+:root {
     --app-space-unit: 4px;
     --app-space-field: 16px;
     --app-space-section: 24px;
@@ -13,6 +13,18 @@
     --app-radius-card: 8px;
     --app-radius-btn: 4px;
     --app-radius-chip: 12px;
+    --app-font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+    --app-font-h1: 28px;
+    --app-font-h1w: 700;
+    --app-font-h2: 20px;
+    --app-font-h2w: 600;
+    --app-font-value: 14px;
+    --app-font-label: 12px;
+    --app-font-desc: 12px;
+}
+.v-application {
+    font-family: var(--app-font-family) !important;
+    font-size: var(--app-font-value);
 }
 .container {
     width: 100%;
@@ -42,7 +54,7 @@ textarea,
     margin-top: 15px;
 }
 .v-field--variant-outlined {
-    border-radius: 5px !important;
+    border-radius: var(--app-radius-field) !important;
 }
 // Компактный date-picker (как в Vuetify 2)
 .v-date-picker {
@@ -176,8 +188,8 @@ textarea,
     background-color: #fff !important;
 }
 // Форма
-h1 {font-size: 1.8em;}
-h2 {font-size: 1.4em;}
+h1 {font-size: var(--app-font-h1); font-weight: var(--app-font-h1w);}
+h2 {font-size: var(--app-font-h2); font-weight: var(--app-font-h2w);}
 .form_header {margin-bottom: 20px;}
 
 table.tbl1 {

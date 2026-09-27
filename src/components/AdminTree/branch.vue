@@ -379,7 +379,7 @@ export default {
   
   computed:{
       cur_color(){
-          let colors=['#CFD8DC','#D7CCC8','#FFCCBC','#FFE0B2','#FFECB3','#FFF9C4','#F0F4C3','#DCEDC8','#C8E6C9','#B2DFDB','#B2EBF2','#B3E5FC','#BBDEFB','#C5CAE9'];
+          let colors=(this.$scheme && this.$scheme.colors && this.$scheme.colors.treeLevels) || ['#CFD8DC','#D7CCC8','#FFCCBC','#FFE0B2','#FFECB3','#FFF9C4','#F0F4C3','#DCEDC8','#C8E6C9','#B2DFDB','#B2EBF2','#B3E5FC','#BBDEFB','#C5CAE9'];
           if(this.level in colors)
             return colors[this.level]
           return '#ffffff'

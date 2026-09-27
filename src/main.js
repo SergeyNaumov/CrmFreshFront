@@ -10,7 +10,14 @@ import mitt from 'mitt'
 import axios from 'axios'
 
 import { dynamic_component_loader } from './dynamic_component_loader.js'
-import { palette } from './theme/palette.js'
+import { schemes, getScheme } from './theme/schemes.js'
+
+import '@fontsource/inter/400.css'
+import '@fontsource/inter/600.css'
+import '@fontsource/inter/700.css'
+import '@fontsource/nunito/400.css'
+import '@fontsource/nunito/600.css'
+import '@fontsource/nunito/700.css'
 
 // Event bus с сохранением Vue2-API ($on/$off/$emit)
 const emitter = mitt()
@@ -35,24 +42,38 @@ const LegacyIcon = (props) => {
   return h(props.tag, { class: ['material-icons'] }, icon)
 }
 
-const theme = {
-  defaultTheme: 'light',
-  themes: {
-    light: {
-      colors: {
-        ...palette,
-        'red-darken-1': '#d32f2f',
-        'green-darken-1': '#388e3c',
-        'grey-lighten-4': '#f5f5f5',
-      },
-    },
-    dark: {
-      colors: {
-        primary: '#64b5f6',
-      },
-    },
-  },
+// Схема выбирается фронтенд-конфигом: public/configure.js -> config.schema
+// (+ dev-override ?schema=N для проверки)
+const schemaOverride = new URLSearchParams(window.location.search).get('schema')
+const schemaId = schemaOverride != null ? schemaOverride : (window.config && window.config.schema)
+const scheme = getScheme(schemaId)
+
+const themes = {}
+for (const s of schemes) {
+  const { treeLevels, ...colors } = s.colors
+  themes['s' + s.id] = { dark: !!s.dark, colors }
 }
+
+const theme = {
+  defaultTheme: 's' + scheme.id,
+  themes,
+}
+
+const schemeDefaults = (() => {
+  const d = scheme.field
+  const base = { variant: d.variant, density: d.density, rounded: d.rounded }
+  const ctrlDensity = d.density === 'default' ? 'default' : 'compact'
+  return {
+    VTextField: { ...base },
+    VTextarea: { ...base },
+    VSelect: { ...base },
+    VAutocomplete: { ...base },
+    VCombobox: { ...base },
+    VFileInput: { ...base },
+    VCheckbox: { density: ctrlDensity },
+    VSwitch: { density: ctrlDensity },
+  }
+})()
 
 const vuetify = createVuetify({
   theme,
@@ -62,16 +83,7 @@ const vuetify = createVuetify({
       legacy: { component: LegacyIcon, aliases: mdiAliases },
     },
   },
-  defaults: {
-    VTextField: { variant: 'outlined', density: 'compact' },
-    VTextarea: { variant: 'outlined', density: 'compact' },
-    VSelect: { variant: 'outlined', density: 'compact' },
-    VAutocomplete: { variant: 'outlined', density: 'compact' },
-    VCombobox: { variant: 'outlined', density: 'compact' },
-    VFileInput: { variant: 'outlined', density: 'compact' },
-    VCheckbox: { density: 'compact' },
-    VSwitch: { density: 'compact' },
-  },
+  defaults: schemeDefaults,
   locale: {
     locale: 'ru',
     fallback: 'en',
@@ -79,12 +91,39 @@ const vuetify = createVuetify({
   },
 })
 
-theme.rounded = false
+// Токены схемы -> CSS-переменные (шрифт, размеры, отступы, радиусы)
+function applyScheme(s) {
+  const root = document.documentElement
+  root.setAttribute('data-scheme', s.name)
+  root.style.setProperty('--app-font-family', s.fontFamily)
+  root.style.setProperty('--app-font-h1', s.typography.h1)
+  root.style.setProperty('--app-font-h1w', String(s.typography.h1w))
+  root.style.setProperty('--app-font-h2', s.typography.h2)
+  root.style.setProperty('--app-font-h2w', String(s.typography.h2w))
+  root.style.setProperty('--app-font-value', s.typography.value)
+  root.style.setProperty('--app-font-label', s.typography.label)
+  root.style.setProperty('--app-font-desc', s.typography.desc)
+  root.style.setProperty('--app-font-help', s.typography.help)
+  root.style.setProperty('--app-space-unit', s.spacing.unit)
+  root.style.setProperty('--app-space-field', s.spacing.field)
+  root.style.setProperty('--app-space-section', s.spacing.section)
+  root.style.setProperty('--app-space-inline', s.spacing.inline)
+  root.style.setProperty('--app-radius-field', s.radii.field)
+  root.style.setProperty('--app-radius-card', s.radii.card)
+  root.style.setProperty('--app-radius-btn', s.radii.btn)
+  root.style.setProperty('--app-radius-chip', s.radii.chip)
+}
+applyScheme(scheme)
+
+theme.rounded = scheme.field.rounded
 
 const app = createApp(App)
 
-app.config.globalProperties.$color = palette
+app.config.globalProperties.$color = scheme.colors
 app.config.globalProperties.$theme = theme
+app.config.globalProperties.$scheme = scheme
+app.config.globalProperties.$schemeDefaults = schemeDefaults
+window.scheme = scheme
 app.config.globalProperties.$http = axios
 app.config.globalProperties.$toDate = function (v) {
   if (!v) return null

@@ -246,9 +246,12 @@ export default {
 .err_select {text-align: center;padding-left: 20px; color: red; font-size: 0.8rem; font-weight: bold;}
 .v-row {display: flex; flex-wrap: wrap; gap: 16px; margin: 0;}
 .v-row > div {padding: 0 !important; margin: 0 !important;}
+.v-input, .v-field {margin-bottom: 0 !important;}
+:deep(.v-input__details) {display: none !important;}
 .v-field__clearable {margin-right: 20px;}
 .description {
     margin-top: 5px;
+    margin-bottom: 4px;
     color: rgba(0, 0, 0, 0.54);
     font-size: 12px;
     font-weight: 700; 

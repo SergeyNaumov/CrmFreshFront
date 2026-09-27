@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-defaults-provider :defaults="$schemeDefaults">
     <v-app v-if="headapp">
 
         <component v-show="headapp" v-bind:is="headapp" is_headapp="1" :params="headapp_params"></component>
@@ -67,7 +67,7 @@
         </v-footer>
   </v-app>
       
-  </div>
+  </v-defaults-provider>
 </template>
 
 <script>
@@ -322,7 +322,7 @@ export default {
  
   input, .v-field__input {font-size: 12px !important;}
   .v-list-item-title, .v-field__input {font-size: 12px;}
-  .v-label, .v-input {font-size: 12px !important; margin-bottom: 10px;}
+  .v-label, .v-input {font-size: var(--app-font-label) !important; margin-bottom: 10px;}
   .v-field--rounded .v-field {
     border: 1px solid black; 
     padding-left: 3px;
@@ -332,7 +332,7 @@ export default {
   }
 
   .v-field-label--floating {
-    font-size: 10px !important;
+    font-size: calc(var(--app-font-label) - 2px) !important;
     font-weight: bold;
     color: rgb(var(--v-theme-primary)) !important;
   }
