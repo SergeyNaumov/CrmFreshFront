@@ -340,6 +340,14 @@ export default {
                     
                   }
                   t.filters=D.filters;
+                  // нормализуем "пустые" значения фильтров: false/null/undefined -> '' или []
+                  const norm_filter_value=(f)=>{
+                    if(f.value===false || f.value===null || f.value===undefined){
+                      f.value = (f.multiple || f.type=='multiconnect') ? [] : ''
+                    }
+                  };
+                  for(let f of t.filters){ norm_filter_value(f) }
+                  if(D.on_filters && D.on_filters.length){ for(let f of D.on_filters){ norm_filter_value(f) } }
                   
                   t.search_links=D.search_links;
                   if(D.javascript)

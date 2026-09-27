@@ -72,18 +72,12 @@ export default {
     created(){
         let v=this.field.value;
 
-        
-        this.values=this.field.values
-        //document.getElementById("filter_"+this.field.name).
-        if(this.field.filter_type && this.field.filter_type=='checkbox'){
-            //v=false
-            
-        }
+        const is_multiple = !!(this.field.multiple || !this.field.not_multiple)
+        if(v===false || v===null || v===undefined || v==='') v = is_multiple ? [] : ''
+        else if(typeof(v)=='string') v=[v]
 
-        if(typeof(v)=='string') v=[v]
-        
+        this.values=this.field.values
         this.value=v;
-        
 
         
         if(this.field.autocomplete && this.field.autocomplete_start_loaded){
