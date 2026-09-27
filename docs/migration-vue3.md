@@ -156,6 +156,11 @@
 - «Голый» `<template>` без директивы в Vue 3 рендерится как нативный `<template>` и скрывает содержимое. Вложенные обёртки убраны в `left_menu_item.vue`, `fields/multiconnect.vue`, `fields/datetime.vue`, `fields/text_subtypes/qr_call.vue`, `AdminTable/filters/{file,in_ext_url}.vue`, `Table.vue` (из-за этого пропадали листья левого меню). `v-show` на `<template>` (`fields/wysiwyg.vue`) тоже даёт нативный `<template>` — заменено на `v-if` (из-за этого не выводилось поле wysiwyg и кнопка «в режим редактирования»/TinyMCE).
 - `EditForm`/`FormBlock`: поля выровнены по левой линии заголовка — убраны `div.field{margin:0 20px}`, горизонтальный padding карточки и вложенных `v-col` (`div.field [class*="v-col"]{padding-left/right:0}`). `h1.form_header{margin-top:15px}`; `.v-field--variant-outlined{border-radius:5px}`; textarea — `padding:8px 5px` (иначе floating-label «наезжал» на текст).
 - Date-фильтр: колонки «С/По» `md="auto"`, поля `width:220px`, `.v-row{gap:16px}` (зазор был ~190px).
+- AdminTable: пустые обёртки `v-col` вокруг `search_links`/`log`/`before_filters_html` выводились безусловно (под `v-if="1"`) и давали отступ ~99px между «Добавить» и фильтрами — обёрнуты в `v-if` (стало ~31px, у Vue2 ~24px).
+- Тулбары фильтров — белые (`.filters .v-toolbar`); пагинация — квадратные кнопки 32px с рамкой, активная — `primary`/белый текст.
+- `AdminTable/filters/multiconnect.vue`: `field.value=false` нормализуется в `[]` (иначе выводился чип «false»).
+- `v-calendar` (labs): `Schedule.vue` и `fields/time_table.vue` переведены на `view-mode` и `events` вида `{title,start:Date,end:Date,color}`; `$toDate` теперь парсит и дату-время (`YYYY-MM-DD HH:mm:ss`). Labs-VCalendar не поддерживает `event-color`, `event-overlap-mode`, `first-interval`, `@click:event`, поэтому клик по событию (попап редактирования/удаления) недоступен — добавление событий и остальной UI работают. Компоненты в svcms-меню отсутствуют.
+- Сохранение формы проверено на живом бэкенде: `POST /backend/edit-form/news/1 → 200 success:true`.
 - Шапка: Vuetify 3 задаёт `a { color: rgb(var(--v-theme-primary)) }`, а классы Vuetify 2 `.v-toolbar__title` больше не существуют. В `App.vue` стили переведены на `.v-toolbar-title`, ссылке и иконке задан белый (`!important`).
 
 ### Стили и цветовые схемы (после перехода)
@@ -188,9 +193,16 @@
 
 ### Требует проверки на реальном стенде
 
-- Отправка формы (save/insert, файлы, 1_to_m/drag-sort), multiconnect treeview.
-- Messenger (WS), StatTool/ParserExcel/Schedule/VideoList/Documentation/TransfereCards на своих конфигах (в svcms-меню их нет).
+- `insert`/загрузка файлов/1_to_m drag-sort и multiconnect treeview (на своих конфигах).
+- Messenger (WS) — в `App.vue` отключён (`v-if="false"`).
+- StatTool/ParserExcel/VideoList/Documentation/TransfereCards/Schedule — в svcms-меню отсутствуют.
 - Серверный `eval`/`jscode` (см. `security.md`).
+- Deploy-скрипты `build/<tenant>`, PR `vue3 → main`.
+
+### Найдено в финальном прогоне
+
+- `fields/field_functions.js` (`check_fld`): правила `regexp_rules` отдаются бэкендом как строки без слэшей (`"^.+$"`), а код делал `eval("^.+$.test(...)")` — падало с `Unexpected token '^'` (`feedback_form`, `send_request_form`). Переведено на `new RegExp(rule)` (+ поддержка формы `/.../flags`), с try/catch. Баг есть и в ветке `main`.
+- Полный smoke: все 19 пунктов меню и все `edit_form/<config>` — 0 ошибок/предупреждений.
 
 ## Раньше: план (для истории)
 

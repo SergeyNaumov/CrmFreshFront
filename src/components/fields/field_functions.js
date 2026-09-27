@@ -40,6 +40,14 @@ export function field_update(new_data, self){
     }
 }
 
+function to_regex(rule){
+    if(rule instanceof RegExp) return rule;
+    let s=String(rule);
+    let m=s.match(/^\/(.*)\/([a-z]*)$/);
+    if(m) return new RegExp(m[1], m[2]);
+    return new RegExp(s);
+}
+
 export function check_fld(self){
     if(!self.value)
       self.value='';
@@ -54,7 +62,11 @@ export function check_fld(self){
                 
                 self.$nextTick(
                   ()=>{
-                    self.value=eval('self.value.replace('+rule+",'"+rep+"')");
+                    try{
+                      self.value=String(self.value).replace(to_regex(rule), rep);
+                    }catch(e){
+                      console.error('check_fld replace error', rule, e);
+                    }
                   }
                 );
                 
@@ -65,9 +77,15 @@ export function check_fld(self){
     let i=0
     if(f.regexp_rules){
             
-            while(i<f.regexp_rules.length){
+              while(i<f.regexp_rules.length){
               let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
-              let test=eval(`${rule}.test(self.value)`);
+              let test=true;
+              try{
+                test=to_regex(rule).test(self.value===null||self.value===undefined?'':String(self.value));
+              }catch(e){
+                console.error('check_fld regexp error', rule, e);
+                test=true;
+              }
 
               if(!test){
 

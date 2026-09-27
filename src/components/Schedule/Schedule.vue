@@ -55,11 +55,8 @@
           </div>
       
 
-              <v-menu
+              <v-dialog
                 v-model="selectedOpen"
-                :close-on-content-click="false"
-                :activator="selectedElement"
-                offset-x
                 max-width="400"
               >
                 <v-card>
@@ -69,12 +66,14 @@
                     <hr>
                     <br>
                     <v-icon size="small" color="primary">fa fa-trash</v-icon>&nbsp;<a href="#" @click.prevent="deleteEvent(selectedEvent)">удалить запись</a> 
-                    <!--<v-btn @click="deleteEvent(selectedEvent)" color="primary" size="x-small"></v-btn> удалить запись-->
                     <div v-for="e in errors_delete" class="err">{{e}}</div>
                   </v-card-text>
+                  <v-card-actions>
+                    <v-btn variant="text" @click="selectedOpen=false">Закрыть</v-btn>
+                  </v-card-actions>
                 </v-card>
 
-              </v-menu>
+              </v-dialog>
               
 
 
@@ -84,7 +83,7 @@
 
 
           
-          <v-sheet height="600">
+          <v-sheet height="600" @click="on_event_click">
             <div class="types">
               <v-btn size="small" :color="(type=='day')?'primary':''" @click="type='day'">дни</v-btn>
               <v-btn size="small" :color="(type=='week')?'primary':''" @click="type='week'">недели</v-btn>
@@ -97,15 +96,10 @@
               :weekdays="[1, 2, 3, 4, 5, 6,0]"
               :view-mode="type"
               @update:model-value="value=$toIso($event[0])"
-              :events="events"
-              :event-overlap-mode="mode"
-              :event-overlap-threshold="30"
-              :event-color="getEventColor"
+              :events="calendar_events"
               :interval-minutes="form.interval_minutes_calendar"
               :interval-count="form.interval_count_calendar"
-              :first-time="form.begin"
-              @click:event="showEvent"
-              locale="ru-Ru"
+              locale="ru-RU"
               style="min-height: 800px;"
             />
 
@@ -282,6 +276,17 @@ export default {
         return event.color
       },
 
+      on_event_click(e){ // labs VCalendar не эмитит click:event — ловим по чипу
+        let chip=e.target && e.target.closest ? e.target.closest('.v-chip') : null
+        if(!chip) return
+        let title=(chip.innerText||'').trim()
+        let ev=(this.events||[]).find(x=>x.name===title)
+        if(ev){
+          this.selectedEvent=ev
+          this.selectedOpen=true
+        }
+      },
+
       deleteEvent(event){
         this.$http.post(
           `${BackendBase}/Schedule/${this.params.config}/deleteEvent`,
@@ -321,6 +326,16 @@ export default {
       },
     },
     computed:{
+      calendar_events(){
+        return (this.events||[]).map(e=>({
+          title: e.name,
+          start: this.$toDate(e.start),
+          end: this.$toDate(e.end),
+          color: e.color,
+          allDay: false,
+          raw: e
+        })).filter(e=>e.start && e.end)
+      },
       multi(){ // если true -- разрешено добавлять нескольких
         if(this.form.multi){
           

@@ -24,23 +24,18 @@
               </div>     
             </template>         
             <v-row  v-else>
-            <v-col cols="12" lg="12" class="mt-2 mb-2" >
-              <v-btn v-if=0 @click="SHOW_FILTERS=!SHOW_FILTERS" size="small"><v-icon color="primary" size="small">filter_list</v-icon> </v-btn>  
-              <v-col cols="12" lg="12" class="mt-2 mb-2">
-                    <template v-if="1">
-                      <div class="links" v-if="1">
-                        <div v-for="l in search_links" v-bind:key="l.link"><a :href="l.link" :target="l.target">{{l.description}}</a></div>
-                      </div>
-                      <div class="log" v-if="log">
-                        <pre v-if="typeof(log)=='string'">{{ log }}</pre>
-                        <pre v-else v-for="(l,i) in log" v-bind:key="'log'+i">{{  l }}</pre>
-                      </div> 
-                      <div class="before_filters_html" v-if=" before_filters_html">
-                        <div v-if="typeof(before_filters_html)=='string'" v-html="before_filters_html"></div>
-                        <div v-else v-for="h in before_filters_html" :key="h.i" v-html="h"></div>
-                      </div>
-                    </template>
-              </v-col>
+            <v-col cols="12" lg="12" class="mt-1 mb-0" v-if="search_links.length || log || before_filters_html">
+                  <div class="links" v-if="search_links.length">
+                    <div v-for="l in search_links" v-bind:key="l.link"><a :href="l.link" :target="l.target">{{l.description}}</a></div>
+                  </div>
+                  <div class="log" v-if="log">
+                    <pre v-if="typeof(log)=='string'">{{ log }}</pre>
+                    <pre v-else v-for="(l,i) in log" v-bind:key="'log'+i">{{  l }}</pre>
+                  </div> 
+                  <div class="before_filters_html" v-if=" before_filters_html">
+                    <div v-if="typeof(before_filters_html)=='string'" v-html="before_filters_html"></div>
+                    <div v-else v-for="h in before_filters_html" :key="h.i" v-html="h"></div>
+                  </div>
             </v-col>
                 <template v-if="show_find_button_top">
                   <v-col cols="12" lg="12" v-show="on_filters && on_filters.length">

@@ -1,13 +1,7 @@
 <template>
   <div v-if="form.id"> <!-- показываем только для существующих записей -->
-    <pre>
-      {{events}}
-    </pre>
-        <v-menu
+        <v-dialog
           v-model="selectedOpen"
-          :close-on-content-click="false"
-          :activator="selectedElement"
-          offset-x
           max-width="500"
         >
           <v-card>
@@ -16,42 +10,11 @@
               {{selectedEvent.name}}: {{getTime(selectedEvent.start)}} -  {{getTime(selectedEvent.end)}}
               <v-btn @click="deleteEvent(selectedEvent)">удалить</v-btn>
             </v-card-text>
-          </v-card>
-          <!--<v-card
-            color="grey-lighten-4"
-            min-width="350px"
-            flat
-          >
-            <v-toolbar
-              :color="selectedEvent.color"
-              dark
-            >
-              <v-btn icon>
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-              <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </v-toolbar>
-            <v-card-text>
-              <span v-html="selectedEvent.details"></span>
-            </v-card-text>
             <v-card-actions>
-              <v-btn
-                variant="text"
-                color="secondary"
-                @click="selectedOpen = false"
-              >
-                Cancel
-              </v-btn>
+              <v-btn variant="text" @click="selectedOpen=false">Закрыть</v-btn>
             </v-card-actions>
-          </v-card>-->
-        </v-menu>
+          </v-card>
+        </v-dialog>
     <p>
       <span>{{value}}</span> <v-btn color="primary" size="small" @click="show_event_form=!show_event_form">{{show_event_form?'Не добавлять в расписание':'Добавить в расписание'}}</v-btn>
     </p>
@@ -83,7 +46,7 @@
 
 
     
-    <v-sheet height="600">
+    <v-sheet height="600" @click="on_event_click">
       <v-calendar
         v-if="field"
         :ref="refname"
@@ -91,15 +54,10 @@
         :weekdays="weekday"
         :view-mode="type"
         @update:model-value="value=$toIso($event[0])"
-        :events="events"
-        :event-overlap-mode="mode"
-        :event-overlap-threshold="30"
-        :event-color="getEventColor"
+        :events="calendar_events"
         :interval-minutes="field.interval_minutes"
         :interval-count="field.interval_count"
-        :first-interval="field.first_interval"
-        @click:event="showEvent"
-        locale="ru-Ru"
+        locale="ru-RU"
       />
     </v-sheet>
   </div>
@@ -266,6 +224,16 @@
       getEventColor (event) {
         return event.color
       },
+      on_event_click(e){ // labs VCalendar не эмитит click:event — ловим по чипу
+        let chip=e.target && e.target.closest ? e.target.closest('.v-chip') : null
+        if(!chip) return
+        let title=(chip.innerText||'').trim()
+        let ev=(this.events||[]).find(x=>x.name===title)
+        if(ev){
+          this.selectedEvent=ev
+          this.selectedOpen=true
+        }
+      },
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a
       },
@@ -296,25 +264,26 @@
       },
     },
     computed:{
+      calendar_events(){
+        return (this.events||[]).map(e=>({
+          title: e.name,
+          start: this.$toDate(e.start),
+          end: this.$toDate(e.end),
+          color: e.color,
+          allDay: false,
+          raw: e
+        })).filter(e=>e.start && e.end)
+      },
       cur_value(){
-        let refname=this.refname
-        if(!this.$refs[refname]){
-          //console.log('none')
+        if(!this.value)
           return ''
-        }
-        
         if(this.type=='day'){
-          let v=this.value?this.value:this.$refs[refname].start
-          let [year,mon,day]=v.split('-')
-         // console.log('start:',this.$refs[refname].start)
-          mon=parseInt(mon)-1
-          
-          return `${day} ${monlist[mon]} ${year}`
+          let [year,mon,day]=String(this.value).split('-')
+          if(!year||!mon||!day)
+            return this.value
+          return `${day} ${monlist[parseInt(mon)-1]} ${year}`
         }
-        else {
-          
-          return this.$refs[refname].title
-        }
+        return this.value
       },
       form_event_intervals(){
         let d=new Date()

@@ -89,8 +89,8 @@ app.config.globalProperties.$http = axios
 app.config.globalProperties.$toDate = function (v) {
   if (!v) return null
   if (v instanceof Date) return v
-  const m = String(v).match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)
-  if (m) return new Date(+m[1], +m[2] - 1, +m[3])
+  const m = String(v).match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?/)
+  if (m) return new Date(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0))
   const d = new Date(v)
   return isNaN(d.getTime()) ? null : d
 }

@@ -50,7 +50,8 @@ export default {
         }
     },
     created(){
-        this.value=this.field.value;
+        let v=this.field.value;
+        this.value = Array.isArray(v) ? v : (v ? [v] : []);
         if(!this.field.autocomplete){
             this.$http.post(
                 BackendBase+'/multiconnect/'+this.config+'/'+this.field.name,
