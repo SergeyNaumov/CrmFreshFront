@@ -618,6 +618,10 @@ export default {
   .errors_find h2 {margin-bottom: 1rem;}
   .filters_groups .v-label {font-size: 12px;}
   .is_headapp {margin: 20px;}
+  .is_headapp h1 {margin-bottom: 8px;}
+  .is_headapp .v-row > [class*="v-col"] {padding-top: 0 !important; padding-bottom: 0 !important;}
+  .is_headapp .filters, .is_headapp #on_filters {margin-top: 20px;}
+  .is_headapp .links {margin: 0 0 var(--app-space-inline) 0;}
 
   
   .filter_block:nth-last-child {border-bottom: none;}

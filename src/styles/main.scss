@@ -22,6 +22,8 @@
 .container_fluid {
     width: 100%;
 }
+// AdminTable: плотные отступы строки заголовка/фильтров
+.is_headapp .v-row > [class*="v-col"] { padding-top: 0 !important; padding-bottom: 0 !important; }
 // Ограничение ширины полей (на широких экранах)
 .v-field {
     max-width: 960px;
