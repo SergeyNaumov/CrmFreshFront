@@ -66,6 +66,7 @@ docs/                          # подробное описание разде�
 |---|---|
 | Архитектура: вход, глобалы, bus, App.vue, URL-роутинг | [docs/architecture.md](docs/architecture.md) |
 | Form Engine: JSON-контракт, EditForm/FormBlock, `js/edit_form.js` | [docs/form-engine.md](docs/form-engine.md) |
+| Зависимости полей (движок, циклы, ajax/TTL) | [docs/dependencies.md](docs/dependencies.md) |
 | Поля и фильтры (20+ типов) | [docs/fields.md](docs/fields.md) |
 | Компоненты и их API | [docs/components.md](docs/components.md) |
 | Messenger (WebSocket-чат) | [docs/messenger.md](docs/messenger.md) |
