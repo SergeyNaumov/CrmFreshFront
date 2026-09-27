@@ -49,6 +49,6 @@ npm run build && ls -R dist | head -50
 ## Проверка ссылок документации
 
 ```bash
-rg -o '\]\((docs/[^)]+)\)' AGENTS.md
+rg -o '\]\((agent-doc/[^)]+)\)' AGENTS.md
 # каждый путь должен существовать
 ```

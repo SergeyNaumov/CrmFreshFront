@@ -1,6 +1,6 @@
 # План перехода CRMFreshFront на Vue 3 + Vite + Vuetify 3
 
-Источник деталей: `docs/migration-vue3.md`, `docs/icon-system.md`, `docs/build-and-tenant.md`. Исполняемый чеклист.
+Источник деталей: `agent-doc/migration-vue3.md`, `agent-doc/icon-system.md`, `agent-doc/build-and-tenant.md`. Исполняемый чеклист.
 
 Легенда: `[x]` выполнено, `[ ]` осталось (требует браузера/сервера).
 
@@ -17,7 +17,7 @@
 - [x] Ветка `vue3`, тег `pre-vue3`.
 - [x] Baseline `npm run build` (Vue CLI) — успешен, зафиксирован.
 - [x] Smoke на Vue2 — сравнение с baseline (Vue2-билд) на ключевых экранах.
-- [x] Список проверяемых экранов — `docs/verification.md`.
+- [x] Список проверяемых экранов — `agent-doc/verification.md`.
 
 ## Этап 1. Vite
 
@@ -109,7 +109,7 @@
 
 - [x] Реальный smoke на живом бэке (shell, формы, деревья, таблицы, const) — 0 ошибок/предупреждений.
 - [x] save (update) проверен на живом бэкенде; insert/файлы/1_to_m/drag и multiconnect treeview — на стенде.
-- [ ] Проверить `eval`-точки `docs/security.md` на стенде (формы с regexp-правилами исправлены без eval).
+- [ ] Проверить `eval`-точки `agent-doc/security.md` на стенде (формы с regexp-правилами исправлены без eval).
 - [x] Grep-защиты (Vue2 API / Vuetify2 / `process.env`).
 - [ ] PR `vue3 → main`.
 
@@ -129,7 +129,7 @@
 - `src/App.vue`, `src/js/app.js`
 - codemods и правки в ~50 `*.vue`
 - `public/index.html`, `babel.config.js`, `src/plugins/vuetify.js` — удалены
-- docs: `AGENTS.md`, `plan.md`, `docs/*`
+- docs: `AGENTS.md`, `plan.md`, `agent-doc/*`
 
 ## Критерий готовности
 
