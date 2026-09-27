@@ -162,9 +162,9 @@ export default {
   html {font-size: 12px;}
   #on_filters form { margin-top: 10px; }
   .v-label {font-size: 12px;}
-  .onfilter.sortable-ghost{background-color: rgb(var(--v-theme-primary-lighten-4));}
+  .onfilter.sortable-ghost{background-color: var(--app-tint);}
   .onfilter {
-    border-color: rgba(0, 0, 0, 0.12) !important;
+    border-color: rgba(var(--v-theme-on-surface), 0.12) !important;
     margin-top: 10px;
     margin-bottom: 6px;
   }
@@ -176,7 +176,7 @@ export default {
     height: 22px;
     padding-left: 6px;
     border-radius: 3px;
-    background-color: rgb(var(--v-theme-primary-lighten-4));
+    background-color: var(--app-tint);
   }
   .drag_area .v-icon {
     font-size: 10px;

@@ -625,17 +625,17 @@ export default {
 
   
   .filter_block:nth-last-child {border-bottom: none;}
-  .filter_block:nth-child(2n) {background-color: rgb(var(--v-theme-primary-lighten-4));}
+  .filter_block:nth-child(2n) {background-color: var(--app-tint);}
   .filter_block.v-input { display: flex; align-items: center; margin: 0 !important;}
   .filter_block .v-selection-control { min-height: auto; }
   .filter_block .v-label { margin-bottom: 0 !important; }
   .filter_block .v-input__details { display: none; }
   .filter_block {padding: 5px; 
-    border: 1px solid rgb(var(--v-theme-primary-lighten-4));
+    border: 1px solid var(--app-tint);
   
   }
   .filters_groups .filter_block {padding: 8px 0px;}
-  .filters_groups .filter_block:nth-child(2n) {background-color: #E8EAF6; }
+  .filters_groups .filter_block:nth-child(2n) {background-color: var(--app-tint); }
   .filters_groups .v-selection-control{margin-top: 0; margin-bottom: 0;}
   .filters_list {margin-top: 10px;}
   .search_plugin div {margin-top: 15px;}

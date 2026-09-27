@@ -288,11 +288,11 @@ export default {
    font-size: 0.9rem ;
  }
  .memo_item .registered{
-   color: #3f51b5;
+   color: rgb(var(--v-theme-primary));
  }
 
  .memo_item .user{
-   color: red;
+   color: rgb(var(--v-theme-error));
  }
 .results_wrap{
   
@@ -322,7 +322,7 @@ export default {
 }
 
 .results tr:nth-child(2n+1) {
-  background: rgb(var(--v-theme-primary-lighten-5));
+  background: rgba(var(--v-theme-on-surface), 0.04);
 } 
 /*.results tr.header {
   
@@ -349,8 +349,8 @@ export default {
 
 
 .v-application a {text-decoration: none;}
-.v-application a.sort_asc .v-icon {color: green;}
-.v-application a.sort_desc .v-icon {color: red;}
+.v-application a.sort_asc .v-icon {color: rgb(var(--v-theme-success));}
+.v-application a.sort_desc .v-icon {color: rgb(var(--v-theme-error));}
 .v-application a.bold .v-icon {font-weight: bold;}
 /*
 .application .theme--light.v-icon, .theme--light a.sort_asc .v-icon {color: green;}
@@ -358,8 +358,8 @@ export default {
 
 .application .theme--light.v-icon, .theme--light .sort_desc .v-icon {color: red;}
 */
-.results td .saved {color: green; font-weight: bold;}
-.results td .err {color: red; font-weight: bold;}
+.results td .saved {color: rgb(var(--v-theme-success)); font-weight: bold;}
+.results td .err {color: rgb(var(--v-theme-error)); font-weight: bold;}
 .results td.multi_action {padding-left: 10px;}
 .sort_button a {text-decoration: none; white-space: nowrap;}
 .controls a {text-decoration: none;}

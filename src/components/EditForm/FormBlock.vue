@@ -194,12 +194,12 @@ import FieldPassword from '../fields/password';
   .block .field .v-row {margin-bottom: 0;}
   .block .description_container {margin-top: 0; margin-bottom: 4px;}
   table.one_to_m td{
-    border: 1px solid gray;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.24);
     padding: 0.5rem;
   }
   div.one_to_m{
-    background-color: #eee;
-    border: 1px solid gray;
+    background-color: var(--app-tint);
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.24);
     padding: 1rem;
     margin-bottom: 1rem;
   }
@@ -208,12 +208,10 @@ import FieldPassword from '../fields/password';
   .one_to_m_new{margin-left: 0.5rem;}
   .one_to_m_description {margin-top: 0.5rem}
   .description_container {
-    margin-top: 10px;
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.6);
-    margin-top: 15px;
+    font-size: var(--app-font-desc);
+    color: rgba(var(--v-theme-on-surface), 0.7);
     font-weight: bold;
-    font-family: "Roboto", sans-serif;
+    font-family: var(--app-font-family);
   }
   .field_container {padding-left: 0; padding-right: 2rem;}
   div {line-height: 20px;}

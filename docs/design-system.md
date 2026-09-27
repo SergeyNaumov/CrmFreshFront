@@ -38,6 +38,7 @@
 | `--app-space-inline` | внутри групп (чекбоксы, строки) |
 | `--app-radius-field/card/btn/chip` | радиусы |
 | `--app-font-family/h1/h2/value/label/desc` | типографика |
+| `--app-tint` | нейтральный фон для чередования строк, плашек-хэндлов, подложек (схема задаёт rgba primary с низкой альфой; работает и в dark) |
 
 **EditForm (с блоками и без)**
 - Один источник шага: `.field { margin-bottom: var(--app-space-field) }`; `.field .v-input { margin-bottom: 0 }`.

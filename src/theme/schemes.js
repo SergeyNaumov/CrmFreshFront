@@ -9,6 +9,7 @@ export const schemes = [
     // 0 — текущая схема проекта
     id: 0,
     name: 'default',
+    tint: 'rgba(37,58,93,0.08)',
     dark: false,
     fontFamily: 'Roboto, "Helvetica Neue", Arial, sans-serif',
     typography: { h1: '28px', h1w: 700, h2: '20px', h2w: 600, value: '14px', label: '12px', desc: '12px', help: '12px' },
@@ -49,6 +50,7 @@ export const schemes = [
     // 1 — компактная, строгая, Inter
     id: 1,
     name: 'compact',
+    tint: 'rgba(21,101,192,0.07)',
     dark: false,
     fontFamily: 'Inter, "Helvetica Neue", Arial, sans-serif',
     typography: { h1: '22px', h1w: 700, h2: '18px', h2w: 600, value: '13px', label: '11px', desc: '11px', help: '11px' },
@@ -89,6 +91,7 @@ export const schemes = [
     // 2 — мягкая, крупные радиусы, Nunito
     id: 2,
     name: 'soft',
+    tint: 'rgba(106,27,154,0.06)',
     dark: false,
     fontFamily: 'Nunito, "Segoe UI", Arial, sans-serif',
     typography: { h1: '30px', h1w: 700, h2: '22px', h2w: 600, value: '15px', label: '13px', desc: '13px', help: '12px' },
@@ -129,6 +132,7 @@ export const schemes = [
     // 3 — тёмная, Inter
     id: 3,
     name: 'dark',
+    tint: 'rgba(144,202,249,0.10)',
     dark: true,
     fontFamily: 'Inter, "Helvetica Neue", Arial, sans-serif',
     typography: { h1: '28px', h1w: 700, h2: '20px', h2w: 600, value: '14px', label: '12px', desc: '12px', help: '12px' },

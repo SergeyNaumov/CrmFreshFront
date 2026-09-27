@@ -135,7 +135,7 @@ export default {
 <style scoped>
 .description {
     margin-top: 5px;
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(var(--v-theme-on-surface), 0.6);
     font-size: 12px;
     font-weight: 700; 
 }

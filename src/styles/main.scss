@@ -21,6 +21,7 @@
     --app-font-value: 14px;
     --app-font-label: 12px;
     --app-font-desc: 12px;
+    --app-tint: rgba(37, 58, 93, 0.08);
 }
 .v-application {
     font-family: var(--app-font-family) !important;
@@ -172,20 +173,20 @@ textarea,
     width: 32px !important;
     height: 32px !important;
     font-size: 13px !important;
-    border: 1px solid rgba(0, 0, 0, 0.24) !important;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.24) !important;
     border-radius: 4px !important;
-    background-color: #fff !important;
+    background-color: rgb(var(--v-theme-surface)) !important;
     box-shadow: none !important;
 }
 .v-pagination .v-pagination__item--is-active .v-btn {
     background-color: rgb(var(--v-theme-primary)) !important;
-    color: #fff !important;
+    color: rgb(var(--v-theme-on-primary)) !important;
     border-color: rgb(var(--v-theme-primary)) !important;
 }
 // Тулбары фильтров — белые, как в Vuetify 2
 .filters .v-toolbar,
 #on_filters .v-toolbar {
-    background-color: #fff !important;
+    background-color: rgb(var(--v-theme-surface)) !important;
 }
 // Форма
 h1 {font-size: var(--app-font-h1); font-weight: var(--app-font-h1w);}
@@ -249,10 +250,10 @@ table.tbl1 td {
     padding: 2px 5px;
 }
 table.tbl1  thead td {
-    background: rgb(var(--v-theme-primary-lighten-4));
+    background: var(--app-tint);
 }
 table.tbl1 tr:nth-child(2n+1) {
-  background: rgb(var(--v-theme-primary-lighten-5));
+  background: rgba(var(--v-theme-on-surface), 0.03);
 }
 
 table.mini {
