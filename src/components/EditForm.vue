@@ -416,9 +416,10 @@ methods: {
     .v-application {line-height: 1;}  
     body {font-size: 14px;}
     
-    div.field {margin: 8px 0;}
+    div.field {margin: 0 0 var(--app-space-field) 0;}
     div.field [class*="v-col"] {padding-left: 0; padding-right: 0;}
     div.field .v-row {margin-left: 0; margin-right: 0;}
+    div.field .v-input {margin-bottom: 0 !important;}
     
     button {margin: 1rem;}
     .container {max-width: 960px;}

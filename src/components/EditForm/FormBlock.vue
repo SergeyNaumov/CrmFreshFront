@@ -188,11 +188,11 @@ import FieldPassword from '../fields/password';
   }
 </script>
 <style scoped>
-  .block {margin-top: 10px; padding-bottom: 10px;}  
+  .block {margin-top: var(--app-space-section); padding-bottom: 0;}  
   .block .field .v-col {padding: 0;}
-  .block .field .v-input {margin-bottom: 10px;}
+  .block .field .v-input {margin-bottom: 0;}
   .block .field .v-row {margin-bottom: 0;}
-  .block .description_container {margin-top: 4px;}
+  .block .description_container {margin-top: 0; margin-bottom: 4px;}
   table.one_to_m td{
     border: 1px solid gray;
     padding: 0.5rem;

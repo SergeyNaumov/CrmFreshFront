@@ -2,6 +2,18 @@
     color: rgb(var(--v-theme-primary));
     text-decoration: none;
 }
+
+/* Дизайн-токены (значения по умолчанию; схема переопределяет через JS) */
+.v-application {
+    --app-space-unit: 4px;
+    --app-space-field: 16px;
+    --app-space-section: 24px;
+    --app-space-inline: 8px;
+    --app-radius-field: 5px;
+    --app-radius-card: 8px;
+    --app-radius-btn: 4px;
+    --app-radius-chip: 12px;
+}
 .container {
     width: 100%;
     max-width: 960px;
@@ -32,8 +44,8 @@ textarea,
 }
 // Компактный date-picker (как в Vuetify 2)
 .v-date-picker {
-    max-width: 340px !important;
-    width: 340px !important;
+    max-width: 300px !important;
+    width: 300px !important;
     overflow: hidden !important;
 }
 .v-date-picker .v-picker-title,
@@ -41,15 +53,15 @@ textarea,
     display: none;
 }
 .v-date-picker .v-picker__header {
-    min-height: 34px !important;
-    padding: 0 4px !important;
-    height: 34px !important;
+    min-height: 28px !important;
+    padding: 0 2px !important;
+    height: 28px !important;
 }
 .v-date-picker .v-date-picker-header {
-    min-height: 34px !important;
+    min-height: 28px !important;
 }
 .v-date-picker .v-picker__body {
-    padding: 4px 4px 6px !important;
+    padding: 2px 2px 4px !important;
     width: 100% !important;
     min-width: 0 !important;
 }
@@ -64,8 +76,8 @@ textarea,
     padding: 0 !important;
 }
 .v-date-picker .v-date-picker-month__days {
-    grid-template-columns: repeat(7, 34px) !important;
-    column-gap: 2px !important;
+    grid-template-columns: repeat(7, 30px) !important;
+    column-gap: 0 !important;
     width: auto !important;
     flex: 0 0 auto !important;
 }
@@ -73,47 +85,47 @@ textarea,
     grid-template-rows: auto !important;
 }
 .v-date-picker .v-date-picker-month__weekday {
-    font-size: 11px !important;
+    font-size: 10px !important;
 }
 .v-date-picker .v-date-picker-month__day {
-    width: 34px !important;
-    height: 34px !important;
+    width: 30px !important;
+    height: 30px !important;
     min-width: 0 !important;
 }
 .v-date-picker .v-date-picker-month__day .v-btn {
-    --v-btn-height: 28px !important;
-    min-width: 28px !important;
-    width: 28px !important;
-    height: 28px !important;
+    --v-btn-height: 26px !important;
+    min-width: 26px !important;
+    width: 26px !important;
+    height: 26px !important;
     font-size: 12px !important;
 }
 .v-date-picker .v-date-picker-controls {
     width: 100% !important;
-    padding: 0 2px !important;
+    padding: 0 !important;
     flex-wrap: nowrap !important;
 }
 .v-date-picker .v-date-picker-controls .v-btn {
     min-width: auto !important;
     padding: 0 4px !important;
     font-size: 11px !important;
-    height: 28px !important;
+    height: 24px !important;
 }
 .v-date-picker .v-date-picker-controls__month {
     display: flex !important;
     align-items: center !important;
-    gap: 2px !important;
+    gap: 0 !important;
     flex: 0 0 auto !important;
 }
 .v-date-picker .v-date-picker-controls__month .v-btn {
-    width: 32px !important;
-    min-width: 32px !important;
-    height: 32px !important;
+    width: 28px !important;
+    min-width: 28px !important;
+    height: 28px !important;
     padding: 0 !important;
 }
 .v-date-picker .v-date-picker-controls__month-btn {
     max-width: 150px !important;
     overflow: hidden !important;
-    font-size: 12px !important;
+    font-size: 11px !important;
 }
 .v-date-picker .v-date-picker-controls__mode-btn {
     width: 28px !important;
