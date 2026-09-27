@@ -625,7 +625,7 @@ export default {
 
   
   .filter_block:nth-last-child {border-bottom: none;}
-  .filter_block:nth-child(2n) {background-color: var(--app-tint);}
+  .filter_block:nth-child(2n) {background-color: var(--app-stripe);}
   .filter_block.v-input { display: flex; align-items: center; margin: 0 !important;}
   .filter_block .v-selection-control { min-height: auto; }
   .filter_block .v-label { margin-bottom: 0 !important; }
@@ -635,7 +635,7 @@ export default {
   
   }
   .filters_groups .filter_block {padding: 8px 0px;}
-  .filters_groups .filter_block:nth-child(2n) {background-color: var(--app-tint); }
+  .filters_groups .filter_block:nth-child(2n) {background-color: var(--app-stripe); }
   .filters_groups .v-selection-control{margin-top: 0; margin-bottom: 0;}
   .filters_list {margin-top: 10px;}
   .search_plugin div {margin-top: 15px;}

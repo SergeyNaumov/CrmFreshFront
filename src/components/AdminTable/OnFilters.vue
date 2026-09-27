@@ -165,7 +165,7 @@ export default {
   .onfilter.sortable-ghost{background-color: var(--app-tint);}
   .onfilter {
     border-color: rgba(var(--v-theme-on-surface), 0.12) !important;
-    margin-top: 10px;
+    margin-top: 0;
     margin-bottom: 6px;
   }
   .drag_area{
@@ -173,10 +173,10 @@ export default {
     align-items: center;
     color: rgb(var(--v-theme-primary));
     width: 100%;
-    height: 22px;
+    height: 24px;
     padding-left: 6px;
-    border-radius: 3px;
-    background-color: var(--app-tint);
+    border-radius: 4px 4px 0 0;
+    background-color: var(--app-stripe);
   }
   .drag_area .v-icon {
     font-size: 10px;

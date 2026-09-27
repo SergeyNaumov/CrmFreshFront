@@ -113,6 +113,7 @@ function applyScheme(s) {
   root.style.setProperty('--app-radius-btn', s.radii.btn)
   root.style.setProperty('--app-radius-chip', s.radii.chip)
   root.style.setProperty('--app-tint', s.tint)
+  root.style.setProperty('--app-stripe', s.stripe)
 }
 applyScheme(scheme)
 
