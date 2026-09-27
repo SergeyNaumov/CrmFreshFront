@@ -1,20 +1,21 @@
 <template>
-  <v-flex xs12 sm12 md7 lg7 offset-lg1 offset-md1  class="mb-2" id="on_filters">
+  <v-col cols="12" sm="12" md="7" lg="7" offset-lg="1" offset-md="1"  class="mb-2" id="on_filters">
 <!---@ -->
     <v-card >
 
-      <v-toolbar @click="toggle_filters()">
+      <v-toolbar @click="toggle_filters()" elevation="4">
         <v-app-bar-nav-icon color="primary" ></v-app-bar-nav-icon>
-        <v-subheader>Используемые фильтры</v-subheader>
+        <v-list-subheader>Используемые фильтры</v-list-subheader>
       </v-toolbar></v-card>
       <form @submit.prevent="go_search(1)" autocomplete="new-password">
-      <draggable :options="{handle:'.drag_area'}" :list="filter_list" v-show="SHOW_FILTERS_on">
-        <div v-for="f in filter_list" :key="f.name">
+      <draggable :list="filter_list" item-key="name" handle=".drag_area" v-show="SHOW_FILTERS_on">
+        <template #item="{ element: f }">
+        <div :key="f.name">
             <div class="drag_area">
               <v-icon>fa-arrows-alt-v</v-icon>
             </div>
-            <v-card   class="pa-2 mt-0 mb-3 onfilter" :outlined="true" >
-                <div v-if="dynamic_component(f)" style="inline-block;  border; 1px solid black;">
+            <v-card   class="pa-2 mt-0 mb-3 onfilter" variant="outlined" >
+                <div v-if="dynamic_component(f)" style="display:block; width:100%;">
                     <component
                       :is="dynamic_component(f)"
                       :field="f"
@@ -26,12 +27,12 @@
                 </div>            
             </v-card>
         </div>
-        
+        </template>
 
         
         </draggable>
       </form>
-  </v-flex>
+  </v-col>
 </template>
 <script>
 /*
@@ -158,31 +159,40 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    @import '@/styles/variables.scss';
   html {font-size: 12px;}
+  #on_filters form { margin-top: 10px; }
   .v-label {font-size: 12px;}
-  .onfilter.sortable-ghost{background-color: $lighten4;}
+  .onfilter.sortable-ghost{background-color: rgb(var(--v-theme-primary-lighten-4));}
+  .onfilter {
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    margin-top: 10px;
+    margin-bottom: 6px;
+  }
   .drag_area{
-    display: inline-block;   color: $primary;
-    
-    position: relative;
-    top: 12px;
-    z-index: 1;
+    display: flex;
+    align-items: center;
+    color: rgb(var(--v-theme-primary));
     width: 100%;
-    min-height: 12px;
-    padding-left: 3px;
+    height: 22px;
+    padding-left: 6px;
     border-radius: 3px;
-    
-    background-color: $lighten4;
+    background-color: rgb(var(--v-theme-primary-lighten-4));
   }
   .drag_area .v-icon {
-    font-size: 8px;
-    margin: 4px 4px 4px 4px;
-    padding: 3px 3px 3px 4px;
-    width: 16px;
+    font-size: 10px;
+    margin: 0;
+    padding: 0;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    line-height: 1;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid gray;
-    border-radius: 10px;
-    color: $lighten5;
+    border-radius: 50%;
+    color: rgb(var(--v-theme-primary-lighten-5));
     background-color: gray;
     
   }

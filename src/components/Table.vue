@@ -5,7 +5,7 @@
       width="auto "
     >
       <v-card>
-        <v-card-title class="headline">{{dialog_title}}</v-card-title>
+        <v-card-title class="text-h5">{{dialog_title}}</v-card-title>
         <v-card-text v-html="dialog_html">
 
         </v-card-text>
@@ -29,14 +29,14 @@
       
       
       <div class="links" >
-          <template v-for="(l,idx) in form.links" >
+          <template v-for="(l,idx) in form.links" :key="idx">
               <a  :href="l.link" target="_blank">{{l.description}}</a>
               <template v-if="idx < form.links.length -1 ">&nbsp;|&nbsp;</template>
           </template>
 
       </div>
           <template v-if="form.data.length>0">
-            <v-simple-table v-if="!form.errors.length" mobile-breakpoint="0" class="results">
+            <v-table v-if="!form.errors.length" mobile-breakpoint="0" class="results">
               <template v-slot:default>
                   <thead>
                       <tr>
@@ -44,11 +44,11 @@
                           <th v-for="(header,idx) in form.headers" :key="'th'+idx">
                               <a href="" @click.prevent="go_sort(header.sort?header.sort:header.n,'')" v-html="header.h"/>
                               <span style="padding-left: 8px; padding-bottom: 5px;" v-if="header.tooltip">
-                                  <a href="" style="text-decoration: none; " @click.prevent="show_tooltip(header.tooltip);"><v-icon style="font-size: 8pt;" small color="primary">fa fa-question</v-icon></a>
+                                  <a href="" style="text-decoration: none; " @click.prevent="show_tooltip(header.tooltip);"><v-icon style="font-size: 8pt;" size="small" color="primary">fa fa-question</v-icon></a>
                               </span>
                               <div>
-                                  <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'asc')" class="sort_desc" :class=""><v-icon color="green" small>keyboard_arrow_down</v-icon></a>
-                                    <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'desc')" class="sort_asc" :class=""><v-icon color="red" small>keyboard_arrow_up</v-icon></a>
+                                  <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'asc')" class="sort_desc" ><v-icon color="green" size="small">keyboard_arrow_down</v-icon></a>
+                                    <a href="#" @click.prevent="go_sort(header.sort?header.sort:header.n,'desc')" class="sort_asc" ><v-icon color="red" size="small">keyboard_arrow_up</v-icon></a>
                               </div>
                           </th>
                       </tr>
@@ -59,16 +59,14 @@
                         :key="'tr'+idx"
                       >  
 
-                        <template v-for="(header,h_idx) in form.headers">
+                        <template v-for="(header,h_idx) in form.headers" :key="idx+'_'+h_idx">
                           
                           <!--
                           <template v-if="tr[header.name].type=='dialog' || tr[header.name].type=='ajax_dialog'">
                             <td :key="idx+'_'+h_idx"><a href="" @click.prevent="show_dialog(tr[header.name])">{{tr[header.name].header}}</a></td>
                           </template>
                           -->
-                          <template >
-                            <td v-html="get_data_td(header,h_idx,tr)" :key="idx+'_'+h_idx"></td>
-                          </template>
+                            <td v-html="get_data_td(header,h_idx,tr)"></td>
                           
                           
                         </template>
@@ -76,7 +74,7 @@
                       </tr>
                   </tbody>
               </template>
-            </v-simple-table>
+            </v-table>
           </template>
           <template v-else>
             {{empty_message}}
@@ -250,7 +248,7 @@ export default {
       height: auto !important;
       
     }
-    .results td:last-child{border-bottom: 3px solid $primary;}
+    .results td:last-child{border-bottom: 3px solid rgb(var(--v-theme-primary));}
 
 
 
@@ -258,7 +256,7 @@ export default {
       content: attr(data-label);
       display: block;
       font-weight: bold;
-      color: $primary;
+      color: rgb(var(--v-theme-primary));
       text-decoration: underline;
       
     }

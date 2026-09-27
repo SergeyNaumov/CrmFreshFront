@@ -4,7 +4,7 @@
       <div v-if="values && values.length">      
         <v-dialog v-model="del_errors_out" max-width="500">
         <v-card class="one_to_m" >
-            <v-card-title  class="headline">
+            <v-card-title  class="text-h5">
                 Ошибка
             </v-card-title>
             <ul class="del_error">
@@ -14,18 +14,19 @@
         </v-dialog> 
         <!-- view type: list -->
         <template v-if="field.view_type=='list'">
-            <v-layout>
+            <v-row>
 
                 <draggable
                     v-model="list"
+                    item-key="id"
                     tag="div"
                     @end="move_end"
                     :draggable="field.sort?'.v-card':false"
                 >
-                
-                    <v-card class="one_to_m one_to_m_list"  v-for="(v,vi) in list" :key="v[vi]"> <!--:style="{'background-color': $color.secondary}"-->
-                        <template v-for="(h,hidx) in field.headers">
-                            <div :key="h[hidx]" v-if="v[h.name] && fields_hash[h.name] ">
+                <template #item="{ element: v, index: vi }">
+                    <v-card class="one_to_m one_to_m_list"> <!--:style="{'background-color': $color.secondary}"-->
+                        <template v-for="(h,hidx) in field.headers" :key="hidx">
+                            <div v-if="v[h.name] && fields_hash[h.name] ">
                                 <template v-if="h.change_in_slide">
                                     <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="v.id" :values="v"></change_in_slide>
                                 </template>
@@ -66,13 +67,14 @@
                         </template>
                         <div class="controls">
                             
-                            <v-icon small class="edit" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">edit</v-icon>
-                            <v-icon small color="primary" v-if="make_delete" @click="del(v)">delete</v-icon>
+                            <v-icon size="small" class="edit" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">edit</v-icon>
+                            <v-icon size="small" color="primary" v-if="make_delete" @click="del(v)">delete</v-icon>
                             
                         </div>
                     </v-card>
+                </template>
                 </draggable>
-            </v-layout>
+            </v-row>
         </template>
         
         <!-- view type: default -->
@@ -119,8 +121,8 @@
                 
                 </td>
                 <td class="tool">
-                    <a :href="'/-'+ch_id(v)" v-if="!field.read_only" @click.prevent="open_edit_dialog(v)"><v-icon small class="edit" color="primary">edit</v-icon></a>
-                    <a :href="'/-'+ch_id(v)" @click.prevent="del(v)" v-if="make_delete"><v-icon small color="primary"  >delete</v-icon></a>
+                    <a :href="'/-'+ch_id(v)" v-if="!field.read_only" @click.prevent="open_edit_dialog(v)"><v-icon size="small" class="edit" color="primary">edit</v-icon></a>
+                    <a :href="'/-'+ch_id(v)" @click.prevent="del(v)" v-if="make_delete"><v-icon size="small" color="primary"  >delete</v-icon></a>
                 </td>
             </tr>
             </draggable>
@@ -202,7 +204,7 @@ export default {
 
 
     },
-    beforeDestroy(){
+    beforeUnmount(){
         let field=this.field
         bus.$off( // обновление полей в 1_to_m
             `1_to_m/slide_${field.name}:update_fields`,this._update_fields

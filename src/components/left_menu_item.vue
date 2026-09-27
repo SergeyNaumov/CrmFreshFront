@@ -5,7 +5,7 @@
         <a href="#" @click.prevent="show=!show">
         <v-icon class="arrow">fa-{{show?'chevron-down':'chevron-right'}}</v-icon>
         <div class="icon_slot">
-          <v-icon color="primary" x-small>{{item.icon}}</v-icon>
+          <v-icon color="primary" size="x-small">{{item.icon}}</v-icon>
         </div>
         
         <span>{{item.header}}</span></a>
@@ -23,16 +23,12 @@
         </div>
       </template>
       <template v-else> <!-- дочерний пункт меню -->
-        <template>
           <a :href="get_link(item)" @click.prevent="go_link(item)">  <!-- get_link(item)   " -->
             <div class="icon_slot" v-if="item.icon"> 
-              <v-icon color="primary" x-small>{{item.icon}}</v-icon>
+              <v-icon color="primary" size="x-small">{{item.icon}}</v-icon>
             </div>
             <span :style="item.style">{{item.header}}</span>
           </a>
-        </template>
-
-
       </template>
   </div>
 </template>
@@ -58,12 +54,11 @@ export default {
 </script>
 <style scoped lang="scss">
 
-  @import '@/styles/variables.scss';
 
   a { text-decoration: none; color: black !important;}
-  a:hover { color: $primary;}
+  a:hover { color: rgb(var(--v-theme-primary));}
   a:hover span {text-decoration: underline;}
-  .v-icon {font-size: 12px; color: $primary;}
+  .v-icon {font-size: 12px; color: rgb(var(--v-theme-primary));}
   .v-icon.arrow {padding-right: 10px; font-size: 10px;}
   div {
     font-size: 14px; color: black; 

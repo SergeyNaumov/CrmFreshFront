@@ -45,7 +45,7 @@
                     :items="cf.values"
                     filled
                     item-value="v"
-                    item-text="d"
+                    item-title="d"
                     no-data-text="ничего не найдено"
                     v-model="edit_fields[cf.name].value"
                 />
@@ -75,7 +75,7 @@
           <v-btn color="primary" 
             v-if="(!form.read_only && !field.read_only)"
             :disabled="form_disabled"
-            @click="save(edit_fields,save_action)" small>Сохранить
+            @click="save(edit_fields,save_action)" size="small">Сохранить
           </v-btn>
           <div v-if="form_disabled" class="err">перед сохранением исправьте ошибки</div>
           
@@ -389,16 +389,15 @@ export default {
 </script>
 <style scoped lang="scss">
 
-  @import '@/styles/variables.scss';
-  .headline {padding: 0 0 0 20px; margin: 0; color: $primary;}
+  .text-h5 {padding: 0 0 0 20px; margin: 0; color: rgb(var(--v-theme-primary));}
   .v-dialog {max-width: 800px;}
   .v-dialog .v-card {margin-top: 0; padding-top: 0; max-width: 800px;}
-  .v-dialog > .v-card > .v-card__title {padding-left: 0; padding-bottom: 20px; color: $primary;}
+  .v-dialog > .v-card > .v-card-title {padding-left: 0; padding-bottom: 20px; color: rgb(var(--v-theme-primary));}
   .v-btn {margin-left: 0;}
   
   .row .col {margin: 0; padding-right: 0; padding-top: 0;}
-  .dialog_head {width: 100%; margin: 20px 0 20px 0; border-bottom: 1px solid $primary; padding-bottom: 10px;}
-  .dialog_head div {display: inline-block; width: auto; color: $primary; font-size: 14pt; min-width: 50%;}
+  .dialog_head {width: 100%; margin: 20px 0 20px 0; border-bottom: 1px solid rgb(var(--v-theme-primary)); padding-bottom: 10px;}
+  .dialog_head div {display: inline-block; width: auto; color: rgb(var(--v-theme-primary)); font-size: 14pt; min-width: 50%;}
   .one_to_m .close {
     position: absolute;
     width: 50px;
@@ -409,5 +408,5 @@ export default {
     color: black;
     
   }
-  .v-icon:hover {color :$primary;}
+  .v-icon:hover {color :rgb(var(--v-theme-primary));}
 </style> 

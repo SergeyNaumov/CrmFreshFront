@@ -1,7 +1,7 @@
 <template>      
     <div>
         <errors :errors="errors" v-show="errors.length"></errors>
-        <template v-show="!errors.length">        
+        <template v-if="!errors.length">
             <!-- файловый навигатор -->
             <v-dialog v-model="dialog" min-height="300" max-width="800">
             <v-card class="filenavigator" style="">
@@ -17,8 +17,8 @@
                             v-model="new_folder_name"
                             label="введите название папки"
                         />
-                        <v-btn x-small color="primary" @click="create_folder" :disabled="!new_folder_name">создать новую папку</v-btn>
-                        <v-btn x-small @click.prevent="create_folder_form=false; new_folder_name=''" color="error">отмена</v-btn>
+                        <v-btn size="x-small" color="primary" @click="create_folder" :disabled="!new_folder_name">создать новую папку</v-btn>
+                        <v-btn size="x-small" @click.prevent="create_folder_form=false; new_folder_name=''" color="error">отмена</v-btn>
                     </form>
                     <template v-else>
                         <div>путь: {{file_path}}</div>
@@ -30,14 +30,14 @@
                                     </td>
                                     <td></td>
                                 </tr>
-                                <template v-for="(f,idx) in file_list" >
-                                    <tr v-if="f.type=='dir'"  :key="f.name">
+                                <template v-for="(f,idx) in file_list" :key="idx">
+                                    <tr v-if="f.type=='dir'" >
                                         <td ><v-icon color="primary" >mdi-folder </v-icon>
                                             <a href="" @click.prevent="go_to_folder(f.name)">{{f.name}}</a>
                                         </td>
                                         <td><v-icon @click.prevent="del(f)">mdi-delete</v-icon></td>
                                     </tr>
-                                    <tr v-else :key="idx">
+                                    <tr v-else >
                                         <td  color="primary"><v-icon>insert_drive_file</v-icon> 
                                         <a href="" @click.prevent="goFileCallBack(f.name,{})">{{f.name}}</a> </td>
                                         <td><v-icon @click.prevent="del(f)">mdi-delete</v-icon> </td>
@@ -55,7 +55,7 @@
                                 v-model="upload_value"
                                 label="выберите файлы для загрузки"
                             />
-                            <v-btn x-small color="primary" @click="upload()">загрузить</v-btn>
+                            <v-btn size="x-small" color="primary" @click="upload()">загрузить</v-btn>
                         </form>
                     </template>
             </v-card>
@@ -82,7 +82,7 @@
                     <a href="" @click.prevent="value=v.v" >{{ v.d }}</a>&nbsp;
                     </span>
                 </template>
-                <template v-for="plugin in field.plugins">
+                <template v-for="(plugin, pidx) in field.plugins" :key="pidx">
                     <GPTAssist
                       v-if="plugin.type=='GPTAssist'"
                       :set_value_button="plugin.set_value_button"
@@ -191,7 +191,7 @@ export default {
       bus.$on('field-update:'+this.field.name,this._field_update )
     }
   }, 
-  beforeDestroy(){
+  beforeUnmount(){
     if(!this.parent){
        bus.$off('field-update:'+this.field.name,this._field_update)
     }

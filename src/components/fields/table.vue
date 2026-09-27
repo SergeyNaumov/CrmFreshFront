@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <v-simple-table>
+        <v-table>
             <template v-slot:default>
                 <thead>
                     <tr>
@@ -9,11 +9,11 @@
                         <th v-for="(header,idx) in field.table.headers" >
                             <a href="" @click.prevent="go_sort(idx)" v-html="header.h"/>
                             <span style="padding-left: 8px; padding-bottom: 5px;" v-if="header.tooltip">
-                                <a href="" style="text-decoration: none; " @click.prevent="show_tooltip(header.tooltip);"><v-icon style="font-size: 8pt;" small color="primary">fa fa-question</v-icon></a>
+                                <a href="" style="text-decoration: none; " @click.prevent="show_tooltip(header.tooltip);"><v-icon style="font-size: 8pt;" size="small" color="primary">fa fa-question</v-icon></a>
                             </span>
                             <div>
-                                <a href="#" @click.prevent="go_sort(idx,'asc')" class="sort_desc" :class=""><v-icon color="green" small>keyboard_arrow_down</v-icon></a>
-                                  <a href="#" @click.prevent="go_sort(idx,'desc')" class="sort_asc" :class=""><v-icon color="red" small>keyboard_arrow_up</v-icon></a>
+                                <a href="#" @click.prevent="go_sort(idx,'asc')" class="sort_desc" ><v-icon color="green" size="small">keyboard_arrow_down</v-icon></a>
+                                  <a href="#" @click.prevent="go_sort(idx,'desc')" class="sort_asc" ><v-icon color="red" size="small">keyboard_arrow_up</v-icon></a>
                             </div>
                         </th>
                     </tr>
@@ -30,7 +30,7 @@
                     </tr>
                 </tbody>
             </template>
-        </v-simple-table>
+        </v-table>
 
     </div>
 </template>

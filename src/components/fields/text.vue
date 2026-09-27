@@ -130,7 +130,7 @@
     check_fld(this);
 
   },
-  beforeDestroy(){
+  beforeUnmount(){
     if(!this.parent){
        bus.$off('field-update:'+this.field.name,this._field_update)
     }
@@ -310,12 +310,11 @@
   }
 </script>
 <style scoped lang="scss">
-  @import '@/styles/variables.scss';
   .v-input {font-size: 14px;}
   .popup_list {position: relative; border: 1px solid gray; border-radius: 5px;}
   
   .popup_list div.item {padding: 2px 5px; border-bottom: 1px dotted gray; font-size: 0.8rem;}
-  .popup_list div.item:hover {background:$primary;}
+  .popup_list div.item:hover {background:rgb(var(--v-theme-primary));}
   .popup_list .close {text-align: right;}
   .label {
     left: 0px; right: auto; font-size: 11px !important;

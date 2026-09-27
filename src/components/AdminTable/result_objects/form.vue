@@ -4,37 +4,37 @@
                 {{errors}}
             </pre>
             <div v-if="opt.spoiler && !show" @click.prevent="show=true" class="spoiler">
-                <v-btn @click.prevent="show=true" small color="primary">{{opt.spoiler}}</v-btn>
+                <v-btn @click.prevent="show=true" size="small" color="primary">{{opt.spoiler}}</v-btn>
 
             </div>
             
             <v-dialog v-model="show" max-width="500" class="dialog">
                 <v-card>
                     
-                    <v-card-title  class="headline">{{opt.title}}</v-card-title>
+                    <v-card-title  class="text-h5">{{opt.title}}</v-card-title>
                     <v-card-text>
                         <div class="success" v-if="success">
                             <p>Ваша заявка была успешно отправлена</p>
-                            <p><v-btn small color="primary" @click="show=false; success=false">ок</v-btn></p>
+                            <p><v-btn size="small" color="primary" @click="show=false; success=false">ок</v-btn></p>
                         </div>
 
                         <form enctype="multipart/form-data" method="post" :action="opt.url" :target="iframe_name" :id="form_id" @submit.prevent="submit" v-else> 
                             
-                            <template v-for="f of fields">
-                                <div v-if="f.type=='file'" class="row">
+                            <template v-for="f of fields" :key="f.id || f.name">
+                                <div v-if="f.type=='file'" class="d-flex align-center">
                                     <v-file-input
                                       :label="f.description"
-                                      @change="attach_file(f)"
+                                      @update:model-value="attach_file(f)"
                                       :id="f.id"
                                       
                                     />
                                 </div>
-                                <div v-else-if="f.type=='text'" class="row">
+                                <div v-else-if="f.type=='text'" class="d-flex align-center">
                                     <v-text-field   :label="f.description" :name="f.name"
                                         v-model="f.value"
                                     />
                                 </div>
-                                <div v-else-if="f.type=='textarea'" class="row">
+                                <div v-else-if="f.type=='textarea'" class="d-flex align-center">
                                     <v-textarea :label="f.description" 
                                         v-model="f.value"
                                     />
@@ -43,7 +43,7 @@
                                     {{form_errors[f.name]}}
                                 </div>
                             </template>
-                            <v-btn small @click.prevent="submit">отправить</v-btn>
+                            <v-btn size="small" @click.prevent="submit">отправить</v-btn>
                         </form>
                     </v-card-text>
                 </v-card>

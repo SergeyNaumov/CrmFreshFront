@@ -7,8 +7,8 @@
           <template v-if="field.tree_use">
             <v-autocomplete
               autocomplete="true"
-              :items="values" item-value="v" item-text="d"
-              :search-input.sync="search"
+              :items="values" item-value="v" item-title="d"
+              v-model:search="search"
               
               v-model="value"
               :label="field.description"
@@ -35,7 +35,7 @@
                                 v-model="value"
                                 :descriprion="field.description"
                                 item-value="v"
-                                item-text="d"
+                                item-title="d"
                                 :hint="field.add_description"
                                 :disabled="!!field.read_only || !!form.read_only"
                                 class="color_select"
@@ -57,8 +57,8 @@
                           autocomplete="false"
                           :label="field.description"
                           v-model="value"
-                          :items="values" item-value="v" item-text="d"
-                          :search-input.sync="search"
+                          :items="values" item-value="v" item-title="d"
+                          v-model:search="search"
                           :rounded="$theme.rounded"
                           hide-details
                           no-data-text="Внимание! следует выбрать значение из списка, иначе оно не будет сохранено"
@@ -76,12 +76,11 @@
 
                           :label="field.description"
                           v-model="value"
-                          :items="values" item-value="v" item-text="d"
-                          :search-input.sync="search"
+                          :items="values" item-value="v" item-title="d"
+                          v-model:search="search"
                           :rounded="$theme.rounded"
                           no-data-text="не выбрано"
-                          cache-items
-                          dense
+                          density="compact"
                           :disabled="!!field.read_only"
                           clearable
                           hide-details
@@ -94,7 +93,7 @@
                           :items="values"
                           :style="field.style"
                           item-value="v"
-                          item-text="d"
+                          item-title="d"
                           no-data-text="не выбрано"
                           v-model="value"
                           autocomplete
@@ -323,7 +322,7 @@ export default {
   .error_msg {color: red;}
   .row.colored .col {padding: 0 5px 0 0; }
   .row.colored .col .v-text-field {padding-top: 0; margin-top: 0;}
-  .v-select__slot  {padding-left: 2px;}
+  .v-field__input  {padding-left: 2px;}
   .v-select__selection {padding-left: 5px;}
   
 </style>

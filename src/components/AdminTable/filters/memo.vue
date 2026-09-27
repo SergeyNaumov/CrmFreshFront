@@ -1,7 +1,7 @@
 <template>
     <div>
                 <div class="description">{{field.description}}:</div>
-                <v-flex xs12>
+                <v-col cols="12">
                     <v-menu 
                         v-model="menu_from"
                         :close-on-content-click="true"
@@ -10,14 +10,14 @@
                         readonly
                         min-width="290px"
                     >
-                            <template v-slot:activator="{ on }">
+                            <template v-slot:activator="{ props }">
                             <v-text-field
                                 v-model="field.registered_low"
                                 label="С"
                                 prepend-icon="event"
                                 readonly
                                 clearable
-                                v-on="on"
+                                v-bind="props"
                             ></v-text-field>
                             
                             
@@ -25,7 +25,7 @@
                             <v-date-picker
                                 first-day-of-week="1" 
                                 locale="ru-Ru"
-                                v-model="field.registered_low"
+                                :model-value="$toDate(field.registered_low)" @update:model-value="field.registered_low=$toIso($event)"
                             />
                             
                         
@@ -39,13 +39,13 @@
                         readonly
                         min-width="290px"
                     >
-                            <template v-slot:activator="{ on }">
+                            <template v-slot:activator="{ props }">
                             <v-text-field
                                 v-model="field.registered_hi"
                                 label="По"
                                 prepend-icon="event"
                                 readonly
-                                v-on="on"
+                                v-bind="props"
                                 clearable
                             ></v-text-field>
                             
@@ -54,26 +54,26 @@
                             <v-date-picker
                                 first-day-of-week="1" 
                                 locale="ru-Ru"
-                                v-model="field.registered_hi"
+                                :model-value="$toDate(field.registered_hi)" @update:model-value="field.registered_hi=$toIso($event)"
                             />
                     </v-menu>
-                    <v-flex xs12>
+                    <v-col cols="12">
                       <v-text-field label="текст комментария" v-model="field.message" clearable></v-text-field>
-                    </v-flex>
-                    <v-flex xs12>
+                    </v-col>
+                    <v-col cols="12">
                       <v-select v-if="0"
                           label="Комментарий оставил" 
-                          v-model="field.user_id" :items="field.users" item-value="v" item-text="d"
+                          v-model="field.user_id" :items="field.users" item-value="v" item-title="d"
                           class="input-group--focused"
                           multiple :autocomplete="field.users.length>10" clearable
                       ></v-select>
                       <v-autocomplete
                         label="Комментарий оставил" 
-                        v-model="field.user_id" :items="field.users" item-value="v" item-text="d"
+                        v-model="field.user_id" :items="field.users" item-value="v" item-title="d"
                         multiple :autocomplete="field.users.length>10" clearable
                       ></v-autocomplete>
-                    </v-flex>
-                </v-flex>
+                    </v-col>
+                </v-col>
     </div>
 </template>
 <script>

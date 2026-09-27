@@ -2,45 +2,30 @@
   "name": "edit_form",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "serve": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service serve --port 8081 --host=0.0.0.0",
-    "build": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/default.js vue-cli-service build --target app --name index",
-    "build_trade": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/trade.js vue-cli-service build  --target app --name index",
-    "build_strateg": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/strateg.js vue-cli-service build  --target app --name index",
-    "build_svcms": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/build/config/svcms.js vue-cli-service build  --target app --name index",
-    "lint": "vue-cli-service lint",
-    "report": "vue-cli-service build --report"
+    "dev": "vite",
+    "serve": "vite --host 0.0.0.0 --port 8081",
+    "build": "vite build --mode default",
+    "build_trade": "vite build --mode trade",
+    "build_svcms": "vite build --mode svcms",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@mdi/font": "^4.9.95",
-    "@tinymce/tinymce-vue": "^3.2.8",
-    "axios": "^0.19.2",
-    "chart.js": "^3.4.0",
-    "core-js": "^2.6.12",
-    "css-loader": "^3.6.0",
-    "style-loader": "^1.3.0",
-    "stylus": "^0.54.8",
-    "stylus-loader": "^3.0.2",
+    "@mdi/font": "4.9.95",
+    "axios": "^1.6.8",
+    "mitt": "^3.0.1",
     "tinymce": "^5.9.2",
-    "vue": "^2.6.12",
-    "vue-advanced-cropper": "^0.15.3",
-    "vue-chartjs": "^3.5.1",
-    "vuedraggable": "^2.24.3",
-    "vuetify": "^2.5.0"
+    "vue": "^3.4.21",
+    "vue-advanced-cropper": "^2.8.8",
+    "vuedraggable": "^4.1.0",
+    "vuetify": "3.5.13"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.11.0",
-    "@vue/cli-service": "^3.11.0",
-    "sass": "~1.32.12",
-    "sass-loader": "^7.3.1",
-    "vue-cli-plugin-vuetify": "^0.6.3",
-    "vue-template-compiler": "^2.6.12",
-    "vuetify-loader": "^1.7.1"
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
+    "@vitejs/plugin-vue": "^4.6.2",
+    "sass": "^1.69.7",
+    "vite": "^4.5.3",
+    "vite-plugin-vuetify": "^1.0.2"
   },
   "browserslist": [
     "> 1%",

@@ -43,8 +43,8 @@
                             <option v-for="v in field.values" :value="v.v" v-html="v.d"></option>
                         </select>
 
-                        <v-btn x-small @click.prevent="reset" color="primary">отмена</v-btn>
-                        <v-btn x-small @click.prevent="set_all_value_field(action,3)"  v-if="new_value">перенести записи ({{cnt_selected}})</v-btn>
+                        <v-btn size="x-small" @click.prevent="reset" color="primary">отмена</v-btn>
+                        <v-btn size="x-small" @click.prevent="set_all_value_field(action,3)"  v-if="new_value">перенести записи ({{cnt_selected}})</v-btn>
                     </template>
 
                     <errors :errors="errors" v-if="errors"/>
@@ -72,8 +72,8 @@
 
                 <div>
                       <errors :errors="errors" v-if="errors"/>
-                      <v-btn small @click.prevent="reset" color="primary">отмена</v-btn>
-                      <v-btn small @click.prevent="change_price(action,3)" :disabled="!change_price_settings.value">изменить ({{cnt_selected}})</v-btn>
+                      <v-btn size="small" @click.prevent="reset" color="primary">отмена</v-btn>
+                      <v-btn size="small" @click.prevent="change_price(action,3)" :disabled="!change_price_settings.value">изменить ({{cnt_selected}})</v-btn>
                 </div>
 
 

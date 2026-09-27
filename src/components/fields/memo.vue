@@ -19,8 +19,8 @@
                         :clearable="true"
                         :autofocus="true">
                       </v-textarea>
-                          <v-btn color="primary"  @click="update(l)" small>Внести изменения</v-btn>
-                          <v-btn color="red"  @click="edit(l,false)" small>Отмена</v-btn>
+                          <v-btn color="primary"  @click="update(l)" size="small">Внести изменения</v-btn>
+                          <v-btn color="red"  @click="edit(l,false)" size="small">Отмена</v-btn>
                     </div>
 
                     <div v-else class="memo_item">
@@ -29,8 +29,8 @@
                         <span class="user_name" :style="l.style">{{l.user_name}}:</span>&nbsp;
                         <span class="message" v-html="to_html(l.message)"></span>
                         <div v-if=" (l.make_edit || l.make_delete)">
-                          <v-icon v-if="l.make_edit" small @click="edit(l,true)">edit</v-icon>
-                          <v-icon v-if="l.make_delete" small @click="del(l,idl)">delete</v-icon>
+                          <v-icon v-if="l.make_edit" size="small" @click="edit(l,true)">edit</v-icon>
+                          <v-icon v-if="l.make_delete" size="small" @click="del(l,idl)">delete</v-icon>
                         </div>
                       </div>
                     </div>
@@ -38,7 +38,7 @@
               </v-card>
 
               <div v-if="!form.read_only && !field.read_only" class="new_comment">
-                  <v-btn color="primary" v-if="!view_adding_block" @click="view_adding_block=1" x-small>Новый комментарий</v-btn>
+                  <v-btn color="primary" v-if="!view_adding_block" @click="view_adding_block=1" size="x-small">Новый комментарий</v-btn>
                   <div v-if="view_adding_block" class="adding_block pt-1">
                     <v-textarea v-model="adding_value" class="" :rows="1"
                       :label="'Введите комментарий'"
@@ -47,7 +47,7 @@
                       @keydown="handleKeyDown"
                       :autofocus="true">
                     </v-textarea>
-                    <v-btn color="primary"  @click="add()" x-small>Сохранить</v-btn> <v-btn color="red"  @click="view_adding_block=false" x-small>Отмена</v-btn>
+                    <v-btn color="primary"  @click="add()" size="x-small">Сохранить</v-btn> <v-btn color="red"  @click="view_adding_block=false" size="x-small">Отмена</v-btn>
                   </div>
               </div>
             </template>
@@ -256,7 +256,6 @@
   }
 </script>
 <style scoped lang="scss">
-  @import '@/styles/variables.scss';
   .memo {
     border: 1px solid gray; min-height: 50px;
     padding: 0;
@@ -291,7 +290,7 @@
     
   }
   div.memo div.memo_str:nth-child(2n){
-    background-color: $lighten5;
+    background-color: rgb(var(--v-theme-primary-lighten-5));
   }
   .edit_on{
     margin: 5px;

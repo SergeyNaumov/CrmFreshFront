@@ -9,19 +9,20 @@
 
       <v-sheet style="margin-bottom: 20px;">
             <div v-if="!show_select_date">
-              <v-btn @click="show_select_date=true" small>{{value}}</v-btn> 
+              <v-btn @click="show_select_date=true" size="small">{{value}}</v-btn> 
               &nbsp;
-              <v-btn color="primary" small @click="show_event_form=!show_event_form">{{show_event_form?'Не добавлять в расписание':'Добавить в расписание'}}</v-btn>
+              <v-btn color="primary" size="small" @click="show_event_form=!show_event_form">{{show_event_form?'Не добавлять в расписание':'Добавить в расписание'}}</v-btn>
             </div>
             <div v-if="show_select_date">
               <v-date-picker 
                 
                 first-day-of-week="1" 
                 locale="ru-Ru"
-                v-model="value"
+                :model-value="$toDate(value)"
+                @update:model-value="value=$toIso($event)"
               />
               <br>
-              <v-btn color="primary" @click="show_select_date=false" small>оставить {{value}}</v-btn>
+              <v-btn color="primary" @click="show_select_date=false" size="small">оставить {{value}}</v-btn>
             </div>
       </v-sheet>
           <div v-if="show_event_form && !show_select_date" class="event_form"> 
@@ -46,7 +47,7 @@
               </div>
               <errors :errors="errors_add_time"/>
               
-              <v-btn color="red" small @click="show_event_form=!show_event_form">Не добавлять</v-btn>
+              <v-btn color="red" size="small" @click="show_event_form=!show_event_form">Не добавлять</v-btn>
 
               <v-btn v-if="form_event.interval" @click.prevent="insert_event">Добавить</v-btn>
             </form>
@@ -67,8 +68,8 @@
                     {{selectedEvent.name}}: {{getTime(selectedEvent.start)}} -  {{getTime(selectedEvent.end)}}
                     <hr>
                     <br>
-                    <v-icon small color="primary">fa fa-trash</v-icon>&nbsp;<a href="#" @click.prevent="deleteEvent(selectedEvent)">удалить запись</a> 
-                    <!--<v-btn @click="deleteEvent(selectedEvent)" color="primary" x-small></v-btn> удалить запись-->
+                    <v-icon size="small" color="primary">fa fa-trash</v-icon>&nbsp;<a href="#" @click.prevent="deleteEvent(selectedEvent)">удалить запись</a> 
+                    <!--<v-btn @click="deleteEvent(selectedEvent)" color="primary" size="x-small"></v-btn> удалить запись-->
                     <div v-for="e in errors_delete" class="err">{{e}}</div>
                   </v-card-text>
                 </v-card>
@@ -85,16 +86,17 @@
           
           <v-sheet height="600">
             <div class="types">
-              <v-btn small :color="(type=='day')?'primary':''" @click="type='day'">дни</v-btn>
-              <v-btn small :color="(type=='week')?'primary':''" @click="type='week'">недели</v-btn>
+              <v-btn size="small" :color="(type=='day')?'primary':''" @click="type='day'">дни</v-btn>
+              <v-btn size="small" :color="(type=='week')?'primary':''" @click="type='week'">недели</v-btn>
             </div>
 
             <v-calendar
               v-if="value"
               :ref="refname"
-              v-model="value"
+              :model-value="[$toDate(value)]"
               :weekdays="[1, 2, 3, 4, 5, 6,0]"
-              :type="type"
+              :view-mode="type"
+              @update:model-value="value=$toIso($event[0])"
               :events="events"
               :event-overlap-mode="mode"
               :event-overlap-threshold="30"

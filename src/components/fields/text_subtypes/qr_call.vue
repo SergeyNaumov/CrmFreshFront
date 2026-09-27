@@ -1,11 +1,8 @@
 <template>
   <span>
-    <template>
-
       <template v-if="!for_slide">{{field.show_only_subtype?field.description:'Телефон'}}: </template>
       <span style="padding-left: 3px;" v-for="(p,idx) in splitted" :key="`qr-${idx}`"><a href="#"   @click.prevent="show_qr==p?(show_qr=false):(draw_qr(p))">{{ format_phone(p) }}</a><template v-if="idx!=splitted.length-1"> | </template></span>
 
-    </template>
     <template v-if="show_qr">
       <div class="call_number">
         позвонить по: {{show_qr}}

@@ -3,7 +3,7 @@
 
         <template v-if="field.range">
             <div class="description">{{field.description}}:</div>
-            <v-flex xs6>
+            <v-col cols="6">
                 <v-text-field 
                     prepend-icon="done"
                     label="От"
@@ -11,8 +11,8 @@
                     hide-details
                     clearable
                 />
-            </v-flex>
-            <v-flex xs6>
+            </v-col>
+            <v-col cols="6">
                 <v-text-field
                     prepend-icon="done_all"
                     label="До"
@@ -20,7 +20,7 @@
                     hide-details
                     clearable
                 />
-            </v-flex>
+            </v-col>
               
         </template>
         <template v-else>
@@ -32,7 +32,7 @@
             -->
             <v-combobox
                 v-if="field.autocomplete"
-                :search-input.sync="value"
+                v-model:search="value"
 
                 :label="field.description"
                 v-model="value"

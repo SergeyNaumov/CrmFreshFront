@@ -4,7 +4,7 @@
               <h1  >{{title}}</h1>
 
               <div v-if="permissions.make_create ">
-                <v-icon class="small" color="primary">fa-plus</v-icon>&nbsp;
+                <v-icon size="small" color="primary">fa-plus</v-icon>&nbsp;
                 <a href=""  @click.prevent="new_card()">Добавить</a>
               </div>
               
@@ -23,10 +23,10 @@
                 
               </div>     
             </template>         
-            <v-layout row wrap v-else>
-            <v-flex xs12 lg12 class="mt-2 mb-2" >
-              <v-btn v-if=0 @click="SHOW_FILTERS=!SHOW_FILTERS" small><v-icon color="primary" small>filter_list</v-icon> </v-btn>  
-              <v-flex xs12 lg12 class="mt-2 mb-2">
+            <v-row  v-else>
+            <v-col cols="12" lg="12" class="mt-2 mb-2" >
+              <v-btn v-if=0 @click="SHOW_FILTERS=!SHOW_FILTERS" size="small"><v-icon color="primary" size="small">filter_list</v-icon> </v-btn>  
+              <v-col cols="12" lg="12" class="mt-2 mb-2">
                     <template v-if="1">
                       <div class="links" v-if="1">
                         <div v-for="l in search_links" v-bind:key="l.link"><a :href="l.link" :target="l.target">{{l.description}}</a></div>
@@ -40,31 +40,31 @@
                         <div v-else v-for="h in before_filters_html" :key="h.i" v-html="h"></div>
                       </div>
                     </template>
-              </v-flex>
-            </v-flex>
+              </v-col>
+            </v-col>
                 <template v-if="show_find_button_top">
-                  <v-flex xs12 lg12 v-show="on_filters && on_filters.length">
+                  <v-col cols="12" lg="12" v-show="on_filters && on_filters.length">
 
-                    <v-btn color="primary" small  @click.prevent="go_search(1);" href="" id="search_results"><v-icon  class="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
-                  </v-flex>
+                    <v-btn color="primary" size="small"  @click.prevent="go_search(1);" href="" id="search_results"><v-icon  size="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
+                  </v-col>
                 </template>
-                <v-flex xs12 sm12 md4 lg4 class="mb-2 filters"  v-show="SHOW_FILTERS">
+                <v-col cols="12" sm="12" md="4" lg="4" class="mb-2 filters"  v-show="SHOW_FILTERS">
                       
-                          <v-toolbar @click="SHOW_FILTERS_all=!SHOW_FILTERS_all">
+                          <v-toolbar @click="SHOW_FILTERS_all=!SHOW_FILTERS_all" elevation="4">
                             <!--<v-toolbar-side-icon @click="SHOW_FILTERS_all=!SHOW_FILTERS_all"></v-toolbar-side-icon>-->
                             <v-app-bar-nav-icon color="primary" ></v-app-bar-nav-icon>
-                            <v-subheader>Фильтры</v-subheader>
+                            <v-list-subheader>Фильтры</v-list-subheader>
                           </v-toolbar>
                           <div v-if="SHOW_FILTERS_all && filters_groups.length">
                             
                             <div  v-for="(fg,idx) in filters_groups" class="filters_groups" :key="fg.description" >
                                 <a href="#" @click.prevent="filters_groups[idx].on=!filters_groups[idx].on" color="primary">{{fg.description}}</a>
-                                <template v-for="cid in fg.child">
-                                <div v-if="fg.on"  :key="cid.i" class="filter_block">
+                                <template v-for="cid in fg.child" :key="cid.i">
+                                <div v-if="fg.on" class="filter_block">
                                     <v-checkbox
                                       hide-details
-                                      small
-                                      color="primary" @change="filter_toggle(filters[cid])" v-model="filters[cid]['filter_on']" :label="filters[cid]['description']"
+                                      density="compact"
+                                      color="primary" @update:model-value="filter_toggle(filters[cid], $event)" :model-value="filters[cid]['filter_on']" :label="filters[cid]['description']"
                                     />
                                 </div>
                                 </template>
@@ -74,12 +74,13 @@
                                      <v-checkbox
                                       v-for="f in filters" :key="f.name" class="filter_block"
                                       hide-details
-                                      color="primary" @change="filter_toggle(f)" v-model="f.filter_on"
+                                      density="compact"
+                                      color="primary" @update:model-value="filter_toggle(f, $event)" :model-value="f.filter_on"
                                       :label="f.description"
                                     />
                           </div>
    
-                </v-flex>
+                </v-col>
                 <template v-if="0">
                   {{on_filters}}
                   <hr>
@@ -98,13 +99,13 @@
                     :filters_values="filters_values"
                   />
                   <template v-if="!show_find_button_top">
-                    <v-flex xs12 lg12 v-show="on_filters && on_filters.length">
-                      <v-btn color="primary" small  @click.prevent="go_search(1)" href="" id="search_results"><v-icon  class="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
-                    </v-flex>
+                    <v-col cols="12" lg="12" v-show="on_filters && on_filters.length">
+                      <v-btn color="primary" size="small"  @click.prevent="go_search(1)" href="" id="search_results"><v-icon  size="small"> fa fa-search</v-icon>&nbsp;искать</v-btn>
+                    </v-col>
                   </template>
                 
             
-            <v-flex md12 class="mt-1" >
+            <v-col md="12" class="mt-1" >
 
                 <!-- [loading...] -->
                 <v-progress-linear
@@ -148,8 +149,8 @@
                   />
                   
                 </template>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
       </div>
 
 </template>
@@ -401,7 +402,9 @@ export default {
               alert('!!'+e);
           });
     },
-    filter_toggle(f){  
+    filter_toggle(f, value){
+          if(typeof value !== 'undefined')
+            f.filter_on = value;
           if(f.filter_on)
             f.filter_order=this.ORDER;
           
@@ -575,7 +578,6 @@ export default {
 }
 </script>
 <style lang="scss">
-  @import '@/styles/variables.scss';
   .is_headapp h1 {margin-bottom: 20px;;} 
   div.errors {margin: 3rem;}
   div.errors .error {background-color: #ffffff !important;  color: red;}
@@ -590,7 +592,7 @@ export default {
   .filters_groups div {
     padding: 0;
   }
-  .filters_groups .v-input__control{
+  .filters_groups .v-field{
     padding-left: 1rem;
   }
   .filters_groups .v-messages{display: none;}
@@ -614,7 +616,6 @@ export default {
     padding: 5px 5px 5px 20px;
   }
 
-  .list--two-line .list__tile {height: 20px; margin-top: 20px;}
 
   div.links{margin: 1rem;}
   div.log pre {font-family: arial; font-size: 10pt; border: 1px dotted gray;}
@@ -625,15 +626,18 @@ export default {
 
   
   .filter_block:nth-last-child {border-bottom: none;}
-  .filter_block:nth-child(2n) {background-color: $lighten4;}
-  .filter_block.v-input--selection-controls { margin: 0;}
+  .filter_block:nth-child(2n) {background-color: rgb(var(--v-theme-primary-lighten-4));}
+  .filter_block.v-input { display: flex; align-items: center; margin: 0 !important;}
+  .filter_block .v-selection-control { min-height: auto; }
+  .filter_block .v-label { margin-bottom: 0 !important; }
+  .filter_block .v-input__details { display: none; }
   .filter_block {padding: 5px; 
-    border: 1px solid $lighten4;
+    border: 1px solid rgb(var(--v-theme-primary-lighten-4));
   
   }
   .filters_groups .filter_block {padding: 8px 0px;}
   .filters_groups .filter_block:nth-child(2n) {background-color: #E8EAF6; }
-  .filters_groups .v-input--selection-controls{margin-top: 0; margin-bottom: 0;}
+  .filters_groups .v-selection-control{margin-top: 0; margin-bottom: 0;}
   .filters_list {margin-top: 10px;}
   .search_plugin div {margin-top: 15px;}
   .search_plugin div .v-icon {margin-right: 10px;}

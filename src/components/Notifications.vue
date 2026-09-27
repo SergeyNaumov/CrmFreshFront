@@ -3,25 +3,25 @@
         
     <v-expansion-panels>
         <v-expansion-panel>
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
                 <v-card-title>
                     Сообщения от системы<v-badge color="red" v-if="not_read" :content="not_read" ></v-badge>
                     
                 </v-card-title>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
                 <v-dialog v-model="dialog">
                     <v-card v-if="message">
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn
-                                color="green darken-1"
-                                text
+                                color="green-darken-1"
+                                variant="text"
                                 @click="set_readed(message,0); dialog=false"
                             >
                                 Сделать не прочитанным
                             </v-btn>
-                            <v-btn color="primary" text @click="dialog = false">
+                            <v-btn color="primary" variant="text" @click="dialog = false">
                                 Закрыть
                             </v-btn>
                         </v-card-actions>
@@ -47,7 +47,7 @@
                     </tr>
                 </table>
 
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
         </v-expansion-panel>
     </v-expansion-panels>
 
@@ -180,7 +180,7 @@ export default{
 }
 </script>
 <style scoped>
-    .v-card__text {padding: 20px !important;}
+    .v-card-text {padding: 20px !important;}
     td {
         font-size: 0.8rem;
         vertical-align: top;

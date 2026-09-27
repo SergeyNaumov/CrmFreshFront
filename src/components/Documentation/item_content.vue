@@ -92,21 +92,20 @@ export default {
 }
 </script>
 <style  scoped lang="scss">
-    @import '@/styles/variables.scss';
     
     h1 {font-size: 36px !important; margin-top: 20px !important; margin-bottom: 10px !important;}
-    h2 {font-size: 28px !important; margin-top: 20px !important; color: $primary;}
-    h3 {font-size: 22px !important; margin-top: 20px !important; color: $primary;}
-    h4 {font-size: 18px !important; margin-top: 20px !important; color: $primary;}
-    h5 {font-size: 16px !important; margin-top: 20px !important; color: $primary;}
+    h2 {font-size: 28px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
+    h3 {font-size: 22px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
+    h4 {font-size: 18px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
+    h5 {font-size: 16px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
 
-    h6 {font-size: 15px !important; margin-top: 20px !important; color: $primary;}
+    h6 {font-size: 15px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
     @media only screen and (max-width: 800px) {
         h1 {font-size: 26px !important; margin-top: 20px !important; margin-bottom: 10px !important;}
-        h2 {font-size: 24px !important; margin-top: 20px !important; color: $primary;}
-        h3 {font-size: 22px !important; margin-top: 20px !important; color: $primary;}
-        h4 {font-size: 18px !important; margin-top: 20px !important; color: $primary;}
-        h5 {font-size: 16px !important; margin-top: 20px !important; color: $primary;}
+        h2 {font-size: 24px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
+        h3 {font-size: 22px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
+        h4 {font-size: 18px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
+        h5 {font-size: 16px !important; margin-top: 20px !important; color: rgb(var(--v-theme-primary));}
     }
     .v-dialog{
         width: unset;

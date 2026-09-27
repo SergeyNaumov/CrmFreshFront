@@ -8,12 +8,11 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template v-slot:activator="{ props }">
         <v-btn
           color="primary"
           dark
-          v-bind="attrs"
-          v-on="on"
+          v-bind="props"
           v-if="code_for_show"
         >
           Продолжить просмотр
@@ -36,7 +35,7 @@
           <v-toolbar-items>
             <v-btn
               dark
-              text
+              variant="text"
               @click="dialog = false"
             >
               Закрыть
@@ -55,8 +54,8 @@
        <errors :errors="errors"/>       
 
       <div class="links" >
-          <template v-for="(l,idx) in links">
-              <a   :key="idx" :href="l.link" target="_blank">{{l.description}}</a>
+          <template v-for="(l,idx) in links" :key="idx">
+              <a   :href="l.link" target="_blank">{{l.description}}</a>
               <template v-if="idx < links.length -1 ">&nbsp;|&nbsp;</template>
           </template>
 

@@ -5,29 +5,29 @@
           <template v-else>-</template>
         </template>
         <template v-else>
-          <v-layout row wrap>
-              <v-flex pl-3 md6 xs12 >
+          <v-row >
+              <v-col class="pl-3" md="6" cols="12" >
                   <v-autocomplete
                     v-model="day"
                     :items="day_list"
                     no-data-text="недопустимое значение"
                     label="Выберите день"
                   />
-                  </v-flex>
-              <v-flex pl-3 md6 xs12 >
+                  </v-col>
+              <v-col class="pl-3" md="6" cols="12" >
                   <v-select
                     v-model="mon"
                     :items="mon_list"
                     item-value="v"
-                    item-text="d"
+                    item-title="d"
                     label="Выберите месяц"
                   />
-              </v-flex>
+              </v-col>
               <div class="clear" v-show="need_empty"><small>
                 <a href="#" @click.prevent="set_current()">установить текущие значения</a> |
                 <a href="#" @click.prevent="clear()"> очистить</a></small>
               </div>
-          </v-layout>
+          </v-row>
         </template>
 
     </div>

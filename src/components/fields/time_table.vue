@@ -18,7 +18,7 @@
             </v-card-text>
           </v-card>
           <!--<v-card
-            color="grey lighten-4"
+            color="grey-lighten-4"
             min-width="350px"
             flat
           >
@@ -43,7 +43,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn
-                text
+                variant="text"
                 color="secondary"
                 @click="selectedOpen = false"
               >
@@ -53,7 +53,7 @@
           </v-card>-->
         </v-menu>
     <p>
-      <span>{{value}}</span> <v-btn color="primary" small @click="show_event_form=!show_event_form">{{show_event_form?'Не добавлять в расписание':'Добавить в расписание'}}</v-btn>
+      <span>{{value}}</span> <v-btn color="primary" size="small" @click="show_event_form=!show_event_form">{{show_event_form?'Не добавлять в расписание':'Добавить в расписание'}}</v-btn>
     </p>
 
     <div v-if="show_event_form" class="event_form"> 
@@ -77,7 +77,8 @@
         v-if="show_select_date"
         first-day-of-week="1" 
         locale="ru-Ru"
-        v-model="value"
+        :model-value="$toDate(value)"
+        @update:model-value="value=$toIso($event)"
       />
 
 
@@ -86,9 +87,10 @@
       <v-calendar
         v-if="field"
         :ref="refname"
-        v-model="value"
+        :model-value="[$toDate(value)]"
         :weekdays="weekday"
-        :type="type"
+        :view-mode="type"
+        @update:model-value="value=$toIso($event[0])"
         :events="events"
         :event-overlap-mode="mode"
         :event-overlap-threshold="30"
@@ -357,8 +359,7 @@
 
 
 <style scoped lang="scss">
-  @import '@/styles/variables.scss';
-  .v-toolbar__title {color: #bebebe; padding-top: 15px; font-size: 1rem;}
+  .v-toolbar-title {color: #bebebe; padding-top: 15px; font-size: 1rem;}
   .event_form {border: 1px solid gray; padding: 20px; margin-top: 20px; margin-bottom: 20px; border-radius: 5px;}
   h2 {font-size: 0.9rem; color: black;}
 </style>

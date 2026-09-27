@@ -1,6 +1,5 @@
 <template>
     <div>
-        <template>
             <v-text-field 
                   v-bind:label="field.description"
                   v-model="field.value"
@@ -8,7 +7,6 @@
                   clearable
                   hide-details
             />
-        </template>
     </div>
 </template>
 <script>

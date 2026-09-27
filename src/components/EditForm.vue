@@ -3,7 +3,7 @@
         <!-- для вызова попапа извне -->
         <v-dialog v-model="popup.show" max-width="500">
           <v-card>
-            <v-card-title  class="headline">{{popup.header}}</v-card-title>
+            <v-card-title  class="text-h5">{{popup.header}}</v-card-title>
             <v-card-text>
               {{popup.body}}
             </v-card-text>
@@ -16,7 +16,7 @@
             </pre>
             
             <v-card v-if="fatal_errors.length">
-              <v-card-title  class="headline">Критическая ошибка</v-card-title>
+              <v-card-title  class="text-h5">Критическая ошибка</v-card-title>
               <v-card-text >
                       <errors :errors="fatal_errors"/>
               </v-card-text>
@@ -31,7 +31,7 @@
                     </template>
                     <v-dialog v-model="dialog" max-width="500">
                         <v-card>
-                            <v-card-title  class="headline">{{dialog_header}}</v-card-title>
+                            <v-card-title  class="text-h5">{{dialog_header}}</v-card-title>
                             <v-card-text>
                               <template v-if="log.length">
                                   <b>обратитесь к разработчику: </b>
@@ -45,8 +45,8 @@
                             <!--
                             <v-card-actions ">
                                 <div class="flex-grow-1"></div>
-                                <v-btn color="primary darken-1" text @click="dialog = false">Продолжить работу</v-btn>
-                                <v-btn color="red darken-1" text v-if="exists_opener()" @click="window_close()">Закрыть</v-btn>
+                                <v-btn color="primary-darken-1" variant="text" @click="dialog = false">Продолжить работу</v-btn>
+                                <v-btn color="red-darken-1" variant="text" v-if="exists_opener()" @click="window_close()">Закрыть</v-btn>
                             </v-card-actions>
                             -->
                         </v-card>
@@ -54,11 +54,11 @@
 
                     <h1 color="primary" class="form_header" v-html="form.title"/>
                     <form autocomplete="off">
-                    <v-layout row wrap>
+                    <v-row >
 
                         <template v-if="cols.length"> <!-- Колонки, блоки -->
                           <!--  -->
-                            <v-flex pl-3 :class="'md'+12/Math.floor(cols.length)" xs12 v-for="c in cols" :key="c.idx">
+                            <v-col class="pl-3" :md="12/Math.floor(cols.length)" cols="12" v-for="c in cols" :key="c.idx">
 
                             <v-card class="block" v-for="block in c" :key="block.name">
                                 <v-toolbar color="primary" dark height="35px" @click="block_toggle(block)">
@@ -72,47 +72,47 @@
 
                                 <div v-show="!block.hide" pb-1>
                                     <form-block :block_name="block.name" :form="form"  :save="save" :values="values"></form-block>
-                                    <v-flex xs12 lg12 text-lg-center>
+                                    <v-col cols="12" lg="12" class="text-lg-center">
 
                                     <v-btn color="primary" v-if="!form.read_only && !block.not_save_button" :disabled="disabled_form" @click="save()">Сохранить</v-btn> 
-                                    </v-flex>
+                                    </v-col>
                                 </div>
                                 
                             </v-card>
 
-                            </v-flex>
+                            </v-col>
                         </template>
                         <template v-else-if="tabs.length"> <!-- Табы -->
                               <v-tabs v-model="tab">
                                 <v-tab v-for="(tab,idx) in tabs" :key="'tab'+idx" :style="tab.style" v-html="tab.description"/>
 
                               </v-tabs>
-                              <v-flex md12 >
+                              <v-col md="12" >
                               <v-card style="width: 100%;">
-                                <v-tabs-items v-model="tab" >
-                                  <v-tab-item v-for="(tab,idx) in tabs" :key="'tabitm'+idx">
+                                <v-window v-model="tab" >
+                                  <v-window-item v-for="(tab,idx) in tabs" :key="'tabitm'+idx">
                                     <form-block :block_name="tab.name" :form="form"  :save="save" :values="values"></form-block>
-                                  </v-tab-item>
-                                </v-tabs-items>
+                                  </v-window-item>
+                                </v-window>
                               </v-card>
-                              </v-flex>
+                              </v-col>
                               
                         </template>
                         <template v-else> 
-                            <v-flex md12 >
+                            <v-col md="12" >
 
-                            <v-card style="padding: 1rem;">
+                            <v-card style="padding: 1rem 0;">
 
                                 <form-block :block_name="''" :form="form"  :save="save" :values="values"></form-block>
-                                <v-flex xs12 lg12 text-lg-center>
+                                <v-col cols="12" lg="12" class="text-lg-center">
                                 
                                 <v-btn color="primary" v-if="!form.read_only" :disabled="disabled_form" @click="save()">Сохранить</v-btn> 
-                                </v-flex>
+                                </v-col>
                             </v-card>
-                            </v-flex>
+                            </v-col>
 
                         </template>
-                    </v-layout>
+                    </v-row>
                     </form>
             
         </template>
@@ -202,7 +202,7 @@ created(){
 
   this.Init();
 },
-beforeDestroy(){
+beforeUnmount(){
   bus.$off('change_field',this._change_field);
   bus.$off('save_field_1_to_m',this._save_field_1_to_m);
   bus.$off('frontend_button_process',this._frontend_button_process);
@@ -416,7 +416,9 @@ methods: {
     .v-application {line-height: 1;}  
     body {font-size: 14px;}
     
-    div.field {margin: 0 20px;}
+    div.field {margin: 8px 0;}
+    div.field [class*="v-col"] {padding-left: 0; padding-right: 0;}
+    div.field .v-row {margin-left: 0; margin-right: 0;}
     
     button {margin: 1rem;}
     .container {max-width: 1200px;}

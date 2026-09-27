@@ -2,8 +2,8 @@
     <div>
         <div class="description">{{field.description}}:</div>
         <template v-if="field.range">
-            <v-layout row wrap>
-                <v-flex pl-3 md6 xs12 >
+            <v-row >
+                <v-col class="pl-3" md="auto" cols="auto" >
                     <v-menu
                         v-model="menu[0]"
                         :close-on-content-click="false"
@@ -15,7 +15,7 @@
                         min-width="290px"
                     >
                     
-                        <template v-slot:activator="{ on }">
+                        <template v-slot:activator="{ props }">
 
                             <v-text-field
                                 v-model="field.value_low"
@@ -23,9 +23,9 @@
                                 prepend-icon="event"
                                 readonly
                                 clearable
-                                v-on="on"
+                                v-bind="props"
                                 @click="show_time[0]=false"
-                                style="max-width: 250px;"
+                                style="width: 220px;"
                             />
 
                         
@@ -35,18 +35,18 @@
                             v-if="!show_time[0]"
                             first-day-of-week="1" 
                             locale="ru-Ru"
-                            v-model="dat_value0" @input="select_dat(0)"
+                            :model-value="$toDate(dat_value0)" @update:model-value="dat_value0=$toIso($event); select_dat(0)"
                         />
                         <v-time-picker 
                             v-if="show_time[0]"
                             format="24hr"
                             v-model="time_value0" 
-                            @input="select_cal(0)"
+                            @update:model-value="select_cal(0)"
                         />
                         
                     </v-menu>
-                </v-flex>
-                <v-flex pl-3 md6 xs12 >
+                </v-col>
+                <v-col class="pl-3" md="auto" cols="auto" >
                     <v-menu
                         v-model="menu[1]"
                         :close-on-content-click="false"
@@ -57,15 +57,15 @@
                         min-width="290px"
                     >
                     
-                        <template v-slot:activator="{ on }">
+                        <template v-slot:activator="{ props }">
                          <v-text-field
                             v-model="field.value_hi"
                             label="По"
                             prepend-icon="event"
                             readonly
                             clearable
-                            v-on="on"
-                            style="max-width: 250px;"
+                            v-bind="props"
+                            style="width: 220px;"
                             @click="show_time[1]=false"
                         />
                         
@@ -75,20 +75,20 @@
                             v-if="!show_time[1]"
                             first-day-of-week="1" 
                             locale="ru-Ru"
-                            v-model="dat_value1" @input="select_dat(1)"
+                            :model-value="$toDate(dat_value1)" @update:model-value="dat_value1=$toIso($event); select_dat(1)"
                         />
                         <v-time-picker 
                             v-if="show_time[1]"
                             format="24hr"
                             v-model="time_value1" 
-                            @input="select_cal(1)"
+                            @update:model-value="select_cal(1)"
                         />
                     </v-menu>
-                </v-flex>
-                <v-flex pl-3 md12 xs12 class="err_select" v-if="err_select">
+                </v-col>
+                <v-col class="pl-3 err_select" md="12" cols="12" v-if="err_select">
                     дата начала периода больше даты его окончания
-                </v-flex>
-            </v-layout>
+                </v-col>
+            </v-row>
         </template>
         <template v-else>
 
@@ -183,12 +183,13 @@ export default {
 </script>
 <style scoped>
 .err_select {text-align: center;padding-left: 20px; color: red; font-size: 0.8rem; font-weight: bold;}
-.v-input__icon--clear {margin-right: 20px;}
+.v-field__clearable {margin-right: 20px;}
 .description {
     margin-top: 5px;
     color: rgba(0, 0, 0, 0.54);
     font-size: 12px;
     font-weight: 700;
-    
 }
+.v-row {display: flex; flex-wrap: wrap; gap: 16px; margin: 0;}
+.v-row > div {padding: 0 !important; margin: 0 !important;}
 </style>

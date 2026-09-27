@@ -6,8 +6,8 @@
             <v-card>
                 <v-card-text>
         <form @submit.prevent="save()">
-            <template v-for="f in fields">
-                <div :key="f.name" v-if="/^(text|textarea)$/.test(f.type)">
+            <template v-for="f in fields" :key="f.name">
+                <div v-if="/^(text|textarea)$/.test(f.type)">
                     <div class="description">{{ f.description }}:</div>
                     
                     <template v-if="f.type=='text'">
@@ -28,8 +28,8 @@
                 <v-card-actions>
                     <div class="flex-grow-1"></div>
                     
-                    <v-btn color="primary darken-1" text @click="save">Сохранить</v-btn>
-                    <v-btn color="red darken-1" text @click="close_edit_form">Закрыть форму</v-btn>
+                    <v-btn color="primary-darken-1" variant="text" @click="save">Сохранить</v-btn>
+                    <v-btn color="red-darken-1" variant="text" @click="close_edit_form">Закрыть форму</v-btn>
                 </v-card-actions>
             </v-card>
             

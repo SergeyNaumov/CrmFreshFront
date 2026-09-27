@@ -1,17 +1,15 @@
 <template>
     <div>
 
-        <template>
             <v-select
                 :label="field.description"
                 v-model="value"
-                :items="values" item-value="v" item-text="d"
+                :items="values" item-value="v" item-title="d"
                 
                 
                 cache-items
                 clearable
             ></v-select>
-        </template>
     </div>
 </template>
 <script>

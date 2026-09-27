@@ -8,7 +8,7 @@
       <div v-if="explain_query" v-html="sql_format(explain_query)"></div>
   <v-dialog v-model="dialog" max-width="500">
       <v-card>
-        <v-card-title  class="headline">{{dialog_header}}</v-card-title>
+        <v-card-title  class="text-h5">{{dialog_header}}</v-card-title>
 
         <v-card-text>
           {{dialog_body}}
@@ -26,18 +26,18 @@
 
         <v-card-actions v-if="dialog_type=='delete_dialog'">
           <div class="flex-grow-1"></div>
-          <v-btn color="primary darken-1" text @click="delete_element()">Да</v-btn>
-          <v-btn color="red darken-1" text  @click="dialog=false; dialog_type=''">Нет</v-btn>
+          <v-btn color="primary-darken-1" variant="text" @click="delete_element()">Да</v-btn>
+          <v-btn color="red-darken-1" variant="text"  @click="dialog=false; dialog_type=''">Нет</v-btn>
         </v-card-actions>
         <v-card-actions v-else>
           <div class="flex-grow-1"></div>
-          <v-btn color="primary darken-1" text @click="dialog=false; dialog_type=''">Ок</v-btn>
+          <v-btn color="primary-darken-1" variant="text" @click="dialog=false; dialog_type=''">Ок</v-btn>
         </v-card-actions>
       </v-card>
 
   </v-dialog>
       <pre v-if="0">{{selected_ids}}</pre>
-      <div sm12 md12 lg12 class="mt-5 text-left" v-if="results.headers">
+      <div md="12" lg="12" class="mt-5 text-left" v-if="results.headers">
             <!--<h2 class="subheadling mb-2">Результаты поиска</h2>-->
 
             <div v-for="(o,idx) in out_before_search" :key="idx" v-html="o"></div>
@@ -45,8 +45,8 @@
               
               <template v-if="results.count_total">
                     
-                    <div class="text-xs-left"><u>Найдено записей: {{results.count_total}}</u></div>
-                    <div class="text-xs-left">
+                    <div class="text-left"><u>Найдено записей: {{results.count_total}}</u></div>
+                    <div class="text-left">
                       <v-pagination v-if="results.count_pages>1" :length="results.count_pages" v-model="page"></v-pagination>
                     </div>
                     <div class="results_wrap">
@@ -70,8 +70,8 @@
                             <th v-for="h in results.headers" :key="h.head_idx"> 
                                 <span v-html="h.h"></span>
                                 <span v-if="h.make_sort" class="sort_button">
-                                  <a href="#" @click.prevent="go_search(page,{priority_sort: [h.n,'asc']})" class="sort_desc" :class="{'bold': (h.sorted=='desc')}"><v-icon color="green" small>keyboard_arrow_down</v-icon></a>
-                                  <a href="#" @click.prevent="go_search(page,{priority_sort: [h.n,'desc']})" class="sort_asc" :class="{'bold': (h.sorted=='asc')}"><v-icon color="red" small>keyboard_arrow_up</v-icon></a>
+                                  <a href="#" @click.prevent="go_search(page,{priority_sort: [h.n,'asc']})" class="sort_desc" :class="{'bold': (h.sorted=='desc')}"><v-icon color="green" size="small">keyboard_arrow_down</v-icon></a>
+                                  <a href="#" @click.prevent="go_search(page,{priority_sort: [h.n,'desc']})" class="sort_asc" :class="{'bold': (h.sorted=='asc')}"><v-icon color="red" size="small">keyboard_arrow_up</v-icon></a>
                                   
                                 </span>
                             </th>
@@ -134,15 +134,15 @@
 
                                   <template v-else-if="td.type=='select'">
                                       <v-select 
-                                          v-model="td.value" :items="results.selects[td.name]" item-value="v" item-text="d"
-                                          @change="change_in_search(tr,td)"
+                                          v-model="td.value" :items="results.selects[td.name]" item-value="v" item-title="d"
+                                          @update:model-value="change_in_search(tr,td)"
                                       ></v-select>
                                       <div class="saved" :id="td.name+'_'+tr.key"></div>
                                       <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </template>
 
                                   <div style="text-align: center;" v-else-if="td.type=='checkbox' || td.type=='switch'">
-                                      <v-checkbox v-model="td.value" hide-details row @change="change_in_search(tr,td)"></v-checkbox>
+                                      <v-checkbox v-model="td.value" hide-details row @update:model-value="change_in_search(tr,td)"></v-checkbox>
                                     <div class="saved" :id="td.name+'_'+tr.key"></div>
                                     <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </div>
@@ -192,16 +192,16 @@
                                   
                                 </div>
                               </td>
-                              <td class="text-xs-left text-md-right controls" v-if="!permissions.not_edit || permissions.make_delete">
+                              <td class="text-left text-md-right controls" v-if="!permissions.not_edit || permissions.make_delete">
                                 
                                 
-                                <v-btn small v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
+                                <v-btn size="small" v-if="!permissions.not_edit" @click="go_to_edit(tr.key)" >
                                   <a :href="edit_link(tr)" @click.prevent="go_to_edit(tr.key)">
-                                    <v-icon  color="primary" small>edit</v-icon>
+                                    <v-icon  color="primary" size="small">edit</v-icon>
                                   </a>
                                 </v-btn>&nbsp;
-                                <v-btn v-if="permissions.make_delete" @click="delete_dialog(tr.key)" small>
-                                  <v-icon small  color="primary" icon >delete</v-icon>
+                                <v-btn v-if="permissions.make_delete" @click="delete_dialog(tr.key)" size="small">
+                                  <v-icon size="small"  color="primary" >delete</v-icon>
                                 </v-btn>
                               </td>
                             </tr>
@@ -209,7 +209,7 @@
                         </tbody>
                       </table>
                     </div>
-                    <div class="text-xs-left" v-if="results.count_pages>1">
+                    <div class="text-left" v-if="results.count_pages>1">
                       <v-pagination :length="results.count_pages" v-model="page"></v-pagination>
                     </div>
               </template>
@@ -283,19 +283,7 @@ export default {
 };
 </script>
 <style scope lang="scss">
-@import '@/styles/variables.scss';
-.errors {color: $error;}
-.theme--light.v-pagination{
-  
-  
-}
-  .theme--light.v-pagination .v-pagination__item{
-    width: auto;
-    font-size: 0.9rem;
-    min-width: 5px;
-    
-  }
-  .v-pagination__item {font-size: 14px; width: 15px;}
+.errors {color: rgb(var(--v-theme-error));}
  .memo_item{
    font-size: 0.9rem ;
  }
@@ -334,7 +322,7 @@ export default {
 }
 
 .results tr:nth-child(2n+1) {
-  background: $lighten5;
+  background: rgb(var(--v-theme-primary-lighten-5));
 } 
 /*.results tr.header {
   
@@ -360,10 +348,10 @@ export default {
 }
 
 
-.application a {text-decoration: none;}
-.application a.sort_asc .theme--light.v-icon {color: green;}
-.application a.sort_desc .theme--light.v-icon {color: red;}
-.application a.bold .theme--light.v-icon {font-weight: bold;}
+.v-application a {text-decoration: none;}
+.v-application a.sort_asc .v-icon {color: green;}
+.v-application a.sort_desc .v-icon {color: red;}
+.v-application a.bold .v-icon {font-weight: bold;}
 /*
 .application .theme--light.v-icon, .theme--light a.sort_asc .v-icon {color: green;}
 .application .theme--light.v-icon, .theme--light .bold .v-icon {font-weight: bold;}
@@ -390,15 +378,15 @@ export default {
     .results td .field{
       margin: 0 0;  
       padding: 10px 0;
-      border-bottom: 1px dotted $primary;
+      border-bottom: 1px dotted rgb(var(--v-theme-primary));
     }
     .results td.controls{
       width: 100%;
       padding-bottom: 2rem;
-      border-bottom: 1px solid $primary;
+      border-bottom: 1px solid rgb(var(--v-theme-primary));
     }
     /*.results td:first-child{border-top: 2px solid gray;}*/
-    .results td:last-child{border-bottom: 3px solid $primary;}
+    .results td:last-child{border-bottom: 3px solid rgb(var(--v-theme-primary));}
 
 
 
@@ -406,7 +394,7 @@ export default {
       content: attr(data-label);
       /*position: absolute;*/
       font-weight: bold;
-      color: $primary;
+      color: rgb(var(--v-theme-primary));
       text-decoration: underline;
       
     }

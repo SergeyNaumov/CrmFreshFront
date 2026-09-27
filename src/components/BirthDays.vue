@@ -3,13 +3,13 @@
         
         <v-expansion-panels>
         <v-expansion-panel>
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
                 <v-card-title>
                     Ближайшие дни рождения <v-badge color="red" v-if="near" :content="near" ></v-badge>
                     
                 </v-card-title>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
                 <div class="table_wrap">
                     <table>
                         <tr v-for="m in list" :class="{'bd':m.days==0, 'ready':m.days<7}">
@@ -19,7 +19,7 @@
                         </tr>
                     </table>
                 </div>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
         </v-expansion-panel>
     </v-expansion-panels>
 

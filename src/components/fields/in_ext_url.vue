@@ -69,7 +69,7 @@
     
        
   },
-  beforeDestroy(){
+  beforeUnmount(){
     if(!this.parent){
        bus.$off('field-update:'+this.field.name,this._field_update)
     }

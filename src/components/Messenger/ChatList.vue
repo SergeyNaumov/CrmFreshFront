@@ -53,10 +53,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-	@import '@/styles/main.scss'; 
-	.header {
+	@use '../../styles/main' as *;
+.header {
 	    padding: 5px;
-	    background-color: $lighten2;
+	    background-color: rgb(var(--v-theme-primary-lighten-2));
 	    color: #fff;
 	    text-align: left;
 	    font-weight: bold;

@@ -4,11 +4,11 @@
       <v-row  no-gutters class="manager_panel" >
         <v-col class="p1" cols="12" sm="6" md="6" style="padding: 5px;">
           <!--
-            <a href=""><v-icon small color="primary">fa-user-alt</v-icon></a>
+            <a href=""><v-icon size="small" color="primary">fa-user-alt</v-icon></a>
             <a :href="manager.link">{{manager.name}}</a>
           -->
           
-            <v-icon small color="primary">fa-user-alt</v-icon>
+            <v-icon size="small" color="primary">fa-user-alt</v-icon>
             {{manager.name || manager.login}}
             
           
@@ -16,7 +16,7 @@
         </v-col>
 
         <v-col class="p3"  cols="12" sm="6" md="6">
-          <v-icon small color="primary">fa-calendar-alt</v-icon> {{curdate}}
+          <v-icon size="small" color="primary">fa-calendar-alt</v-icon> {{curdate}}
         </v-col>
       </v-row>
       <v-row>
@@ -43,7 +43,7 @@
           <div class="item" v-for="(n,idx) in news_list" :key="'newsitem'+idx">
             <v-row>
               <v-col cols="12" sm="12" md="10" class="header">{{n.header}}</v-col>
-              <v-col cols="12" sm="12" md="2" class="reg"><v-icon small color="primary">fa-calendar-alt</v-icon> {{n.registered}}</v-col>
+              <v-col cols="12" sm="12" md="2" class="reg"><v-icon size="small" color="primary">fa-calendar-alt</v-icon> {{n.registered}}</v-col>
             </v-row>
             <div class="body" v-html="n.body" />
             <hr/>
@@ -118,7 +118,6 @@ export default {
 }
 </script>
 <style scope lang="scss">
-  @import '@/styles/variables.scss';
   
   .main {
     height: 100%;
@@ -129,7 +128,7 @@ export default {
   .v-card.news {
     padding: 20px;
   }
-  .news .item .header {font-weight: bold; color: $primary;}
+  .news .item .header {font-weight: bold; color: rgb(var(--v-theme-primary));}
   .news .item .reg {text-align: right;}
   .news .item hr {border-bottom: 1px solid gray;}
   .manager_panel {
@@ -147,7 +146,7 @@ export default {
 }
   .manager_panel .p1{
     font-weight: bold;
-    color: $primary; 
+    color: rgb(var(--v-theme-primary)); 
     padding-left: 20px;
 
   }
@@ -174,7 +173,7 @@ export default {
 
   }
   .v-avatar {
-    background-color: $primary;
+    background-color: rgb(var(--v-theme-primary));
     font-size: 8px; margin: 10px;
     
   }

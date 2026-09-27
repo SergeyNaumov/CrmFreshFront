@@ -22,19 +22,19 @@
                             max-width="350px"
                         >
                         
-                            <template v-slot:activator="{ on }">
+                            <template v-slot:activator="{ props }">
                             <v-text-field
                                 v-model="date_show"
                                 label="Дата: ДД.ММ.ГГГГ"
                                 prepend-icon="event"
                                 readonly
-                                v-on="on"
+                                v-bind="props"
                                 class="inline"
                                 style="max-width: 190px;"
                             />
                             </template>
                             
-                            <v-date-picker :first-day-of-week="1"  locale="ru-Ru" v-model="date" @input="set_value(); menu_date=false"/>
+                            <v-date-picker :first-day-of-week="1"  locale="ru-Ru" :model-value="$toDate(date)" @update:model-value="date=$toIso($event); set_value(); menu_date=false"/>
                             
                         </v-menu>
                         
@@ -42,7 +42,7 @@
                                 v-model="time"
                                 label="Время: ЧЧ:MM"
                                 prepend-icon="event"
-                                @change="fix_time"
+                                @update:model-value="fix_time"
                                 @keyup="fix_time"
                                 style="max-width: 180px"
                             ></v-text-field>
@@ -60,9 +60,9 @@
                         >
 
                         
-                            <template v-slot:activator="{ on }">
+                            <template v-slot:activator="{ props }">
                             </template>
-                            <v-time-picker format="24hr" v-model="time" @input="select_cal_time()" />
+                            <v-time-picker format="24hr" v-model="time" @update:model-value="select_cal_time()" />
                             
                         </v-menu>
                         -->
@@ -70,9 +70,7 @@
                         
             </div>
             <div class="clear">
-                <template>
                   <small v-show="need_empty"><a href="#" @click.prevent="clear()"> очистить</a></small>&nbsp;
-                </template>
                 <small><a href="" @click.prevent="set_now()">текущая дата и время</a></small>
             </div>
         </template>
@@ -125,7 +123,7 @@ export default {
       this.fix_time()
       this.set_need_empty()
     },
-    beforeDestroy(){
+    beforeUnmount(){
       if(!this.parent){
         bus.$off('field-update:'+this.field.name,this._field_update)
       }
@@ -222,7 +220,7 @@ export default {
   .select_cal {margin-top: 1rem;}
   .select_cal {transition: background 0.3s ease, color 0.2s linear;}
   .clear {position: relative; top: -1.5rem;}
-  .v-date-picker-title__date {font-size: 16px;}
+  .v-date-picker-header {font-size: 16px;}
   .read_only {margin-top: 10px;}
   .v-input {display: inline-flex;}
   /*.inline {display: inline-block;}

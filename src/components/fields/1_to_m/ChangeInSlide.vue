@@ -11,7 +11,7 @@
             {{cur_field.after_html}}
         </template>
         <div class="saved" v-show="view_saved" style="position: relative; top: 0px;">
-            <v-icon small color="green" >fa fa-save</v-icon>
+            <v-icon size="small" color="green" >fa fa-save</v-icon>
         </div>
         <div class="errors">
             <div v-for="(e,idx) in errors" :key="'error'+idx">{{e}}</div>

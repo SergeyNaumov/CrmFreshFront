@@ -14,24 +14,24 @@
     </div>
     <v-expansion-panels v-else> 
       <v-expansion-panel>
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
                 <v-card-title :class="{need_set:need_set}">
                   Укажите процент своей загрузки
                 </v-card-title>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <template v-if="exists">
                 
               </template>
               <template v-else>
                   <input type="text"  v-model="percent" placeholder="от 1 до 100" keyup="fix" @input="fix" class="percent">
                   <span v-if="percent">
-                    &nbsp;<v-btn small @click.prevent="save">сохранить</v-btn>
+                    &nbsp;<v-btn size="small" @click.prevent="save">сохранить</v-btn>
                   </span>                
               </template>
 
               <errors :errors="errors"/>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
   </div>  

@@ -1,7 +1,7 @@
 <template>
     <div scoped>
 
-        <v-icon small color="$color.primary" @click="show=!show"> 
+        <v-icon size="small" color="primary" @click="show=!show"> 
             <template v-if="show">fa-minus</template>
             <template v-else>fa-plus</template>
         </v-icon> 
@@ -131,18 +131,17 @@
 }
 </script>
 <style scoped lang="scss">
-    @import '@/styles/variables.scss';
 
 
     .row { padding-left: 20px;}
     .col { font-size: 10px; border-bottom: none; padding: none;}
     .v-icon {margin-right: 10px;}
     .header {font-weight: bold; /*color: rgb(63,81,181)*/}
-    .v-card {padding-left: 0; border: 1px solid $primary; margin-bottom:10px; background-color: $lighten5; margin-top: 10px;}
+    .v-card {padding-left: 0; border: 1px solid rgb(var(--v-theme-primary)); margin-bottom:10px; background-color: rgb(var(--v-theme-primary-lighten-5)); margin-top: 10px;}
     .v-card div {padding: 4px 16px;}
-    .v-card__title {font-size: 12px; font-weight: bold; color: $primary;}
-    .not_paid {color: $error; font-weight: bold;}
-    .v-application .success  {border: 1px solid $primary; border-radius: 5px; background-color: $lighten4 !important; padding: 10px;}
+    .v-card-title {font-size: 12px; font-weight: bold; color: rgb(var(--v-theme-primary));}
+    .not_paid {color: rgb(var(--v-theme-error)); font-weight: bold;}
+    .v-application .success  {border: 1px solid rgb(var(--v-theme-primary)); border-radius: 5px; background-color: rgb(var(--v-theme-primary-lighten-4)) !important; padding: 10px;}
 
 
 </style>

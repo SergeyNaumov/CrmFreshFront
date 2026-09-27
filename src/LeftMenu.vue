@@ -3,7 +3,7 @@
 
         <div class="cur_profile">
           <div style="display: inline-block; min-width: 165px;">
-            <v-avatar size=24><v-icon small color="primary">fa-user-edit</v-icon></v-avatar>
+            <v-avatar size=24><v-icon size="small" color="primary">fa-user-edit</v-icon></v-avatar>
             <template v-if="manager.out_manager_card_link">
                 <a :href="manager.link" target="_blank">{{manager.login}}</a>
 
@@ -15,7 +15,7 @@
             
             
           </div>
-          <v-btn class="logout" @click.prevent="logout()" small>выйти</v-btn>
+          <v-btn class="logout" @click.prevent="logout()" size="small">выйти</v-btn>
           
         </div>
 
@@ -149,19 +149,18 @@ export default{
   .left_menu {
     margin-top: 10px;    
   }
-    @import '@/styles/variables.scss';
   .cur_profile {
     height: 65px;
     border-bottom: 1px solid gray;
     padding: 10px 0 10px 0;
-    background-color: $darken1;
+    background-color: rgb(var(--v-theme-primary-darken-1));
     display: table;
     width: 100%;
   }
   .cur_profile .v-avatar {background-color: white; font-size: 8px; margin: 10px;}
   .cur_profile .v-icon {color :#fff;  }
-  .cur_profile .v-btn.v-size--small {
-    font-size: 10px; background-color: $primary !important;
+  .cur_profile .v-btn.v-btn--size-small {
+    font-size: 10px; background-color: rgb(var(--v-theme-primary)) !important;
     border: 1px solid #fff;
     color: #fff;
     font-weight: bold;
@@ -184,8 +183,5 @@ export default{
     
     text-decoration: none;
     font-size: 12pt;
-  }
-  .v-application .left_menu .v-treeview-node__label:hover,  .v-application .left_menu .v-treeview-node__label a:hover{
-    color: $primary !important;
   }
 </style>

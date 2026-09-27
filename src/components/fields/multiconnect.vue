@@ -5,7 +5,6 @@
         <pre v-if="0">
             {{list_searched}}
         </pre>
-        <template>
                 <div v-if="field.fast_search">
                     <v-text-field label='быстрый поиск' v-model="search" flat hide-details/>
                 </div>
@@ -27,19 +26,17 @@
                     </table>
                 </template>
                 <v-treeview v-else-if="out_tree"
-                    item-disabled="read_only"
                     :items="list"
-                    :selection-type="selectionType"
+                    item-title="header"
+                    item-value="id"
+                    item-children="child"
                     :search="search"
-                    item-text="header"
-                    item-children="child"                   
-
-                    @change="selected_hash_to_value"
-                    v-model="value"
-                    dense
+                    :select-strategy="selectionType"
+                    v-model:selected="value"
+                    @update:selected="selected_hash_to_value"
+                    density="compact"
                     selectable
                     hoverable
-                    selected-color="primary"
                 />
                 <div v-else>
                     <div v-if="field.make_add">
@@ -60,7 +57,7 @@
                             </div>
                         </div>
                         
-                        <v-btn @click.prevent="add_tag" v-show="new_tag && new_tag_checked && !new_tag_exists"  small>добавить тэг "{{new_tag}}"</v-btn>
+                        <v-btn @click.prevent="add_tag" v-show="new_tag && new_tag_checked && !new_tag_exists"  size="small">добавить тэг "{{new_tag}}"</v-btn>
 
                     </div>
                     <v-container>
@@ -69,7 +66,7 @@
 
                             <v-row>
                                 <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" v-if="selected_hash[l.id]" :key="'l'+idx">
-                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()"></v-checkbox>
+                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @update:model-value="selected_hash_to_value()"></v-checkbox>
                                 </v-col>
                             </v-row>
 
@@ -78,7 +75,7 @@
 
                             <v-row>
                                 <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" :key="'l'+idx">
-                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @change="selected_hash_to_value()" />
+                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @update:model-value="selected_hash_to_value()" />
                                 </v-col>
 
                             </v-row>
@@ -89,8 +86,6 @@
                     </v-container>
 
                 </div>
-
-        </template>
 
     </div>
 
@@ -188,7 +183,7 @@
         get_md_class2(){
             if(this.field.cols>0)
                 return parseInt(12/this.field.cols);
-            return '12'
+            return 12
         },
         get_md_class(){
             if(this.field.cols>0)
@@ -345,11 +340,9 @@
 <style scope>
     .tag_list {margin-left: 20px;}
     .tag_list div {margin-left: 10px;}
-    .layout.multiconnect {padding-left: 20px;}
+    .multiconnect {padding-left: 20px;}
     .multiconnect, .multiconnect .v-label {font-size: 12px !important; }
-    .v-input--selection-controls {margin-top: 5px; font-size: 10px;}
-    .v-treeview-node__children {margin-left: 50px !important;}
-    .v-treeview--dense .v-treeview-node__root {min-height: 20px;}
+    .v-selection-control {margin-top: 5px; font-size: 10px;}
     .mini td {border: none !important;}
     .mini input {border: 1px solid gray !important; padding: 2px 1px; margin: 5px;}
     input.percent {width: 30px; text-align: right}

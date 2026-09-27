@@ -16,7 +16,7 @@
                         style="max-width: 200px; display: inline-block;" autofocus
                         label="укажите сумму" v-model="new_act_summ" @keyup="fix_summ(new_act_summ,'new_act_summ')"></v-text-field>
 
-                    <v-btn x-small color=primary :disabled="!new_act_summ_ok" @click.prevent="step_new_act=2">далее</v-btn>
+                    <v-btn size="x-small" color=primary :disabled="!new_act_summ_ok" @click.prevent="step_new_act=2">далее</v-btn>
                 </div>
                 <div v-else>
                     <p><b>Сумма акта:</b> {{new_act_summ}}</p>
@@ -27,20 +27,20 @@
 
                     <v-date-picker
                         color="primary"
-                        v-model="new_act_date"
+                        :model-value="$toDate(new_act_date)"
                         first-day-of-week="1"
                         locale="ru-Ru"
-                        @change="step_new_act=3"
+                        @update:model-value="new_act_date=$toIso($event); step_new_act=3"
                     />
-                    <v-btn x-small color=primary  @click.prevent="step_new_act=1">вернуться к сумме</v-btn>
+                    <v-btn size="x-small" color=primary  @click.prevent="step_new_act=1">вернуться к сумме</v-btn>
                 </div>
                 <div v-if="step_new_act==3">
                     <b>Дата акта:</b> {{new_act_date.split('-').reverse().join('.')}}
                 </div>
                 <errors :errors="new_act_errors"/>
-                <v-btn x-small   @click.prevent="show_new_act_form=false">отменить создание акта</v-btn>
+                <v-btn size="x-small"   @click.prevent="show_new_act_form=false">отменить создание акта</v-btn>
                 <template v-if="step_new_act==3">
-                    <v-btn x-small color=primary  @click.prevent="create_new_act">Создать акт</v-btn>
+                    <v-btn size="x-small" color=primary  @click.prevent="create_new_act">Создать акт</v-btn>
                 </template>
             </template>
 
@@ -49,7 +49,7 @@
         <div class="act_list">
             <div v-for="a in act_list">
                 <a :href="a.link" target="_blank">{{a.header}}</a>
-                <a href="" @click.prevent="delete_act(a)"><v-icon v-if="a.make_delete" x-small color=primary>fa fa-trash</v-icon></a>
+                <a href="" @click.prevent="delete_act(a)"><v-icon v-if="a.make_delete" size="x-small" color=primary>fa fa-trash</v-icon></a>
 
             </div>
             <errors :errors="act_list_errors"/>

@@ -3,7 +3,7 @@
         <h1>{{title}}</h1>
         <v-row v-if="ready">
             <v-col>
-                <template v-for="f in fields">
+                <template v-for="f in fields" :key="f.name || f.description">
                         <h3 v-if="f.type=='header'">{{f.description}}</h3>
                         <filter-date :field="f" :filter_change="filter_change" v-if="f.type=='date'"/>
                         <filter-select :field="f" :filter_change="filter_change" v-if="f.type=='select'"/>
@@ -123,7 +123,6 @@ export default {
 }
 </script>
 <style lang="scss">
-    @import '@/styles/variables.scss';
     .is_headapp {margin: 20px;}
     .is_headapp h1 {margin: 20px 0px; }
     .ok {color: green; font-weight: bold; background: none !important;}

@@ -3,11 +3,11 @@
     <div v-if="!field.hide">
         <!-- <pre v-if="field.name=='prez_order'">{{field}}</pre> -->
         <template v-if="field.type=='checkbox' || field.type=='1_to_1_checkbox'">
-            <v-checkbox  :label="field.description" :disabled="disabled" color="primary" v-model="value" @change="change_field(field)" hide-details></v-checkbox>
+            <v-checkbox  :label="field.description" :disabled="disabled" color="primary" v-model="value" @update:model-value="change_field(field)" hide-details></v-checkbox>
             
         </template>
         <template v-else-if="field.type=='switch'">
-            <v-switch  :label="field.description" color="primary" :disabled="disabled"  v-model="value" @change="change_field(field)" hide-details></v-switch>
+            <v-switch  :label="field.description" color="primary" :disabled="disabled"  v-model="value" @update:model-value="change_field(field)" hide-details></v-switch>
         </template>
         
         <div v-if="after_html" v-html="after_html"></div>
@@ -39,7 +39,7 @@
         check_fld(this);
         
     },
-    beforeDestroy(){
+    beforeUnmount(){
         if(!this.parent){
            bus.$off('field-update:'+this.field.name,this._field_update)
         }

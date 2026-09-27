@@ -20,7 +20,7 @@
             min-width="290px"
           >
           
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               
               <!-- v-model="value" -->
               <v-text-field
@@ -28,7 +28,7 @@
                 :label="field.description"
                 :prepend-icon="need_empty?'event':''"
                 readonly
-                v-on="on"
+                v-bind="props"
                 :rounded="$theme.rounded"
                 hide-details
               ></v-text-field>
@@ -38,7 +38,7 @@
             <v-date-picker
               first-day-of-week="1" 
               locale="ru-Ru"
-              v-model="value" @input="select_cal()"></v-date-picker>
+              :model-value="$toDate(value)" @update:model-value="value=$toIso($event); select_cal()"></v-date-picker>
           </v-menu>
           
         </template>
@@ -100,7 +100,7 @@ export default {
       // убрал, потому что из-за него криво отправляло из change_in_search
       //check_fld(this);
     },
-    beforeDestroy(){
+    beforeUnmount(){
       if(!this.parent){
        bus.$off('field-update:'+this.field.name,this._field_update)
       }

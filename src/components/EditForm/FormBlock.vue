@@ -7,17 +7,17 @@
           
           <template v-if="f.before_html" v-html="f.before_html"></template>
           
-          <component  :is="dynamic_component(f)"
+          <component  :is="dynamic_component(f)" v-if="dynamic_component(f)"
                   :form="form" :field="f" 
           />
           <!--<div v-if="f.after_html" v-html="f.after_html"></div>-->
       </template>
       <div row wrap v-else>
           
-          <v-flex md12 xs12 v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
+          <v-col md="12" cols="12" v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
             <!-- FULL_STR -->
               <div class="description_container" v-if="f.description && !is_default_not_description(f)">{{f.description}}:</div>
-              <template if="dynamic_component(f)">
+              <template v-if="dynamic_component(f)">
               <!--
                 Перенесено в компонент                
                 <template v-if="f.before_html" v-html="f.before_html"></template>
@@ -35,7 +35,7 @@
               -->
 
               
-          </v-flex>
+          </v-col>
           <template v-else>
             
             <v-row no-gutters>
@@ -63,15 +63,15 @@
             </v-row>
             <!-- NOT_FULL_STR -->
             <!--
-            <v-flex md6 xs12 class="v-col-6description_container">
+            <v-col md="6" cols="12" class="v-col-6description_container">
               {{f.description}}:
-            </v-flex>
+            </v-col>
             
             
-            <v-flex md6 xs12 class="field_container">
+            <v-col md="6" cols="12" class="field_container">
             
 
-            </v-flex>
+            </v-col>
             -->
           </template>
       </div>
@@ -189,6 +189,10 @@ import FieldPassword from '../fields/password';
 </script>
 <style scoped>
   .block {margin-top: 10px; padding-bottom: 10px;}  
+  .block .field .v-col {padding: 0;}
+  .block .field .v-input {margin-bottom: 10px;}
+  .block .field .v-row {margin-bottom: 0;}
+  .block .description_container {margin-top: 4px;}
   table.one_to_m td{
     border: 1px solid gray;
     padding: 0.5rem;

@@ -3,17 +3,17 @@
         <v-container>
             <v-card max-width="500" class="mx-auto auth">
                 <template v-if="success">
-                    <v-card-title  class="headline">Регистрация прошла успешно!</v-card-title>
+                    <v-card-title  class="text-h5">Регистрация прошла успешно!</v-card-title>
                     <v-card-text>
                         Ваша заявка принята, с вами свяжется менеджер для уточнения деталей
                         <v-card-actions v-if="0">
-                            <v-btn color="primary" ref="button"  @click="to_login()" small>Войти в систему</v-btn>
+                            <v-btn color="primary" ref="button"  @click="to_login()" size="small">Войти в систему</v-btn>
                         </v-card-actions>
                     </v-card-text>
                     
                 </template>
                 <template v-else>
-                    <v-card-title  class="headline">
+                    <v-card-title  class="text-h5">
                     Регистрация в системе
                     </v-card-title>
                     <v-card-text>
@@ -63,7 +63,7 @@
                     </div>
                     </v-card-text>
                     <v-card-actions>
-                    <v-btn color="primary" ref="button" :disabled="submit_disabled" @click="register()" small>Зарегистрироваться</v-btn>
+                    <v-btn color="primary" ref="button" :disabled="submit_disabled" @click="register()" size="small">Зарегистрироваться</v-btn>
                     </v-card-actions>
                 </template>
 

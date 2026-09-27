@@ -14,7 +14,7 @@
           <div>
           загрузка: <!-- Способы загрузки файла-->
               <span v-for="l in load_methods" :key="l.loader" class="file_loader_item">
-                <v-icon x-small color="primary">{{ l.icon }}</v-icon>&nbsp;
+                <v-icon size="x-small" color="primary">{{ l.icon }}</v-icon>&nbsp;
                 <template v-if="img_loader==l.loader">
                   {{ l.header }}
                 </template>
@@ -33,7 +33,7 @@
                     В том случае, если в буфере обмена содержится изображение, Вы можете вставить его.<br>
                     Данное изображение будет загружено в виде PNG-файла
                   </p>
-                  <v-btn x-small color="primary"  @click.prevent="load_image_from_clipboard">Вставить изображение</v-btn>
+                  <v-btn size="x-small" color="primary"  @click.prevent="load_image_from_clipboard">Вставить изображение</v-btn>
                   <template v-if="clipboard_error">&nbsp;<span class="err">{{clipboard_error}}</span></template>
                   <template v-if="clipboard_success">
                     <div class="accepted">{{clipboard_success}}</div>
@@ -48,7 +48,7 @@
                 Выберите файл для загрузки:
                 <v-file-input
                   :accept="field.accept" :id="field.name+'_attach'" 
-                  @change="run_cropper"
+                  @update:model-value="run_cropper"
                   :label="`выберите файл для загрузки в поле ${field.description}`"
                   :rounded="$theme.rounded"
                   hide-details
@@ -67,24 +67,24 @@
 
 
             <div v-if="!show_loaded">
-              <v-icon x-small v-if="is_img" @click.prevent="show_loaded=true" class="show">fa-eye</v-icon>
+              <v-icon size="x-small" color="primary" v-if="is_img" @click.prevent="show_loaded=true" class="show">fa-eye</v-icon>
               <!-- удалять разрешаем только тогда, когда фото не обязательно -->
               <a :href="download_link" :download="orig_filename">скачать</a> | 
               <a href="" v-if="!field.required" @click.prevent="remove()">удалить</a>
             </div>
 
             <template v-if="show_loaded" >
-              <v-icon x-small  @click.prevent="show_loaded=false" class="not_show">fa-eye-slash</v-icon>
+              <v-icon size="x-small" color="primary" @click.prevent="show_loaded=false" class="not_show">fa-eye-slash</v-icon>
               <a href="" v-if="field.crops && field.resize && field.resize.length" @click.prevent="start_crop_already_loaded">обрезать фото заново</a>
             </template>
             <template v-if="show_loaded">
-              <v-layout  row wrap  v-if="field.resize && field.resize.lenght">
-                <v-flex pl-3 lg2 md4 xs12 v-for="(r,idx) in field.resize" :key="'resize'+field.name+'_'+idx" >
+              <v-row    v-if="field.resize && field.resize.lenght">
+                <v-col class="pl-3" lg="2" md="4" cols="12" v-for="(r,idx) in field.resize" :key="'resize'+field.name+'_'+idx" >
                   <v-card class="img_show">
                     <a :href="r.loaded" target="_blank"><img :src="r.loaded" style="max-height: 100%; margin: 20px"></a>
                   </v-card>
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
               
               <div v-else-if="is_img" class="img_show">
                
@@ -106,8 +106,8 @@
                 <a href="" v-if="begin_value" @click.prevent="imgSrc=''; field_error_check()">отмена</a>
               </div>
 
-                    <v-layout row wrap style="margin-top:20px;">
-                        <v-flex pl-3 lg4 md4 xs12 v-for="(c,idx) in crops" :key="'crop'+idx">
+                    <v-row  style="margin-top:20px;">
+                        <v-col class="pl-3" lg="4" md="4" cols="12" v-for="(c,idx) in crops" :key="'crop'+idx">
                           
                           <v-card class="card_cropper">
                               <div > {{c.description}} 
@@ -122,8 +122,8 @@
                                 
                               
                           </v-card>
-                        </v-flex>
-                    </v-layout>
+                        </v-col>
+                    </v-row>
                 </template>
         </template>
         <template v-if="0">{{value}}</template>
@@ -437,7 +437,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-  @import '@/styles/variables.scss';
   .root_element {
     border-bottom: 1px solid gray;
   }
@@ -449,7 +448,7 @@ export default {
   .card_cropper div {padding: 10px;}
   .show, .not_show {margin-right: 20px;}
   .show:hover, .not_show:hover {
-    color: $primary
+    color: rgb(var(--v-theme-primary))
   }
   .img_show{
     margin-top: 10px;

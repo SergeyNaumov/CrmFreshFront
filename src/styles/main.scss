@@ -1,4 +1,139 @@
-@import './colors/blue2.scss';
+.v-application a {
+    color: rgb(var(--v-theme-primary));
+    text-decoration: none;
+}
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.container_fluid {
+    width: 100%;
+}
+// Единый вид/отступы полей формы
+.form_header {
+    margin-top: 15px;
+}
+.v-field--variant-outlined {
+    border-radius: 5px !important;
+}
+// Компактный date-picker (как в Vuetify 2)
+.v-date-picker {
+    max-width: 340px !important;
+    width: 340px !important;
+    overflow: hidden !important;
+}
+.v-date-picker .v-picker-title,
+.v-date-picker .v-date-picker-header__content {
+    display: none;
+}
+.v-date-picker .v-picker__header {
+    min-height: 34px !important;
+    padding: 0 4px !important;
+    height: 34px !important;
+}
+.v-date-picker .v-date-picker-header {
+    min-height: 34px !important;
+}
+.v-date-picker .v-picker__body {
+    padding: 4px 4px 6px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+.v-date-picker.v-picker {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+.v-date-picker .v-date-picker-month {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+.v-date-picker .v-date-picker-month__days {
+    grid-template-columns: repeat(7, 34px) !important;
+    column-gap: 2px !important;
+    width: auto !important;
+    flex: 0 0 auto !important;
+}
+.v-date-picker .v-date-picker-month__weeks {
+    grid-template-rows: auto !important;
+}
+.v-date-picker .v-date-picker-month__weekday {
+    font-size: 11px !important;
+}
+.v-date-picker .v-date-picker-month__day {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 0 !important;
+}
+.v-date-picker .v-date-picker-month__day .v-btn {
+    --v-btn-height: 28px !important;
+    min-width: 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px !important;
+}
+.v-date-picker .v-date-picker-controls {
+    width: 100% !important;
+    padding: 0 2px !important;
+    flex-wrap: nowrap !important;
+}
+.v-date-picker .v-date-picker-controls .v-btn {
+    min-width: auto !important;
+    padding: 0 4px !important;
+    font-size: 11px !important;
+    height: 28px !important;
+}
+.v-date-picker .v-date-picker-controls__month {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    flex: 0 0 auto !important;
+}
+.v-date-picker .v-date-picker-controls__month .v-btn {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+}
+.v-date-picker .v-date-picker-controls__month-btn {
+    max-width: 150px !important;
+    overflow: hidden !important;
+    font-size: 12px !important;
+}
+.v-date-picker .v-date-picker-controls__mode-btn {
+    width: 28px !important;
+    min-width: 28px !important;
+}
+// Поля в «Используемых фильтрах» — компактнее по высоте
+.onfilter .v-field__input {
+    min-height: 40px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    --v-field-input-padding-top: 6px !important;
+    --v-field-input-padding-bottom: 6px !important;
+}
+.onfilter .v-field {
+    min-height: 40px !important;
+}
+// Компактная пагинация (как в Vuetify 2)
+.v-pagination__list {
+    gap: 2px;
+}
+.v-pagination__item,
+.v-pagination__first,
+.v-pagination__prev,
+.v-pagination__next,
+.v-pagination__last {
+    margin: 0.1rem;
+}
+.v-pagination .v-btn {
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 13px !important;
+}
 // Форма
 h1 {font-size: 1.8em;}
 h2 {font-size: 1.4em;}
@@ -61,10 +196,10 @@ table.tbl1 td {
     padding: 2px 5px;
 }
 table.tbl1  thead td {
-    background: $lighten4;
+    background: rgb(var(--v-theme-primary-lighten-4));
 }
 table.tbl1 tr:nth-child(2n+1) {
-  background: $lighten5;
+  background: rgb(var(--v-theme-primary-lighten-5));
 }
 
 table.mini {

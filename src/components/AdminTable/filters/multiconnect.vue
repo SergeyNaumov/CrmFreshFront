@@ -6,32 +6,30 @@
                 v-model="value"
                 class="input-group--focused"
                 item-value="v"
-                item-text="d"
+                item-title="d"
                 no-data-text="значения не выбраны"
                 hint="Выберите одно или несколько значений"
-                single-line
                 descriprion="выберите значения"
                 multiple
                 :label="field.description"
                 chips
                 clearable
-                @change="change"
+                @update:model-value="change"
             />
             <v-autocomplete v-else
                 :items="values"
                 v-model="value"
                 class="input-group--focused"
                 item-value="v"
-                item-text="d"
+                item-title="d"
                 no-data-text="значения не выбраны"
                 hint="Выберите одно или несколько значений"
-                single-line
                 descriprion="выберите значения"
                 :label="field.description"
                 multiple
                 chips
                 clearable
-                @change="change"
+                @update:model-value="change"
             />
             <div class="err"  v-for="(e,idx) in errors" :key="'err'+idx">{{e}}</div>
         </div>

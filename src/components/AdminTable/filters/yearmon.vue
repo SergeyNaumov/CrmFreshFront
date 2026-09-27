@@ -4,36 +4,36 @@
 
         <template v-if="field.range">
             <div class="description">От:</div>
-            <v-flex xs6>
+            <v-col cols="6">
                 <v-row>
                     
                     <v-col>
-                        <v-select label="Месяц" :items="mon_items" item-value="v" item-text="d" v-model="mon_from" @change="set_value"/>
+                        <v-select label="Месяц" :items="mon_items" item-value="v" item-title="d" v-model="mon_from" @update:model-value="set_value"/>
                     </v-col>
                     <v-col>
                         
-                        <v-select label="Год" :items="year_items" v-model="year_from" class="year" @change="set_value"/>
+                        <v-select label="Год" :items="year_items" v-model="year_from" class="year" @update:model-value="set_value"/>
                     </v-col>
                     <v-col class="reset_link" >
                         <small v-if="year_from || mon_from"><a href="" @click.prevent="reset(0)">сбросить</a></small>
                     </v-col>
                 </v-row>
-            </v-flex>
+            </v-col>
             <div class="description">До:</div>
-            <v-flex xs6>
+            <v-col cols="6">
                 <v-row>
-                    <v-col md-2>
+                    <v-col md="2">
 
-                        <v-select label="Месяц" :items="mon_items" item-value="v" item-text="d" v-model="mon_to" @change="set_value"/>
+                        <v-select label="Месяц" :items="mon_items" item-value="v" item-title="d" v-model="mon_to" @update:model-value="set_value"/>
                     </v-col>
-                    <v-col md-2>
-                        <v-select label="Год" :items="year_items" v-model="year_to" class="year" @change="set_value"/>
+                    <v-col md="2">
+                        <v-select label="Год" :items="year_items" v-model="year_to" class="year" @update:model-value="set_value"/>
                     </v-col>
-                    <v-col class="reset_link"  md-1>
+                    <v-col class="reset_link"  md="1">
                         <small v-if="year_to || mon_to"><a href="" @click.prevent="reset(1)">сбросить</a></small>
                     </v-col>
                 </v-row>
-            </v-flex>
+            </v-col>
               
         </template>
         <template v-else>
@@ -43,7 +43,7 @@
                 <v-row>
                     <v-col>
                         
-                        <v-select label="Месяц" :items="mon_items" item-value="v" item-text="d" v-model="mon"/>
+                        <v-select label="Месяц" :items="mon_items" item-value="v" item-title="d" v-model="mon"/>
                     </v-col>
                     <v-col>
                         <v-select label="Год" :items="year_items" v-model="year" class="year"/>

@@ -1,6 +1,6 @@
 <template>
     <div  class="is_headapp" >
-        <v-btn top right absolute="" color="red" small @click="dialog=!dialog" v-scroll="scrolling" id="scrollbutton"
+        <v-btn top right absolute="" color="red" size="small" @click="dialog=!dialog" v-scroll="scrolling" id="scrollbutton"
         >
             оглавление
         </v-btn>
@@ -20,7 +20,7 @@
         </div>
         <v-dialog v-model="dialog" max-width="800">
             <v-card>
-                 <v-card-title class="headline">Оглавление</v-card-title>
+                 <v-card-title class="text-h5">Оглавление</v-card-title>
                  <v-card-text>
                     <item-menu 
                         v-for="m in list" :key="m.id"
@@ -124,7 +124,7 @@ export default {
     margin-top:  20px;
     font-size:  36px !important;
   }
-  .headline {margin-bottom: 20px;}
+  .text-h5 {margin-bottom: 20px;}
   @media only screen and (max-width: 800px) {
     .title {font-size:  28px !important;}
   }

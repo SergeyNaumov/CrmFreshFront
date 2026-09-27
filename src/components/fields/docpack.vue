@@ -27,10 +27,8 @@
 
             <v-list-item>
 
-                <v-list-item-content>
-                    
                     <div>
-                        <v-icon  small  color="primary">edit</v-icon>
+                        <v-icon  size="small"  color="primary">edit</v-icon>
                         <a :href="'/edit_form/docpack/'+dp.id" target="_blank">Редактировать пакет документов</a>
                     </div>
                     <div>Тариф: <a :href="'/edit_form/tarif/'+dp.tarif_id" target="_blank">{{dp.tarif}}</a></div>
@@ -49,7 +47,6 @@
                         :permissions="permissions"
                         
                     />
-                </v-list-item-content>
             </v-list-item>
 
 

@@ -15,20 +15,20 @@
             min-width="290px"
           >
           
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-text-field
                 v-model="field.value"
                 label="Выберите время"
                 prepend-icon="event"
                 readonly
-                v-on="on"
+                v-bind="props"
               ></v-text-field>
               
               
             </template>
             <v-time-picker
               format="24hr"
-              v-model="field.value" @input="select_cal()"></v-time-picker>
+              v-model="field.value" @update:model-value="select_cal()"></v-time-picker>
               
           </v-menu>
           

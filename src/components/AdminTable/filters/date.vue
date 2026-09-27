@@ -3,8 +3,8 @@
         
         <div class="description">{{field.description}}:</div>
         <template v-if="field.range">
-            <v-layout row wrap>
-                <v-flex pl-3 md6 xs12 >
+            <v-row >
+                <v-col class="pl-3" md="auto" cols="auto" >
                     <v-menu
                         v-model="menu[0]"
                         :close-on-content-click="false"
@@ -15,7 +15,7 @@
                         min-width="290px"
                     >
                         <!-- v-model="dat_value0" -->
-                        <template v-slot:activator="{ on }">
+                        <template v-slot:activator="{ props }">
                          <v-text-field
                             
                             v-model="show_dat_value0"
@@ -24,8 +24,8 @@
                             readonly
                             clearable
                             
-                            v-on="on"
-                            style="max-width: 250px;"
+                            v-bind="props"
+                            style="width: 220px;"
                         ></v-text-field>
                         
                         
@@ -33,11 +33,11 @@
                         <v-date-picker
                         first-day-of-week="1" 
                         locale="ru-Ru"
-                        v-model="dat_value0" @input="select_cal(0)"></v-date-picker>
+                        :model-value="$toDate(dat_value0)" @update:model-value="dat_value0=$toIso($event); select_cal(0)"></v-date-picker>
                         
                     </v-menu>
-                </v-flex>
-                <v-flex pl-3 md6 xs12 >
+                </v-col>
+                <v-col class="pl-3" md="auto" cols="auto" >
                     <v-menu
                         v-model="menu[1]"
                         :close-on-content-click="false"
@@ -48,7 +48,7 @@
                         min-width="290px"
                     >
                         <!--  v-model="dat_value1" -->
-                        <template v-slot:activator="{ on }">
+                        <template v-slot:activator="{ props }">
                          <v-text-field
                             v-model="show_dat_value1"
                             label="По"
@@ -56,8 +56,8 @@
                             readonly
                             clearable
                             
-                            v-on="on"
-                            style="max-width: 250px;"
+                            v-bind="props"
+                            style="width: 220px;"
                         ></v-text-field>
                         
                         
@@ -65,13 +65,13 @@
                         <v-date-picker
                         first-day-of-week="1" 
                         locale="ru-Ru"
-                        v-model="dat_value1" @input="select_cal(1)"></v-date-picker>
+                        :model-value="$toDate(dat_value1)" @update:model-value="dat_value1=$toIso($event); select_cal(1)"></v-date-picker>
                     </v-menu>
-                </v-flex>
-                <v-flex pl-3 md12 xs12 class="err_select" v-if="err_select">
+                </v-col>
+                <v-col class="pl-3 err_select" md="12" cols="12" v-if="err_select">
                     дата начала периода больше даты его окончания
-                </v-flex>
-            </v-layout>
+                </v-col>
+            </v-row>
         </template>
         <template v-else>
 
@@ -85,7 +85,7 @@
                         min-width="290px"
                     >
                         <!-- v-model="dat_value0" -->
-                        <template v-slot:activator="{ on }">
+                        <template v-slot:activator="{ props }">
                          <v-text-field
                             
                             v-model="show_dat_value0"
@@ -94,8 +94,8 @@
                             readonly
                             clearable
                             
-                            v-on="on"
-                            style="max-width: 250px;"
+                            v-bind="props"
+                            style="width: 220px;"
                         ></v-text-field>
                         
                         
@@ -103,7 +103,7 @@
                         <v-date-picker
                         first-day-of-week="1" 
                         locale="ru-Ru"
-                        v-model="dat_value0" @input="select_cal(0)" />
+                        :model-value="$toDate(dat_value0)" @update:model-value="dat_value0=$toIso($event); select_cal(0)" />
                     </v-menu>
         </template>
     </div>
@@ -243,14 +243,10 @@ export default {
 }
 </script>
 <style scoped>
-.description {
-    padding: 20px 0 0 0px;
-    color: gray;
-    font-size: 14px;
-    font-family: Roboto, sans-serif;
-}
 .err_select {text-align: center;padding-left: 20px; color: red; font-size: 0.8rem; font-weight: bold;}
-.v-input__icon--clear {margin-right: 20px;}
+.v-row {display: flex; flex-wrap: wrap; gap: 16px; margin: 0;}
+.v-row > div {padding: 0 !important; margin: 0 !important;}
+.v-field__clearable {margin-right: 20px;}
 .description {
     margin-top: 5px;
     color: rgba(0, 0, 0, 0.54);

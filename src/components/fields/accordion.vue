@@ -2,17 +2,17 @@
     <div>
         <v-expansion-panels multiple v-model='panel'>
             <v-expansion-panel v-for="item in field.data" :key="item.id"  >
-                <v-expansion-panel-header @click="show_links=!show_links">
+                <v-expansion-panel-title @click="show_links=!show_links">
                   <div v-html="item.header"></div>
 
-                </v-expansion-panel-header >
+                </v-expansion-panel-title >
                 <div class="header_links_block" v-if="item.header_links && show_links">
                   <div class="header_link" v-for="l in item.header_links" :key="l.id">
                   <a :href="l.url" :style="l.style" target="_blank">{{l.header}}</a></div>
                 </div>
                 
                 
-                <v-expansion-panel-content>
+                <v-expansion-panel-text>
                     <template v-if="item.not_container">
 
                         <div v-for="(c,idx) in item.content" v-if="c.type=='html'" v-html="c.body"/>
@@ -21,7 +21,7 @@
                     <template v-else>
                         <v-container>
                           <v-row>
-                          <template v-for="(c,idx) in item.content" >
+                          <template v-for="(c,idx) in item.content" :key="idx">
                             
                             
                             <v-col cols="12" md="12" sm="12" v-if="c.type=='html'" v-html="c.body"/>
@@ -42,7 +42,7 @@
                         </v-container>                        
                     </template>
 
-                </v-expansion-panel-content>
+                </v-expansion-panel-text>
             </v-expansion-panel>
         </v-expansion-panels>
     </div>

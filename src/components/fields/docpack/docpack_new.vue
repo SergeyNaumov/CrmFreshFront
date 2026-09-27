@@ -1,28 +1,28 @@
 <template>
     <div>
         <div class="new">
-            <v-icon small color="primary" @click="show=!show">fa-plus</v-icon>
+            <v-icon size="small" color="primary" @click="show=!show">fa-plus</v-icon>
             &nbsp;<a href="" @click.prevent="show=!show" target="_blank">новый пакет документов</a>
         </div>
         <v-card v-if="show">
             <v-card-title>Новый пакет документов</v-card-title>
             <!-- <div v-if="success" class="success">
                 <p>Пакет документов успешно создан </p>
-                <v-btn v-if="form_ok" color="primary" small @click="success=false">Ок</v-btn>
+                <v-btn v-if="form_ok" color="primary" size="small" @click="success=false">Ок</v-btn>
             </div> -->
              <v-select
                 label="Тариф"
                 v-model="tarif_id"
                 :items="tarif_list"
                 item-value="v"
-                item-text="d"
+                item-title="d"
              />
              <v-select
                 label="Юр.лицо"
                 v-model="ur_lico_id"
                 :items="ur_lico_list"
                 item-value="v"
-                item-text="d"
+                item-title="d"
              />
              <v-select
                 v-if="need_manager_field"
@@ -30,11 +30,11 @@
                 v-model="manager_id"
                 :items="manager_list"
                 item-value="v"
-                item-text="d"
+                item-title="d"
              />
              
              <div class="err" v-for="e in errors" :key="e">{{e}}</div>
-             <v-btn v-if="form_ok" color="primary" small @click="save">Сохранить</v-btn>
+             <v-btn v-if="form_ok" color="primary" size="small" @click="save">Сохранить</v-btn>
 
         </v-card>
     </div>
@@ -127,7 +127,6 @@
 }
 </script>
 <style scoped lang="scss">
-    @import '@/styles/variables.scss';
     .v-card {padding: 10px;}
     
 </style>

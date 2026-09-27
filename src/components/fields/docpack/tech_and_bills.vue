@@ -37,7 +37,7 @@
                             <!-- сообщения об ошибках -->
                             <div v-for="(e,idx) in new_app.errors" :key="'e'+idx">{{e}}</div>
 
-                            <v-btn v-if="new_app_ok" small color="primary" @click="create_app">создать приложение</v-btn>
+                            <v-btn v-if="new_app_ok" size="small" color="primary" @click="create_app">создать приложение</v-btn>
 
                             <div v-if="!new_app_ok" class="err">
                                 выберите услугу и укажите корректно суммы предоплаты и постоплаты
@@ -76,7 +76,7 @@
                             <!-- сообщения об ошибках -->
                             <div v-for="(e,idx) in new_bill.errors" :key="'e'+idx">{{e}}</div>
 
-                            <v-btn v-if="new_bill_ok" small color="primary" @click="create_bill">создать счёт</v-btn>
+                            <v-btn v-if="new_bill_ok" size="small" color="primary" @click="create_bill">создать счёт</v-btn>
 
                             <div v-if="!new_bill_ok" class="err">
                                 выберите услугу и укажите корректно суммы предоплаты и постоплаты
@@ -114,16 +114,16 @@
                             {{a}}
                         </pre>
 
-                        <v-btn v-if="show_create_sr_list!=a.id" small color="primary" @click.prevent="show_create_sr(a)">создать СР</v-btn>
+                        <v-btn v-if="show_create_sr_list!=a.id" size="small" color="primary" @click.prevent="show_create_sr(a)">создать СР</v-btn>
                         <div v-if="show_create_sr_list==a.id" class="sr_list_select">
                             Привязать приложение к существующей СР:
                             <div v-for="sr in sr_list" class="item">
                                 <div><a :href="sr.link" target="_blank">{{sr.v}} от {{sr.from_date}}</a></div>
                                 <div>{{sr.last_comment?sr.last_comment:'-'}}</div>
-                                <v-btn x-small @click="link_sr(a,sr)">привязать</v-btn>
+                                <v-btn size="x-small" @click="link_sr(a,sr)">привязать</v-btn>
                             </div>
-                            <v-btn small @click.prevent="show_create_sr_list=false">отмена</v-btn>
-                            <v-btn small color="primary" @click="create_sr(a)">создать новую СР</v-btn>
+                            <v-btn size="small" @click.prevent="show_create_sr_list=false">отмена</v-btn>
+                            <v-btn size="small" color="primary" @click="create_sr(a)">создать новую СР</v-btn>
                         </div>
                     </template>
                     <div>
@@ -145,13 +145,13 @@
                                     </template>
                                     <template v-else>
                                         <textarea v-model="f.value"></textarea>
-                                        <a href="" @click.prevent="save_app_field(a,f)"><v-icon small color="primary">fa fa-save</v-icon></a>
+                                        <a href="" @click.prevent="save_app_field(a,f)"><v-icon size="small" color="primary">fa fa-save</v-icon></a>
                                     </template>
 
                                 </td>
                                 <td>
                                     <template v-if="!form.read_only">
-                                        <a href="" @click.prevent="f.edited=true"><v-icon x-small color="primary">fa fa-pencil-alt</v-icon></a>
+                                        <a href="" @click.prevent="f.edited=true"><v-icon size="x-small" color="primary">fa fa-pencil-alt</v-icon></a>
                                     </template>
                                 </td>
                             </tr>
@@ -167,14 +167,14 @@
                                     <template v-if="!b.edit_sum">
                                         <!-- сумма не редактируется -->
                                         {{b.summ}}
-                                        <a href="" @click.prevent="b.edit_sum=true"><v-icon small color="primary">fa fa-pencil-alt</v-icon></a>
+                                        <a href="" @click.prevent="b.edit_sum=true"><v-icon size="small" color="primary">fa fa-pencil-alt</v-icon></a>
                                     </template>
                                     <template v-else>
                                         <!-- сумма редактируется -->
                                         <input type="text" class="edited_summ" v-model="b.summ" @keyup="control_summ(b)">
 
-                                        <a href="" @click.prevent="save_sum_bill(b)"><v-icon small color="primary">fa fa-save</v-icon></a>
-                                        <a href="" @click.prevent="b.summ=b.old_summ; b.edit_sum=false"><v-icon small color="red">far fa-window-close</v-icon></a>
+                                        <a href="" @click.prevent="save_sum_bill(b)"><v-icon size="small" color="primary">fa fa-save</v-icon></a>
+                                        <a href="" @click.prevent="b.summ=b.old_summ; b.edit_sum=false"><v-icon size="small" color="red">far fa-window-close</v-icon></a>
 
                                     </template>
                                 </template>
@@ -219,14 +219,14 @@
                             <template v-if="!b.edit_sum">
                                 <!-- сумма не редактируется -->
                                 {{b.summ}}
-                                <a href="" @click.prevent="b.edit_sum=true"><v-icon small color="primary">fa fa-pencil-alt</v-icon></a>
+                                <a href="" @click.prevent="b.edit_sum=true"><v-icon size="small" color="primary">fa fa-pencil-alt</v-icon></a>
                             </template>
                             <template v-else>
                                 <!-- сумма редактируется -->
                                 <input type="text" class="edited_summ" v-model="b.summ" @keyup="control_summ(b)">
 
-                                <a href="" @click.prevent="save_sum_bill(b)"><v-icon small color="primary">fa fa-save</v-icon></a>
-                                <a href="" @click.prevent="b.summ=b.old_summ; b.edit_sum=false"><v-icon small color="red">far fa-window-close</v-icon></a>
+                                <a href="" @click.prevent="save_sum_bill(b)"><v-icon size="small" color="primary">fa fa-save</v-icon></a>
+                                <a href="" @click.prevent="b.summ=b.old_summ; b.edit_sum=false"><v-icon size="small" color="red">far fa-window-close</v-icon></a>
 
                             </template>
                         </template>
@@ -625,8 +625,8 @@ export default {
         margin: 0 0 20px 15px;
     }
     .v-card div {padding: 4px 16px;}
-    .v-card {padding-left: 0; border: 1px solid $primary; margin-bottom:10px; background-color: $lighten5; margin-top: 10px;}
-    .v-card__title {font-size: 12px; font-weight: bold; color: $primary;}
+    .v-card {padding-left: 0; border: 1px solid rgb(var(--v-theme-primary)); margin-bottom:10px; background-color: rgb(var(--v-theme-primary-lighten-5)); margin-top: 10px;}
+    .v-card-title {font-size: 12px; font-weight: bold; color: rgb(var(--v-theme-primary));}
     .bills_without_app h2 {color: #000; margin-bottom: 3px;}
     table.fields {margin-top: 5px;border-collapse: collapse;}
     table.fields td {border-bottom: 1px solid gray; padding: 2px 5px;}

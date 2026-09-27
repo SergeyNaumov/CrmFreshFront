@@ -17,7 +17,8 @@
       <div >
         <pre v-if=0>{{list}}</pre>
           <table>
-          <template v-for="l in list" v-if="show_field(l)">
+          <template v-for="(l, idx) in list" :key="'l'+idx">
+            <template v-if="show_field(l)">
                 <template v-if="l.type=='header'">
                   <!-- <tr><td colspan="2"><b>{{l.header}}</b></td></tr> -->
                   <div class="header"><b>{{l.header}}</b></div>
@@ -57,7 +58,7 @@
                             <input type="checkbox"   v-model="l.value" @change="change(l)"> {{l.header}}
                         </template>
                         <template v-if="l.type=='switch'">
-                            <v-switch   v-model="l.value" @change="change(l)"/>
+                            <v-switch   v-model="l.value" @update:model-value="change(l)"/>
                         </template>
                         <template v-if="l.type=='select'">
                             {{l.header}}:
@@ -102,7 +103,7 @@
                             <input type="checkbox"   v-model="l.value" @change="change(l)">
                         </template>
                         <template v-if="l.type=='switch'">
-                            <v-switch   v-model="l.value" @change="change(l)"/>
+                            <v-switch   v-model="l.value" @update:model-value="change(l)"/>
                         </template>
                         <template v-if="l.type=='select'">
                             <select v-model="l.value">
@@ -119,6 +120,7 @@
                       </td>
                     </tr> -->
               </template>
+            </template>
         </template>
       </table>
       </div>
@@ -161,7 +163,7 @@ export default {
           t.get_list()
           
         },
-        beforeDestroy(){
+        beforeUnmount(){
           bus.$off('change_field',t._change_field);
         },
         watch:{

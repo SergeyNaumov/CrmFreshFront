@@ -7,7 +7,7 @@
                 <!-- сообщение об успешной загрузке -->
                 <v-dialog v-model="success_parse" max-width="290">
                   <v-card>
-                    <v-card-title class="headline">Загрузка </v-card-title>
+                    <v-card-title class="text-h5">Загрузка </v-card-title>
                     <v-card-text>Ваш файл {{orig_name}} был успешно загружен на сервер!</v-card-text>
 
                     <v-card-actions>
@@ -28,11 +28,11 @@
                       <v-select
                         :label="f.description"
                         v-model="f.value"
-                        :items="f.values" item-value="v" item-text="d"
+                        :items="f.values" item-value="v" item-title="d"
                         :multiple="false"
                         no-data-text="Выберите значение"
                         cache-items
-                        @change="select_before_field(f)"
+                        @update:model-value="select_before_field(f)"
                         clear
                       ></v-select>
                     </div>
@@ -81,7 +81,7 @@
                       <div class="selected" v-if="data_line_number">
                         Отлично, теперь можно приступить к загрузке файла
                         <hr>
-                        <v-btn small color="primary" v-if="all_fields_selected" @click="load()">Загрузить</v-btn>
+                        <v-btn size="small" color="primary" v-if="all_fields_selected" @click="load()">Загрузить</v-btn>
                       </div>
                       <div class="not_selected" v-else>Все столбцы выбраны. Теперь отметьте слева строку, с которой начинаются данные (заголовок не считаем)</div>
                     </div>

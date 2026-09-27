@@ -3,7 +3,7 @@
         <v-container>
             <v-card max-width="344" class="mx-auto auth">
                 
-                <v-card-title  class="headline">
+                <v-card-title  class="text-h5">
                   Напоминание пароля 
                 </v-card-title>
 
@@ -12,7 +12,7 @@
                     <v-text-field :label="show_labels?'Ваш логин':''" v-model="login"  id="login"/>
                     </v-card-text>
                     <v-card-actions>
-                    <v-btn color="primary" ref="button" :disabled="!login_ok" @click="remember()" small>Напомнить пароль</v-btn>
+                    <v-btn color="primary" ref="button" :disabled="!login_ok" @click="remember()" size="small">Напомнить пароль</v-btn>
                     
                     </v-card-actions>
                 </template>
@@ -22,7 +22,7 @@
                         <v-text-field :label="show_labels?'Код доступа':''" v-model="remember_code"  id="login"/>
                     </v-card-text>
                     <v-card-actions>
-                    <v-btn color="primary" ref="button" :disabled="!remember_code" @click="check_remember_code()" small>Восстановить пароль</v-btn>
+                    <v-btn color="primary" ref="button" :disabled="!remember_code" @click="check_remember_code()" size="small">Восстановить пароль</v-btn>
 
                     </v-card-actions>
                 </template>
@@ -38,7 +38,7 @@
                     
                     <v-card-actions>
                         
-                    <v-btn color="primary" ref="button" :disabled="!pass_ok" @click="change_password()" small>Изменить старый пароль</v-btn>
+                    <v-btn color="primary" ref="button" :disabled="!pass_ok" @click="change_password()" size="small">Изменить старый пароль</v-btn>
 
                     </v-card-actions>
                 </template>
@@ -50,7 +50,7 @@
                     
                     <v-card-actions>
                         
-                    <v-btn color="primary" ref="button" :disabled="!pass_ok" @click="change_password()" small>Изменить старый пароль</v-btn>
+                    <v-btn color="primary" ref="button" :disabled="!pass_ok" @click="change_password()" size="small">Изменить старый пароль</v-btn>
 
                     </v-card-actions>
                 </template>

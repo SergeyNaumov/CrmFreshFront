@@ -12,7 +12,7 @@
         <template v-else>
           
         </template>
-        <v-icon class="msg_count" small>fa fa-comments</v-icon>
+        <v-icon class="msg_count" size="small">fa fa-comments</v-icon>
       </a>
       <ChatList 
         v-if="show_chat_list"

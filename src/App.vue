@@ -8,11 +8,11 @@
   <v-app id="inspire" v-else>
         <v-dialog v-model="dialog" app>
             <v-card>
-              <v-card-title  class="headline">{{dialog_header}}</v-card-title>
+              <v-card-title  class="text-h5">{{dialog_header}}</v-card-title>
               <v-card-text>{{dialog_body}}</v-card-text>
               <v-card-actions>
                 <div class="flex-grow-1"></div>
-                <v-btn color="red darken-1" @click="dialog=false">Закрыть</v-btn>
+                <v-btn color="red-darken-1" @click="dialog=false">Закрыть</v-btn>
               </v-card-actions>
             </v-card>
         </v-dialog>
@@ -31,10 +31,10 @@
           
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title >
-            <a href="/"><v-icon small>fa fa-home</v-icon>&nbsp; {{title}}</a>
+            <a href="/"><v-icon size="small">fa fa-home</v-icon>&nbsp; {{title}}</a>
             <!--<a href="/"><img align="absmiddle" class="logo" :src="logo_url"></a> -->
           </v-toolbar-title>
-          <Messenger v-if="" :config="app_components.navigator" :manager="manager"/>
+          <Messenger v-if="false" :config="app_components.navigator" :manager="manager"/>
         </v-app-bar>
 
         <v-main>
@@ -60,7 +60,7 @@
 
         </v-main>
         <v-footer class="app-footer" app>
-          <span class="white--text" >&copy; {{copyright}}
+          <span class="text-white" >&copy; {{copyright}}
             | <a :href="m.url" :target="m.target" v-for='(m,idx) in bottom_menu' style="color: white;">{{m.header}}</a>
           </span>
           
@@ -104,7 +104,7 @@ export default {
           
         },
         data: () => ({
-          logo_url:process.env.BASE_URL+'logo.png',
+          logo_url:import.meta.env.BASE_URL+'logo.png',
           drawer:true, // вкл / выкл левое меню
           active:{},
           dialog:false,
@@ -272,7 +272,7 @@ export default {
 
         computed: {
            imageHeight () {
-             switch (this.$vuetify.breakpoint.name) {
+             switch (this.$vuetify.display.name) {
                case 'xs': return '220px'
                case 'sm': return '400px'
                case 'md': return '500px'
@@ -284,12 +284,11 @@ export default {
 }
 </script>
 <style lang="scss">
-@import '@/styles/main.scss'; 
-  .app-footer {
-    background-color: $primary !important;
+@use './styles/main' as *;
+.app-footer {
+    background-color: rgb(var(--v-theme-primary)) !important;
   }
   .v-application .error {background-color: white !important;}
-  $color-pack: false;
   /* настройка полосы прокрутки */
   ::-webkit-scrollbar {
       width: 8px;
@@ -297,34 +296,34 @@ export default {
   ::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
-    background-color:$lighten2;
+    background-color:rgb(var(--v-theme-primary-lighten-2));
   }
   .v-app-bar {
-    background-color:$primary  !important;
-    color: $text_on_primary;
+    background-color:rgb(var(--v-theme-primary))  !important;
+    color: rgb(var(--v-theme-text-on-primary));
   }
-  .v-app-bar .theme--light.v-btn.v-btn--icon{
-    color: $text_on_primary;
+  .v-app-bar .v-btn{
+    color: rgb(var(--v-theme-text-on-primary));
   }
 
-  h1 {color: $primary;}
-  h2 {color: $primary;}
-  .v-toolbar__title {font-size: 1rem; color: $text_on_primary; font-weight: bold; vertical-align: bottom;}
-  header .v-toolbar__title .v-icon {color: #fff; position: relative; top: -2px; margin-right: 10px;}
-  header .v-toolbar__title a {color: #fff; text-decoration: none;}
+  h1 {color: rgb(var(--v-theme-primary));}
+  h2 {color: rgb(var(--v-theme-primary));}
+  .v-toolbar-title {font-size: 1rem; color: rgb(var(--v-theme-text-on-primary)); font-weight: bold; vertical-align: bottom;}
+  header .v-toolbar-title .v-icon {color: #fff !important; position: relative; top: -2px; margin-right: 10px;}
+  header .v-toolbar-title a {color: #fff !important; text-decoration: none;}
   .not_underline {text-decoration: none;}
 
   
   .v-application .err  {background: #fff0; background-color: #fff0;  color: red; margin-bottom: 5px;}
   .v-application .succ  {background: #fff; background-color: #fff !important;  color: green; margin-bottom: 5px;}
   
-  .v-select-list .v-list-item__title {font-size: 12px;}
+  .v-select-list .v-list-item-title {font-size: 12px;}
   
  
-  input, .v-select__selections [type=text] {font-size: 12px !important;}
-  .v-list-item__content, .v-select__slot {font-size: 12px;}
+  input, .v-field__input {font-size: 12px !important;}
+  .v-list-item-title, .v-field__input {font-size: 12px;}
   .v-label, .v-input {font-size: 12px !important; margin-bottom: 10px;}
-  .v-text-field--rounded .v-input__control {
+  .v-field--rounded .v-field {
     border: 1px solid black; 
     padding-left: 3px;
     border-radius: 5px !important;
@@ -332,26 +331,26 @@ export default {
     
   }
 
-  .v-input__slot .v-label--active {
+  .v-field-label--floating {
+    font-size: 10px !important;
     font-weight: bold;
-    border-bottom: 1px solid white;
-    background-color: white;
+    color: rgb(var(--v-theme-primary)) !important;
   }
-  .v-input__prepend-outer {width: 50px;}
+  .v-field__prepend-inner {width: 50px;}
   img.logo {max-height: 50px;  margin: 0px 20px 0 0;}
-  .v-toolbar__title .header {text-align: center;vertical-align: top; margin-top: 8px; font-size: 20px; display: inline-block;}
+  .v-toolbar-title .header {text-align: center;vertical-align: top; margin-top: 8px; font-size: 20px; display: inline-block;}
 
   .v-textarea textarea{
     line-height: 1.1rem !important;
   }
 
-  .v-textarea .v-input__slot{
-    padding:  0 5px !important;
+  .v-textarea .v-field__input{
+    padding:  8px 5px !important;
   }
 
   @media only screen and (max-width: 800px) {
     img.logo {height: 20px; ; margin: 0;}
-    .v-toolbar__title .header {text-align: center; margin-top: 0px; font-size: 12px; display: block;}
+    .v-toolbar-title .header {text-align: center; margin-top: 0px; font-size: 12px; display: block;}
   }
 
 </style>

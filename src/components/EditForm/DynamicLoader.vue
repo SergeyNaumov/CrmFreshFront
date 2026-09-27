@@ -7,6 +7,7 @@
 
 <script>
   
+  const field_modules = import.meta.glob('../fields/*.vue')
   export default {
     data:function(){
         return {
@@ -30,9 +31,9 @@
             if (!this.field.type) {
                 return null
             }
-            let filed_type=this.field.type.replace(/^1_to_1_(.+)$/,$1)
+            let filed_type=this.field.type.replace(/^1_to_1_(.+)$/, '$1')
 
-            return () => import(`../fields/${filed_type}`)
+            return field_modules[`../fields/${filed_type}.vue`]
         },
 
   },

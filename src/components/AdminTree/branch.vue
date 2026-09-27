@@ -2,7 +2,7 @@
     <div>
         <v-dialog v-model="dialog_add_form" max-width="500">
             <v-card>
-                <v-card-title  class="headline">Создание нового элемента</v-card-title>
+                <v-card-title  class="text-h5">Создание нового элемента</v-card-title>
                 <v-card-text>
                     <template v-if="mode_new_element=='text'">
                         <v-text-field  @keyup.enter="save()" label="Наименование раздела" placeholder="введите название" :ref="'new_header'+parent.id" v-model="values[form.header_field]" />
@@ -18,21 +18,21 @@
                 </v-card-text>
                 <v-card-actions>
                     <div class="flex-grow-1"></div>
-                    <v-btn color="red" text @click="dialog_add_form=false">Отменить</v-btn>
-                    <v-btn color="primary darken-1" text @click="save()">Сохранить</v-btn>   
+                    <v-btn color="red" variant="text" @click="dialog_add_form=false">Отменить</v-btn>
+                    <v-btn color="primary-darken-1" variant="text" @click="save()">Сохранить</v-btn>   
                 </v-card-actions>  
             </v-card>
         </v-dialog>
         
         <v-dialog v-model="show_errors" max-width="500">
             <v-card>
-                <v-card-title  class="headline">Произошли ошибки</v-card-title>
+                <v-card-title  class="text-h5">Произошли ошибки</v-card-title>
                 <v-card-text>
                     <errors :errors="errors" />
                 </v-card-text>
                 <v-card-actions>
                     <div class="flex-grow-1"></div>
-                    <v-btn color="red" text @click="show_errors=false">Закрыть</v-btn>
+                    <v-btn color="red" variant="text" @click="show_errors=false">Закрыть</v-btn>
                       
                 </v-card-actions>  
             </v-card>
@@ -51,20 +51,24 @@
                 class="list-group"
                 ghost-class="ghost"
                 :renew="renew"
-                :options="{'group':'g'+parent.id}" @start="move_start" @end="move_end"                
+                :list="list"
+                item-key="id"
+                :group="'g'+parent.id"
+                @start="move_start" @end="move_end"                
             >   
-                <li v-for="l in list" :key="l.id" :id="'li-'+l.id" >
+                <template #item="{ element: l }">
+                <li :id="'li-'+l.id" >
                 <div >
                     <div class="li_header" :style='{"background":cur_color}'  >
                             <div class="plus-icon " v-if="form.tree_use && (!form.max_level || (level < form.max_level))" >
                                 <!---->
-                                <v-icon small color="primary"
+                                <v-icon size="x-small" color="primary"
                                     v-if="!shows[l.id]" 
                                     @click="show_this(l)"
                                 >
                                     fa fa-plus 
                                 </v-icon>
-                                <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
+                                <v-icon size="x-small" color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
                             <div class="branch-header" >
                                 <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
@@ -79,8 +83,8 @@
                                 
                             </div>
                             <div class="branch-tools " style="display: block; position: relative; top: -30px; height: 0; margin-bottom: 0; text-align: right; ">
-                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
-                                <v-icon v-if="make_delete(parent.id,l)" small style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
+                                <a :href="get_edit_link(l.id)" @click.prevent="edit_in_new_tab(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
+                                <v-icon v-if="make_delete(parent.id,l)" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
                     </div>
                     <template v-if="shows[l.id]">
@@ -96,6 +100,7 @@
                 </div>
 
                 </li>
+                </template>
             </draggable>
         </div>
         <template v-else> <!-- NOT USE SORT-->
@@ -105,8 +110,8 @@
                     <div class="li_header">
                         <div class="ws-nowrap">
                             <div class="plus-icon float-left" v-if="form.tree_use">
-                                <v-icon small color="primary" v-if="!shows[l.id] && form.tree_use" @click="show_this(l)">fa fa-plus</v-icon>
-                                <v-icon small color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
+                                <v-icon size="x-small" color="primary" v-if="!shows[l.id] && form.tree_use" @click="show_this(l)">fa fa-plus</v-icon>
+                                <v-icon size="x-small" color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
                             <div class="branch-header">
                                 <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
@@ -120,8 +125,8 @@
                                 />
                             </div>
                             <div class="branch-tools float-right">
-                                <a :href="get_edit_link(l.id)" @click.prevent="go_to_edit(l.id)"><v-icon color="primary" small >edit</v-icon></a>&nbsp;
-                                <v-icon v-if="make_delete(parent.id,l)" small style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
+                                <a :href="get_edit_link(l.id)" @click.prevent="edit_in_new_tab(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
+                                <v-icon v-if="make_delete(parent.id,l)" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
                         </div>
                     </div>
@@ -323,6 +328,9 @@ export default {
                 url=UrlPrefix.replace(/\/$/,'')+'/edit_form/'+this.form.config+'/'+key
             return url
         },
+        edit_in_new_tab(key){
+            window.open( this.get_edit_link(key) );
+        },
         go_to_edit(key){
             let t=this
             if(t.form.changed_in_tree){ // открываем форму для редактирования здесь же
@@ -438,7 +446,9 @@ export default {
     margin-top: 0.5rem;
 }
 div.plus-icon{
-    min-width: 20px; 
+    min-width: 18px;
+    margin-right: 6px;
+    vertical-align: middle;
     display:inline-block;
 }
 div.plus-icon button {margin: 0;}
@@ -446,6 +456,7 @@ div.branch-header{
     width:auto; 
     max-width: 80%;
     display:inline-block;
+    vertical-align: middle;
 }
 div.branch-tools{
     width:auto;

@@ -1,6 +1,6 @@
 <template>
   <div class="gpt-assist" v-if="inited">
-    <v-btn x-small @click="show_panel=!show_panel" color="secondary" style="margin: 0" v-if="!show_panel">GPT</v-btn>
+    <v-btn size="x-small" @click="show_panel=!show_panel" color="secondary" style="margin: 0" v-if="!show_panel">GPT</v-btn>
     <v-dialog v-model="show_panel"  transition="dialog-bottom-transition" fullscreen>
 
         <v-toolbar dark color="primary">

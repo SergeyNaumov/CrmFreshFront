@@ -5,25 +5,25 @@
           <template v-else>-</template>
         </template>
         <template v-else>
-          <v-layout row wrap>
-              <v-flex pl-3 md6 xs12 >
+          <v-row >
+              <v-col class="pl-3" md="6" cols="12" >
                   <v-select
                     v-model="year"
                     :items="year_list"
                     autocomplete
                     label="Выберите год"
                   />
-                  </v-flex>
-              <v-flex pl-3 md6 xs12 >
+                  </v-col>
+              <v-col class="pl-3" md="6" cols="12" >
                   <v-select
                     v-model="mon"
                     :items="mon_list"
                     item-value="v"
-                    item-text="d"
+                    item-title="d"
                     label="Выберите месяц"
                   />
-              </v-flex>
-          </v-layout>
+              </v-col>
+          </v-row>
         </template>
         <div class="clear" v-show="need_empty">
           <small>

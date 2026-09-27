@@ -1,6 +1,6 @@
 <template>
 	<div class="chat_window" id="chat_window">
-		<div class="" class="header">
+		<div class="header">
 			Чат с {{chat.name}}
 			<a href="" @click.prevent="go_chat_list()"><div class="close">[x]</div></a>
 		</div>
@@ -23,7 +23,7 @@
         <div class="footer" v-if="!read_only">
           <textarea id="chat_window_newmes" v-model="new_message" placeholder="Введите Ваше сообщение (можно отправить нажатием Shift + Enter)"></textarea>
           <div style="text-align: right; margin-bottom: 10px;">
-          	<v-btn @click.prevent="send_message"><v-icon x-small>far fa-paper-plane</v-icon>&nbsp;отправить</v-btn>
+          	<v-btn @click.prevent="send_message"><v-icon size="x-small">far fa-paper-plane</v-icon>&nbsp;отправить</v-btn>
           </div>
         </div>
 	</div>
@@ -55,7 +55,7 @@ export default {
       document.querySelector('#chat_window_newmes').focus()
 
     },
-    destroyed() {
+    unmounted() {
     	this.$el.removeEventListener('keydown',this.keylistener)
     },
     watch:{
@@ -115,8 +115,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-	@import '@/styles/main.scss'; 
-	.chat_window{
+	@use '../../styles/main' as *;
+.chat_window{
 	    position: absolute;
 	    text-align: left;
 
@@ -135,7 +135,7 @@ export default {
 	.back {margin-left: 10px;}
 	.header {
 	    padding: 5px;
-	    background-color: $lighten2;
+	    background-color: rgb(var(--v-theme-primary-lighten-2));
 	    color: #fff;
 	    text-align: left;
 	    font-weight: bold;
@@ -162,11 +162,11 @@ export default {
 	.message_item{
 		
 
-		background-color: $lighten4;;
+		background-color: rgb(var(--v-theme-primary-lighten-4));;
 	}
 	.message_item.your{
 		text-align: right;	
-		background-color: $lighten5;
+		background-color: rgb(var(--v-theme-primary-lighten-5));
 	}
 
 	.message_item.your div{

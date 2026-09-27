@@ -1,14 +1,14 @@
 <template>
     <span>
     <div class="li_header" >
-        <v-icon small v-if="!shows[item.id] && form.tree_use" @click="show_this(item)">fa fa-plus</v-icon>
-        <v-icon small v-if="shows[item.id]" @click="shows[item.id]=false">fa fa-minus</v-icon>
+        <v-icon size="small" v-if="!shows[item.id] && form.tree_use" @click="show_this(item)">fa fa-plus</v-icon>
+        <v-icon size="small" v-if="shows[item.id]" @click="shows[item.id]=false">fa fa-minus</v-icon>
             {{ item.header }} 
             <pre>{{ form }}</pre>
             
                 <template v-if="form.tree_use && item.childs && item.childs.length>0">({{item.childs.length}})</template>
-                <v-icon color="primary" small @click="go_to_edit(item.id)">edit</v-icon> 
-                <v-icon v-if="form.make_delete" small style="font-size: 10pt;" color="primary" @click="del(parent.id,item)">fa fa-trash</v-icon>
+                <v-icon color="primary" size="small" @click="go_to_edit(item.id)">edit</v-icon> 
+                <v-icon v-if="form.make_delete" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,item)">fa fa-trash</v-icon>
     </div>
 
     <template v-if="shows[item.id]">

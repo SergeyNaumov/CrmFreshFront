@@ -15,14 +15,14 @@
         <template v-if="dialog_multiload"> <!-- v-if для очистки формы-->
           <v-dialog  v-model="dialog_multiload" max-width="500">
             <v-card class="one_to_m" >
-                <v-card-title  class="headline">
+                <v-card-title  class="text-h5">
                   Загрузка нескольких файлов
                 </v-card-title>
                 <v-card-text class="multiload">
                     <form enctype="multipart-form/data">                
                       <input type="file" multiple="multiple" :name="this.multiload_name">
                     </form>
-                    <v-btn color="primary" @click="start_multiload()" small>Загрузить</v-btn>
+                    <v-btn color="primary" @click="start_multiload()" size="small">Загрузить</v-btn>
                 </v-card-text>
             </v-card>
           </v-dialog> 
@@ -107,7 +107,7 @@
     
     
   },
-  beforeDestroy(){
+  beforeUnmount(){
   },
   watch:{
     field(){
@@ -215,7 +215,6 @@
 }
 </script>
 <style lang="scss" >
-  @import '@/styles/variables.scss';
   table.one_to_m{
     margin-top: 10px;
     border-collapse: collapse;
@@ -223,16 +222,16 @@
     width: 100%;
   }
   table.one_to_m th{
-    color: $light;
-    background-color: $primary;
+    color: #fff;
+    background-color: rgb(var(--v-theme-primary));
     
   }
 
 table.one_to_m tr:nth-child(2n+1) {
-  background: $lighten5;
+  background: rgb(var(--v-theme-primary-lighten-5));
 } 
   table.one_to_m td, table.one_to_m th{
-    border: 1px solid $lighten2;
+    border: 1px solid rgb(var(--v-theme-primary-lighten-2));
     padding: 5px;
     font-size: 10pt;
     text-align: left;
@@ -261,11 +260,11 @@ table.one_to_m tr:nth-child(2n+1) {
   }
   div.one_to_m{
     
-    border: 1px solid $lighten2;
+    border: 1px solid rgb(var(--v-theme-primary-lighten-2));
     padding: 1rem;
     margin-bottom: 1rem;
   }
-  div.one_to_m .h{color: $primary; font-size: 11pt; vertical-align: top;}
+  div.one_to_m .h{color: rgb(var(--v-theme-primary)); font-size: 11pt; vertical-align: top;}
   div.one_to_m .controls{position: absolute; right: 1rem; bottom: 0rem; padding-top: 2rem;}
   /*.one_to_m.theme--light.v-card {background-color: #7dd5f857 !important;}*/
   a.create {font-size: 12px;}  
