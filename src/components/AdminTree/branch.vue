@@ -476,6 +476,8 @@ div.branch-tools a{text-decoration: none;}
     align-items: center;
     gap: 6px;
     white-space: nowrap;
+    flex: 1 1 auto;
+    width: 100%;
 }
 
 li.sortable-ghost .li_header {
