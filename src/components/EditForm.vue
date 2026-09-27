@@ -421,8 +421,8 @@ methods: {
     div.field .v-row {margin-left: 0; margin-right: 0;}
     
     button {margin: 1rem;}
-    .container {max-width: 1200px;}
-    .container.onecol {max-width: 1200px;}
+    .container {max-width: 960px;}
+    .container.onecol {max-width: 960px;}
     header {margin-top: 1rem;}  
     .v-list-item {min-height: 25px !important;}
     .form_header {margin-bottom: 20px;}

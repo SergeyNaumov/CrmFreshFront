@@ -4,11 +4,24 @@
 }
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 960px;
     margin: 0 auto;
 }
 .container_fluid {
     width: 100%;
+}
+// Ограничение ширины полей (на широких экранах)
+.v-field {
+    max-width: 960px;
+}
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+.tox-tinymce {
+    max-width: 960px;
 }
 // Единый вид/отступы полей формы
 .form_header {
