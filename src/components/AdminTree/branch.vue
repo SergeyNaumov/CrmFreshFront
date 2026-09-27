@@ -82,7 +82,7 @@
                                 />
                                 
                             </div>
-                            <div class="branch-tools " style="display: block; position: relative; top: -30px; height: 0; margin-bottom: 0; text-align: right; ">
+                            <div class="branch-tools">
                                 <a :href="get_edit_link(l.id)" @click.prevent="edit_in_new_tab(l.id)"><v-icon color="primary" size="small" >edit</v-icon></a>&nbsp;
                                 <v-icon v-if="make_delete(parent.id,l)" size="small" style="font-size: 10pt;" color="primary" @click="del(parent.id,l)">fa fa-trash</v-icon>
                             </div>
@@ -433,6 +433,9 @@ export default {
 }
 
 .li_header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     border: 1px solid #E8EAF6; border-radius: 10px; width: 85%; max-width: 1000px; padding: 0.5rem;
     margin-bottom: 0.5rem;
     margin-top: 0.5rem;
@@ -446,27 +449,33 @@ export default {
     margin-top: 0.5rem;
 }
 div.plus-icon{
+    flex: 0 0 auto;
     min-width: 18px;
     margin-right: 6px;
-    vertical-align: middle;
-    display:inline-block;
+    display: inline-flex;
+    align-items: center;
 }
 div.plus-icon button {margin: 0;}
 div.branch-header{
-    width:auto; 
-    max-width: 80%;
-    display:inline-block;
-    vertical-align: middle;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    display: inline-block;
 }
 div.branch-tools{
-    width:auto;
-    display:inline-block; 
+    flex: 0 0 auto;
+    width: auto;
     min-width: 30px;
-    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0;
 }
 div.branch-tools a{text-decoration: none;}
 .ws-nowrap{
-    white-space:nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 li.sortable-ghost .li_header {
