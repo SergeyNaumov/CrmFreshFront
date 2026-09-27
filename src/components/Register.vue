@@ -132,7 +132,7 @@ export default {
 
         methods: {
             to_login(){
-                document.location.href="/login"
+                this.$router.replace('/login')
             },
             login_check(){
 

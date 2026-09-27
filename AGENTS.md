@@ -47,7 +47,6 @@ src/
   main.js                      # createApp: bus(mitt), Vuetify, $http, icon set, router, глобальные компоненты
   router/index.js              # vue-router: /vue/* (shell) и /* (full-screen), alias'ы
   App.vue                      # layout по route.meta.blank: shell (меню) или full-screen
-  js/app.js                    # legacy get_headapp (не используется, для совместимости)
   dynamic_component_loader.js  # ленивая регистрация компонентов (поля)
   LeftMenu.vue, MainPage.vue
   components/                  # EditForm, AdminTable, AdminTree, StatTool, Messenger, fields, FallbackRoute, ...

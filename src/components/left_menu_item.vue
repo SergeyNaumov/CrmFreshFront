@@ -1,5 +1,5 @@
 <template>
-  <div class="item">
+  <div class="item" :class="{active:isActive, 'has-active':hasActiveChild}">
 
       <template v-if="item.child.length"> <!-- Родительский пункт меню -->
         <a href="#" @click.prevent="show=!show">
@@ -37,7 +37,7 @@ export default {
   name:'left_menu_item',
   props:["manager","item","get_link","go_link"],
   created(){
-    if(this.item.show){
+    if(this.item.show || this.hasActiveChild){
       this.show=true
     }
   },
@@ -47,8 +47,27 @@ export default {
       show:false
     }
   },
+  computed:{
+    isActive(){
+      let l=this.link_of(this.item)
+      return !!l && l===this.$route.path
+    },
+    hasActiveChild(){
+      return !!(this.item.child && this.item.child.length && this.list_has_active(this.item.child))
+    }
+  },
   methods:{
-
+    link_of(item){
+      return this.get_link ? this.get_link(item) : ''
+    },
+    list_has_active(list){
+      let p=this.$route.path
+      for(let m of (list||[])){
+        if(this.link_of(m)===p) return true
+        if(m.child && m.child.length && this.list_has_active(m.child)) return true
+      }
+      return false
+    }
   }
 }
 </script>
@@ -58,6 +77,8 @@ export default {
   a { text-decoration: none; color: black !important;}
   a:hover { color: rgb(var(--v-theme-primary));}
   a:hover span {text-decoration: underline;}
+  .item.active > a span, .item.has-active > a span {color: rgb(var(--v-theme-primary)); font-weight: bold;}
+  .item.active > a {background: var(--app-tint); border-radius: 4px;}
   .v-icon {font-size: 12px; color: rgb(var(--v-theme-primary));}
   .v-icon.arrow {padding-right: 10px; font-size: 10px;}
   div {

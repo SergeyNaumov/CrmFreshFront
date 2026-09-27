@@ -73,7 +73,13 @@ export default {
                 let D=response.data;
                 if(D.success){
                   let prev_login=localStorage.getItem('link_prev_login')
-                  location.href=prev_login?prev_login:'/'
+                  if(prev_login && prev_login.indexOf(location.origin)===0){
+                    this.$router.replace(prev_login.slice(location.origin.length) || '/')
+                  } else if(prev_login && prev_login[0]==='/'){
+                    this.$router.replace(prev_login)
+                  } else {
+                    this.$router.replace('/')
+                  }
                 }
 
                 

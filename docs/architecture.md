@@ -39,33 +39,16 @@
 
 > В Vue 3 у Vue-инстанса нет `$on/$emit/$off`. Нужен shim (mitt) с тем же API — `migration-vue3.md`.
 
-## `src/App.vue` — два режима
+## `src/App.vue` — два layout'а (Vue Router)
 
-Определяется в `src/js/app.js` (`get_headapp(self)`), вызывается в `created` и на `window.onhashchange`.
+Layout выбирается по `route.meta.blank` (см. `src/router/index.js`):
 
-1. **`headapp`** — полноэкранное приложение: рендерится `<component :is="headapp" is_headapp="1" :params="headapp_params">` (без drawer/меню).
-2. **`v-app` shell** — обычный CRM-интерфейс: `v-navigation-drawer` + `LeftMenu`, `v-app-bar` + `Messenger`, `v-main` с `MenuItem` (`type:'vue'` → компонент, `type:'src'` → iframe), `v-footer`.
+1. **`meta.blank !== true`** — shell: `v-navigation-drawer` + `LeftMenu`, `v-app-bar` + `Messenger`, `v-main` с `<router-view>`, `v-footer`. Загрузка `/startpage` (left_menu, manager, title, copyright) — в `App.created`.
+2. **`meta.blank === true`** — full-screen: `<v-app><router-view/></v-app>` без меню (формы, деревья/таблицы headapp, логин).
 
-### Роутинг URL (`src/js/app.js`)
+Маршруты: `/vue/*` — shell; `/*` (без `/vue`) — full-screen. Катч-олл `/:pathMatch(.*)*` обрабатывает `/src:<url>` (iframe в shell) и неизвестные пути (→ на главную). Дефисные алиасы (`/edit-form`, `/admin-table`, `/admin-tree`) сохранены.
 
-| URL (regex) | headapp |
-|---|---|
-| `/src:<...>` | iframe (`MenuItem.type='src'`) |
-| `/vue/<...>` | компонент в shell (не headapp) |
-| `/edit_form/<config>/<id>` | `edit-form` |
-| `/edit_form/<config>` | `edit-form` (new) |
-| `/transfere_cards/<config>` | `transfere-cards` |
-| `/admin_table/<config>` | `admin-table` |
-| `/admin_tree/<config>[:id]` | `admin-tree` |
-| `/table/<config>` | `table_component` |
-| `/const/<config>` | `const` |
-| `/login`, `/register`, `/remember` | соответствующие |
-| `/stat-tool/<config>` | `stat-tool` |
-| `/parser-excel/<config>` | `parser-excel` |
-| `/documentation/<config>` | `documentation` |
-| `/Schedule/<config>` | `schedule` |
-| `/VideoList/<config>` | `VideoList` |
-| `/memo-aggregate/<config>` | `memo-aggregate` (компонент не зарегистрирован) |
+Активный пункт меню — по совпадению `get_link(item)` с `$route.path` (`left_menu_item.vue`).
 
 ### Загрузка данных shell
 
