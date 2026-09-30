@@ -1,0 +1,100 @@
+{
+  "schema": "svcms.page_blocks",
+  "version": 2,
+  "blocks": [
+    {
+      "type": "header",
+      "params": {
+        "layout": "classic",
+        "sticky": true,
+        "topbar": true,
+        "nav": true,
+        "phone": true,
+        "email": true,
+        "workTime": true,
+        "favorite": true,
+        "compare": true,
+        "cart": true
+      }
+    },
+    {
+      "type": "text",
+      "variant": "prose",
+      "fill": "fill-1",
+      "params": {
+        "eyebrow": "О компании",
+        "title": "Мы делаем сложное простым",
+        "leadOn": true,
+        "lead": "Коротко о том, чем мы занимаемся.",
+        "p1": "Мы работаем с 2012 года.",
+        "list": true,
+        "quote": true,
+        "quoteText": "Клиент должен получать ровно то, что ожидает."
+      }
+    },
+    {
+      "type": "product_card",
+      "variant": "card",
+      "params": {
+        "varname": "goods_list",
+        "cols": "4",
+        "showAnons": true,
+        "showBadges": true,
+        "showFavorite": true,
+        "showCompare": true,
+        "showBuy": true
+      }
+    },
+    {
+      "type": "service_card",
+      "variant": "card",
+      "params": {
+        "varname": "services_list",
+        "showIcon": true,
+        "showPrice": true,
+        "showMore": true
+      }
+    },
+    {
+      "type": "news_list",
+      "params": {
+        "varname": "news_list",
+        "header": "Новости",
+        "columns": 3,
+        "limit": 6,
+        "source": "news",
+        "sub": "Актуальные события из мира технологий."
+      }
+    },
+    {
+      "type": "video",
+      "variant": "carousel",
+      "params": {
+        "varname": "video_list",
+        "header": "Видеообзоры",
+        "sub": "Обзоры и инструкции на RuTube.",
+        "autoplay": "0"
+      }
+    },
+    {
+      "type": "faq",
+      "variant": "faq",
+      "params": {
+        "varname": "faq_list",
+        "header": "Частые вопросы",
+        "sub": "Ответы на частые вопросы."
+      }
+    },
+    {
+      "type": "footer",
+      "params": {
+        "columns": "4",
+        "catalog": true,
+        "contacts": true,
+        "socials": true,
+        "note": true,
+        "copyright": "© 2026 Компания"
+      }
+    }
+  ]
+}

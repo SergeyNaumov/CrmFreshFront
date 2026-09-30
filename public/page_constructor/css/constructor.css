@@ -1,0 +1,271 @@
+/* page_constructor/css/constructor.css
+   Обвязка инструмента: шапка, холст, правая панель (JSON/предпросмотр), модалки. */
+
+* { box-sizing: border-box; }
+
+body.pc-body {
+  margin: 0;
+  background: #eef1f6;
+  color: #1f2430;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+}
+
+/* ---------- шапка ---------- */
+.pc-appbar {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 10px 16px; background: #171a2b; color: #fff;
+  position: sticky; top: 0; z-index: 20;
+}
+.pc-appbar__brand { display: flex; align-items: baseline; gap: 8px; }
+.pc-appbar__brand b { font-size: 16px; }
+.pc-appbar__brand span { font-size: 12px; color: #98a0b8; }
+.pc-appbar__spacer { flex: 1; }
+.pc-saved { font-size: 12px; color: #7fd1a8; min-width: 120px; }
+
+.pc-tool {
+  border: 1px solid #3a4160; background: #262b42; color: #e7eaf5;
+  border-radius: 6px; padding: 7px 12px; font-size: 13px; cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.pc-tool:hover { background: #333a58; }
+.pc-tool--primary { background: #e94560; border-color: #e94560; color: #fff; font-weight: 600; }
+.pc-tool--primary:hover { background: #d43a53; }
+.pc-tool--ghost { background: transparent; }
+
+/* ---------- раскладка ---------- */
+.pc-shell {
+  display: grid; grid-template-columns: minmax(0, 1fr) 380px;
+  align-items: start; min-height: calc(100vh - 56px);
+  transition: grid-template-columns .18s ease;
+}
+.pc-canvas, .pc-aside { min-width: 0; }
+/* при редактировании: форма уже, превью шире */
+@media (min-width: 901px) {
+  .pc-shell.is-editing-preview { grid-template-columns: minmax(0, 40%) minmax(0, 60%); }
+  .pc-shell.is-editing-preview .pcb-row > label { flex-basis: 118px; }
+}
+
+/* ---------- холст ---------- */
+.pc-canvas { padding: 16px; min-height: calc(100vh - 56px); }
+.pc-canvas__bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.pc-add-btn {
+  border: none; background: #4a3fd0; color: #fff; font-weight: 600;
+  border-radius: 8px; padding: 10px 16px; font-size: 14px; cursor: pointer;
+  box-shadow: 0 2px 6px rgba(74, 63, 208, .25);
+}
+.pc-add-btn:hover { background: #3f35bd; }
+.pc-canvas__hint { color: #98a0b8; font-size: 13px; }
+.pc-canvas__empty {
+  border: 2px dashed #cfd6e6; border-radius: 10px; padding: 60px 20px;
+  text-align: center; color: #98a0b8; background: #fff;
+}
+
+/* ---------- карточка блока ---------- */
+.pcb-card {
+  position: relative; background: #fff; border: 1px solid #dde2ec;
+  border-radius: 10px; margin-bottom: 14px; overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20, 28, 50, .04);
+}
+.pcb-head {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  background: #f7f9fc; border-bottom: 1px solid #e6eaf2;
+}
+.pcb-card.is-collapsed .pcb-head { border-bottom: none; }
+.pcb-head__title { font-weight: 600; font-size: 13px; }
+.pcb-head__index { color: #98a0b8; font-size: 12px; }
+.pcb-head__summary { color: #98a0b8; font-size: 12px; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pcb-head__spacer { flex: 1; }
+.pcb-ico {
+  border: 1px solid #dfe4ee; background: #fff; color: #566077;
+  border-radius: 6px; min-width: 28px; height: 28px; cursor: pointer;
+  font-size: 13px; line-height: 1; padding: 0 7px;
+}
+.pcb-ico:hover { background: #eef1f7; }
+.pcb-ico--toggle { font-size: 12px; }
+.pcb-drag { cursor: grab; user-select: none; color: #b6bdcb; font-size: 15px; padding: 2px 4px; border-radius: 4px; }
+.pcb-drag:hover { background: #eef1f7; color: #566077; }
+.pcb-drag.is-disabled { opacity: .3; cursor: default; }
+.pcb-card.is-structural { border-left: 3px solid #4a3fd0; }
+.pcb-card.is-structural .pcb-head { background: #f3f1ff; }
+.pcb-card { transition: margin .12s ease, box-shadow .12s ease, background .12s ease; }
+.pcb-card.is-dragging {
+  border: 2px dashed #4a3fd0;
+  background: #f3f1ff;
+  box-shadow: 0 10px 30px rgba(74, 63, 208, .28);
+  opacity: .75;
+}
+.pcb-card.is-drop-before,
+.pcb-card.is-drop-after { overflow: visible; }
+.pcb-card.is-drop-before {
+  margin-top: 16px;
+  box-shadow: 0 -6px 0 0 #4a3fd0;
+}
+.pcb-card.is-drop-after {
+  margin-bottom: 16px;
+  box-shadow: 0 6px 0 0 #4a3fd0;
+}
+.pcb-card.is-drop-before::before,
+.pcb-card.is-drop-after::after {
+  content: 'вставить сюда';
+  position: absolute; left: 12px;
+  font-size: 10px; letter-spacing: .4px; text-transform: uppercase;
+  color: #4a3fd0; background: #efeaff; border: 1px dashed #b9aeff;
+  border-radius: 999px; padding: 1px 8px; z-index: 6;
+}
+.pcb-card.is-drop-before::before { top: -9px; }
+.pcb-card.is-drop-after::after { bottom: -9px; }
+
+/* ---------- форма ---------- */
+.pcb-form { border-top: 1px solid #e6eaf2; padding: 12px; background: #fdfdff; }
+.pcb-form__section { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #98a0b8; margin: 4px 0 8px; }
+.pcb-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.pcb-row > label { flex: 0 0 150px; font-size: 12px; color: #586079; padding-top: 6px; }
+.pcb-row__control { flex: 1; min-width: 0; display: flex; gap: 6px; align-items: center; }
+.pcb-row__control > .pcb-field { flex: 1; min-width: 0; }
+.pcb-row__control > label.pcb-switch { flex: 0 0 auto; }
+.pcb-pick { flex: 0 0 auto; font-size: 15px; }
+
+/* ---------- пикер изображений / эмодзи ---------- */
+.pc-picker {
+  position: fixed; inset: 0; background: rgba(15, 19, 32, .55);
+  display: flex; align-items: flex-start; justify-content: center; padding: 48px 16px;
+  z-index: 65;
+}
+.pc-picker__dialog {
+  background: #fff; border-radius: 12px; width: 580px; max-width: 100%;
+  max-height: calc(100vh - 96px); display: flex; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(10, 15, 30, .4); overflow: hidden;
+}
+.pc-picker__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid #e6eaf2;
+}
+.pc-picker__head b { font-size: 15px; }
+.pc-picker__body { padding: 14px 16px; overflow: auto; }
+.pc-picker__body--emoji { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.pc-emoji {
+  border: 1px solid transparent; background: #fff; border-radius: 8px;
+  font-size: 20px; line-height: 1; padding: 6px 0; cursor: pointer; text-align: center;
+}
+.pc-emoji:hover { background: #eef1f7; border-color: #d8dde8; }
+.pc-picker__body--image { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.pc-img {
+  border: 1px solid #e3e6ea; background: #fff; border-radius: 8px; padding: 0;
+  overflow: hidden; cursor: pointer; aspect-ratio: 1 / 1; display: flex;
+}
+.pc-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pc-img:hover { border-color: #4a3fd0; box-shadow: 0 0 0 2px #efeaff; }
+.pcb-field {
+  width: 100%; border: 1px solid #d8dde8; border-radius: 6px; padding: 6px 8px;
+  font-size: 13px; font-family: inherit; background: #fff;
+}
+textarea.pcb-field { min-height: 56px; resize: vertical; }
+.pcb-switch { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #586079; }
+.pcb-switch input { width: 16px; height: 16px; }
+.pcb-note {
+  margin: 10px 0 4px; padding: 8px 12px; font-size: 12px; color: #4a3fd0;
+  background: #f3f1ff; border: 1px solid #e0dbff; border-radius: 8px;
+}
+.pcb-items { margin-top: 10px; border-top: 1px dashed #e2e6ee; padding-top: 10px; }
+.pcb-item { border: 1px solid #e6eaf2; border-radius: 8px; padding: 10px; margin-bottom: 8px; background: #fbfcfe; }
+.pcb-item__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.pcb-item__head b { font-size: 12px; color: #6b7488; text-transform: uppercase; letter-spacing: .4px; }
+.pcb-item .pcb-row > label { flex-basis: 120px; }
+.pcb-add-item {
+  border: 1px dashed #c3cbe0; background: #fff; color: #4a3fd0;
+  border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer;
+}
+.pcb-add-item:hover { background: #f2f0ff; }
+
+/* ---------- правая панель ---------- */
+.pc-aside {
+  position: sticky; top: 56px; align-self: start; max-height: calc(100vh - 56px);
+  display: flex; flex-direction: column; border-left: 1px solid #dde2ec;
+  background: #0f1320; color: #cdd4e6;
+}
+.pc-aside__head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #232a44; }
+.pc-aside__head b { font-size: 13px; color: #fff; }
+.pc-aside__stats { font-size: 12px; color: #8a93a6; }
+.pc-aside__body { flex: 1; overflow: auto; }
+.pc-aside__body.is-preview { background: #eef1f6; }
+.pc-json {
+  margin: 0; padding: 12px; font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.55; color: #b9c3da; white-space: pre;
+}
+.pc-frame {
+  width: 100%; min-height: 260px; border: 0; display: block;
+  background: #fff; border-radius: 8px;
+}
+.pc-frame--modal { min-height: 62vh; }
+
+/* бейджи шапки карточки (тип/вариант/fill/anim) */
+.pc-badge {
+  font-size: 11px; line-height: 1; padding: 4px 8px; border-radius: 999px;
+  background: #eef1f7; color: #5b6478; border: 1px solid #e0e5ee;
+}
+.pc-badge--type { background: #e8e5ff; color: #4a3fd0; border-color: #d8d3ff; font-weight: 600; }
+.pc-badge--fill { background: #fff4e6; color: #9a6414; border-color: #ffe2c2; }
+.pc-badge--anim { background: #e6f7ef; color: #187a52; border-color: #c9ecdc; }
+
+/* ---------- модалки ---------- */
+.pc-modal {
+  position: fixed; inset: 0; background: rgba(15, 19, 32, .55);
+  display: flex; align-items: flex-start; justify-content: center; padding: 48px 16px;
+  z-index: 60;
+}
+.pc-modal__dialog {
+  background: #fff; border-radius: 12px; width: 680px; max-width: 100%;
+  max-height: calc(100vh - 96px); display: flex; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(10, 15, 30, .4); overflow: hidden;
+}
+.pc-previewmodal { width: 900px; }
+/* Предпросмотр страницы — шире и выше, чтобы помещался весь макет */
+.pc-previewmodal--page { width: min(1400px, 96vw); }
+.pc-previewmodal--page .pc-frame--modal { min-height: 78vh; }
+.pc-modal__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid #e6eaf2;
+}
+.pc-modal__head b { font-size: 15px; }
+.pc-modal__close { border: none; background: none; font-size: 16px; color: #566077; cursor: pointer; }
+.pc-modal__body { padding: 14px 16px; overflow: auto; background: #eef1f6; }
+.pc-modal__foot { padding: 8px 16px; border-top: 1px solid #e6eaf2; font-size: 12px; color: #98a0b8; }
+
+/* добавление блока */
+.pc-addmodal__search { padding: 12px 16px 0; }
+.pc-addmodal__input {
+  width: 100%; border: 1px solid #c3cbe0; border-radius: 8px;
+  padding: 10px 14px; font-size: 15px;
+}
+.pc-addmodal__input:focus { outline: 2px solid #cfc9ff; border-color: #4a3fd0; }
+.pc-addmodal__body { padding: 12px 16px; overflow: auto; }
+.pc-addmodal__group { margin-bottom: 12px; }
+.pc-addmodal__gtitle { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: #98a0b8; margin-bottom: 6px; }
+.pc-addmodal__type { margin-bottom: 8px; }
+.pc-addmodal__tname { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.pc-addmodal__tkey { color: #a3abbd; font-weight: 400; font-size: 11px; margin-left: 6px; }
+.pc-addmodal__struct { margin-left: 6px; font-size: 10px; color: #4a3fd0; background: #efeaff; border-radius: 999px; padding: 1px 7px; }
+.pc-addmodal__variants { display: flex; flex-wrap: wrap; gap: 6px; }
+.pc-addmodal__variant {
+  border: 1px solid #d8dde8; background: #fff; color: #353c4e;
+  border-radius: 999px; padding: 5px 12px; font-size: 12px; cursor: pointer;
+}
+.pc-addmodal__variant:hover { background: #eef1f7; }
+.pc-addmodal__variant.is-active { background: #4a3fd0; border-color: #4a3fd0; color: #fff; }
+.pc-addmodal__empty { padding: 30px; text-align: center; color: #98a0b8; }
+
+/* ---------- тост ---------- */
+.pc-toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  background: #171a2b; color: #fff; border-radius: 8px; padding: 10px 18px;
+  font-size: 13px; box-shadow: 0 8px 24px rgba(10, 15, 30, .3); z-index: 70;
+}
+
+/* ---------- адаптив ---------- */
+@media (max-width: 1100px) { .pc-shell { grid-template-columns: minmax(0, 1fr) 320px; } }
+@media (max-width: 900px) {
+  .pc-shell { grid-template-columns: minmax(0, 1fr); }
+  .pc-aside { position: static; max-height: none; order: -1; }
+  .pc-modal__dialog { width: 100%; }
+}

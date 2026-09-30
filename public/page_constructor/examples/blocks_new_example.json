@@ -1,0 +1,104 @@
+{
+  "schema": "svcms.page_blocks",
+  "version": 2,
+  "comment": "Пример страницы из новых блоков конструктора: команда, сертификаты, каталог проектов, таймер, бегущая строка, вкладки, галерея, бренды, история, структура, документы.",
+  "blocks": [
+    {
+      "type": "header",
+      "params": {
+        "layout": "classic",
+        "sticky": true,
+        "topbar": true,
+        "nav": true,
+        "phone": true,
+        "email": true,
+        "workTime": true,
+        "favorite": true,
+        "compare": true,
+        "cart": true
+      }
+    },
+    {
+      "type": "countdown",
+      "params": {
+        "header": "Архитектурный проект в подарок",
+        "text": "до 20 сентября",
+        "date": "2026-09-20T23:59:59",
+        "mode": "until",
+        "units": "days-hours-minutes-seconds",
+        "buttonText": "Записаться на консультацию",
+        "buttonUrl": "#consultation",
+        "hideAfter": true
+      }
+    },
+    {
+      "type": "marquee",
+      "fill": "fill-1",
+      "params": { "view": "cards", "speed": 40, "direction": "left", "pause": true }
+    },
+    {
+      "type": "team",
+      "variant": "cards",
+      "params": { "header": "Наша команда", "sub": "Персональные менеджеры на связи", "cols": 4, "contacts": true }
+    },
+    {
+      "type": "team",
+      "variant": "list",
+      "params": { "header": "Отдел продаж", "contacts": true }
+    },
+    {
+      "type": "team",
+      "variant": "manager",
+      "params": { "header": "Персональный менеджер", "contacts": true }
+    },
+    {
+      "type": "catalog_projects",
+      "params": {
+        "header": "Каталог проектов",
+        "sub": "Выберите по площади, технологии и сегменту",
+        "perpage": 6,
+        "segment": true,
+        "floors": true,
+        "technology": true,
+        "area": true,
+        "sort": true,
+        "loadMore": true
+      }
+    },
+    {
+      "type": "tabs",
+      "params": { "header": "Технологии", "sub": "Сравните варианты" }
+    },
+    {
+      "type": "photo_gallery",
+      "variant": "bento",
+      "params": { "header": "Галерея работ", "filter": true, "filterTags": "Интерьер, Улица" }
+    },
+    {
+      "type": "brands_grid",
+      "params": { "header": "Производители", "cols": 4 }
+    },
+    {
+      "type": "certificates",
+      "variant": "grid",
+      "params": { "header": "Сертификаты", "cols": 4, "fancybox": true }
+    },
+    {
+      "type": "history_timeline",
+      "variant": "vertical",
+      "params": { "header": "История компании" }
+    },
+    {
+      "type": "org_chart",
+      "params": { "header": "Структура компании" }
+    },
+    {
+      "type": "reports",
+      "params": { "header": "Документы и отчёты" }
+    },
+    {
+      "type": "footer",
+      "params": { "columns": 4, "socials": true, "catalog": true, "contacts": true, "note": true }
+    }
+  ]
+}

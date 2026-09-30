@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Конструктор страниц — svcms-templates</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/constructor.css">
+</head>
+<body class="pc-body">
+  <div id="page-constructor">
+
+    <!-- ======================= шапка ======================= -->
+    <header class="pc-appbar">
+      <div class="pc-appbar__brand">
+        <b>Конструктор страниц</b>
+        <span>block_list.json · v2</span>
+      </div>
+      <span class="pc-appbar__spacer"></span>
+      <span class="pc-saved">{{ lastSavedAt ? ('сохранено ' + lastSavedAt) : '' }}</span>
+      <button class="pc-tool pc-tool--ghost" @click="openPagePreview">Предпросмотр страницы</button>
+      <button class="pc-tool pc-tool--ghost" @click="loadExample">Пример</button>
+      <button class="pc-tool pc-tool--ghost" @click="loadExampleNew">Пример: новые блоки</button>
+      <button class="pc-tool pc-tool--ghost" @click="resetAll">Очистить</button>
+      <button class="pc-tool pc-tool--primary" @click="copyJson">Копировать JSON</button>
+      <button class="pc-tool" @click="downloadJson">Скачать .json</button>
+    </header>
+
+    <div class="pc-shell" :class="{ 'is-editing-preview': asideMode === 'preview' }">
+
+      <!-- ======================= холст ======================= -->
+      <main class="pc-canvas">
+        <div class="pc-canvas__bar">
+          <button class="pc-add-btn" @click="openAddModal">＋ Добавить блок</button>
+          <span class="pc-canvas__hint">{{ blocks.length }} блок(ов)</span>
+        </div>
+
+        <div class="pc-canvas__empty" v-if="!blocks.length">
+          Страница пуста. Нажмите «Добавить блок».
+        </div>
+
+        <article
+          class="pcb-card"
+          :class="[ 'pcb-card--' + block.type, { 'is-structural': isStructural(block), 'is-collapsed': !isOpen(block), 'is-editing': isOpen(block), 'is-dragging': dragIndex === idx }, dropClass(idx) ]"
+          v-for="(block, idx) in blocks"
+          :key="block._uid"
+          @dragover="onDragOver(idx, $event)"
+          @drop="onDrop(idx, $event)"
+        >
+          <header class="pcb-head">
+            <span
+              class="pcb-drag"
+              :class="{ 'is-disabled': !canDrag(block) }"
+              :draggable="canDrag(block)"
+              @dragstart="onDragStart(idx, $event)"
+              @dragend="onDragEnd"
+              title="Перетащите, чтобы изменить порядок"
+            >⠿</span>
+            <span class="pcb-head__index">{{ idx + 1 }}</span>
+            <span class="pcb-head__title">{{ typeTitle(block.type) }}</span>
+            <span class="pc-badge" v-if="block.variant">{{ variantTitle(block.type, block.variant) }}</span>
+            <span class="pcb-head__summary" v-if="!isOpen(block)">{{ block.params.header || block.params.title || '' }}</span>
+            <span class="pcb-head__spacer"></span>
+            <button class="pcb-ico" @click="openBlockPreview(block)" aria-label="Предпросмотр блока" title="Предпросмотр блока">👁</button>
+            <template v-if="!isStructural(block)">
+              <button class="pcb-ico" @click="moveBlock(idx, -1)" aria-label="Поднять блок">↑</button>
+              <button class="pcb-ico" @click="moveBlock(idx, 1)" aria-label="Опустить блок">↓</button>
+              <button class="pcb-ico" @click="duplicateBlock(idx)" aria-label="Дублировать блок">⧉</button>
+            </template>
+            <button class="pcb-ico pcb-ico--toggle" @click="toggleForm(block)" :aria-expanded="isOpen(block)" :aria-label="isOpen(block) ? 'Свернуть блок' : 'Развернуть и редактировать'">{{ isOpen(block) ? '▾ Редактирование' : '▸ Редактировать' }}</button>
+            <button class="pcb-ico" @click="removeBlock(idx)" aria-label="Удалить блок">✕</button>
+          </header>
+
+          <div class="pcb-form" v-if="isOpen(block)">
+            <div class="pcb-form__grid">
+              <div>
+                <div class="pcb-form__section">Оформление блока</div>
+                <div class="pcb-row">
+                  <label>Фон</label>
+                  <div class="pcb-row__control">
+                    <select class="pcb-field" v-model="block.fill">
+                      <option v-for="f in fillOptions" :key="f" :value="f">{{ f || '— по умолчанию' }}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="pcb-row">
+                  <label>Анимация</label>
+                  <div class="pcb-row__control">
+                    <select class="pcb-field" v-model="block.anim">
+                      <option v-for="a in animOptions" :key="a" :value="a">{{ a || '— по умолчанию' }}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="pcb-row">
+                  <label>Во всю ширину</label>
+                  <div class="pcb-row__control">
+                    <label class="pcb-switch"><input type="checkbox" v-model="block.bleed"><span>{{ block.bleed ? 'да' : 'нет' }}</span></label>
+                  </div>
+                </div>
+
+                <template v-if="hasViews(block)">
+                  <div class="pcb-row">
+                    <label>Вид блока</label>
+                    <div class="pcb-row__control">
+                      <select class="pcb-field" :value="block.variant" @change="setView(block, $event.target.value)">
+                        <option v-for="v in viewOptions(block)" :key="v.key" :value="v.key">{{ v.label }}</option>
+                      </select>
+                    </div>
+                  </div>
+                </template>
+
+                <template v-if="paramsOf(block).length">
+                  <div class="pcb-form__section">Параметры</div>
+                  <div class="pcb-row" v-for="pp in paramsOf(block)" :key="pp.name">
+                    <label>{{ pp.label }}</label>
+                    <div class="pcb-row__control">
+                      <input v-if="pp.kind === 'text'" class="pcb-field" type="text" v-model="block.params[pp.name]">
+                      <textarea v-else-if="pp.kind === 'textarea'" class="pcb-field" v-model="block.params[pp.name]"></textarea>
+                      <input v-else-if="pp.kind === 'number'" class="pcb-field" type="number" :min="pp.min" :max="pp.max" :step="pp.step" v-model.number="block.params[pp.name]">
+                      <select v-else-if="pp.kind === 'select'" class="pcb-field" v-model="block.params[pp.name]">
+                        <option v-for="o in pp.options" :key="String(o.value)" :value="o.value">{{ o.label }}</option>
+                      </select>
+                      <label v-else-if="pp.kind === 'bool'" class="pcb-switch"><input type="checkbox" v-model="block.params[pp.name]"><span>{{ block.params[pp.name] ? 'да' : 'нет' }}</span></label>
+                      <input v-else class="pcb-field" type="text" v-model="block.params[pp.name]">
+                      <button v-if="isImageField(pp)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'param', pp)" title="Выбрать изображение">🖼</button>
+                      <button v-else-if="isEmojiField(pp)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'param', pp)" title="Выбрать эмодзи">😀</button>
+                    </div>
+                  </div>
+                </template>
+
+                <div class="pcb-note" v-if="isDataBlock(block)">Данные блока берутся из переменной (поле «Название переменной»). Ниже приведены демонстрационные элементы для превью — в JSON они не выгружаются.</div>
+
+              <div class="pcb-items" v-if="hasItems(block)">
+                  <div class="pcb-form__section">Элементы ({{ block.items.length }})</div>
+                  <div class="pcb-item" v-for="(it, ii) in block.items" :key="ii">
+                    <div class="pcb-item__head">
+                      <b>№{{ ii + 1 }}</b>
+                      <button class="pcb-ico" @click="removeItem(block, ii)" aria-label="Удалить элемент">✕</button>
+                    </div>
+                    <div class="pcb-row" v-for="f in fieldsOf(block)" :key="f.name">
+                      <label>{{ f.label }}</label>
+                      <div class="pcb-row__control">
+                        <input v-if="f.kind === 'text'" class="pcb-field" type="text" v-model="it[f.name]">
+                        <textarea v-else-if="f.kind === 'textarea'" class="pcb-field" v-model="it[f.name]"></textarea>
+                        <input v-else-if="f.kind === 'number'" class="pcb-field" type="number" v-model.number="it[f.name]">
+                        <select v-else-if="f.kind === 'select'" class="pcb-field" v-model="it[f.name]">
+                          <option v-for="o in f.options" :key="String(o.value)" :value="o.value">{{ o.label }}</option>
+                        </select>
+                        <label v-else-if="f.kind === 'bool'" class="pcb-switch"><input type="checkbox" v-model="it[f.name]"></label>
+                        <input v-else class="pcb-field" type="text" v-model="it[f.name]">
+                        <button v-if="isImageField(f)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'item', f, ii)" title="Выбрать изображение">🖼</button>
+                        <button v-else-if="isEmojiField(f)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'item', f, ii)" title="Выбрать эмодзи">😀</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="pcb-add-item" @click="addItem(block)">+ Добавить элемент</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </main>
+
+      <!-- ======================= правая панель (JSON / предпросмотр) ======================= -->
+      <aside class="pc-aside">
+        <template v-if="asideMode === 'preview'">
+          <div class="pc-aside__head">
+            <b>Предпросмотр</b>
+            <span class="pc-aside__stats">{{ previewTitle }}</span>
+            <span class="pc-appbar__spacer"></span>
+            <button class="pc-tool" @click="showJson">Показать JSON</button>
+          </div>
+          <div class="pc-aside__body is-preview">
+            <iframe class="pc-frame" :srcdoc="previewSrc" @load="onFrameLoad" title="Предпросмотр блока"></iframe>
+          </div>
+        </template>
+        <template v-else>
+          <div class="pc-aside__head">
+            <b>block_list.json</b>
+            <span class="pc-aside__stats">{{ blocks.length }} бл. · {{ totalItems }} элем.</span>
+            <span class="pc-appbar__spacer"></span>
+            <button class="pc-tool" @click="copyJson">Копировать</button>
+            <button class="pc-tool" @click="downloadJson">Скачать</button>
+          </div>
+          <div class="pc-aside__body">
+            <pre class="pc-json">{{ jsonText }}</pre>
+          </div>
+        </template>
+      </aside>
+
+    </div>
+
+    <!-- ======================= модалка добавления ======================= -->
+    <div class="pc-modal" v-if="showAddModal" @click.self="closeAddModal">
+      <div class="pc-modal__dialog pc-addmodal" role="dialog" aria-modal="true" aria-label="Добавить блок">
+        <div class="pc-modal__head">
+          <b>Добавить блок</b>
+          <button class="pc-modal__close" @click="closeAddModal" aria-label="Закрыть">✕</button>
+        </div>
+        <div class="pc-addmodal__search">
+          <input
+            class="pc-addmodal__input"
+            type="text"
+            v-model="addQuery"
+            @keydown="onAddKeydown"
+            placeholder="Поиск: карта, header, отзывы, contacts, реквизиты…"
+          >
+        </div>
+        <div class="pc-addmodal__body">
+          <div class="pc-addmodal__group" v-for="g in addResults" :key="g.group">
+            <div class="pc-addmodal__gtitle">{{ g.group }}</div>
+            <div class="pc-addmodal__type" v-for="t in g.types" :key="t.type">
+              <div class="pc-addmodal__tname">
+                {{ t.typeTitle }}
+                <span class="pc-addmodal__tkey">{{ t.type }}</span>
+                <span class="pc-addmodal__struct" v-if="t.structural">структурный</span>
+              </div>
+              <div class="pc-addmodal__variants">
+                <button
+                  class="pc-addmodal__variant"
+                  :class="{ 'is-active': isHighlighted(t.type, v.variantKey) }"
+                  v-for="v in t.variants"
+                  :key="v.variantKey"
+                  @click="pick({ type: t.type, variantKey: v.variantKey })"
+                  @mouseenter="addHighlight = flatIndexOf(t.type, v.variantKey)"
+                >{{ v.variantLabel }}</button>
+              </div>
+            </div>
+          </div>
+          <div class="pc-addmodal__empty" v-if="!addFlat.length">Ничего не найдено</div>
+        </div>
+        <div class="pc-modal__foot">↑↓ выбор · Enter добавить · Esc закрыть</div>
+      </div>
+    </div>
+
+    <!-- ======================= модалка предпросмотра блока ======================= -->
+    <div class="pc-modal" v-if="previewUid !== null" @click.self="closeBlockPreview">
+      <div class="pc-modal__dialog pc-previewmodal" role="dialog" aria-modal="true" aria-label="Предпросмотр блока">
+        <div class="pc-modal__head">
+          <b>Предпросмотр: {{ modalBlock ? typeTitle(modalBlock.type) : '' }}</b>
+          <button class="pc-modal__close" @click="closeBlockPreview" aria-label="Закрыть">✕</button>
+        </div>
+        <div class="pc-modal__body">
+          <iframe class="pc-frame pc-frame--modal" :srcdoc="modalSrc" @load="onFrameLoad" title="Предпросмотр блока"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================= модалка предпросмотра страницы ======================= -->
+    <div class="pc-modal" v-if="showPagePreview" @click.self="closePagePreview">
+      <div class="pc-modal__dialog pc-previewmodal pc-previewmodal--page" role="dialog" aria-modal="true" aria-label="Предпросмотр страницы">
+        <div class="pc-modal__head">
+          <b>Предпросмотр страницы</b>
+          <button class="pc-modal__close" @click="closePagePreview" aria-label="Закрыть">✕</button>
+        </div>
+        <div class="pc-modal__body">
+          <iframe class="pc-frame pc-frame--modal" :srcdoc="pageSrc" @load="onFrameLoad" title="Предпросмотр страницы"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- пикер изображений / эмодзи -->
+    <div class="pc-picker" v-if="picker" @click.self="closePicker">
+      <div class="pc-picker__dialog" role="dialog" :aria-label="pickerLabel()">
+        <div class="pc-picker__head">
+          <b>{{ pickerLabel() }}</b>
+          <button class="pc-modal__close" @click="closePicker" aria-label="Закрыть">✕</button>
+        </div>
+        <div class="pc-picker__body" :class="pickerIsEmoji() ? 'pc-picker__body--emoji' : 'pc-picker__body--image'">
+          <template v-if="pickerIsEmoji()">
+            <button v-for="e in emojiPresets" :key="e" class="pc-emoji" type="button" @click="pickValue(e)">{{ e }}</button>
+          </template>
+          <template v-else>
+            <button v-for="src in imagePresets" :key="src" class="pc-img" type="button" @click="pickValue(src)" :title="src"><img :src="thumb(src)" alt=""></button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-toast" v-if="toast">{{ toast }}</div>
+  </div>
+
+  <script src="js/vue.global.prod.js"></script>
+  <script src="js/block-schema.js"></script>
+  <script src="js/block-registry.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/preview-map.js"></script>
+  <script src="js/data/sprite.js"></script>
+  <script src="js/data/header.js"></script>
+  <script src="js/data/footer.js"></script>
+  <script src="js/data/forms.js"></script>
+  <script src="js/render-preview.js"></script>
+  <script src="js/preview-frame.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
