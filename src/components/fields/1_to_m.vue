@@ -224,7 +224,15 @@
   table.one_to_m th{
     color: #fff;
     background-color: rgb(var(--v-theme-primary));
-    
+    vertical-align: middle;
+  }
+  table.one_to_m td{vertical-align: middle;}
+  .v-theme--s3 table.one_to_m th{
+    background: rgba(var(--v-theme-primary), 0.18) !important;
+    color: rgb(var(--v-theme-primary));
+  }
+  .v-theme--s3 table.one_to_m tr:nth-child(2n+1){
+    background: var(--app-tint);
   }
 
 table.one_to_m tr:nth-child(2n+1) {
@@ -254,9 +262,15 @@ table.one_to_m tr:nth-child(2n+1) {
   }
 */
   table.one_to_m td.tool{
-    padding:0;
+    padding: 0 6px;
     text-align: center;
-    width: 60px;
+    white-space: nowrap;
+    width: 1%;
+  }
+  table.one_to_m td.tool a{
+    display: inline-flex;
+    align-items: center;
+    margin: 0 3px;
   }
   div.one_to_m{
     

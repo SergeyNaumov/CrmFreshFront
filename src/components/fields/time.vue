@@ -23,12 +23,14 @@
                 prepend-icon="event"
                 readonly
                 v-bind="props"
+                :style="field_style"
                 hide-details
               ></v-text-field>
               
               
             </template>
             <v-time-picker
+              color="primary"
               format="24hr"
               v-model="field.value" @update:model-value="select_cal()"></v-time-picker>
               
@@ -44,10 +46,13 @@
 </template>
 <script>
 import { bus } from '../../main'
+import { fieldWidthStyle } from './field_style'
 export default {
     props:['form','field'],
     computed:{
-
+      field_style(){
+        return fieldWidthStyle(this.field,'200px')
+      }
     },
     mounted(){
       this.set_need_empty()
@@ -81,5 +86,5 @@ export default {
 <style scoped>
   .select_cal {margin-top: 1rem;}
   .select_cal {transition: background 0.3s ease, color 0.2s linear;}
-  .clear {position: relative; top: -1.5rem;}
+  .clear {margin-top: 2px;}
 </style>

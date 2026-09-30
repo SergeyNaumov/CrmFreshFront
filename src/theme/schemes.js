@@ -16,7 +16,7 @@ export const schemes = [
     typography: { h1: '28px', h1w: 700, h2: '20px', h2w: 600, value: '14px', label: '12px', desc: '12px', help: '12px' },
     spacing: { unit: '4px', field: '16px', section: '24px', inline: '8px' },
     radii: { field: '5px', card: '8px', btn: '4px', chip: '12px' },
-    field: { variant: 'outlined', density: 'compact', rounded: false },
+    field: { variant: 'outlined', density: 'compact', rounded: false, height: '40px' },
     elevation: { toolbar: 4, card: 1, dialog: 8 },
     colors: {
       primary: '#253a5d',
@@ -58,7 +58,7 @@ export const schemes = [
     typography: { h1: '22px', h1w: 700, h2: '18px', h2w: 600, value: '13px', label: '11px', desc: '11px', help: '11px' },
     spacing: { unit: '4px', field: '12px', section: '16px', inline: '6px' },
     radii: { field: '4px', card: '4px', btn: '2px', chip: '8px' },
-    field: { variant: 'outlined', density: 'compact', rounded: false },
+    field: { variant: 'outlined', density: 'compact', rounded: false, height: '40px' },
     elevation: { toolbar: 2, card: 0, dialog: 6 },
     colors: {
       primary: '#1565c0',
@@ -100,7 +100,7 @@ export const schemes = [
     typography: { h1: '30px', h1w: 700, h2: '22px', h2w: 600, value: '15px', label: '13px', desc: '13px', help: '12px' },
     spacing: { unit: '4px', field: '20px', section: '32px', inline: '8px' },
     radii: { field: '10px', card: '16px', btn: '999px', chip: '999px' },
-    field: { variant: 'filled', density: 'default', rounded: true },
+    field: { variant: 'filled', density: 'default', rounded: true, height: '56px' },
     elevation: { toolbar: 2, card: 1, dialog: 8 },
     colors: {
       primary: '#6a1b9a',
@@ -142,7 +142,7 @@ export const schemes = [
     typography: { h1: '28px', h1w: 700, h2: '20px', h2w: 600, value: '14px', label: '12px', desc: '12px', help: '12px' },
     spacing: { unit: '4px', field: '16px', section: '24px', inline: '8px' },
     radii: { field: '8px', card: '8px', btn: '4px', chip: '12px' },
-    field: { variant: 'outlined', density: 'compact', rounded: false },
+    field: { variant: 'outlined', density: 'compact', rounded: false, height: '40px' },
     elevation: { toolbar: 4, card: 1, dialog: 8 },
     colors: {
       primary: '#90caf9',

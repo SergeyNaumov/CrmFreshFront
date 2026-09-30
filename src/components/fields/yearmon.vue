@@ -13,6 +13,7 @@
                     :items="year_list"
                     autocomplete
                     label="Выберите год"
+                    :style="field_style"
                     hide-details
                   />
                   </v-col>
@@ -23,6 +24,7 @@
                     item-value="v"
                     item-title="d"
                     label="Выберите месяц"
+                    :style="field_style"
                     hide-details
                   />
               </v-col>
@@ -48,9 +50,13 @@ function get_cur_mon(){
   var dt = new Date(); return dt.getMonth()+1
 }
 import { bus } from '../../main'
+import { fieldWidthStyle } from './field_style'
 export default {
     props:['form','field'],
     computed:{
+      field_style(){
+        return fieldWidthStyle(this.field,'200px')
+      },
       year_list(){
         let cur_year=get_cur_year();
         let min=cur_year-100, max=cur_year+20;
@@ -123,5 +129,5 @@ export default {
 }
 </script>
 <style scoped>
-  .clear {position: relative; top: -1.5rem;}
+  .clear {margin-top: 2px;}
 </style>

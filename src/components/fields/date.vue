@@ -4,8 +4,9 @@
             <v-text-field 
               :label="field.description"
               disabled
-              v-model="value_show"
+              :model-value="value_show"
               :rounded="$theme.rounded"
+              :style="field_style"
               hide-details
             />
         </template>
@@ -24,18 +25,22 @@
               
               <!-- v-model="value" -->
               <v-text-field
-                v-model="value_show"
+                :model-value="value_show"
                 :label="field.description"
                 :prepend-icon="need_empty?'event':''"
+                :clearable="need_empty && !field.read_only"
                 readonly
                 v-bind="props"
                 :rounded="$theme.rounded"
+                :style="field_style"
+                @click:clear="clear"
                 hide-details
               ></v-text-field>
               
               
             </template>
             <v-date-picker
+              color="primary"
               first-day-of-week="1" 
               locale="ru-Ru"
               :model-value="$toDate(value)" @update:model-value="value=$toIso($event); select_cal()"></v-date-picker>
@@ -43,7 +48,6 @@
           
         </template>
         <div v-if="field.before_html" v-html="field.before_html"></div>
-        <div class="clear" v-show="need_empty"><small><a href="#" @click.prevent="clear()"> очистить</a></small></div>
         <div
           class="err" v-if="field.error_message" v-html="field.error_message"
         />
@@ -55,10 +59,14 @@
 </template>
 <script>
 import { field_update,check_fld } from './field_functions'
+import { fieldWidthStyle } from './field_style'
 import { bus } from '../../main'
 export default {
     props:['form','field','parent'], // ,'calc_values'
     computed:{
+      field_style(){
+        return fieldWidthStyle(this.field,'200px')
+      },
       value_show(){
         let v=this.value
         if(/\s\d{2}:\d{2}:\d{2}/.test(v)){
@@ -152,6 +160,5 @@ export default {
 <style scoped>
   .select_cal {margin-top: 1rem;}
   .select_cal {transition: background 0.3s ease, color 0.2s linear;}
-  .clear {position: relative; top: -15px;}
   /*.v-input__control {width: 150px;}*/
 </style>

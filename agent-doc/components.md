@@ -1,5 +1,8 @@
 # Компоненты
 
+> Как бэкенд-конфиг превращается в компонент (меню, AdminTable/AdminTree/Const,
+> фильтры, пробелы) — `backend-contract.md`.
+
 ## Регистрация (`src/dynamic_component_loader.js`)
 
 | Глобальное имя | Путь |

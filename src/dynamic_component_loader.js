@@ -32,10 +32,17 @@ export const dynamic_component_loader = (app) => {
 	app.component('field-font-awesome', defineAsyncComponent(() => import('./components/fields/font-awesome.vue')));
 	app.component('field-memo', defineAsyncComponent(() => import('./components/fields/memo.vue')));
 	app.component('field-multiconnect', defineAsyncComponent(() => import('./components/fields/multiconnect.vue')));
+	app.component('field-multiconnect_old', defineAsyncComponent(() => import('./components/fields/multiconnect_old.vue')));
 	app.component('field-table', defineAsyncComponent(() => import('./components/fields/table.vue')));
 	app.component('field-time_table', defineAsyncComponent(() => import('./components/fields/time_table.vue')));
 	app.component('field-wysiwyg', defineAsyncComponent(() => import('./components/fields/wysiwyg.vue')));
 	app.component('field-component', defineAsyncComponent(() => import('./components/fields/component.vue')));
+
+	// Поля-приложения админ-панели svcms (группа svcmsAdmin)
+	app.component('field-project_sitemap', defineAsyncComponent(() => import('./components/svcmsAdmin/ProjectSitemap.vue')));
+	app.component('field-project_export', defineAsyncComponent(() => import('./components/svcmsAdmin/ProjectExport.vue')));
+	app.component('field-project_clone', defineAsyncComponent(() => import('./components/svcmsAdmin/ProjectClone.vue')));
+	app.component('field-project_struct', defineAsyncComponent(() => import('./components/svcmsAdmin/ProjectCreateStruct.vue')));
 
 	// Фильтры:
 	app.component('filter-text', defineAsyncComponent(() => import('./components/AdminTable/filters/text.vue')));

@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import fs from 'node:fs'
+import path from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
 
@@ -9,11 +11,32 @@ const bases = {
   svcms: '/manager/',
 }
 
+const preserveDistConfigure = () => {
+  let saved = null
+  let dest = ''
+  return {
+    name: 'preserve-dist-configure',
+    apply: 'build',
+    configResolved(config) {
+      dest = path.resolve(config.root, config.build.outDir, 'configure.js')
+      try {
+        saved = fs.readFileSync(dest, 'utf8')
+      } catch (e) {
+        saved = null
+      }
+    },
+    closeBundle() {
+      if (saved !== null && dest) fs.writeFileSync(dest, saved)
+    },
+  }
+}
+
 export default defineConfig(({ mode }) => ({
   base: bases[mode] || '/',
   plugins: [
     vue(),
     vuetify({ autoImport: true }),
+    preserveDistConfigure(),
   ],
   resolve: {
     alias: {

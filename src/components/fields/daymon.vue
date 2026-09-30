@@ -13,6 +13,7 @@
                     :items="day_list"
                     no-data-text="недопустимое значение"
                     label="Выберите день"
+                    :style="field_style"
                     hide-details
                   />
                   </v-col>
@@ -23,14 +24,15 @@
                     item-value="v"
                     item-title="d"
                     label="Выберите месяц"
+                    :style="field_style"
                     hide-details
                   />
               </v-col>
-              <div class="clear" v-show="need_empty"><small>
-                <a href="#" @click.prevent="set_current()">установить текущие значения</a> |
-                <a href="#" @click.prevent="clear()"> очистить</a></small>
-              </div>
           </v-row>
+          <div class="clear" v-show="need_empty"><small>
+            <a href="#" @click.prevent="set_current()">установить текущие значения</a> |
+            <a href="#" @click.prevent="clear()"> очистить</a></small>
+          </div>
         </template>
 
         <div v-if="field.add_description" class="add_description">{{field.add_description}}</div>
@@ -41,9 +43,13 @@
 </template>
 <script>
 import { bus } from '../../main'
+import { fieldWidthStyle } from './field_style'
 export default {
     props:['form','field'],
     computed:{
+      field_style(){
+        return fieldWidthStyle(this.field,'200px')
+      },
       day_list(){
         let list=[];
         if(!this.mon){
@@ -114,5 +120,5 @@ export default {
 <style scoped>
   .select_cal {margin-top: 1rem;}
   .select_cal {transition: background 0.3s ease, color 0.2s linear;}
-  .clear {position: relative; top: -1.5rem;}
+  .clear {margin-top: 2px;}
 </style>

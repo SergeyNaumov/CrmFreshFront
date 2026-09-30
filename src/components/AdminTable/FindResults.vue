@@ -47,7 +47,7 @@
                     
                     <div class="text-left"><u>Найдено записей: {{results.count_total}}</u></div>
                     <div class="text-left">
-                      <v-pagination v-if="results.count_pages>1" :length="results.count_pages" v-model="page"></v-pagination>
+                      <v-pagination v-if="results.count_pages>1" :length="results.count_pages" :total-visible="paginationVisible" v-model="page"></v-pagination>
                     </div>
                     <div class="results_wrap">
 
@@ -210,7 +210,7 @@
                       </table>
                     </div>
                     <div class="text-left" v-if="results.count_pages>1">
-                      <v-pagination :length="results.count_pages" v-model="page"></v-pagination>
+                      <v-pagination :length="results.count_pages" :total-visible="paginationVisible" v-model="page"></v-pagination>
                     </div>
               </template>
               <template v-else-if="!finding">
@@ -277,6 +277,13 @@ export default {
   computed:{
     is_show_add_memo(){
       return this.CUR_STR.show_form;
+    },
+    paginationVisible(){
+      const d = this.$vuetify && this.$vuetify.display
+      if(!d) return 7
+      if(d.smAndDown) return 3
+      if(d.md) return 5
+      return 7
     }
   },
   methods: FindResultsMethods
@@ -311,6 +318,7 @@ export default {
 
 .results th{
   font-weight: bold;
+  color: rgb(var(--v-theme-primary));
 }
 .results td.controls, .results th.controls{
   width: 120px;
@@ -324,9 +332,19 @@ export default {
   margin-left: 10px;
 }
 
-.results tr:nth-child(2n+1) {
-  background: rgba(var(--v-theme-on-surface), 0.04);
-} 
+.results thead tr {
+  background: rgb(var(--v-theme-primary-lighten-4));
+}
+.results tbody tr:nth-child(2n+1) {
+  background: rgb(var(--v-theme-primary-lighten-5));
+}
+/* тёмная схема: lighten почти белый — используем тинт */
+[data-scheme="dark"] .results thead tr {
+  background: rgba(var(--v-theme-primary), 0.2);
+}
+[data-scheme="dark"] .results tbody tr:nth-child(2n+1) {
+  background: var(--app-tint);
+}
 /*.results tr.header {
   
   

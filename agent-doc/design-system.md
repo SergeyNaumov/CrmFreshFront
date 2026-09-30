@@ -36,6 +36,7 @@
 | `--app-space-field` | вертикальный шаг между полями формы |
 | `--app-space-section` | между блоками/секциями |
 | `--app-space-inline` | внутри групп (чекбоксы, строки) |
+| `--app-field-height` | высота контрола (40px компакт, 56px soft) — для иконок/выравнивания |
 | `--app-radius-field/card/btn/chip` | радиусы |
 | `--app-font-family/h1/h2/value/label/desc` | типографика |
 | `--app-tint` | нейтральный фон для чередования строк, плашек-хэндлов, подложек (схема задаёт rgba primary с низкой альфой; работает и в dark) |
@@ -44,9 +45,16 @@
 - Один источник шага: `.field { margin-bottom: var(--app-space-field) }`; `.field .v-input { margin-bottom: 0 }`.
 - Описание: `margin: 0 0 4px`; clear/«очистить» `margin-top: 4`.
 - Блоки: тулбар 40, тело 16, между блоками `var(--app-space-section)`.
+- Карточки (`FormBody.vue`): `.v-card.block` / `.v-card.block_card` — граница `rgba(var(--v-theme-on-surface), .14)`, радиус `var(--app-radius-card)`, мягкая тень; тело `.block_body` — `padding: 16px 20px 12px` (поля не прилипают к краям). Проп `framed=false` (модалка `FormInBranch`) делает карточку «плоской» (без границы/тени/фона) — чтобы не было карточки в карточке.
+- Иконка поля: `field.icon` (`FormBlock.vue`) — квадрат слева от контрола (`.control_row` → `.field_icon` + `.control_body`), высота/ширина = `--app-field-height` (40px компакт, 56px soft), верх/низ совпадают с `.v-field`; фон `var(--app-tint)`. Поддерживаются MDI/FontAwesome/голые имена.
+- Узкие поля (`date`/`time`/`datetime`/`daymon`/`yearmon`): `max-width` из `field.style` или `field.width`, по умолчанию 200px (`fields/field_style.js`).
+- Date picker (режимы месяца/года): сетки `.v-date-picker-months/years__content` — 3 колонки, кнопки внутри пикера без `margin` (иначе глобальный `button { margin: 1rem }` ломает раскладку и появляется горизонтальный скролл), `main.scss`. Сетка дней месяца растянута на всю ширину (`repeat(7, minmax(0,1fr))`), кнопка дня — 100% ширины, высота 32px; отступ после цветной шапки — 12px (`padding` у `.v-date-picker-month` / `.v-date-picker-months` / `.v-date-picker-years`); месяцы — `height:auto` (без скролла), годы — фиксированная высота с вертикальным скроллом.
+- Поле `date`: очистка — `clearable`-крестик внутри поля (`click:clear`), а не ссылка «очистить».
+- Цвета date/time picker — из схемы: на `<v-date-picker>`/`<v-time-picker>` передан `color="primary"`; шапка — цветная строка `.v-date-picker-controls` (фон `primary`, контролы `on-primary`); `.v-picker__header`/`.v-date-picker-header` скрыты, чтобы шапка не перекрывала сетку (`main.scss`).
 
 **AdminTable**
 - h1 → «Добавить» 8; «Добавить» → фильтры ≈16; строка фильтра 36; результаты header/строка 40; пагинация 32.
+- `FindResults`: заголовок `.results thead tr` — `rgb(var(--v-theme-primary-lighten-4))` (насыщеннее строк), чётные строки `.results tbody tr:nth-child(2n+1)` — `primary-lighten-5` (как `$lighten5` в Vuetify 2); для тёмной схемы: шапка `rgba(primary,.2)`, строки `var(--app-tint)`; `th` — цвет `primary`.
 - У `v-col` без класса `v-col` (только `v-col-md-4` и т.п.) селектор — `[class*="v-col"]`.
 
 **Фильтры (date/datetime/memo)**

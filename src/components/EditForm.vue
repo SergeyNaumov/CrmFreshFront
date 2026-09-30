@@ -10,7 +10,7 @@
           </v-card>
         </v-dialog>
 
-        <div :class="form.wide_form?'container_fluid':'container'" >
+        <div :class="containerClass" >
             <pre v-if="0">
                 {{values}}
             </pre>
@@ -98,6 +98,9 @@ computed:{
     }
     return '';
   },
+  containerClass(){
+    return (this.form.wide_form || (this.cols && this.cols.length > 1)) ? 'container_wide' : 'container'
+  },
 
 },
 created(){
@@ -161,8 +164,19 @@ methods: {
     div.field .v-input {margin-bottom: 0 !important;}
     
     button {margin: 1rem;}
-    .container {max-width: 960px;}
+    #EditForm .v-btn:not(.v-btn--icon) {
+      min-width: 0;
+      padding: 0 12px;
+      border-radius: var(--app-radius-btn);
+      margin: 4px;
+    }
+    #EditForm .v-btn--size-default:not(.v-btn--icon) {
+      --v-btn-height: 32px;
+      --v-btn-size: var(--app-font-label, 12px);
+    }
+    .container {max-width: 960px; width: 100%;}
     .container.onecol {max-width: 960px;}
+    .container_wide {max-width: 1440px; width: 100%; margin: 0 auto; padding: 0 24px;}
     header {margin-top: 1rem;}  
     .v-list-item {min-height: 25px !important;}
     .form_header {margin-bottom: 20px;}

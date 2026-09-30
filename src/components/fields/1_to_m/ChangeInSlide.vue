@@ -5,7 +5,14 @@
             <template v-if="/^(textarea|text)$/.test(cur_field.type)">
                 <field-text :refresh="cur_refresh" :field="cur_field" :parent="parent_sub"></field-text>
             </template>
-            <field-checkbox v-if="/^(checkbox|switch)$/.test(cur_field.type)" :field="cur_field" :parent="parent_sub" />
+            <field-select v-else-if="/^(select|select_from_table|select_values)$/.test(cur_field.type)"
+                :field="cur_field"
+                :parent="parent_sub"
+                :name_parent_field="field.name"
+                :form="form"
+                :refresh="cur_refresh"
+            />
+            <field-checkbox v-else-if="/^(checkbox|switch)$/.test(cur_field.type)" :field="cur_field" :parent="parent_sub" />
         </template>
         <template v-if="cur_field.after_html">
             {{cur_field.after_html}}
@@ -65,6 +72,7 @@ export default {
             errors:[],
             cur_refresh:0,
             view_saved:false,
+            suppress_save:false,
         }
     },
     methods:{
@@ -81,8 +89,11 @@ export default {
                     
                 }
             this.cur_refresh++;
+            this.suppress_save=true;
+            this.$nextTick(()=>{this.suppress_save=false});
         },
         parent_sub(obj){
+            if(this.suppress_save) return;
             let value=obj.value
             if(obj.error) return;
             
@@ -112,4 +123,5 @@ export default {
 </script>
 <style scoped>
     .errors {color: red;}
+    :deep(.v-select), :deep(.v-autocomplete) {display: inline-block; min-width: 200px; vertical-align: top;}
 </style>

@@ -2,6 +2,9 @@
 
 Каталог: `src/components/fields/`. Маппинг `field.type` → глобальный компонент делается в `src/components/EditForm/FormBlock.vue:dynamic_component`.
 
+> Контракт с бэкендом (меню, AdminTable/AdminTree/Const, `filter_extend_*`) —
+> `backend-contract.md`.
+
 ## Регистрация
 
 Eager в `src/main.js`:

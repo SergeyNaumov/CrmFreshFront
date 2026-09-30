@@ -31,12 +31,12 @@
                                 readonly
                                 v-bind="props"
                                 class="inline"
-                                style="max-width: 190px;"
+                                :style="field_style"
                                 hide-details
                             />
                             </template>
                             
-                            <v-date-picker :first-day-of-week="1"  locale="ru-Ru" :model-value="$toDate(date)" @update:model-value="date=$toIso($event); set_value(); menu_date=false"/>
+                            <v-date-picker color="primary" :first-day-of-week="1"  locale="ru-Ru" :model-value="$toDate(date)" @update:model-value="date=$toIso($event); set_value(); menu_date=false"/>
                             
                         </v-menu>
                         
@@ -46,7 +46,7 @@
                                 prepend-icon="event"
                                 @update:model-value="fix_time"
                                 @keyup="fix_time"
-                                style="max-width: 180px"
+                                :style="field_style_time"
                                 hide-details
                             ></v-text-field>
                 
@@ -86,6 +86,7 @@
 <script>
 import { bus } from '../../main'
 import { field_update } from './field_functions'
+import { fieldWidthStyle } from './field_style'
 
 export default {
     props:['form','field','refresh','parent'], // ,'calc_values'
@@ -149,6 +150,12 @@ export default {
         }
     },
     computed:{
+      field_style(){
+        return fieldWidthStyle(this.field,'190px')
+      },
+      field_style_time(){
+        return fieldWidthStyle(this.field,'180px')
+      },
       date_show(){
         if(this.date)
           return this.date.split('-').reverse().join('.')

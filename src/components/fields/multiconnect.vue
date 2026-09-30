@@ -66,8 +66,10 @@
                         <template v-if="field.view_only_selected">
 
                             <v-row>
-                                <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" v-if="selected_hash[l.id]" :key="'l'+idx">
-                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @update:model-value="selected_hash_to_value()"></v-checkbox>
+                                <v-col v-for="(l,idx) in list_searched" cols="12" :md="get_md_class2" v-if="selected_hash[l.id]" :key="'l'+idx">
+                                    <v-checkbox hide-details density="compact" color="primary" v-model="selected_hash[l.id]" @update:model-value="selected_hash_to_value()">
+                                        <template #label><span v-html="l.header"></span></template>
+                                    </v-checkbox>
                                 </v-col>
                             </v-row>
 
@@ -75,8 +77,10 @@
                         <template v-else>
 
                             <v-row>
-                                <v-col v-for="(l,idx) in list_searched" :md="get_md_class2" :key="'l'+idx">
-                                    <v-checkbox hide-details :label="l.header" v-model="selected_hash[l.id]" @update:model-value="selected_hash_to_value()" />
+                                <v-col v-for="(l,idx) in list_searched" cols="12" :md="get_md_class2" :key="'l'+idx">
+                                    <v-checkbox hide-details density="compact" color="primary" v-model="selected_hash[l.id]" @update:model-value="selected_hash_to_value()">
+                                        <template #label><span v-html="l.header"></span></template>
+                                    </v-checkbox>
                                 </v-col>
 
                             </v-row>
@@ -188,7 +192,7 @@
         get_md_class2(){
             if(this.field.cols>0)
                 return parseInt(12/this.field.cols);
-            return 12
+            return this.list_searched.length>6 ? 6 : 12
         },
         get_md_class(){
             if(this.field.cols>0)
@@ -342,12 +346,17 @@
     }
   }
 </script>
-<style scope>
+<style scoped>
     .tag_list {margin-left: 20px;}
     .tag_list div {margin-left: 10px;}
-    .multiconnect {padding-left: 20px;}
-    .multiconnect, .multiconnect .v-label {font-size: 12px !important; }
-    .v-selection-control {margin-top: 5px; font-size: 10px;}
+    .multiconnect {padding-left: 0;}
+    .multiconnect {font-size: var(--app-font-value, 13px) !important;}
+    .multiconnect :deep(.v-label) {font-size: var(--app-font-label, 12px) !important; opacity: 1; line-height: 1.4;}
+    .multiconnect :deep(.v-container) {padding: 0;}
+    .multiconnect :deep(.v-row) {margin: 0;}
+    .multiconnect :deep([class*="v-col"]) {padding: 0 12px 0 0;}
+    .multiconnect :deep(.v-selection-control) {align-items: flex-start; min-height: 28px; margin-top: 0;}
+    .multiconnect :deep(.v-selection-control__wrapper) {margin-inline-start: 0; margin-top: 0;}
     .mini td {border: none !important;}
     .mini input {border: 1px solid gray !important; padding: 2px 1px; margin: 5px;}
     input.percent {width: 30px; text-align: right}

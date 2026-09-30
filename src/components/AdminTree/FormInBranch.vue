@@ -9,7 +9,7 @@
           v-else-if="data_loaded"
           :form="form" :cols="cols" :tabs="tabs"
           :values="values" :save="save_modal" :disabled_form="disabled_form"
-          :show_save="false"
+          :show_save="false" :framed="false"
         />
       </v-card-text>
       <v-card-actions>

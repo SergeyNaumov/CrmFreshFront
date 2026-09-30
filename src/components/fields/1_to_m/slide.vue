@@ -14,7 +14,7 @@
         </v-dialog> 
         <!-- view type: list -->
         <template v-if="field.view_type=='list'">
-            <v-row>
+            <div>
 
                 <draggable
                     v-model="list"
@@ -28,7 +28,7 @@
                         <template v-for="(h,hidx) in field.headers" :key="hidx">
                             <div v-if="v[h.name] && fields_hash[h.name] ">
                                 <template v-if="h.change_in_slide">
-                                    <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="v.id" :values="v"></change_in_slide>
+                                    <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="ch_id(v)" :values="v"></change_in_slide>
                                 </template>
                                 <template v-else>
                                     
@@ -57,7 +57,7 @@
 
                                         </template>
                                         <template v-else>
-                                            {{get_value_for_slide(h,v)}}
+                                            <span v-html="get_value_for_slide(h,v)"></span>
                                         </template>
 
                                     </template>
@@ -74,7 +74,7 @@
                     </v-card>
                 </template>
                 </draggable>
-            </v-row>
+            </div>
         </template>
         
         <!-- view type: default -->
@@ -90,14 +90,16 @@
             <draggable
                 v-model="list"
                 tag="tbody"
+                :item-key="ch_id"
                 @end="move_end"
                 :draggable="field.sort?'tr':false"
             >
-            <tr v-for="v in list" :key="ch_id(v)">
+            <template #item="{ element: v }">
+            <tr :key="ch_id(v)">
 
                 <td v-for="h in field.headers" :key="h.name"  >
                 <template v-if="h.change_in_slide">
-                    <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="v.id" :values="v"></change_in_slide>
+                    <change_in_slide :refresh="cur_refresh" :form="form" :field="field" :name="h.name" :cur_id="ch_id(v)" :values="v"></change_in_slide>
                 </template>
                 <template v-else>
                     
@@ -125,6 +127,7 @@
                     <a :href="'/-'+ch_id(v)" @click.prevent="del(v)" v-if="make_delete"><v-icon size="small" color="primary"  >delete</v-icon></a>
                 </td>
             </tr>
+            </template>
             </draggable>
             </table>
         </template>
@@ -251,6 +254,8 @@ export default {
         get_value_for_slide(h,values){
             let type=h.type;
             let name=h.name;
+            if(h.slide_code && values[name+'_slide']!==undefined && values[name+'_slide']!==null)
+                return values[name+'_slide'];
             let value=values[name];
             if(type=='text' || type=='textarea' || type=='wysiwyg'){
                 return value
@@ -386,6 +391,7 @@ export default {
     .tool a {text-decoration: none;}
     .v-icon.edit {margin-right: 10px; }
     .v-card.one_to_m {display: inline-block; margin-right: 15px; padding-right: 40px; padding-bottom: 20px;}
+    .one_to_m_list > div:not(.controls) {margin-bottom: 8px;}
     .one_to_m_list .controls {margin-top: 5px !important;   margin-bottom: 5px; display: none;}
     
     .one_to_m_list:hover .controls{display: block;}

@@ -64,6 +64,14 @@
                 <input type="file">
               </form>
             </template>
+
+            <!-- presets: кнопки-заполнители (могут заполнять несколько полей) -->
+            <div v-if="cf.presets && cf.presets.length" class="presets">
+              <template v-for="(p, pi) in cf.presets" :key="'preset'+cf.name+pi">
+                <a href="#" @click.prevent="apply_preset(p)">{{ p.label }}</a>
+                <span v-if="pi < cf.presets.length-1"> | </span>
+              </template>
+            </div>
           </div>
           
           <template v-if="dialog_errors.length">
@@ -154,6 +162,27 @@ export default {
             this.fields[cf.name].value=cf.value;
 
             this.change_one_to_m()
+        },
+
+        // Применение пресета: заполняем одно или несколько полей записи.
+        // Значения вида <%field%> берём из полей родительской формы.
+        apply_preset(preset){
+            let values=(preset && preset.values) ? preset.values : {}
+            for(let name in values){
+                if(this.edit_fields[name]){
+                    this.edit_fields[name].value=this.resolve_preset_value(values[name])
+                }
+            }
+            this.cur_refresh=Math.random()
+            if(this.change_one_to_m)
+                this.change_one_to_m()
+        },
+
+        resolve_preset_value(value){
+            return String(value).replace(/<%([\w_]+)%>/g,(m,name)=>{
+                let f=(this.form.fields || []).find(x=>x.name==name)
+                return f ? (f.value===undefined || f.value===null ? '' : f.value) : ''
+            })
         },
         get_child_by_name(field,name){
           for(let f of field.fields)
@@ -390,6 +419,8 @@ export default {
 <style scoped lang="scss">
 
   .text-h5 {padding: 0 0 0 20px; margin: 0; color: rgb(var(--v-theme-primary));}
+  .presets {margin-top: 6px; font-size: 0.85rem;}
+  .presets a {color: #555;}
   .v-dialog {max-width: 800px;}
   .v-dialog .v-card {margin-top: 0; padding-top: 0; max-width: 800px;}
   .v-dialog > .v-card > .v-card-title {padding-left: 0; padding-bottom: 20px; color: rgb(var(--v-theme-primary));}

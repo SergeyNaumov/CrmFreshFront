@@ -109,6 +109,7 @@ function applyScheme(s) {
   root.style.setProperty('--app-space-field', s.spacing.field)
   root.style.setProperty('--app-space-section', s.spacing.section)
   root.style.setProperty('--app-space-inline', s.spacing.inline)
+  root.style.setProperty('--app-field-height', s.field.height)
   root.style.setProperty('--app-radius-field', s.radii.field)
   root.style.setProperty('--app-radius-card', s.radii.card)
   root.style.setProperty('--app-radius-btn', s.radii.btn)
