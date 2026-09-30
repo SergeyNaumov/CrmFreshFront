@@ -1,71 +1,55 @@
-# Архитектура
+# Architecture
 
-## Точка входа и глобалы
+> Load when: app startup, globals, event bus, shell layout.
+> Canonical for: entry chain, global names, bus events, `/startpage` loading, palette/style mechanics.
 
-1. `public/index.html` — подключает:
-   - `dist/googleapis.com-Material-plus-Icons.css`, `dist/fontawesome/all.css` (иконки, см. `icon-system.md`).
-   - `configure.js` → глобальный объект `config`.
-   - inline-скрипт: `var BaseUrl='<%= BASE_URL %>', BackendBase=config.BackendBase`.
-2. `public/configure.js` — рантайм-конфиг (не собирается):
-   - `BackendBase`, `MessengerWS`, `MessengerSignal`, `TinyMCE_BaseUrl`, `UrlPrefix`.
-3. `src/main.js` — создаёт `bus`, Vuetify, глобальные прототипы, регистрирует компоненты.
-4. `src/App.vue` — корень.
+## Entry chain
 
-> `BaseUrl`/`BackendBase` — глобальные переменные (через `window`), а не импорты. В коде используются напрямую (`BackendBase+'/...'`). При миграции на Vite это надо сохранить (см. `migration-vue3.md`).
+1. `public/index.html` — loads `dist/googleapis.com-Material-plus-Icons.css`, `dist/fontawesome/all.css`, `configure.js`; inline `var BaseUrl='<%= BASE_URL %>', BackendBase=config.BackendBase`.
+2. `public/configure.js` (runtime, not bundled) — `BackendBase`, `MessengerWS`, `MessengerSignal`, `TinyMCE_BaseUrl`, `UrlPrefix`.
+3. `src/main.js` — `bus`, Vuetify, globals, component registration. 4. `src/App.vue` — root.
+
+`BaseUrl`/`BackendBase` are `window` globals, not imports — used directly as `BackendBase+'/...'`.
 
 ## `src/main.js`
 
-- `export const bus = new Vue()` — event bus (см. ниже).
-- `let color_scheme='blue'` + импорт `@/styles/colors/blue2.scss` — цветовая тема; `Vue.prototype.$color`, `Vue.prototype.$theme`.
-- `window.Vue=Vue`, `window.log=console.log`.
-- `Vue.prototype.$isMobile` — по ширине `document.body.clientWidth<1000` и `navigator.userAgent` (локально, на сервер не уходит).
-- `Vue.prototype.$http = require('axios')`.
-- `Vue.component('draggable', vuedraggable)`.
-- `dynamic_component_loader(Vue)` — ленивая регистрация (см. `components.md`).
-- Eager-регистрируются: `form-block`, `field-text`, `field-in_ext_url`, `field-date`, `field-time`, `field-datetime`, `field-yearmon`, `field-daymon`, `GPTAssist`, `errors`.
-- Итог: `new Vue({ vuetify, render: h => h(App) }).$mount('#app')`.
+`export const bus` · `$http` = `axios` · `$isMobile` from `document.body.clientWidth<1000` and `navigator.userAgent` (local only, never sent to the server) · `$color`, `$theme`, `$scheme`, `$schemeDefaults` from `src/theme/palette.js` ([design-system.md](design-system.md)) · `$toDate`, `$toIso` (date-picker glue) · `window.Vue`, `window.log=console.log` (used by server `eval`) · globals `draggable`, `VTimePicker`, `VTreeview`, `VCalendar` ([dependencies.md](dependencies.md)).
+
+Lazy registration: `dynamic_component_loader(Vue/app)` ([components.md](components.md)); eager list: [fields.md](fields.md). Branch `main` equivalents: `Vue.prototype.*`, `Vue.component(...)`, `bus = new Vue()`, `new Vue({ vuetify, render: h => h(App) }).$mount('#app')`.
 
 ## Event bus
 
-`bus` из `src/main.js` (Vue 2 instance). Используется в 25+ файлах.
-Схема: `bus.$on('event', cb)` / `bus.$emit('event', data)` / `bus.$off(...)`.
+`bus.$on('event', cb)` / `bus.$emit('event', data)` / `bus.$off(...)`; `bus` is used in 25+ files.
 
-Основные события (grep `bus.$emit|bus.$on`):
-- `change_field` — поле изменилось (`components/js/edit_form.js:48`).
-- `field-update:<name>` — точечное обновление поля.
-- `save_field_1_to_m`, `1_to_m:upload_values:<name>`, `1_to_m:slide_<name>:update_fields`, `1_to_m:change_in_slide:<...>`.
-- `frontend_button_process`.
-- `file:<name>` — результат загрузки файла (`EditForm.vue`).
+| Event | Meaning |
+|---|---|
+| `change_field` | field changed (`components/js/edit_form.js:48`) |
+| `field-update:<name>` | point update of one field |
+| `save_field_1_to_m` | 1_to_m subfield saved |
+| `1_to_m:upload_values:<name>` | 1_to_m values uploaded |
+| `1_to_m:slide_<name>:update_fields` | slide fields refresh |
+| `1_to_m:change_in_slide:<...>` | change inside a slide |
+| `frontend_button_process` | form frontend button |
+| `file:<name>` | file upload result (`EditForm.vue`) |
 
-> В Vue 3 у Vue-инстанса нет `$on/$emit/$off`. Нужен shim (mitt) с тем же API — `migration-vue3.md`.
+Consumer engine: [field-dependencies.md](field-dependencies.md). Vue 3 has no `$on/$emit/$off` → `mitt` shim ([migration-vue3.md](migration-vue3.md)).
 
-## `src/App.vue` — два layout'а (Vue Router)
+## `src/App.vue`
 
-Layout выбирается по `route.meta.blank` (см. `src/router/index.js`):
+Layout by `route.meta.blank`; routes, aliases, menu highlight: [router.md](router.md). `App.created` loads shell data:
 
-1. **`meta.blank !== true`** — shell: `v-navigation-drawer` + `LeftMenu`, `v-app-bar` + `Messenger`, `v-main` с `<router-view>`, `v-footer`. Загрузка `/startpage` (left_menu, manager, title, copyright) — в `App.created`.
-2. **`meta.blank === true`** — full-screen: `<v-app><router-view/></v-app>` без меню (формы, деревья/таблицы headapp, логин).
+- `GET BackendBase + '/startpage'` → `bottom_menu`, `left_menu`, `left_menu_controller`, `manager`, `startpage`, `app_components`, `redirect`, `copyright`, `title`, `errors`.
+- `load_menu(url)`: `GET BackendBase + url` → `left_menu`; `params` parsed from a JSON string.
+- `app_components.navigator` → `<Messenger :config=...>` ([messenger.md](messenger.md)).
 
-Маршруты: `/vue/*` — shell; `/*` (без `/vue`) — full-screen. Катч-олл `/:pathMatch(.*)*` обрабатывает `/src:<url>` (iframe в shell) и неизвестные пути (→ на главную). Дефисные алиасы (`/edit-form`, `/admin-table`, `/admin-tree`) сохранены.
+## Styles
 
-Активный пункт меню — по совпадению `get_link(item)` с `$route.path` (`left_menu_item.vue`).
+- Palette source `src/theme/palette.js` → Vuetify theme in `main.js` → `--v-theme-*` (RGB channels). SCSS color access `rgb(var(--v-theme-<key>))`, e.g. `rgb(var(--v-theme-primary))`, `rgb(var(--v-theme-primary-lighten-4))`, `rgb(var(--v-theme-text-on-primary))`; `var(...)` without `rgb()` is invalid for `color`. A new key in `palette.js` works as `color="key"` and `rgb(var(--v-theme-key))`.
+- No `$primary`-style SCSS vars remain (`src/styles/colors/`, `variables.scss` deleted).
+- `src/styles/main.scss` — tables, forms, global `.v-application a { color: rgb(var(--v-theme-primary)); }` (Vuetify 3 does not color links). `@use`d in `App.vue`, `Messenger/ChatList|ChatWindow`; no Sass `@import` anywhere, `legacy-js-api` warning disabled in `vite.config.js`.
+- Scheme tokens `--app-*` and per-screen spacing: [design-system.md](design-system.md).
 
-### Загрузка данных shell
+## Notes
 
-- `GET BackendBase + '/startpage'`: `bottom_menu`, `left_menu`, `left_menu_controller`, `manager`, `startpage`, `app_components`, `redirect`, `copyright`, `title`, `errors`.
-- `load_menu(url)`: `GET BackendBase + url` → `left_menu` (парсинг `params` из JSON-строки).
-- `app_components.navigator` передаётся в `<Messenger :config=...>`.
-
-## Стили и цветовые схемы
-
-- Единый источник палитры — `src/theme/palette.js`; он же передаётся в тему Vuetify (`main.js`), которая генерирует CSS-переменные `--v-theme-*` (значения — RGB-каналы).
-- В SCSS цвет берётся через `rgb(var(--v-theme-<key>))` (например `rgb(var(--v-theme-primary))`, `rgb(var(--v-theme-primary-lighten-4))`, `rgb(var(--v-theme-text-on-primary))`). SCSS-переменных палитры (`$primary` и т.п.) больше нет — `src/styles/colors/` и `variables.scss` удалены.
-- `src/styles/main.scss` — общие стили (таблицы, формы, глобальный цвет ссылок `.v-application a`). Подключается через `@use` в `App.vue` (глобально) и в `Messenger/ChatList|ChatWindow`.
-- Никаких Sass `@import` в проекте: только `@use`. В `vite.config.js` отключён варнинг `legacy-js-api`.
-- Добавить цвет: ключ в `palette.js` → доступен и как `color="key"` в шаблонах, и как `rgb(var(--v-theme-key))` в SCSS.
-
-
-## Известные особенности
-
-- `runtimeCompiler: true` во всех `build/config/*` — нужен из-за серверного `eval` JS и, возможно, шаблонов.
-- `dynamic_component_loader.js` использует динамические `import()` с template-строками — Vite это не статически анализирует (см. `migration-vue3.md`).
+- `runtimeCompiler: true` in `build/config/*` — required by server `eval` ([security.md](security.md)).
+- `dynamic_component_loader.js` uses `import()` with template strings — Vite cannot analyze them statically.

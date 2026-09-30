@@ -1,93 +1,68 @@
 # Form Engine (EditForm)
 
-Сервер присылает JSON со структурой формы; клиент рендерит табы/блоки/поля и обрабатывает зависимости.
+> Load when: form load/save, the scoped controller, the server JSON contract.
+> Canonical for: EditForm files, load/save flow, `edit_form.js` API, server form/field/frontend JSON shapes.
 
-## Файлы
+Dependency engine: [field-dependencies.md](field-dependencies.md). Fields: [fields.md](fields.md). `eval` sites: [security.md](security.md). `type` → component: [backend-contract.md](backend-contract.md).
 
-| Файл | Роль |
+## Files
+
+| File | Role |
 |---|---|
-| `src/components/EditForm.vue` | контейнер формы, `name:'edit-form'`; табы/колонки/блоки, save, файлы |
-| `src/components/EditForm/form_controller.js` | mixin: загрузка/сохранение формы, `provide('formController')`, bus-мост |
-| `src/components/EditForm/FormBody.vue` | presentational-тело формы (cols/tabs/blocks), общее для EditForm и модалки |
-| `src/components/EditForm/FormBlock.vue` | блок формы; рендерит поля (type → глобальный компонент) |
-| `src/components/EditForm/DynamicLoader.vue` | динамический `import('../fields/'+type)` (практически не используется) |
-| `src/components/fields/field_access.js` | глобальный mixin: `this.emitChange/emitSaveField1ToM/emitFrontendButton` через inject или bus |
-| `src/components/js/edit_form.js` | бизнес-логика: зависимости, изменение/сохранение полей, ajax, CGI |
-| `src/components/fields/*` | реализации полей (см. `fields.md`) |
+| `src/components/EditForm.vue` | form container, `name:'edit-form'`; tabs/columns/blocks, save, files |
+| `src/components/EditForm/form_controller.js` | mixin: load/save, `provide('formController')`, bus bridge |
+| `src/components/EditForm/FormBody.vue` | presentational body (cols/tabs/blocks), shared with the dialog |
+| `src/components/EditForm/FormBlock.vue` | form block; renders fields (`type` → global component) |
+| `src/components/EditForm/DynamicLoader.vue` | dynamic field import (practically unused; `import.meta.glob`) |
+| `src/components/fields/field_access.js` | global mixin: `this.emitChange/emitSaveField1ToM/emitFrontendButton` via inject or bus |
+| `src/components/js/edit_form.js` | dependencies, field change/save, ajax, CGI |
 
-`dynamic_component_loader.js` регистрирует `edit-form` как `import('./components/EditForm')` → резолвится в `EditForm.vue`.
+`dynamic_component_loader.js` registers `edit-form` as `import('./components/EditForm')` → resolves to `EditForm.vue`.
 
-## Scoped-контроллер и изоляция форм
+## Scoped controller and form isolation
 
-- `form_controller.js` — общий mixin. Даёт `provide('formController')` с методами `changeField/saveField1ToM/runFrontendButton/getField`; поля (через глобальный mixin `fields/field_access.js`) берут контроллер через `inject` и вызывают методы напрямую.
-- Это изолирует формы: одновременно смонтированные контроллеры (EditForm, Const, `AdminTree/FormInBranch`) не перехватывают события друг друга.
-- Пока не все поля переведены, а также для серверного `javascript_static`, сохраняется **bus-мост** в `created` контроллера (`change_field`/`save_field_1_to_m`/`frontend_button_process`) и `window.bus`.
-- `AdminTree/FormInBranch.vue` (при `changed_in_tree`) — та же форма, что EditForm, но в `v-dialog`: тот же mixin + `FormBody`, `prop tree_form` — объект дерева, `item` — редактируемый узел.
+- `form_controller.js` provides `provide('formController')` with `changeField/saveField1ToM/runFrontendButton/getField`; fields get it through `inject` (mixin `fields/field_access.js`) and call it directly.
+- This isolates forms: concurrently mounted controllers (EditForm, Const, `AdminTree/FormInBranch`) do not intercept each other's events.
+- While not all fields are migrated, and for server `javascript_static`, a **bus bridge** is kept in the controller's `created` (`change_field`/`save_field_1_to_m`/`frontend_button_process`) and on `window.bus`.
+- `AdminTree/FormInBranch.vue` (`changed_in_tree`) is the same form in a `v-dialog`: same mixin + `FormBody`; prop `tree_form` = tree object, `item` = edited node.
 
+## Loading (`EditForm.vue: Init` → `form_controller.js: load_form`)
 
-## Загрузка формы (`EditForm.vue: Init` → `form_controller.js: load_form`)
+1. `get_params(self)` (`edit_form.js:229`) parses `location.pathname`: `/edit_form/<config>/<id>` → `POST BackendBase/edit-form/<config>/<id>`; `/edit_form/<config>` → `POST BackendBase/edit-form/<config>`; body `{ cgi_params: get_cgi_params() }` (`edit_form.js:217`).
+2. Response `data`: `log`, `redirect`, `success`, `title`, `fields`, `cols`, `tabs`, `read_only`, `errors`, `javascript`, `javascript_static`. `data.javascript` → `eval(...)` (`EditForm.vue:285`); `javascript_static[]` → `<script src>` in `<head>` (`:289-294`).
+3. `calc_values(this)` (`edit_form.js:250`) fills `values`, sets `disabled_form` (if a field has `error`), initializes selects.
 
-1. `get_params(self)` (`edit_form.js:229`) парсит `location.pathname`:
-   - `/edit_form/<config>/<id>` → `POST BackendBase/edit-form/<config>/<id>`
-   - `/edit_form/<config>` → `POST BackendBase/edit-form/<config>`
-2. POST body: `{ cgi_params: get_cgi_params() }` (`edit_form.js:217`).
-3. Ответ (`data`):
-   - `log`, `redirect`, `success`, `title`, `fields`, `cols`, `tabs`, `read_only`, `errors`, `javascript`, `javascript_static`.
-4. `data.javascript` → `eval(data.javascript)` (`EditForm.vue:285`).
-5. `data.javascript_static[]` → `<script src>` в `<head>` (`EditForm.vue:289-294`).
-6. `calc_values(this)` (`edit_form.js:250`) заполняет `values`, `disabled_form` (если у поля `error`), инициализирует select.
+## Saving (`EditForm.vue: save`)
 
-## Сохранение (`EditForm.vue: save`)
-
-- `POST BackendBase/edit-form/<config>[/<id>]` с `{action:'update'|'insert', id, values, cgi_params}`.
-- При успехе: `save_files()` (загрузка `type:'file'`), `history.pushState`, повторный `Init()`.
+`POST BackendBase/edit-form/<config>[/<id>]` with `{action:'update'|'insert', id, values, cgi_params}`; on success `save_files()` (uploads of `type:'file'`), `history.pushState`, re-run `Init()`, then `router.replace('/edit_form/<config>/<id>')`.
 
 ## `js/edit_form.js`
 
-| Функция | Назначение |
+| Function | Purpose |
 |---|---|
-| `on_dependence(self,name,obj,not_frontend_process)` | применяет серверный объект-зависимость к полю (`value`, `values`, `hide`, `error`, `warning`, `before_html`, `after_html`, `fields`), эмитит `change_field` |
-| `change_field(self,field,...)` | пишет `self.values[field.name]`, эмитит `field-update:<name>`, вызывает `calc_values` и `frontend_process` |
-| `save_field_1_to_m` | сохранение подполя 1_to_m |
-| `frontend_result_process` | разбирает `result` (пары `[name, obj]`), вызывает `on_dependence` и `eval(obj.jscode)` (`:127`) |
-| `frontend_button_process` | ajax-кнопка формы (`POST .../ajax/<config>/<button.ajax>`) |
-| `frontend_process` | обработка `field.frontend`: `eval('dep='+front.fields_dependence)` (`:166`) и отложенный ajax поля |
-| `get_cgi_params` / `get_params` | разбор query/path |
-| `calc_values` | пересчёт `values` |
+| `on_dependence(self,name,obj,not_frontend_process)` | applies a server dependency object to a field (`value`, `values`, `hide`, `error`, `warning`, `before_html`, `after_html`, `fields`), emits `change_field` |
+| `change_field(self,field,...)` | writes `self.values[field.name]`, emits `field-update:<name>`, calls `calc_values` and `frontend_process` |
+| `save_field_1_to_m` | saves a 1_to_m subfield |
+| `frontend_result_process` | parses `result` (pairs `[name, obj]`), calls `on_dependence` and `eval(obj.jscode)` (`:127`) |
+| `frontend_button_process` | form ajax button (`POST .../ajax/<config>/<button.ajax>`) |
+| `frontend_process` | handles `field.frontend`: `eval('dep='+front.fields_dependence)` (`:166`) and the field's deferred ajax |
+| `get_cgi_params` / `get_params` | query/path parsing |
+| `calc_values` | recomputes `values` |
 
-## Контракт серверного JSON
+## Server JSON contract
 
-Форма (верхний уровень):
 ```
-{ config, id, title, read_only, fields:[], cols:[[]], tabs:[{name,description,style}],
-  errors:[], log:[], javascript, javascript_static:[], redirect }
-```
-Поле (`field`):
-```
-{ name, type, value, values, description, full_str, hide, error, error_message,
-  before_html, after_html, frontend, frontend_button, jscode, tab, style,
-  read_only, not_description, begin_value }
-```
-Зависимость (`frontend`):
-```
-{ fields_dependence: '<JS-выражение>', ajax: { name, timeout } }
+form: { config, id, title, read_only, fields:[], cols:[[]], tabs:[{name,description,style}],
+        errors:[], log:[], javascript, javascript_static:[], redirect }
+field: { name, type, value, values, description, full_str, hide, error, error_message,
+         before_html, after_html, frontend, frontend_button, jscode, tab, style,
+         read_only, not_description, begin_value }
+frontend: { fields_dependence: '<JS expression>', ajax: { name, timeout } }
 ```
 
-## Типы полей и маппинг (`FormBlock.vue: dynamic_component`)
+URL/CGI: `/edit_form/<config>[/<id>]` (regex also accepts `edit-form`); `get_cgi_params()` puts all query params into `cgi_params`.
 
-- `1_to_1_<type>` → снимается префикс, далее как `<type>`.
-- `text`/`textarea` → `field-text`.
-- `checkbox`/`switch` → `field-checkbox`.
-- `component`, `multiconnect`, `select`, `date`, `time`, `datetime`, `yearmon`, `daymon`, `font-awesome`, `wysiwyg`, `password`, `code`, `accordion`, `memo`, `1_to_m`, `file`, `docpack`, `in_ext_url`, `time_table` → `field-<type>`.
-- `save_button` — рисует кнопку сохранения.
-- `is_only_field`: `checkbox|switch` или read_only `date|datetime` — без обёртки description.
+## Risks
 
-## URL / CGI
-
-- Форма: `/edit_form/<config>[/<id>]` (regex также принимает `edit-form`).
-- Параметры в query: `get_cgi_params()` кладёт все в `cgi_params`.
-
-## Риски при миграции
-
-- `eval` серверного JS требует runtime-компилятора Vue и глобалов (`Vue`, `bus`, `BackendBase`) — сохранять (см. `security.md`, `migration-vue3.md`).
-- `v-layout`/`v-flex` в `EditForm.vue`/`FormBlock.vue` удалены в Vuetify 3.
+- Server-JS `eval` requires the Vue runtime compiler and globals (`Vue`, `bus`, `BackendBase`).
+- `v-layout`/`v-flex` removed from `EditForm.vue`/`FormBlock.vue` in Vuetify 3.

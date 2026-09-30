@@ -1,21 +1,24 @@
-# Роутинг (Vue Router)
+# Routing (Vue Router)
 
-Источник: `src/router/index.js`, `src/App.vue`, `src/LeftMenu.vue`, `src/components/FallbackRoute.vue`.
+> Load when: adding a route, changing the layout, debugging navigation.
+> Canonical for: layouts, route tables, aliases, catch-all, history base, menu navigation.
 
-## Layout'ы
+Sources: `src/router/index.js`, `src/App.vue`, `src/LeftMenu.vue`, `src/components/FallbackRoute.vue`. Shell data loading: [architecture.md](architecture.md). Backend menu contract: [backend-contract.md](backend-contract.md).
 
-Layout выбирается по `route.meta.blank`:
+## Layouts
 
-- `meta.blank !== true` → **shell** (`App.vue`): `v-navigation-drawer` + `LeftMenu`, `v-app-bar`, `v-main` с `<router-view>`, `v-footer`. В `created` грузится `/startpage` (left_menu, manager, title, copyright, bottom_menu).
-- `meta.blank === true` → **full-screen**: `<v-app><router-view/></v-app>` без меню.
+Selected by `route.meta.blank`:
 
-`App.vue` — корень: `<v-defaults-provider>` (схема) → один из двух `v-app`.
+- `meta.blank !== true` → **shell** (`App.vue`): `v-navigation-drawer` + `LeftMenu`, `v-app-bar`, `v-main` with `<router-view>`, `v-footer`; `App.created` loads `/startpage` (left_menu, manager, title, copyright, bottom_menu).
+- `meta.blank === true` → **full-screen**: `<v-app><router-view/></v-app>`, no menu (forms, headapp trees/tables, login).
 
-## Маршруты
+`App.vue` is the root: `<v-defaults-provider>` (scheme) → one of the two `v-app`.
+
+## Routes
 
 Shell (`/vue/...`):
 
-| URL | Компонент |
+| URL | Component |
 |---|---|
 | `/` | MainPage |
 | `/vue/admin_table/:config` | AdminTable |
@@ -28,22 +31,21 @@ Shell (`/vue/...`):
 | `/vue/Schedule/:config` | Schedule |
 | `/vue/table/:config` | Table |
 
-Full-screen (`meta.blank`, URL без `/vue`): `/edit_form/:config/:id?`, `/admin_table/:config`, `/admin_tree/:config`, `/table/:config`, `/const/:config`, `/transfere_cards/:config`, `/stat-tool/:config`, `/memo-aggregate/:config`, `/parser-excel/:config`, `/documentation/:config`, `/Schedule/:config`, `/VideoList/:config`, `/login`, `/register`, `/remember`.
+Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/admin_table/:config`, `/admin_tree/:config`, `/table/:config`, `/const/:config`, `/transfere_cards/:config`, `/stat-tool/:config`, `/memo-aggregate/:config`, `/parser-excel/:config`, `/documentation/:config`, `/Schedule/:config`, `/VideoList/:config`, `/login`, `/register`, `/remember`.
 
-- Пропсы страниц передаются фабриками `shellProps`/`blankProps` (`params`, для full-screen — `is_headapp: '1'`).
-- **Alias'ы** (совместимость): `/edit-form`, `/admin-table`, `/admin-tree`, `/transfere-cards`.
-- **Catch-all** `/:pathMatch(.*)*` → `FallbackRoute`: `/src:<url>` рендерит iframe внутри shell; иначе редирект на `/`.
-- `history: createWebHistory(import.meta.env.BASE_URL)` — база тенанта (`/`, `/CrmFresh/`, `/manager/`).
+- Page props come from the `shellProps`/`blankProps` factories (`params`; full-screen also `is_headapp: '1'`).
+- **Aliases** (compatibility): `/edit-form`, `/admin-table`, `/admin-tree`, `/transfere-cards`.
+- **Catch-all** `/:pathMatch(.*)*` → `FallbackRoute`: `/src:<url>` renders an iframe inside the shell; anything else redirects to `/`.
+- `history: createWebHistory(import.meta.env.BASE_URL)` — tenant base (`/`, `/CrmFresh/`, `/manager/`).
 
-## Меню
+## Menu
 
-- `LeftMenu.get_link(item)` строит путь (`/vue/...`, `/`, `/src:<url>`); `go_link` → `router.push/replace` (тип `newtab` → `window.open`).
-- Активный пункт: `left_menu_item.vue` сравнивает `get_link(item)` с `$route.path`; родитель подсвечивается/раскрывается по `hasActiveChild`.
-- При смене `config` у `AdminTable` состояние фильтров сбрасывается (watch `params`, ремаунт `OnFilters` через `:key`).
+- `LeftMenu.get_link(item)` builds the path (`/vue/...`, `/`, `/src:<url>`); `go_link` → `router.push/replace` (type `newtab` → `window.open`).
+- Active item: `left_menu_item.vue` compares `get_link(item)` with `$route.path`; a parent is highlighted/expanded by `hasActiveChild`.
+- On `config` change in `AdminTable` the filter state resets (watch `params`, remount `OnFilters` via `:key`).
 
-## Прочее
+## Other
 
-- `EditForm` после сохранения делает `router.replace('/edit_form/<config>/<id>')`.
-- `Login`/`Register` — переходы через `$router`.
-- Глобалы для серверного `eval` сохранены: `window.app`, `window.EditForm`, `window.BaseUrl`, `window.BackendBase`, `window.bus`.
-- Для прод-deep-links нужен fallback на nginx: `try_files $uri $uri/ /index.html`.
+- After save, `EditForm` does `router.replace('/edit_form/<config>/<id>')`; `Login`/`Register` navigate through `$router`.
+- Globals for server `eval` preserved: `window.app`, `window.EditForm`, `window.BaseUrl`, `window.BackendBase`, `window.bus`.
+- Production deep links need an nginx fallback: `try_files $uri $uri/ /index.html`.

@@ -1,10 +1,11 @@
-# Зависимости полей (frontend)
+# Field dependencies (frontend)
 
-Реализация: `src/components/js/edit_form.js`. Логика описана здесь; контракт с бэкендом — в `form-engine.md`.
+> Load when: cross-field dependencies, `frontend` handling, ajax-driven field updates.
+> Canonical for: `frontend` semantics, the dependency engine and its constants, the test config.
 
-## Как зависимости описываются на бэке
+Implementation `src/components/js/edit_form.js`. JSON shapes: [form-engine.md](form-engine.md). Test config/MySQL: [debugging.md](debugging.md).
 
-У поля формы может быть объект `frontend`:
+## Declaration on the backend
 
 ```python
 {
@@ -13,54 +14,34 @@
 }
 ```
 
-- `fields_dependence` — **строка с JS-функцией** `v => ...`, где `v` — словарь `values` (name → value). Выполняется на клиенте через `eval`. Возвращает **плоский массив** `[name, obj, name2, obj2, ...]` и/или **мутирует поля напрямую** (например через `window.EditForm.get_field_by_name(...)`).
-- `ajax` — `{ name, timeout }`: `POST {BackendBase}/ajax/{config}/{name}` с `{values, id}`. Бэкенд возвращает `{success, errors, result}`, где `result` — такой же плоский массив `[name, obj, ...]`.
+- `fields_dependence` — **string holding a JS function** `v => ...`, `v` = `values` dict (name → value). Executed client-side via `eval`. Returns a **flat array** `[name, obj, name2, obj2, ...]` and/or **mutates fields directly** (e.g. `window.EditForm.get_field_by_name(...)`).
+- `ajax` — `{ name, timeout }`: `POST {BackendBase}/ajax/{config}/{name}` with `{values, id}`; response `{success, errors, result}`, `result` being the same flat array.
+- `obj` may contain `value`, `instead_of_empty`, `values`, `hide`, `error`, `warning`, `after_html`, `before_html`, `description`, `fields`, `jscode`.
 
-`obj` для поля может содержать: `value`, `instead_of_empty`, `values`, `hide`, `error`, `warning`, `after_html`, `before_html`, `description`, `fields`, `jscode`.
+Example (`configs/svcmsmanager/test2`): `dep1` via `fields_dependence` drives `dep2/dep3/dep4`; `title` via ajax `gen_slug` fills `slug`.
 
-Пример (`configs/svcmsmanager/test2`): `dep1` через `fields_dependence` управляет `dep2/dep3/dep4`; `title` через ajax `gen_slug` заполняет `slug`.
+## Engine (in `edit_form.js`)
 
-## Старая логика и найденные ошибки
+Old flow (kept for reference): user changes field → bus `change_field` → `change_field()` → `frontend_process()` → `frontend_result_process` → `on_dependence()`, which **unconditionally** emitted `change_field` again. Each countermeasure below exists because of a defect of that loop (no change detection, no visited set, `not_frontend_process` muting only the source field, ajax without dedup, `eval` per call).
 
-Поток был: пользователь меняет поле → bus `change_field` → `change_field()` → `frontend_process()`:
-- локальная зависимость: `eval('dep=' + fields_dependence)` → `result` → `frontend_result_process`;
-- `ajax`: debounce → `frontend_result_process(d.result)`;
-- `frontend_result_process` → `on_dependence()` для каждой пары, а `on_dependence` **безусловно** эмитил `change_field`, что снова запускало `frontend_process`.
+- **Change detection** `state_hash(field)` = value + hide + error + length of `values` + description + warning + before/after_html; a field counts as changed only if the hash differs.
+- **Queue + diff**: after any change all field states are diffed against the last (`eng_diff`); only changed fields emit `field-update:<name>` (UI) and are queued.
+- **Local dependencies**: compiled once (`compile_dependence`, cache `field._dep_fn`), applied via `apply_result_array`; changes bubble up through the diff.
+- **Cycles** converge: re-applying the same value does not change the hash and does not re-queue. Fuse `ENGINE_MAX_STEPS` (300) with `console.warn`.
+- **Ajax**: per-field debounce (`timeout`), **dedup of identical in-flight requests** (`inflight_keys` by payload hash), **1s TTL cache** (`AJAX_CACHE`) — identical requests are not resent within a second (backend data may change, hence a TTL, not a permanent cache).
+- **UI sync**: `field-update:<name>` is the public event; field components sync `value`/options on it.
+- `ENGINE` context lives while there is a queue, timers, or requests, then resets and drops the stale cache.
 
-Ошибки:
-1. **Нет детекта изменений** — `on_dependence` эмитил событие, даже если значение/состояние не изменилось: каждый ответ сервера = новый виток.
-2. **Нет контекста/посещённых** — пользовательский ввод и распространение зависимостей шли одним событием `change_field`, без visited-множества и лимита шагов.
-3. **`not_frontend_process` глушит только поле-источник** (`proc_name==name`), а изменение «соседнего» поля запускало его `frontend_process` → цикл A→B→A.
-4. **Ajax без защиты** — только per-field debounce; нет дедупликации одинаковых запросов и защиты от устаревших ответов → бэк «долбили» повторно.
-5. `fields_dependence` вычислялся через `eval` на каждый вызов (не компилировался один раз).
+Entry point `eng_notify(self, name)`, called by `change_field` for user edits; `frontend_result_process` (button results) applies pairs and starts the same engine.
 
-## Новая логика (движок)
+Handled JS-dependency errors: empty `value` on `select` normalized (`calc_values`), select `values` coerced to strings; `obj.values` arriving as a JSON string parsed with try/catch; compile/run errors of `fields_dependence` only `console.warn`, engine continues.
 
-В `edit_form.js` добавлен движок:
+## Verification
 
-- **Детект изменений**: `state_hash(field)` = value + hide + error + длина values + description + warning + before/after_html. Поле считается изменённым, только если хеш отличается.
-- **Очередь + дифф**: после любого изменения движок сравнивает состояние всех полей с последним (`eng_diff`), для реально изменившихся — эмитит `field-update:<name>` (UI) и ставит поле в очередь.
-- **Локальные зависимости**: компилируются один раз (`compile_dependence`, кэш `field._dep_fn`), применяются через `apply_result_array`; изменения всплывают через дифф.
-- **Циклы**: сходятся, потому что повторное применение того же значения не меняет хеш и не переставляет поле в очередь. Дополнительно — `ENGINE_MAX_STEPS` (300) как предохранитель, с `console.warn`.
-- **Ajax**: per-field debounce (`timeout`), **дедупликация одинаковых запросов в полёте** (`inflight_keys` по хешу payload), **TTL-кэш 1с** (`AJAX_CACHE`) — одинаковый запрос не уходит повторно в пределах секунды (данные на бэке могут измениться, поэтому TTL, а не вечный кэш).
-- **Синхронизация с UI**: `field-update:<name>` остаётся публичным событием; компоненты полей по нему синхронизируют `value`/опции.
-- Контекст `ENGINE` живёт, пока есть очередь, таймеры или запросы; затем сбрасывается (и чистит устаревший кэш).
+Test config `~/projects/CrmFreshBackend-python-async/configs/svcmsmanager/test2` (table `test2` in DB `svcms`), reachable as `/edit_form/test2`. Verified with puppeteer:
 
-Точка входа — `eng_notify(self, name)`; `change_field` вызывает её для пользовательских изменений. `frontend_result_process` (результаты кнопок/`frontend_button_process`) применяет пары и запускает тот же движок.
+- `dep1=1` → `dep2/dep3/dep4` hidden; `dep1=4` → shown with new values.
+- cycle `x→y`, `y→x`: `x=abc` → `y=abc`, propagation stops (0 warnings, no step-limit message).
+- `title="Привет Мир"` → ajax `gen_slug` → `slug="privet_mir"`; the `title↔slug` cycle converges, `POST /ajax/*` count bounded (3), no repeats within the TTL.
 
-## Ошибки в JS-зависимостях (исправлено в движке)
-
-- Пустые `value` у `select` нормализуются (`calc_values`), `values` селекта приводятся к строкам.
-- `obj.values` может прийти строкой (JSON) — парсим с try/catch.
-- Ошибки компиляции/исполнения `fields_dependence` не роняют страницу: `console.warn`, движок продолжает.
-
-## Проверка
-
-Тестовый конфиг: `~/projects/CrmFreshBackend-python-async/configs/svcmsmanager/test2` (таблица `test2` в БД `svcms`), доступен как `/edit_form/test2`.
-
-Проверено (puppeteer):
-- `dep1=1` → `dep2/dep3/dep4` скрыты; `dep1=4` → показаны с новыми значениями.
-- цикл `x→y`, `y→x`: `x=abc` → `y=abc`, распространение останавливается (0 предупреждений, без «step limit»).
-- `title="Привет Мир"` → ajax `gen_slug` → `slug="privet_mir"`; цикл `title↔slug` сходится, число POST `/ajax/*` ограничено (3), повторов в пределах TTL нет.
-
-Инструмент: `window.EditForm.get_field_by_name(name)` + `window.bus.$emit('change_field', field)` для эмуляции ввода.
+Tooling: `window.EditForm.get_field_by_name(name)` + `window.bus.$emit('change_field', field)`.

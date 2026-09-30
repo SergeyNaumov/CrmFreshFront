@@ -1,40 +1,40 @@
-# Отладка (бэкенд, БД, стенд)
+# Debugging (backend, DB, stand)
 
-## Окружение
+> Load when: reproducing a bug against the backend stand, editing form configs, or querying MySQL.
+> Canonical for: stand addresses, editable backend config paths, DB access commands.
 
-- Frontend dev: `npm run dev` (Vite, `0.0.0.0:8081`). База/тенант — mode в `vite.config.js`.
-- Backend (стенд): `~/projects/CrmFreshBackend-python-async`, запущен на `http://dev-crm.test/backend` (FastAPI, uvicorn), reload включён — правки конфигов подхватываются без перезапуска.
-- Runtime-конфиг фронта: `public/configure.js` (`config.BackendBase`, `MessengerWS`, `TinyMCE_BaseUrl`, `config.schema`).
+## Environment
 
-## Backend: конфиги форм можно править
+| Item | Value |
+|---|---|
+| Frontend dev | `npm run dev` (Vite, `0.0.0.0:8081`); base/tenant = `mode` in `vite.config.js` ([build-and-tenant.md](build-and-tenant.md)) |
+| Backend stand | `~/projects/CrmFreshBackend-python-async` on `http://dev-crm.test/backend` (FastAPI, uvicorn), reload on — config edits apply without a restart |
+| Frontend runtime config | `public/configure.js` ([architecture.md](architecture.md)) |
 
-Конфиги тенанта `svcms` лежат в `configs/svcmsmanager/<config>/__init__.py` (в `~/projects/CrmFreshBackend-python-async`). Форма — Python-словарь `form = {...}` с `fields`, `cols`, `tabs`, `ajax`.
+Backend `/config` returns `BaseUrl` and `controllers.left_menu`. Modes: `default|trade|svcms`.
 
-Зависимости полей описываются на бэке:
+## Backend configs are editable
 
-```python
-{
-  'description':'...', 'name':'action', 'type':'checkbox',
-  'frontend': {'fields_dependence': 'v=>{ ... return [name, obj, ...] }'},  # JS-строка, считается на клиенте
-  'frontend': {'ajax': {'name':'gen_slug','timeout':200}},                   # POST /ajax/<config>/<name>
-}
-```
-`ajax`-контроллер: `form['ajax']={'gen_slug': async def(form,values): return [name,obj,...]}`. Подробности контракта — `form-engine.md`, `field-dependencies.md`.
+Tenant `svcms` configs live in `configs/svcmsmanager/<config>/__init__.py`. A form is a Python dict `form = {...}` with `fields`, `cols`, `tabs`, `ajax`. `frontend` syntax and the `ajax` controller signature: [field-dependencies.md](field-dependencies.md). Client contract: [form-engine.md](form-engine.md).
 
-Тестовый конфиг зависимостей: `configs/svcmsmanager/test2` (локальные dep, цикл `x↔y`, ajax-цикл `title↔slug`), доступен как `/edit_form/test2`.
+Dependency test config `configs/svcmsmanager/test2` — local deps, cycle `x↔y`, ajax cycle `title↔slug`; reachable as `/edit_form/test2`.
 
-## База данных MySQL
+## MySQL
 
 ```shell
-mysql -u svcms svcms          # интерактивно
+mysql -u svcms svcms          # interactive
 mysql -u svcms svcms -e "show tables;"
 mysql -u svcms svcms -e "select * from test2 limit 5;"
 ```
 
-Рабочие таблицы форм — `work_table` из конфига (напр. `test2`, `struct_5830_good`). Тестовая таблица зависимостей `test2` создана для проверки движка.
+Form working tables come from the config's `work_table` (e.g. `test2`, `struct_5830_good`).
 
-## Быстрая проверка
+## Quick checks
 
-- Проверить ответ бэка: `curl -sS -X POST http://dev-crm.test/backend/edit-form/<config> -H 'Content-Type: application/json' -d '{"cgi_params":{}}'`.
-- Smoke UI — puppeteer (Chrome): открывать `http://localhost:8081/<route>`, собирать console/pageerror. Чеклист — `verification.md`.
-- Тенант: backend `/config` отдаёт `BaseUrl`/`controllers.left_menu`; фронт собирается по mode (`default|trade|svcms`).
+```shell
+curl -sS -X POST http://dev-crm.test/backend/edit-form/<config> \
+  -H 'Content-Type: application/json' -d '{"cgi_params":{}}'
+```
+
+- UI smoke — puppeteer/Chrome: open `http://localhost:8081/<route>`, collect console/pageerror. Checklist: [verification.md](verification.md).
+- Drive a field from the console: `window.EditForm.get_field_by_name(name)` + `window.bus.$emit('change_field', field)`.

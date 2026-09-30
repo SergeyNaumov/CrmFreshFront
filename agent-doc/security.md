@@ -1,41 +1,46 @@
-# Безопасность
+# Security
 
-## eval серверного JavaScript
+> Load when: touching `eval`, `v-html`, or server-provided scripts.
+> Canonical for: the full list of `eval` sites, dynamic `<script>` injection, `v-html` sources.
 
-Сервер присылает JS, исполняемый на клиенте. Backend менять нельзя (решение по миграции), поэтому `eval` сохраняется, но фиксируется как риск.
+The backend must not be changed, so `eval` is kept and tracked as a risk. Globals available to server JS: [architecture.md](architecture.md). Migration constraints: [migration-vue3.md](migration-vue3.md).
 
-| Файл:строка | Источник |
+## Server JavaScript `eval`
+
+| File:line | Source |
 |---|---|
-| `src/components/js/edit_form.js:127` | `eval(obj.jscode)` — `jscode` из AJAX-ответа |
-| `src/components/js/edit_form.js:166` | `eval('dep='+front.fields_dependence)` — зависимость поля |
-| `src/components/EditForm.vue:285` | `eval(data.javascript)` — из ответа `/edit-form/...` |
-| `src/components/EditForm.vue:399` | `eval(block.on_show)` — из данных блока |
+| `src/components/js/edit_form.js:127` | `eval(obj.jscode)` — `jscode` from an ajax response |
+| `src/components/js/edit_form.js:166` | `eval('dep='+front.fields_dependence)` — field dependency |
+| `src/components/EditForm.vue:285` | `eval(data.javascript)` — from the `/edit-form/...` response |
+| `src/components/EditForm.vue:399` | `eval(block.on_show)` — from block data |
 | `src/components/StatTool/StatTool.vue:133` | `eval(d.javascript)` |
 | `src/components/AdminTable.vue:343` | `eval(D.javascript)` |
 | `src/components/AdminTable.vue:524` | `eval(d.javascript)` |
 | `src/components/AdminTree.vue:115` | `eval(D.javascript)` |
-| `src/components/fields/select.vue:286` | `eval(rule+'.test(this.value)')` — regex-правило |
+| `src/components/fields/select.vue:286` | `eval(rule+'.test(this.value)')` — regex rule |
 | `src/components/fields/field_functions.js:57` | `eval('self.value.replace('+rule+",'"+rep+"')")` |
-| `src/components/fields/field_functions.js:70` | `eval(`${rule}.test(self.value)`)` |
-| `src/components/fields/component.vue:107` | `eval(`obj=${r.data}`)` |
+| `src/components/fields/field_functions.js:70` | ``eval(`${rule}.test(self.value)`)`` |
+| `src/components/fields/component.vue:107` | ``eval(`obj=${r.data}`)`` |
 
-Следствия для миграции: нужен runtime-компилятор Vue (`vue/dist/vue.esm-bundler.js`) и доступные глобалы (`Vue`, `bus`, `BackendBase`, `BaseUrl`, `window.EditForm`).
+Consequence for migration: the Vue runtime compiler (`vue/dist/vue.esm-bundler.js`) and the globals (`Vue`, `bus`, `BackendBase`, `BaseUrl`, `window.EditForm`) must stay available.
 
-## Динамические скрипты
+`field_functions.js:57,70`: the backend sends `regexp_rules` as strings without slashes (`"^.+$"`), so `eval("^.+$.test(...)")` threw `Unexpected token '^'` (`feedback_form`, `send_request_form`); switched to `new RegExp(rule)` (plus `/.../flags`) with try/catch. The bug also exists on branch `main`.
 
-- `src/components/EditForm.vue:289-294` — `data.javascript_static[]` → создание `<script src=...>` в `<head>`.
-- `src/components/fields/text_subtypes/qr_call.vue:86-88` — подключение внешнего скрипта.
+## Dynamic scripts
 
-## v-html (64 вхождения)
+- `src/components/EditForm.vue:289-294` — `data.javascript_static[]` creates `<script src=...>` in `<head>`.
+- `src/components/fields/text_subtypes/qr_call.vue:86-88` — loads an external script.
 
-Данные приходят с сервера; это потенциальный XSS. Источники: `form.title`, `tab.description`, `field.description/before_html/after_html`, `log`, `errors`, `message.message`, `header.h`, `item.body`, `d.body`, `plugin_out`, `dialog_html`, ячейки таблиц.
+## `v-html` (64 occurrences)
 
-Примеры: `EditForm.vue:28,29,38,55,87`, `FormBlock.vue:8,34,52`, `AdminTable.vue:22,39,40,127`, `Table.vue:9,45,70`, `Messenger/ChatWindow.vue:17`, `Notifications.vue:32`, `Documentation/item_content.vue:37`.
+Data comes from the server; potential XSS. Sources: `form.title`, `tab.description`, `field.description/before_html/after_html`, `log`, `errors`, `message.message`, `header.h`, `item.body`, `d.body`, `plugin_out`, `dialog_html`, table cells.
 
-Хардненинг (не в этой задаче): DOMPurify или серверная санитизация. При миграции поведение не менять, чтобы не сломать вёрстку форм.
+Examples: `EditForm.vue:28,29,38,55,87`, `FormBlock.vue:8,34,52`, `AdminTable.vue:22,39,40,127`, `Table.vue:9,45,70`, `Messenger/ChatWindow.vue:17`, `Notifications.vue:32`, `Documentation/item_content.vue:37`.
 
-## Прочее
+Hardening (out of scope): DOMPurify or server-side sanitization. Do not change the behaviour during migration — it would break form markup.
 
-- `navigator.userAgent` (`main.js:55`) используется только локально для `$isMobile`, на сервер не передаётся — не уязвимость.
-- `BackendBase`/`MessengerWS` включают `http://`/`ws://` в `public/configure.js` — в продакшене задавать относительные/`wss`.
-- `runtimeCompiler: true` — необходимость, связанная с `eval` (см. `migration-vue3.md`).
+## Other
+
+- `navigator.userAgent` (`main.js:55`) is used only locally for `$isMobile` and never sent to the server — not a vulnerability.
+- `BackendBase`/`MessengerWS` include `http://`/`ws://` in `public/configure.js` — use relative URLs/`wss` in production.
+- `runtimeCompiler: true` is a requirement driven by `eval` ([build-and-tenant.md](build-and-tenant.md)).
