@@ -1,0 +1,187 @@
+/* ============================================================
+   css/header-search.css — строка поиска в шапке с автокомплитом.
+   Компонент: js/preview/header-search.js (Vue, монтируется сам по
+   [data-header-search] или вкладывается в другое приложение).
+
+   Подключение: main_v3.html, all_headers.html (варианты 1 и 3).
+   Все цвета — через переменные темы, поэтому блок корректно
+   перекрашивается переключателями в preview/index.html.
+   ============================================================ */
+
+.hsearch {
+  position: relative;
+  width: 100%;
+}
+
+/* ---------------------------------------------------------
+   Поле ввода
+   --------------------------------------------------------- */
+.hsearch__form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 6px 0 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.hsearch__form:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), .12);
+}
+
+.hsearch__ico {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--muted);
+}
+
+.hsearch__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--on-surface);
+  background: transparent;
+  border: 0;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Убираем нативный крестик WebKit — свой, с aria-label */
+.hsearch__input::-webkit-search-cancel-button,
+.hsearch__input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+
+.hsearch__input::placeholder { color: var(--muted); }
+
+.hsearch__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.hsearch__clear svg { width: 13px; height: 13px; }
+.hsearch__clear:hover { color: var(--on-surface); background: var(--light); }
+
+.hsearch__submit {
+  flex: none;
+  height: 32px;
+  padding: 0 16px;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--search-submit-color, var(--on-primary, var(--white)));
+  background: var(--search-submit-bg, var(--primary));
+  border: 0;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.hsearch__submit:hover { background: var(--primary-dark); }
+
+/* ---------------------------------------------------------
+   Выпадашка подсказок
+   --------------------------------------------------------- */
+.hsearch__list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: var(--z-50);
+  max-height: 420px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  overflow-y: auto;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.hsearch__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+}
+
+.hsearch__item.is-active { background: var(--light); }
+
+.hsearch__photo {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  object-fit: cover;
+  border-radius: var(--radius-xs);
+  background: var(--light);
+}
+
+.hsearch__name {
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+  color: var(--on-surface);
+}
+
+.hsearch__msg {
+  padding: 14px 10px;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+  text-align: center;
+}
+
+.hsearch__all {
+  margin-top: 4px;
+  padding: 10px 8px 6px;
+  border-top: 1px solid var(--border);
+  font-size: var(--font-size-sm);
+}
+
+.hsearch__all a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.hsearch__all a:hover { text-decoration: underline; }
+
+/* Служебная живая область для скринридеров — только для чтения */
+.hsearch__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------
+   Адаптив
+   --------------------------------------------------------- */
+@media (max-width: 560px) {
+  .hsearch__form { height: 38px; }
+  .hsearch__submit { padding: 0 12px; }
+}

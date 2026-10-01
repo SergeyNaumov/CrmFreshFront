@@ -1,0 +1,722 @@
+[
+  {
+    "index": 1,
+    "filename": "product-1.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-1",
+    "seed": 2123871563761106058,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-1.jpg"
+    ]
+  },
+  {
+    "index": 2,
+    "filename": "product-2.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-2",
+    "seed": 8008958114037188071,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-2.jpg"
+    ]
+  },
+  {
+    "index": 3,
+    "filename": "product-3.jpg",
+    "prompt": "Professional product photo of a flagship smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-3",
+    "seed": 6078261015771050998,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-3.jpg"
+    ]
+  },
+  {
+    "index": 4,
+    "filename": "product-4.jpg",
+    "prompt": "Professional product photo of a foldable smartphone, half-open at 90 degrees, inner screen on with a clean UI, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-4",
+    "seed": 5770523636799887167,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-4.jpg"
+    ]
+  },
+  {
+    "index": 5,
+    "filename": "product-5.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-5",
+    "seed": 2298404706837033070,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-5.jpg"
+    ]
+  },
+  {
+    "index": 6,
+    "filename": "product-6.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-6",
+    "seed": 2262497385922696958,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-6.jpg"
+    ]
+  },
+  {
+    "index": 7,
+    "filename": "product-7.jpg",
+    "prompt": "Professional product photo of a flagship smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-7",
+    "seed": 3928546905123386119,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-7.jpg"
+    ]
+  },
+  {
+    "index": 8,
+    "filename": "product-8.jpg",
+    "prompt": "Professional product photo of a flagship smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-8",
+    "seed": 5119951641950182680,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-8.jpg"
+    ]
+  },
+  {
+    "index": 9,
+    "filename": "product-9.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-9",
+    "seed": 6160934655822849818,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-9.jpg"
+    ]
+  },
+  {
+    "index": 10,
+    "filename": "product-10.jpg",
+    "prompt": "Professional product photo of a rugged smartphone, front 3/4 view, reinforced frame, screen on, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-10",
+    "seed": 7086544117054254467,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-10.jpg"
+    ]
+  },
+  {
+    "index": 11,
+    "filename": "product-11.jpg",
+    "prompt": "Professional product photo of a rugged smartphone, front 3/4 view, reinforced frame, screen on, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-11",
+    "seed": 2120615771232778419,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-11.jpg"
+    ]
+  },
+  {
+    "index": 12,
+    "filename": "product-12.jpg",
+    "prompt": "Professional product photo of a flagship smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-12",
+    "seed": 7258077744860412715,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-12.jpg"
+    ]
+  },
+  {
+    "index": 13,
+    "filename": "product-13.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-13",
+    "seed": 2179753585978960650,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-13.jpg"
+    ]
+  },
+  {
+    "index": 14,
+    "filename": "product-14.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-14",
+    "seed": 8332727269369604639,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-14.jpg"
+    ]
+  },
+  {
+    "index": 15,
+    "filename": "product-15.jpg",
+    "prompt": "Professional product photo of a flagship smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-15",
+    "seed": 7275574188889389462,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-15.jpg"
+    ]
+  },
+  {
+    "index": 16,
+    "filename": "product-16.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-16",
+    "seed": 3548367448181017946,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-16.jpg"
+    ]
+  },
+  {
+    "index": 17,
+    "filename": "product-17.jpg",
+    "prompt": "Professional product photo of a flagship smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-17",
+    "seed": 4556741115634607944,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-17.jpg"
+    ]
+  },
+  {
+    "index": 18,
+    "filename": "product-18.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-18",
+    "seed": 3298388929337279893,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-18.jpg"
+    ]
+  },
+  {
+    "index": 19,
+    "filename": "product-19.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-19",
+    "seed": 144789292418851144,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-19.jpg"
+    ]
+  },
+  {
+    "index": 20,
+    "filename": "product-20.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-20",
+    "seed": 4426316447657026111,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-20.jpg"
+    ]
+  },
+  {
+    "index": 21,
+    "filename": "product-21.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-21",
+    "seed": 7453486115690611144,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-21.jpg"
+    ]
+  },
+  {
+    "index": 22,
+    "filename": "product-22.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-22",
+    "seed": 6018274854790625517,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-22.jpg"
+    ]
+  },
+  {
+    "index": 23,
+    "filename": "product-23.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-23",
+    "seed": 1368265767001411983,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-23.jpg"
+    ]
+  },
+  {
+    "index": 24,
+    "filename": "product-24.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-24",
+    "seed": 1856816216961917554,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-24.jpg"
+    ]
+  },
+  {
+    "index": 25,
+    "filename": "product-25.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-25",
+    "seed": 7791587343628485173,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-25.jpg"
+    ]
+  },
+  {
+    "index": 26,
+    "filename": "product-26.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-26",
+    "seed": 8621172726302091767,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-26.jpg"
+    ]
+  },
+  {
+    "index": 27,
+    "filename": "product-27.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-27",
+    "seed": 7457924234521487690,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-27.jpg"
+    ]
+  },
+  {
+    "index": 28,
+    "filename": "product-28.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-28",
+    "seed": 7687873086101197123,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-28.jpg"
+    ]
+  },
+  {
+    "index": 29,
+    "filename": "product-29.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-29",
+    "seed": 4289204679957458336,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-29.jpg"
+    ]
+  },
+  {
+    "index": 30,
+    "filename": "product-30.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-30",
+    "seed": 1178381228033692610,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-30.jpg"
+    ]
+  },
+  {
+    "index": 31,
+    "filename": "product-31.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-31",
+    "seed": 8675615771493437139,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-31.jpg"
+    ]
+  },
+  {
+    "index": 32,
+    "filename": "product-32.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-32",
+    "seed": 7035005551147804276,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-32.jpg"
+    ]
+  },
+  {
+    "index": 33,
+    "filename": "product-33.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-33",
+    "seed": 1632055737363247708,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-33.jpg"
+    ]
+  },
+  {
+    "index": 34,
+    "filename": "product-34.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-34",
+    "seed": 4578568155154554832,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-34.jpg"
+    ]
+  },
+  {
+    "index": 35,
+    "filename": "product-35.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-35",
+    "seed": 9043350352803011727,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-35.jpg"
+    ]
+  },
+  {
+    "index": 36,
+    "filename": "product-36.jpg",
+    "prompt": "Professional product photo of a smartphone, front 3/4 view, screen on with a clean wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-36",
+    "seed": 7530353533630925888,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-36.jpg"
+    ]
+  },
+  {
+    "index": 37,
+    "filename": "product-37.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-37",
+    "seed": 7469525110184391227,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-37.jpg"
+    ]
+  },
+  {
+    "index": 38,
+    "filename": "product-38.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-38",
+    "seed": 3134310989156554131,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-38.jpg"
+    ]
+  },
+  {
+    "index": 39,
+    "filename": "product-39.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-39",
+    "seed": 3393026403616431450,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-39.jpg"
+    ]
+  },
+  {
+    "index": 40,
+    "filename": "product-40.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-40",
+    "seed": 13823022982111383,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-40.jpg"
+    ]
+  },
+  {
+    "index": 41,
+    "filename": "product-41.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-41",
+    "seed": 8873371302949716870,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-41.jpg"
+    ]
+  },
+  {
+    "index": 42,
+    "filename": "product-42.jpg",
+    "prompt": "Professional product photo of a compact entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-42",
+    "seed": 1416063078616334035,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-42.jpg"
+    ]
+  },
+  {
+    "index": 43,
+    "filename": "product-43.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-43",
+    "seed": 269695842425291802,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-43.jpg"
+    ]
+  },
+  {
+    "index": 44,
+    "filename": "product-44.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-44",
+    "seed": 4836219228050509434,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-44.jpg"
+    ]
+  },
+  {
+    "index": 45,
+    "filename": "product-45.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-45",
+    "seed": 1834588638242734272,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-45.jpg"
+    ]
+  },
+  {
+    "index": 46,
+    "filename": "product-46.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-46",
+    "seed": 2770577829900189834,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-46.jpg"
+    ]
+  },
+  {
+    "index": 47,
+    "filename": "product-47.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-47",
+    "seed": 5030865407139260817,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-47.jpg"
+    ]
+  },
+  {
+    "index": 48,
+    "filename": "product-48.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-48",
+    "seed": 198952292107039791,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-48.jpg"
+    ]
+  },
+  {
+    "index": 49,
+    "filename": "product-49.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-49",
+    "seed": 5685860459730816674,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-49.jpg"
+    ]
+  },
+  {
+    "index": 50,
+    "filename": "product-50.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-50",
+    "seed": 2033375632547393309,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-50.jpg"
+    ]
+  },
+  {
+    "index": 51,
+    "filename": "product-51.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-51",
+    "seed": 1637664137243865045,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-51.jpg"
+    ]
+  },
+  {
+    "index": 52,
+    "filename": "product-52.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-52",
+    "seed": 3673781093959240175,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-52.jpg"
+    ]
+  },
+  {
+    "index": 53,
+    "filename": "product-53.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-53",
+    "seed": 5512853694460431033,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-53.jpg"
+    ]
+  },
+  {
+    "index": 54,
+    "filename": "product-54.jpg",
+    "prompt": "Professional product photo of an entry-level smartphone, front 3/4 view, screen on with a simple wallpaper, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-54",
+    "seed": 8094690364443166238,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-54.jpg"
+    ]
+  },
+  {
+    "index": 55,
+    "filename": "product-55.jpg",
+    "prompt": "Professional product photo of a tempered glass screen protector, shown as a thin transparent rectangular pane tilted at a slight angle, subtle edge highlights, no phone behind it, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-55",
+    "seed": 4297349543026443003,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-55.jpg"
+    ]
+  },
+  {
+    "index": 56,
+    "filename": "product-56.jpg",
+    "prompt": "Professional product photo of a silicone smartphone case, three-quarter view, shown empty without a phone inside, matte soft-touch surface, rounded corners with cutouts for camera and ports, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-56",
+    "seed": 1698022834966890568,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-56.jpg"
+    ]
+  },
+  {
+    "index": 57,
+    "filename": "product-57.jpg",
+    "prompt": "Professional product photo of a portable power bank, three-quarter view, rectangular body with rounded edges, small LED indicator lights and USB ports visible, shown without any cables attached, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-57",
+    "seed": 5055044124894688932,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-57.jpg"
+    ]
+  },
+  {
+    "index": 58,
+    "filename": "product-58.jpg",
+    "prompt": "Professional product photo of a rugged MagSafe smartphone case, three-quarter view, shown empty without a phone inside, reinforced corners, matte surface, visible magnetic ring on the back, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-58",
+    "seed": 4666063289930616281,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-58.jpg"
+    ]
+  },
+  {
+    "index": 59,
+    "filename": "product-59.jpg",
+    "prompt": "Professional product photo of a USB-C to USB-C charging cable, neatly coiled into an oval, metallic connectors visible at both ends, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-59",
+    "seed": 2461462156481777428,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-59.jpg"
+    ]
+  },
+  {
+    "index": 60,
+    "filename": "product-60.jpg",
+    "prompt": "Professional product photo of a magnetic car phone holder, three-quarter view, shown without a phone attached, compact body with a magnetic pad and mounting base, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce catalog photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "product-60",
+    "seed": 8764440355981314033,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/product-60.jpg"
+    ]
+  }
+]

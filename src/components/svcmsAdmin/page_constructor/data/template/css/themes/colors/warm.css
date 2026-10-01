@@ -1,0 +1,106 @@
+/* ============================================================
+   themes/colors/warm.css — цветовая схема «Тепло»
+
+   ПОЛНЫЙ набор цветовых токенов (эксклюзивная модель).
+   Брендовая пара: #9a3412 / #f4a261. Файл сгенерирован
+   agent-doc/tools/gen_t1_color_schemes.py — правки вносить в SPEC.
+   Производные токены (rgb, градиент, шторки, слоты, выноски)
+   считаются и доводятся до контраста WCAG AA автоматически.
+   ============================================================ */
+
+:root {
+  /* ---------- Брендовая пара ---------- */
+  --primary: #9a3412;
+  --primary-rgb: 154, 52, 18;
+  --primary-dark: #75280e;
+  --secondary: #f4a261;
+  --secondary-rgb: 244, 162, 97;
+
+  /* ---------- Текст на брендовой заливке ---------- */
+  --on-primary: #ffffff;
+
+  /* ---------- Акцент и семантические плашки ---------- */
+  --accent: #e08c2b;
+  --badge-new: var(--primary);
+  --badge-promo: var(--accent);
+  --badge-sale: var(--danger);
+
+  /* ---------- Статусные ---------- */
+  --success: #198754;
+  --success-rgb: 25, 135, 84;
+  --danger: #dc3545;
+  --danger-rgb: 220, 53, 69;
+  --warning: #ffc107;
+  --warning-rgb: 255, 193, 7;
+  --info: #0dcaf0;
+  --info-rgb: 13, 202, 240;
+
+  /* ---------- Фон, текст, нейтрали ---------- */
+  --light: #eee4dd;
+  --light-rgb: 238, 228, 221;
+  --dark: #302722;
+  --dark-rgb: 48, 39, 34;
+  --body-bg: #f6f1ee;
+  --body-color: #55483f;
+  --muted: #7f6d61;
+  --heading-color: #302721;
+  --border: #e4d7ce;
+  --border-color: #ceb6a7;
+  --callout-bg: rgba(var(--primary-rgb), 0.08);
+  --callout-border: rgba(var(--primary-rgb), 0.32);
+
+  /* ---------- Поверхности ---------- */
+  --surface: #fbf8f7;
+  --surface-rgb: 251, 248, 247;
+  --on-surface: var(--heading-color);
+
+  /* ---------- Ссылки и градиент ---------- */
+  --link-color: var(--primary);
+  --link-hover: var(--primary-dark);
+  --gradient: linear-gradient(135deg, var(--primary-dark) 0%, #b5570d 100%);
+  --gradient-hover: linear-gradient(135deg, var(--primary) 0%, #b5570d 100%);
+
+  /* ---------- Кнопка «В корзину» ---------- */
+  --btn-cart: #9a3412;
+  --btn-cart-rgb: 154, 52, 18;
+  --on-btn-cart: #ffffff;
+
+  /* ---------- Белое и «чернила» ---------- */
+  --white: #ffffff;
+  --white-rgb: 255, 255, 255;
+  --ink: #1b1613;
+  --ink-rgb: 27, 22, 19;
+
+  /* ---------- Шторки каталога ---------- */
+  --catalog-curtain: linear-gradient(0deg, rgba(var(--primary-rgb), 0.82) 0%, rgba(var(--primary-rgb), 0.05) 48%);
+  --catalog-plate: rgba(var(--primary-rgb), 0.95);
+  --catalog-plate-text: var(--on-primary);
+  --catalog-reveal: linear-gradient(0deg, rgba(var(--primary-rgb), 0.95) 0%, rgba(var(--primary-rgb), 0.55) 100%);
+
+  /* ---------- Поиск ---------- */
+  --search-submit-bg: var(--primary);
+  --search-submit-color: var(--on-primary);
+
+  /* ---------- Тёмные инвертированные зоны ---------- */
+  --topbar-bg: #25160e;
+  --hero-bg: #25160e;
+  --hero-tint-rgb: 37, 22, 14;
+  --footer-bg: #25160e;
+
+  /* ---------- Слоты фоновых заливок ---------- */
+  --fill-1: var(--surface);
+  --on-fill-1: var(--body-color);
+  --fill-1-border: var(--border);
+  --fill-2: var(--light);
+  --on-fill-2: var(--body-color);
+  --fill-3: var(--callout-bg);
+  --on-fill-3: var(--body-color);
+  --fill-3-border: var(--callout-border);
+  --fill-4: var(--gradient);
+  --on-fill-4: var(--on-primary);
+  --fill-5: var(--footer-bg);
+  --on-fill-5: var(--white);
+  --fill-brand-4: var(--on-primary);
+  --fill-brand-5: var(--white);
+
+}

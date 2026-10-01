@@ -1,0 +1,269 @@
+/* ============================================================
+   Файл: templates/t1/css/forms.css
+   Назначение: страница preview/forms.html — шоурум всех форм
+   шаблона T1 (F-01..F-31, см. agent-doc/05_forms_and_validation.md).
+   Дополняет базовые стили форм из style.css (.form-card, .form-grid,
+   .form-group, .form-label, .form-control, .checkbox, .btn):
+   - раскладка страницы и секций;
+   - блок капчи, сообщения валидации (.invalid_message);
+   - радио-группы и звёздный рейтинг (F-04);
+   - popup-формы (js/jmodal.js): оверлей .jmodal и диалог;
+   - модалка благодарности (.modal_thanks).
+   ============================================================ */
+
+/* ---------- Страница: шапка, навигация, секции ---------- */
+.forms-page { padding-top: 40px; padding-bottom: 80px; }
+
+.forms-page__title { margin: 0 0 10px; font-size: 2rem; }
+
+.forms-page__lead { max-width: 760px; color: var(--muted); margin-bottom: 30px; }
+
+.forms-page__lead a { color: var(--primary); }
+
+.forms-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+
+.forms-nav__link {
+  display: inline-block;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--heading-color);
+  background: var(--surface-2);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.forms-nav__link:hover { color: var(--primary); border-color: var(--primary); }
+
+.forms-section { margin-top: 52px; }
+
+.forms-section__title {
+  margin: 0 0 6px;
+  font-size: 1.55rem;
+}
+
+.forms-section__title .code { color: var(--primary); font-size: 1rem; }
+
+.forms-section__desc { margin: 0 0 24px; color: var(--muted); }
+
+/* Сетка карточек форм */
+.forms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+  align-items: start;
+}
+
+.forms-grid--single { grid-template-columns: 1fr; max-width: 640px; }
+
+.form-block { min-width: 0; }
+
+/* ---------- Карточка формы ---------- */
+.form-card--demo {
+  position: relative;
+  padding: 26px;
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-card--demo .form-card__badge {
+  position: absolute;
+  top: -11px;
+  left: 20px;
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  background: var(--gradient, var(--primary));
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+
+.form-card__code {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.form-card__code .code { font-weight: 800; color: var(--primary); }
+
+.form-card__code .url { font-size: 12px; color: var(--muted); word-break: break-all; }
+
+.form-card__desc { margin: 0 0 20px; color: var(--muted); font-size: 13.5px; }
+
+/* «Подвал» формы: согласие + кнопка */
+.form-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.form-foot .btn { flex-shrink: 0; }
+
+.form-card--demo .btn[type="submit"]:disabled { cursor: not-allowed; opacity: 0.55; }
+
+/* ---------- Сообщения валидации ---------- */
+.invalid_message {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--danger);
+}
+
+/* Поле с ошибкой подсвечивается (echo-готovo, ставится на input) */
+.form-control.is-invalid ~ .invalid_message, .invalid_message { color: var(--danger); }
+
+/* ---------- select/date в стиле шаблона ---------- */
+select.form-control,
+select.form-select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239aa3af' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+}
+
+input[type="date"].form-control {
+  min-height: 48px;
+  color: var(--heading-color);
+}
+
+/* ---------- Капча ---------- */
+.captcha {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.captcha .fig {
+  display: grid;
+  place-items: center;
+  height: 48px;
+  min-width: 122px;
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.captcha .fig a { display: block; line-height: 0; }
+
+.captcha .fig img { display: block; }
+
+.captcha .form-control { min-width: 0; max-width: 160px; }
+
+/* ---------- Радио-группа и звёздный рейтинг (F-04) ---------- */
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  color: var(--heading-color);
+  cursor: pointer;
+}
+
+.radio input { width: 18px; height: 18px; accent-color: var(--primary); }
+
+/* Звёзды: скрываем нативный input, заполняем до выбранного значения */
+.rating {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.rating input { display: none; }
+
+.rating .star {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--border-color);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.rating .star:hover,
+.rating .star.is-active { color: var(--warning); }
+
+/* ---------- Анкеты с динамическими полями (F-20..F-22) ---------- */
+.complex-fields { display: contents; }
+
+/* ---------- Popup-кнопки (секция «Попап-формы») ---------- */
+.popup-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Модальные окна .jmodal/__dialog/__close/__title перенесены в общий css/style.css */
+
+/* ---------- Модалка благодарности ---------- */
+.modal_thanks__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  font-size: 30px;
+  color: var(--white);
+  background: var(--primary);
+  border-radius: 50%;
+}
+
+.modal_thanks__title { text-align: center; margin: 0 0 10px; font-size: 1.4rem; }
+
+.modal_thanks__text { text-align: center; color: var(--muted); margin-bottom: 22px; }
+
+.modal_thanks .btn { display: block; margin: 0 auto; }
+
+/* ---------- Адаптив ---------- */
+@media (max-width: 991.98px) {
+  .forms-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 575.98px) {
+  .forms-page { padding-top: 24px; }
+  .form-card--demo { padding: 20px; }
+  .captcha { flex-direction: column; }
+  .captcha .fig { height: 44px; }
+  .captcha .form-control { max-width: 100%; }
+  .form-foot { flex-direction: column; align-items: stretch; }
+  .form-foot .btn { width: 100%; }
+}
+/* ---------- Модалки авторизации (block/auth.html, js/auth.js) ---------- */
+.auth-modal { max-width: 440px; }
+.auth-modal__title { margin: 0 0 6px; font-size: var(--font-size-h3); color: var(--heading-color); }
+.auth-modal__lead { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
+.auth-modal .form-grid { margin-bottom: 4px; }
+.auth-modal .btn-block { width: 100%; }
+.auth-modal__foot {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 16px;
+  font-size: var(--font-size-sm); color: var(--muted);
+}
+.auth-modal__link {
+  align-self: flex-start; padding: 0; font: inherit; color: var(--primary);
+  background: none; border: 0; cursor: pointer;
+}
+.auth-modal__link:hover { text-decoration: underline; }

@@ -1,0 +1,170 @@
+[
+  {
+    "index": 1,
+    "filename": "news_14.webp",
+    "prompt": "Editorial illustration: a subtle ranking podium with glowing numbers, a small trophy on top, and a few blurred electronic gadgets around it, symbolizing a top-50 electronics supplier award, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_14.webp",
+    "seed": 5690996652804750235,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_14.webp"
+    ]
+  },
+  {
+    "index": 2,
+    "filename": "news_13.webp",
+    "prompt": "Editorial illustration: a business loyalty concept — a loyalty card, a handshake silhouette and floating discount badges near a laptop, corporate clean style, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_13.webp",
+    "seed": 437777781572111953,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_13.webp"
+    ]
+  },
+  {
+    "index": 3,
+    "filename": "news_12.webp",
+    "prompt": "Editorial illustration: a bright modern electronics showroom interior, clean display stands with smartphones and gadgets, warm ambient lighting, wide shot, no people, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_12.webp",
+    "seed": 74586180460301866,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_12.webp"
+    ]
+  },
+  {
+    "index": 4,
+    "filename": "news_11.webp",
+    "prompt": "Editorial illustration: a business partnership concept — two hands shaking over a modern office table with a contract, a smartphone and a small globe, corporate clean lighting, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_11.webp",
+    "seed": 1170659802348036623,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_11.webp"
+    ]
+  },
+  {
+    "index": 5,
+    "filename": "news_10.webp",
+    "prompt": "Editorial illustration: a friendly courier in a clean uniform handing a parcel to a customer at a doorway, warm daylight, welcoming mood, no visible text on the box, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_10.webp",
+    "seed": 190740599175028911,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_10.webp"
+    ]
+  },
+  {
+    "index": 6,
+    "filename": "news_9.webp",
+    "prompt": "Editorial illustration: a modern electronics trade-show booth with bright illuminated stands, gadgets on display, no people, wide shot, clean corporate style, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_9.webp",
+    "seed": 840624005258931709,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_9.webp"
+    ]
+  },
+  {
+    "index": 7,
+    "filename": "news_8.webp",
+    "prompt": "Editorial illustration: a modern smartwatch on a wrist, close-up, screen glowing with a clean fitness interface, blurred urban background, natural daylight, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_8.webp",
+    "seed": 6827053564122127931,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_8.webp"
+    ]
+  },
+  {
+    "index": 8,
+    "filename": "news_7.webp",
+    "prompt": "Editorial illustration: a tidy remote-work desk setup — a webcam, a USB hub, an ergonomic mouse and over-ear headphones on a light desk, soft daylight, clean modern interior in the blurred background, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_7.webp",
+    "seed": 7952781217292898844,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_7.webp"
+    ]
+  },
+  {
+    "index": 9,
+    "filename": "news_6.webp",
+    "prompt": "Editorial illustration: a pair of premium over-ear wireless headphones on a dark reflective surface, subtle rim light, dramatic studio lighting, close-up product shot, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_6.webp",
+    "seed": 3152741154739922150,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_6.webp"
+    ]
+  },
+  {
+    "index": 10,
+    "filename": "news_5.webp",
+    "prompt": "Editorial illustration: a trade-in concept — an old smartphone lying next to a brand-new smartphone on a light grey surface, soft directional light, clean minimal composition, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_5.webp",
+    "seed": 8864819477372015545,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_5.webp"
+    ]
+  },
+  {
+    "index": 11,
+    "filename": "news_4.webp",
+    "prompt": "Editorial illustration: a modern Wi-Fi router with raised antennas on a minimalist wooden desk, a laptop next to it, soft daylight from a window, home office atmosphere, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_4.webp",
+    "seed": 117599569004286886,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_4.webp"
+    ]
+  },
+  {
+    "index": 12,
+    "filename": "news_3.webp",
+    "prompt": "Editorial illustration: a modern parcel pickup point interior, clean shelves with boxes, a service counter, warm indoor lighting, no people, wide shot, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_3.webp",
+    "seed": 5034907492022724265,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_3.webp"
+    ]
+  },
+  {
+    "index": 13,
+    "filename": "news_2.webp",
+    "prompt": "Editorial illustration: a festive winter sale scene — a smartphone, wireless earbuds and a smartwatch arranged on a snow-white surface with soft golden bokeh and a subtle red ribbon, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_2.webp",
+    "seed": 8684084886247253004,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_2.webp"
+    ]
+  },
+  {
+    "index": 14,
+    "filename": "news_1.webp",
+    "prompt": "Editorial illustration: a modern uninterruptible power supply (UPS) unit standing on a clean office floor next to a desktop computer and a router, subtle blue accent lighting, clean neutral background, soft even lighting, centered composition, sharp focus, high detail, 8K, professional editorial illustration for a tech news article, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "news_1.webp",
+    "seed": 5209573296509445166,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/news/news_1.webp"
+    ]
+  }
+]

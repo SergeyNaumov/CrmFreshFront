@@ -3,4 +3,6 @@ dist/files
 dist/js
 dist/js/*
 dist/css
+public/page_constructor/template
+public/page_constructor/js/data
 

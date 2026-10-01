@@ -18,6 +18,9 @@ Field dependency engine is unrelated: [field-dependencies.md](field-dependencies
 | `vuedraggable` | ^4 | AdminTree / OnFilters / 1_to_m |
 | `vue-advanced-cropper` | ^2 | `fields/file.vue` |
 | `tinymce` | ^5.9.2 | `fields/wysiwyg.vue` (raw, `config.TinyMCE_BaseUrl`) |
+| `@codemirror/view`, `state`, `commands`, `language`, `search`, `autocomplete` | ^6 | `fields/codelist.vue` (CodeMirror 6, granular imports) |
+| `@codemirror/lang-python`, `@codemirror/lang-javascript` | ^6.2 | `fields/codelist.vue` (lazy `import()`) |
+| `@codemirror/legacy-modes` | ^6.5.4 | `fields/codelist.vue` (perl static, sql/shell/css/xml/ruby/lua/clike lazy) |
 | `@fontsource/inter`, `@fontsource/nunito` | ^5 | scheme fonts (main.js) |
 
 Dev: `vite@4`, `@vitejs/plugin-vue@4`, `sass`, `vite-plugin-vuetify@1`.

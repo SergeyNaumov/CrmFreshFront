@@ -1,0 +1,59 @@
+/* ============================================================
+   themes/style/brutal.css — стиль «Брутальный»
+
+   Жёсткая геометрия: резкие/квадратные углы, толстые рамки,
+   тени-смещения без размытия, кнопки с «западением» при наведении.
+
+   Стилевой слой: только форма/геометрия/тени.
+   Толщина рамок задаётся глобально через --border-width = 2px,
+   поэтому отдельные компонентные правила не нужны.
+   ============================================================ */
+
+:root {
+  /* ---------- Скругления: ВСЁ квадратное (в т.ч. pill) ---------- */
+  --radius: 0;
+  --radius-xs: 0;
+  --radius-btn: 0;
+  --radius-lg: 0;
+  --radius-pill: 0;
+
+  --border-width: 2px;
+  --border-width-accent: 2px;
+
+  /* ---------- Тени (жёсткое смещение без размытия) ---------- */
+  --shadow-color: rgba(var(--dark-rgb), 0.22);
+  --shadow-sm: none;
+  --shadow-md: 6px 6px 0 var(--shadow-color);
+  --shadow-lg: 8px 8px 0 var(--shadow-color);
+
+  /* Тени компонентов: ядрёный «штамп» сдвигом */
+  --shadow-inset: 0 0 0 0 transparent;
+  --shadow-btn-primary: 6px 6px 0 rgba(var(--dark-rgb), 0.18);
+  --shadow-btn-primary-hover: 2px 2px 0 rgba(var(--dark-rgb), 0.18);
+  --shadow-btn-success: 6px 6px 0 rgba(var(--dark-rgb), 0.24);
+  --shadow-btn-success-hover: 2px 2px 0 rgba(var(--dark-rgb), 0.24);
+  --shadow-btn-white: 6px 6px 0 rgba(var(--dark-rgb), 0.14);
+  --shadow-btn-white-hover: 2px 2px 0 rgba(var(--dark-rgb), 0.14);
+  --shadow-chip: 5px 5px 0 rgba(var(--primary-rgb), 0.4);
+  --shadow-pill: 4px 4px 0 rgba(var(--dark-rgb), 0.2);
+  --shadow-float: 6px 6px 0 rgba(var(--primary-rgb), 0.42);
+
+  /* Кнопка «В корзину» — такой же жёсткий штамп */
+  --shadow-btn-cart: 6px 6px 0 rgba(var(--dark-rgb), 0.24);
+  --shadow-btn-cart-hover: 2px 2px 0 rgba(var(--dark-rgb), 0.24);
+
+  /* ---------- Карточки ---------- */
+  --surface-2: var(--surface);
+  --card-radius: 0;
+  --card-pad: 20px;
+  --card-hover-transform: translate(-4px, -4px);
+
+  /* ---------- Кнопки ---------- */
+  --btn-pad-x: 26px;
+  --btn-pad-y: 12px;
+  --btn-hover-transform: translate(2px, 2px);
+  --btn-hover-shadow: 6px 6px 0 var(--shadow-color);
+
+  /* ---------- Фокус (доступность) ---------- */
+  --focus-ring: 0 0 0 3px var(--primary);
+}

@@ -1,0 +1,210 @@
+/* ============================================================
+   Файл: templates/t1/css/articles.css
+   Назначение: страница «Статьи» (preview/articles.html).
+   Список статей «шахматкой» — чередование фото слева/справа
+   (zig-zag), ряд целиком кликабелен. По стилю повторяет .checker
+   из catalog.css, но классами, независимыми от страницы каталога.
+   Использует только дизайн-токены темы.
+   ============================================================ */
+
+/* ---- Вступление: заголовок + число статей ---- */
+.articles-note {
+  display: flex;
+  align-items: center;
+  gap: 14px 22px;
+  flex-wrap: wrap;
+  margin-bottom: 44px;
+  padding: 18px 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.articles-note__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: rgba(var(--primary-rgb), 0.12);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.articles-note__txt {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ------------------------------------------------------------
+   «Шахматка»: строки-статьи, фото и текст чередуются
+   ------------------------------------------------------------ */
+
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.article-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 56px;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Чётные ряды: фото уходит направо (классическая «шахматка») */
+.article-row:nth-child(even) .article-row__media { order: 2; }
+
+.article-row__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--dark);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Брендовая шторка снизу — как на открытках .cat-card */
+.article-row__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--catalog-curtain);
+  pointer-events: none;
+}
+
+.article-row__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.article-row:hover .article-row__img,
+.article-row:focus-within .article-row__img { transform: scale(1.08); }
+
+.article-row:hover,
+.article-row:focus-within {
+  color: inherit;
+}
+
+.article-row__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.article-row__num {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Автор в строке списка (необязательное поле) ----------
+   Номер и автор делят одну строку .article-row__meta. Автора нет —
+   строка не схлопывается, а остаётся ровно той, что была раньше. */
+.article-row__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.article-row__author {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.article-row__author > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Иконка пользователя в 18px — .icon по умолчанию 24px, здесь мельче */
+.icon-author {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+}
+
+.article-row__name {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+  color: var(--heading-color);
+}
+
+.article-row__desc {
+  margin: 0;
+  max-width: 48ch;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.article-row__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.article-row__link svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
+.article-row:hover .article-row__link,
+.article-row:focus-within .article-row__link { color: var(--primary-dark); }
+.article-row:hover .article-row__link svg,
+.article-row:focus-within .article-row__link svg { transform: translateX(4px); }
+
+/* Вход секции: каскадное появление строк по --i */
+.article-list--enter .article-row {
+  opacity: 0;
+  animation: catFadeIn 0.6s ease forwards;
+  animation-delay: calc(var(--i) * 90ms);
+}
+
+/* ------------------------------------------------------------
+   Адаптив
+   ------------------------------------------------------------ */
+
+@media (max-width: 991px) {
+  .article-list { gap: 40px; }
+  .article-row { grid-template-columns: 1fr; gap: 20px; }
+  /* На одной колонке «шахматка» отключается: всегда фото сверху */
+  .article-row:nth-child(even) .article-row__media { order: 0; }
+  .article-row__media { aspect-ratio: 16 / 9; }
+  .article-row__name { font-size: 1.3rem; }
+}
+
+@media (max-width: 575px) {
+  .article-list { gap: 34px; }
+  .article-row { gap: 14px; }
+  .articles-note { margin-bottom: 30px; }
+}

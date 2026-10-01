@@ -1,0 +1,35 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ab" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d6efd"/>
+      <stop offset="1" stop-color="#6610f2"/>
+    </linearGradient>
+    <linearGradient id="abw" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e9efff"/>
+    </linearGradient>
+    <radialGradient id="abg" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="#eef2ff"/>
+  <circle cx="120" cy="520" r="240" fill="#dbe4ff"/>
+  <circle cx="700" cy="90" r="200" fill="#ece5ff"/>
+  <g transform="translate(150 120)">
+    <rect x="0" y="0" width="500" height="340" rx="24" fill="url(#ab)"/>
+    <rect x="24" y="24" width="452" height="292" rx="16" fill="#ffffff" fill-opacity="0.12"/>
+    <rect x="48" y="48" width="260" height="180" rx="14" fill="url(#abw)"/>
+    <rect x="76" y="76" width="204" height="120" rx="8" fill="#0b5ed7"/>
+    <circle cx="96" cy="100" r="9" fill="#0dcaf0"/>
+    <circle cx="120" cy="100" r="9" fill="#6610f2"/>
+    <rect x="48" y="244" width="120" height="10" rx="5" fill="#c9d4fb"/>
+    <rect x="48" y="266" width="86" height="10" rx="5" fill="#c9d4fb"/>
+    <rect x="340" y="48" width="112" height="112" rx="56" fill="none"/>
+    <circle cx="396" cy="104" r="56" fill="#ffffff" fill-opacity="0.35"/>
+    <g transform="translate(350 58)">
+      <path d="M46 0 L92 46 L46 92 L0 46 Z" fill="#ffffff" fill-opacity="0.95"/>
+      <rect x="32" y="30" width="28" height="28" fill="url(#ab)"/>
+    </g>
+  </g>
+</svg>

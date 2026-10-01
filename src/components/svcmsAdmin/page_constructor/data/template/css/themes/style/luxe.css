@@ -1,0 +1,47 @@
+/* ============================================================
+   themes/style/luxe.css — стиль «Люкс»
+
+   Утончённая подача: тонкие рамки, глубокие мягкие тени,
+   крупные радиусы и pill-кнопки, сдержанный hover. Форма без цвета.
+   ============================================================ */
+
+:root {
+  --radius: 10px;
+  --radius-xs: 4px;
+  --radius-btn: 50px;
+  --radius-lg: 16px;
+  --radius-pill: 50px;
+
+  --border-width: 1px;
+  --border-width-accent: 1px;
+
+  --shadow-color: rgba(var(--dark-rgb), 0.10);
+  --shadow-sm: 0 6px 20px var(--shadow-color);
+  --shadow-md: 0 16px 40px rgba(var(--dark-rgb), 0.14);
+  --shadow-lg: 0 30px 80px rgba(var(--dark-rgb), 0.18);
+
+  --shadow-inset: inset 0 1px 0 rgba(var(--white-rgb), 0.4);
+  --shadow-btn-primary: 0 12px 28px rgba(var(--secondary-rgb), 0.30);
+  --shadow-btn-primary-hover: 0 18px 36px rgba(var(--secondary-rgb), 0.42);
+  --shadow-btn-success: 0 12px 28px rgba(var(--success-rgb), 0.26);
+  --shadow-btn-success-hover: 0 18px 36px rgba(var(--success-rgb), 0.38);
+  --shadow-btn-white: 0 12px 28px rgba(var(--dark-rgb), 0.16);
+  --shadow-btn-white-hover: 0 18px 36px rgba(var(--dark-rgb), 0.22);
+  --shadow-chip: 0 10px 24px rgba(var(--primary-rgb), 0.32);
+  --shadow-pill: 0 8px 20px rgba(var(--primary-rgb), 0.26);
+  --shadow-float: 0 18px 40px rgba(var(--primary-rgb), 0.34);
+  --shadow-btn-cart: 0 12px 28px rgba(var(--btn-cart-rgb), 0.26);
+  --shadow-btn-cart-hover: 0 18px 36px rgba(var(--btn-cart-rgb), 0.38);
+
+  --surface-2: var(--surface);
+  --card-radius: 16px;
+  --card-pad: 22px;
+  --card-hover-transform: translateY(-4px);
+
+  --btn-pad-x: 30px;
+  --btn-pad-y: 13px;
+  --btn-hover-transform: translateY(-2px);
+  --btn-hover-shadow: var(--shadow-sm);
+
+  --focus-ring: 0 0 0 4px color-mix(in srgb, var(--secondary) 22%, transparent);
+}

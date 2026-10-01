@@ -1,0 +1,526 @@
+/* ============================================================
+   templates/t1/css/catalog.css
+   Страница «Каталог» (preview/catalog.html).
+   Две модификации вывода рубрик:
+     1) «Сетка»   — .cat-grid / .cat-card (стили в style.css);
+     2) «Шахматка» — .checker: фото + краткое описание рубрики,
+        чередование «фото слева / справа» (zig-zag), ряд кликабелен целиком.
+   Использует только дизайн-токены темы (--primary, --muted, --radius-lg...).
+   ============================================================ */
+
+/* ---- Заголовки модификаций: номер + название + описание ---- */
+.cmod { margin-top: 64px; }
+.cmod:first-of-type { margin-top: 8px; }
+
+.cmod__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 30px;
+  max-width: 860px;
+}
+
+.cmod__num {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 100px;
+  background: rgba(var(--primary-rgb), 0.12);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.cmod__title {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.25;
+}
+
+.cmod__desc {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ------------------------------------------------------------
+   «Шахматка»: строки-рубрики, фото и текст чередуются
+   ------------------------------------------------------------ */
+
+.checker {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.checker__row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 56px;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Чётные ряды: фото уходит направо (классическая «шахматка») */
+.checker__row:nth-child(even) .checker__media { order: 2; }
+
+.checker__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--dark);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Брендовая шторка снизу — как на карточках .cat-card (--catalog-curtain) */
+.checker__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--catalog-curtain);
+  pointer-events: none;
+}
+
+.checker__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.checker__row:hover .checker__img,
+.checker__row:focus-within .checker__img { transform: scale(1.08); }
+
+.checker__row:hover,
+.checker__row:focus-within {
+  color: inherit;
+}
+
+.checker__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+}
+
+.checker__name {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+}
+
+.checker__desc {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.checker__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.checker__link svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
+.checker__row:hover .checker__link,
+.checker__row:focus-within .checker__link { color: var(--primary-dark); }
+.checker__row:hover .checker__link svg,
+.checker__row:focus-within .checker__link svg { transform: translateX(4px); }
+
+/* Вход секции: каскадное появление строк по --i */
+.cat-enter--checker .checker__row {
+  opacity: 0;
+  animation: catFadeIn 0.6s ease forwards;
+  animation-delay: calc(var(--i) * 90ms);
+}
+
+/* ------------------------------------------------------------
+   Адаптив
+   ------------------------------------------------------------ */
+
+@media (max-width: 991px) {
+  .checker { gap: 40px; }
+  .checker__row { grid-template-columns: 1fr; gap: 20px; }
+  /* На одной колонке «шахматка» отключается: всегда фото сверху, текст снизу */
+  .checker__row:nth-child(even) .checker__media { order: 0; }
+  .checker__media { aspect-ratio: 16 / 9; }
+  .checker__name { font-size: 1.3rem; }
+}
+
+@media (max-width: 575px) {
+  .cmod { margin-top: 48px; }
+  .checker { gap: 34px; }
+  .checker__row { gap: 14px; }
+}
+
+/* ------------------------------------------------------------
+   Вариант 3 — Волна: каскадный вход по диагонали (--r + --c)
+   ------------------------------------------------------------ */
+
+.cat-enter--wave .cat-card {
+  opacity: 0;
+  animation:
+    catFadeIn 0.55s ease forwards,
+    catRiseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay:
+    calc((var(--r, 0) + var(--c, 0)) * 60ms),
+    calc((var(--r, 0) + var(--c, 0)) * 60ms);
+}
+
+.cat-grid--wave .cat-card__img {
+  transition: transform 0.7s ease;
+}
+.cat-grid--wave .cat-card:hover .cat-card__img,
+.cat-grid--wave .cat-card:focus-within .cat-card__img { transform: scale(1.08); }
+
+/* ------------------------------------------------------------
+   Вариант 4 — Карусель (Splide) в стилистике темы
+   ------------------------------------------------------------ */
+
+.catalog-splide { padding: 0 0 8px; }
+.catalog-splide .splide__arrow {
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--white);
+  opacity: 1 !important;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.catalog-splide .splide__arrow svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--primary);
+  transition: fill 0.25s ease;
+}
+.catalog-splide .splide__arrow:hover {
+  background: var(--primary);
+  border-color: transparent;
+}
+.catalog-splide .splide__arrow:hover svg { fill: var(--white); }
+.catalog-splide .splide__pagination { bottom: -30px; }
+.catalog-splide .splide__pagination__page {
+  width: 8px;
+  height: 8px;
+  background: rgba(var(--primary-rgb), 0.25);
+  opacity: 1;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.catalog-splide .splide__pagination__page.is-active {
+  background: var(--primary);
+  transform: scale(1.25);
+}
+
+/* Карточка слайда карусели */
+.cs-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--dark);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+.cs-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--catalog-curtain);
+  pointer-events: none;
+}
+.cs-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+.cs-card:hover img,
+.cs-card:focus-within img { transform: scale(1.08); }
+.cs-card__name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 12px 18px;
+  background: var(--catalog-plate);
+  color: var(--catalog-plate-text);
+  font-size: 1rem;
+  font-weight: 600;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* ------------------------------------------------------------
+   Вариант 5 — 3D-tilt: наклон карточки за курсором
+   ------------------------------------------------------------ */
+
+.cat-grid--tilt .cat-card {
+  transform: perspective(900px)
+    rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg));
+  transition: transform 0.18s ease-out, box-shadow 0.3s ease;
+  will-change: transform;
+}
+.cat-grid--tilt .cat-card:hover,
+.cat-grid--tilt .cat-card:focus-within {
+  transform: perspective(900px)
+    rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg))
+    translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Блик, следующий за курсором (координаты задаёт catalog-mods.js) */
+.cat-grid--tilt .cat-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 62%);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.cat-grid--tilt .cat-card:hover::after,
+.cat-grid--tilt .cat-card:focus-within::after { opacity: 1; }
+
+/* Плашка названия «всплывает» в перспективе */
+.cat-grid--tilt .cat-card__face--front { transform-style: preserve-3d; }
+.cat-grid--tilt .cat-card__face--front .cat-card__name {
+  transform: translateZ(46px);
+}
+
+/* ------------------------------------------------------------
+   Вариант 6 — Скролл-reveal + «выезд» фото
+   ------------------------------------------------------------ */
+
+.cat-grid--reveal .cat-card {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+  transition-delay: calc(var(--i) * 80ms);
+}
+.cat-grid--reveal .cat-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+.cat-grid--reveal .cat-card__img {
+  transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cat-grid--reveal .cat-card.is-visible .cat-card__img { transform: scale(1.1); }
+
+/* ------------------------------------------------------------
+   Вариант 7 — Бегущая строка (marquee)
+   ------------------------------------------------------------ */
+
+.marquee {
+  overflow: hidden;
+  padding: 6px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee__track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: marqueeScroll 46s linear infinite;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__group {
+  display: flex;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-50% - 8px)); }
+}
+
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 8px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+.marquee__item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.marquee__item span { font-weight: 600; font-size: 0.92rem; }
+.marquee__item:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ------------------------------------------------------------
+   Вариант 8 — Рубрики и подрубрики
+   ------------------------------------------------------------ */
+
+.cat-rubs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.rub {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  animation: catFadeIn 0.6s ease backwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+.rub:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(var(--primary-rgb), 0.35);
+}
+
+.rub__top { display: block; text-decoration: none; color: inherit; }
+.rub__top:hover { color: inherit; }
+
+.rub__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.rub__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--catalog-curtain);
+  pointer-events: none;
+}
+.rub__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.rub:hover .rub__img { transform: scale(1.08); }
+
+.rub__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 18px 0;
+}
+.rub__name { margin: 0; font-size: 1.12rem; letter-spacing: -0.3px; }
+.rub__go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(var(--primary-rgb), 0.1);
+  color: var(--primary);
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.rub:hover .rub__go { background: var(--primary); color: var(--white); }
+
+.rub__desc {
+  margin: 6px 18px 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.rub__subs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 18px 18px;
+  padding: 0;
+  list-style: none;
+}
+.rub__sub {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  transition-delay: calc(var(--j, 0) * 40ms);
+}
+.rub:hover .rub__sub {
+  border-color: rgba(var(--primary-rgb), 0.4);
+  color: var(--primary);
+}
+.rub__sub:hover { background: rgba(var(--primary-rgb), 0.08); }
+
+/* ------------------------------------------------------------
+   Адаптив новых модификаций
+   ------------------------------------------------------------ */
+
+@media (max-width: 991px) {
+  .catalog-splide { padding-bottom: 34px; }
+  .cat-rubs { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .cat-rubs { grid-template-columns: 1fr; }
+  .rub__media { aspect-ratio: 16 / 8; }
+}
+
+@media (max-width: 575px) {
+  .marquee__item { padding: 6px 14px 6px 6px; }
+  .marquee__item img { width: 34px; height: 34px; }
+  .rub__head { padding-top: 12px; }
+}

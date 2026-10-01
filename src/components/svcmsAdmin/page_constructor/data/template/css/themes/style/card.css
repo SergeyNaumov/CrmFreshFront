@@ -1,0 +1,54 @@
+/* ============================================================
+   themes/style/card.css — стиль «Карточный»
+
+   Крупные карточки, выраженные мягкие тени, щедрые отступы и заметный hover-подъём.
+
+   Стилевой слой: только форма/геометрия/тени (см. agent-doc/themes/style.md).
+   ============================================================ */
+
+:root {
+  /* ---------- Скругления ---------- */
+  --radius: 14px;
+  --radius-xs: 8px;
+  --radius-btn: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 50px;
+
+  /* ---------- Толщина рамок ---------- */
+  --border-width: 1px;
+  --border-width-accent: 2px;
+
+  /* ---------- Тени ---------- */
+  --shadow-color: rgba(var(--dark-rgb), 0.10);
+  --shadow-sm: 0 6px 18px var(--shadow-color);
+  --shadow-md: 0 18px 44px rgba(var(--dark-rgb), 0.16);
+  --shadow-lg: 0 30px 72px rgba(var(--dark-rgb), 0.20);
+
+  --shadow-inset: inset 0 1px 0 rgba(var(--white-rgb), 0.3);
+  --shadow-btn-primary: 0 12px 28px rgba(var(--secondary-rgb), 0.4);
+  --shadow-btn-primary-hover: 0 16px 36px rgba(var(--secondary-rgb), 0.5);
+  --shadow-btn-success: 0 12px 28px rgba(var(--success-rgb), 0.3);
+  --shadow-btn-success-hover: 0 16px 36px rgba(var(--success-rgb), 0.42);
+  --shadow-btn-white: 0 12px 28px rgba(var(--dark-rgb), 0.2);
+  --shadow-btn-white-hover: 0 16px 36px rgba(var(--dark-rgb), 0.26);
+  --shadow-chip: 0 10px 24px rgba(var(--primary-rgb), 0.42);
+  --shadow-pill: 0 8px 20px rgba(var(--primary-rgb), 0.34);
+  --shadow-float: 0 16px 34px rgba(var(--primary-rgb), 0.42);
+  --shadow-btn-cart: 0 12px 28px rgba(var(--btn-cart-rgb), 0.3);
+  --shadow-btn-cart-hover: 0 16px 36px rgba(var(--btn-cart-rgb), 0.42);
+
+  /* ---------- Карточки ---------- */
+  --surface-2: var(--surface);
+  --card-radius: var(--radius-lg);
+  --card-pad: 24px;
+  --card-hover-transform: translateY(-8px);
+
+  /* ---------- Кнопки ---------- */
+  --btn-pad-x: 26px;
+  --btn-pad-y: 12px;
+  --btn-hover-transform: translateY(-3px);
+  --btn-hover-shadow: var(--shadow-md);
+
+  /* ---------- Фокус (доступность) ---------- */
+  --focus-ring: 0 0 0 4px color-mix(in srgb, var(--primary) 16%, transparent);
+}

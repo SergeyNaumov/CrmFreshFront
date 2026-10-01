@@ -1,0 +1,242 @@
+[
+  {
+    "index": 1,
+    "filename": "photo-1.webp",
+    "prompt": "Interior of a flagship electronics store on a premium shopping street, wide shot, bright open space with modern display tables, glass facade, warm ambient lighting, polished floor, clean minimal design, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-1.webp",
+    "seed": 1223243766429892259,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-1.webp"
+    ]
+  },
+  {
+    "index": 2,
+    "filename": "photo-2.webp",
+    "prompt": "Modern retail display case with a row of flagship smartphones on illuminated shelves, clean glass cabinet, cool blue accent lighting, screens on with clean wallpapers, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-2.webp",
+    "seed": 4114195444652819261,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-2.webp"
+    ]
+  },
+  {
+    "index": 3,
+    "filename": "photo-3.webp",
+    "prompt": "Audio listening zone in a modern electronics showroom, several pairs of over-ear headphones on wall hooks, a Bluetooth speaker on a shelf, warm ambient lighting, cozy acoustic panels on the walls, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-3.webp",
+    "seed": 1302796929151529861,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-3.webp"
+    ]
+  },
+  {
+    "index": 4,
+    "filename": "photo-4.webp",
+    "prompt": "A friendly sales consultant in a clean shirt explaining features of a smartphone to a customer, both looking at the screen, bright modern store background softly blurred, warm welcoming atmosphere, photorealistic lifestyle corporate photography, natural daylight, shallow depth of field, warm atmosphere, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-4.webp",
+    "seed": 875574719264102730,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-4.webp"
+    ]
+  },
+  {
+    "index": 5,
+    "filename": "photo-5.webp",
+    "prompt": "Modern checkout counter and online order pickup zone in an electronics store, clean service desk, small parcel shelf behind, subtle brand-neutral decor, warm lighting, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-5.webp",
+    "seed": 4146593495654963402,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-5.webp"
+    ]
+  },
+  {
+    "index": 6,
+    "filename": "photo-6.webp",
+    "prompt": "Team of service center engineers in clean uniforms standing together in a modern repair workshop, shelves with tools and spare parts behind them, professional friendly mood, photorealistic lifestyle corporate photography, natural daylight, shallow depth of field, warm atmosphere, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-6.webp",
+    "seed": 3047343288714277646,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-6.webp"
+    ]
+  },
+  {
+    "index": 7,
+    "filename": "photo-7.webp",
+    "prompt": "Grand opening of a new parcel pickup point, a red ribbon being cut in front of a modern storefront, people smiling and applauding around, festive but professional atmosphere, photorealistic lifestyle corporate photography, natural daylight, shallow depth of field, warm atmosphere, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-7.webp",
+    "seed": 5500258775693937834,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-7.webp"
+    ]
+  },
+  {
+    "index": 8,
+    "filename": "photo-8.webp",
+    "prompt": "Product launch presentation in a modern showroom, a speaker on a small stage showing a new smartphone on a large screen, audience seated in front, cool stage lighting with blue accents, photorealistic lifestyle corporate photography, natural daylight, shallow depth of field, warm atmosphere, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-8.webp",
+    "seed": 1359120291010431664,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-8.webp"
+    ]
+  },
+  {
+    "index": 9,
+    "filename": "photo-9.webp",
+    "prompt": "A trainer showing a small group of people how to set up a new smartphone, several devices on a table, bright workshop room, focused attentive atmosphere, photorealistic lifestyle corporate photography, natural daylight, shallow depth of field, warm atmosphere, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-9.webp",
+    "seed": 5709779159305300681,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-9.webp"
+    ]
+  },
+  {
+    "index": 10,
+    "filename": "photo-10.webp",
+    "prompt": "Workbench for PC building and setup, open desktop case with components laid out, screwdriver and thermal paste, clean organized workspace, cool neutral lighting, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-10.webp",
+    "seed": 6599702280492224899,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-10.webp"
+    ]
+  },
+  {
+    "index": 11,
+    "filename": "photo-11.webp",
+    "prompt": "A skilled technician in a clean uniform diagnosing an open laptop at a well-lit workbench, precision tools and a magnifier nearby, focused professional atmosphere, photorealistic lifestyle corporate photography, natural daylight, shallow depth of field, warm atmosphere, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-11.webp",
+    "seed": 1307814935745227207,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-11.webp"
+    ]
+  },
+  {
+    "index": 12,
+    "filename": "photo-12.webp",
+    "prompt": "Electronics test laboratory with measuring instruments on a bench, oscilloscope and multimeter, several devices under test, clean technical environment, neutral lighting, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-12.webp",
+    "seed": 5275081378202942986,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-12.webp"
+    ]
+  },
+  {
+    "index": 13,
+    "filename": "photo-13.webp",
+    "prompt": "Modern office meeting room with a long table and comfortable chairs, glass wall to a bright corridor, large TV on the wall, minimalist corporate interior, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-13.webp",
+    "seed": 7002682951795469819,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-13.webp"
+    ]
+  },
+  {
+    "index": 14,
+    "filename": "photo-14.webp",
+    "prompt": "Open-space office of a purchasing department, rows of modern desks with monitors, ergonomic chairs, green plants, bright daylight through large windows, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-14.webp",
+    "seed": 6914527064782783133,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-14.webp"
+    ]
+  },
+  {
+    "index": 15,
+    "filename": "photo-15.webp",
+    "prompt": "Cozy coffee corner inside a modern electronics showroom, small espresso bar with wooden counter, a couple of bar stools, warm pendant lights, welcoming atmosphere, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-15.webp",
+    "seed": 3249141645999023605,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-15.webp"
+    ]
+  },
+  {
+    "index": 16,
+    "filename": "photo-16.webp",
+    "prompt": "Prize ceremony for a giveaway, several happy winners holding boxes with gadgets and gift certificates, a brand-neutral backdrop, warm lighting, festive mood, photorealistic lifestyle corporate photography, natural daylight, shallow depth of field, warm atmosphere, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-16.webp",
+    "seed": 7062971036635541393,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-16.webp"
+    ]
+  },
+  {
+    "index": 17,
+    "filename": "photo-17.webp",
+    "prompt": "Close-up of three flagship smartphones arranged side by side on a clean dark surface, screens on with clean abstract wallpapers, soft studio lighting, subtle reflections, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-17.webp",
+    "seed": 3030493909509075728,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-17.webp"
+    ]
+  },
+  {
+    "index": 18,
+    "filename": "photo-18.webp",
+    "prompt": "Row of modern laptops on display in a bright showroom, screens on with clean abstract wallpapers, clean white display tables, soft even lighting, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-18.webp",
+    "seed": 4406150990362247018,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-18.webp"
+    ]
+  },
+  {
+    "index": 19,
+    "filename": "photo-19.webp",
+    "prompt": "Team of young professionals on an outdoor corporate training, standing together on a green lawn, warm sunny day, casual smart clothing, cheerful mood, photorealistic lifestyle corporate photography, natural daylight, shallow depth of field, warm atmosphere, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-19.webp",
+    "seed": 2271082448024622066,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-19.webp"
+    ]
+  },
+  {
+    "index": 20,
+    "filename": "photo-20.webp",
+    "prompt": "Close-up of premium over-ear wireless headphones on a dark matte surface, subtle rim light, dramatic studio lighting, elegant minimal composition, photorealistic interior photography, wide-angle lens, bright natural lighting, clean modern design, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "photo-20.webp",
+    "seed": 5244200438875069730,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/galery/photo-20.webp"
+    ]
+  }
+]

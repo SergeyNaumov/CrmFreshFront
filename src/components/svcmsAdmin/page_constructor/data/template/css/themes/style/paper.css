@@ -1,0 +1,47 @@
+/* ============================================================
+   themes/style/paper.css — стиль «Бумага»
+
+   Плоская типографская подача: тонкие линии, почти без теней,
+   малые радиусы, минимум «объёма». Стилевой слой: только форма.
+   ============================================================ */
+
+:root {
+  --radius: 2px;
+  --radius-xs: 1px;
+  --radius-btn: 3px;
+  --radius-lg: 4px;
+  --radius-pill: 4px;
+
+  --border-width: 1px;
+  --border-width-accent: 1px;
+
+  --shadow-color: rgba(var(--dark-rgb), 0.06);
+  --shadow-sm: none;
+  --shadow-md: 0 1px 3px var(--shadow-color);
+  --shadow-lg: 0 6px 18px var(--shadow-color);
+
+  --shadow-inset: none;
+  --shadow-btn-primary: none;
+  --shadow-btn-primary-hover: none;
+  --shadow-btn-success: none;
+  --shadow-btn-success-hover: none;
+  --shadow-btn-white: none;
+  --shadow-btn-white-hover: none;
+  --shadow-chip: none;
+  --shadow-pill: none;
+  --shadow-float: 0 2px 8px var(--shadow-color);
+  --shadow-btn-cart: none;
+  --shadow-btn-cart-hover: none;
+
+  --surface-2: var(--surface);
+  --card-radius: 4px;
+  --card-pad: 18px;
+  --card-hover-transform: translateY(-2px);
+
+  --btn-pad-x: 20px;
+  --btn-pad-y: 10px;
+  --btn-hover-transform: none;
+  --btn-hover-shadow: none;
+
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}

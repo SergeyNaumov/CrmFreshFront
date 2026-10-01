@@ -1,0 +1,306 @@
+/* ============================================================
+   Файл: templates/t1/css/goods_block.css
+   Стили вариантов универсального товарного блока <goods-block>
+   (js/components/goods-block.js; витрина preview/good_blocks.html).
+
+   ⚠ КОНСТРУКТОР: если вариант удалён со страницы — его стили можно
+   удалить вместе с ним; на остальные варианты это не влияет.
+
+   База .product-card / .carousel берётся из css/style.css — здесь
+   только варианты раскладки. Все цвета/тени — только CSS-переменные
+   темы.
+   ============================================================ */
+
+/* ---------- Общий блок + шапка ---------- */
+.goods-block { min-width: 0; }
+
+.section-head--block { margin-bottom: 26px; }
+.section-head--block .section-title { font-size: 1.35rem; }
+.section-head--block .section-sub { margin-top: 10px; font-size: 14px; }
+
+/* ---------- Сетки (grid-варианты, «показать ещё», вкладки) ----------
+   Число колонок задаётся модификатором класса .gb-grid--cols-N
+   (переменная --gb-cols); медиазапросы внизу сжимают его по шагам. */
+.gb-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--gb-cols, 4), minmax(0, 1fr));
+  gap: 22px;
+}
+
+.gb-grid .product-card { height: 100%; }
+
+.gb-grid--cols-1 { --gb-cols: 1; }
+.gb-grid--cols-2 { --gb-cols: 2; }
+.gb-grid--cols-3 { --gb-cols: 3; }
+.gb-grid--cols-4 { --gb-cols: 4; }
+.gb-grid--cols-5 { --gb-cols: 5; }
+.gb-grid--cols-6 { --gb-cols: 6; }
+
+/* ---------- Компактная сетка (variant=compact) ---------- */
+.gb-grid--compact { gap: 16px; }
+.gb-grid--compact .product-card__body { padding: 10px 10px 12px; }
+.gb-grid--compact .product-card__title { font-size: 0.85rem; }
+.gb-grid--compact .product-card__anons { display: none; }
+.gb-grid--compact .product-card__price { font-size: 0.98rem; }
+
+/* ---------- Строки (variant=rows) ---------- */
+.gb-rows {
+  display: grid;
+  grid-template-columns: repeat(var(--gb-rows-cols, 2), minmax(0, 1fr));
+  gap: 18px;
+}
+
+.gb-rows--cols-1 { --gb-rows-cols: 1; }
+.gb-rows--cols-2 { --gb-rows-cols: 2; }
+.gb-rows--cols-3 { --gb-rows-cols: 3; }
+
+.product-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.product-row:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.product-row__media {
+  position: relative;
+  flex: 0 0 120px;
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--light);
+}
+
+.product-row__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Бейджи в мини-медиа строки: чуть меньше и прижаты к углу */
+.product-row .product-card__badges { top: 6px; left: 6px; gap: 4px; }
+.product-row .product-card__badge { padding: 3px 7px; font-size: 9px; }
+
+.product-row__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 2px 0;
+}
+
+.product-row__title { margin: 0; font-size: 1rem; line-height: 1.35; }
+.product-row__title a { color: var(--heading-color); }
+.product-row__title a:hover { color: var(--primary); }
+
+.product-row__anons {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-row__price-row { display: flex; align-items: baseline; gap: 10px; margin-top: auto; }
+.product-row__price { font-size: 1.05rem; font-weight: 700; color: var(--heading-color); }
+.product-row__price-old { font-size: 0.9rem; color: var(--muted); text-decoration: line-through; }
+
+.product-row__actions { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.product-row__buy { white-space: nowrap; }
+
+/* ---------- Товар дня / подборка (variant=feature) ---------- */
+.gb-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+  gap: 22px;
+  align-items: start;
+}
+
+.gb-feature__main .product-card { height: 100%; }
+.gb-feature__side { display: grid; gap: 16px; }
+
+/* ---------- Вкладки (variant=tabs) ---------- */
+.gb-tabs__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.gb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--body-color);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition),
+              background var(--transition), box-shadow var(--transition);
+}
+
+.gb-chip:hover { border-color: var(--primary); color: var(--primary); }
+.gb-chip.is-active { background: var(--gradient); border-color: transparent; color: var(--white); box-shadow: var(--shadow-sm); }
+
+.gb-chip__count {
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  background: rgba(var(--ink-rgb), 0.08);
+  transition: background var(--transition);
+}
+
+.gb-chip.is-active .gb-chip__count { background: rgba(var(--white-rgb), 0.24); color: var(--white); }
+
+/* ---------- Лента (variant=strip, scroll-snap) ---------- */
+.gb-strip {
+  display: flex;
+  gap: 18px;
+  margin: 0;
+  padding: 4px 4px 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gb-strip__item { flex: 0 0 268px; scroll-snap-align: start; min-width: 0; }
+
+.gb-strip::-webkit-scrollbar { height: 8px; }
+.gb-strip::-webkit-scrollbar-track { background: transparent; }
+.gb-strip::-webkit-scrollbar-thumb { border-radius: var(--radius-pill); background: var(--border-color); }
+.gb-strip::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ---------- «Показать ещё» (variant=showmore) ---------- */
+.gb-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.gb-more__count { font-size: 13px; color: var(--muted); }
+.gb-more__btn { min-width: 230px; }
+
+/* ---------- Бейджи-иконки (data-badges="icons") ---------- */
+.product-card__badge .product-card__badge-ico,
+.product-row .product-card__badge-ico {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+/* ---------- Адаптивность (точки шаблона: 1199 / 991 / 640) ---------- */
+@media (max-width: 1199.98px) {
+  .gb-grid--cols-6 { --gb-cols: 4; }
+  .gb-feature { grid-template-columns: minmax(0, 1fr) minmax(0, 320px); }
+}
+
+@media (max-width: 991.98px) {
+  .gb-grid--cols-6 { --gb-cols: 3; }
+  .gb-grid--cols-5 { --gb-cols: 3; }
+  .gb-grid--cols-4 { --gb-cols: 3; }
+  .gb-grid--cols-3 { --gb-cols: 2; }
+  .gb-feature { grid-template-columns: 1fr; }
+  .gb-strip__item { flex-basis: 232px; }
+}
+
+@media (max-width: 640.98px) {
+  .gb-grid,
+  .gb-grid--cols-5,
+  .gb-grid--cols-6,
+  .gb-grid--cols-4,
+  .gb-grid--cols-3,
+  .gb-grid--cols-2 { --gb-cols: 2; }
+  .gb-grid { gap: 12px; }
+  .gb-grid--compact { gap: 10px; }
+  .gb-grid--compact .product-card__body { padding: 8px 8px 10px; }
+  .gb-rows--cols-3,
+  .gb-rows--cols-2 { --gb-rows-cols: 1; }
+  .gb-strip { gap: 12px; }
+  .gb-strip__item { flex-basis: 210px; }
+  .product-row { align-items: flex-start; padding: 12px; }
+  .product-row__actions { flex-direction: row; justify-content: flex-end; }
+}
+
+@media (max-width: 400px) {
+  .gb-grid,
+  .gb-grid--cols-5,
+  .gb-grid--cols-6,
+  .gb-grid--cols-4,
+  .gb-grid--cols-3,
+  .gb-grid--cols-2 { --gb-cols: 1; }
+}
+/* ============================================================
+   Анимация появления карточек (data-animation / .goods-block--anim-*)
+   none | fade | rise | zoom | flip | wave.
+   Каскад — по --i (индекс карточки), fill-mode: backwards, чтобы после
+   проигрывания не блокировать hover-трансформы карточек.
+   ============================================================ */
+@keyframes gbFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes gbRiseIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes gbZoomIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes gbFlipIn {
+  from { opacity: 0; transform: perspective(700px) rotateY(-72deg); }
+  to   { opacity: 1; transform: perspective(700px) rotateY(0deg); }
+}
+@keyframes gbWaveIn {
+  from { opacity: 0; transform: translateY(26px) rotate(-2deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+.goods-block--anim-fade .product-card,
+.goods-block--anim-fade .product-row {
+  animation: gbFadeIn 0.5s ease backwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+.goods-block--anim-rise .product-card,
+.goods-block--anim-rise .product-row {
+  animation: gbRiseIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+.goods-block--anim-zoom .product-card,
+.goods-block--anim-zoom .product-row {
+  animation: gbZoomIn 0.5s ease backwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+.goods-block--anim-flip .product-card,
+.goods-block--anim-flip .product-row {
+  animation: gbFlipIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+.goods-block--anim-wave .product-card,
+.goods-block--anim-wave .product-row {
+  animation: gbWaveIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .goods-block--anim-fade .product-card, .goods-block--anim-fade .product-row,
+  .goods-block--anim-rise .product-card, .goods-block--anim-rise .product-row,
+  .goods-block--anim-zoom .product-card, .goods-block--anim-zoom .product-row,
+  .goods-block--anim-flip .product-card, .goods-block--anim-flip .product-row,
+  .goods-block--anim-wave .product-card, .goods-block--anim-wave .product-row {
+    animation: none !important;
+  }
+}

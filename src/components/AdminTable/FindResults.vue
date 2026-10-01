@@ -99,7 +99,7 @@
 
                                     <div v-if="td.value.after_html" v-html="td.value.after_html" />
                                   </template>
-                                  <template v-else-if="td.type=='html'">
+                                  <template v-else-if="result_type(td)=='html'">
                                         <span v-html='td.value'></span>
                                   </template>
                                   <template v-else-if="td.type=='file'">
@@ -146,6 +146,8 @@
                                     <div class="saved" :id="td.name+'_'+tr.key"></div>
                                     <div class="err" :id="td.name+'_'+tr.key+'_err'"></div>
                                   </div>
+
+                                  <pre v-else-if="result_type(td)=='codelist'" class="codelist_result">{{ td.value }}</pre>
                                   
                                   <template v-if="td.type=='date'">
                                       <field-date
@@ -239,7 +241,7 @@ export default {
   props:[
     'results','permissions','go_search','finding','SearchDataSet',
     'fields','explain_query','out_before_search', 'out_after_search', 'not_out_result_search', 'last_search_params',
-    'search_multi_action','on_filters','get_filter_by_name',
+    'search_multi_action','on_filters','get_filter_by_name','filters',
   ],
   data () {
     return {
@@ -369,7 +371,6 @@ export default {
 }
 
 
-.v-application a {text-decoration: none;}
 .v-application a.sort_asc .v-icon {color: rgb(var(--v-theme-success));}
 .v-application a.sort_desc .v-icon {color: rgb(var(--v-theme-error));}
 .v-application a.bold .v-icon {font-weight: bold;}
@@ -384,6 +385,19 @@ export default {
 .results td.multi_action {padding-left: 10px;}
 .sort_button a {text-decoration: none; white-space: nowrap;}
 .controls a {text-decoration: none;}
+.results td pre.codelist_result {
+  font-family: var(--app-font-mono, monospace);
+  font-size: var(--app-font-desc);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 120px;
+  overflow: auto;
+  margin: 0;
+  padding: 4px 6px;
+  border-radius: var(--app-radius-field);
+  background-color: var(--app-tint);
+}
 @media only screen and (max-width: 1000px) {
     .results thead {
         display: none;

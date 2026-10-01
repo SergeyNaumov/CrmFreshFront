@@ -1,0 +1,47 @@
+/* ============================================================
+   themes/style/neo.css — стиль «Нео-брутал»
+
+   Мягкий брутализм: крупные скругления + жёсткие тени-смещения
+   и толстые рамки. Кнопки «западают» при наведении. Форма без цвета.
+   ============================================================ */
+
+:root {
+  --radius: 14px;
+  --radius-xs: 6px;
+  --radius-btn: 14px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  --border-width: 2px;
+  --border-width-accent: 2px;
+
+  --shadow-color: rgba(var(--dark-rgb), 0.28);
+  --shadow-sm: 3px 3px 0 var(--shadow-color);
+  --shadow-md: 6px 6px 0 var(--shadow-color);
+  --shadow-lg: 10px 10px 0 var(--shadow-color);
+
+  --shadow-inset: 0 0 0 0 transparent;
+  --shadow-btn-primary: 4px 4px 0 rgba(var(--dark-rgb), 0.22);
+  --shadow-btn-primary-hover: 2px 2px 0 rgba(var(--dark-rgb), 0.22);
+  --shadow-btn-success: 4px 4px 0 rgba(var(--dark-rgb), 0.24);
+  --shadow-btn-success-hover: 2px 2px 0 rgba(var(--dark-rgb), 0.24);
+  --shadow-btn-white: 4px 4px 0 rgba(var(--dark-rgb), 0.16);
+  --shadow-btn-white-hover: 2px 2px 0 rgba(var(--dark-rgb), 0.16);
+  --shadow-chip: 3px 3px 0 rgba(var(--primary-rgb), 0.4);
+  --shadow-pill: 3px 3px 0 rgba(var(--dark-rgb), 0.2);
+  --shadow-float: 4px 4px 0 rgba(var(--primary-rgb), 0.42);
+  --shadow-btn-cart: 4px 4px 0 rgba(var(--dark-rgb), 0.24);
+  --shadow-btn-cart-hover: 2px 2px 0 rgba(var(--dark-rgb), 0.24);
+
+  --surface-2: var(--surface);
+  --card-radius: 18px;
+  --card-pad: 20px;
+  --card-hover-transform: translate(-3px, -3px);
+
+  --btn-pad-x: 26px;
+  --btn-pad-y: 12px;
+  --btn-hover-transform: translate(2px, 2px);
+  --btn-hover-shadow: 2px 2px 0 var(--shadow-color);
+
+  --focus-ring: 0 0 0 3px var(--primary);
+}

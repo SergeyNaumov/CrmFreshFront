@@ -1,0 +1,62 @@
+[
+  {
+    "index": 1,
+    "filename": "slider-1.webp",
+    "prompt": "Modern technology hero background: a softly blurred modern smartphone and laptop floating on the right side, gentle blue and violet gradient light, subtle glowing particles, futuristic clean mood suggesting new tech arriving, wide panoramic background image for a website hero slider, abstract or softly blurred subject placed on the right side, large clean empty space on the left for overlay text, smooth gradients, cinematic soft lighting, no text, no letters, no numbers, no watermark, no logo, ultra detailed, 8K, high quality",
+    "params": null,
+    "name": "slider-1.webp",
+    "seed": 5329830256618366687,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/slider/slider-1.webp"
+    ]
+  },
+  {
+    "index": 2,
+    "filename": "slider-2.webp",
+    "prompt": "Sale hero background: a softly blurred cluster of gadgets on the right — a smartphone, wireless earbuds and a smartwatch — with warm red and orange gradient light and subtle bokeh, energetic festive mood suggesting a big discount sale, wide panoramic background image for a website hero slider, abstract or softly blurred subject placed on the right side, large clean empty space on the left for overlay text, smooth gradients, cinematic soft lighting, no text, no letters, no numbers, no watermark, no logo, ultra detailed, 8K, high quality",
+    "params": null,
+    "name": "slider-2.webp",
+    "seed": 1902828448862144809,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/slider/slider-2.webp"
+    ]
+  },
+  {
+    "index": 3,
+    "filename": "slider-3.webp",
+    "prompt": "New arrivals hero background: a softly blurred brand-new smartphone and a tablet on the right side, cool mint and cyan gradient light, subtle floating geometric shapes, fresh clean mood suggesting fresh releases, wide panoramic background image for a website hero slider, abstract or softly blurred subject placed on the right side, large clean empty space on the left for overlay text, smooth gradients, cinematic soft lighting, no text, no letters, no numbers, no watermark, no logo, ultra detailed, 8K, high quality",
+    "params": null,
+    "name": "slider-3.webp",
+    "seed": 702291573529592326,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/slider/slider-3.webp"
+    ]
+  },
+  {
+    "index": 4,
+    "filename": "slider-4.webp",
+    "prompt": "Smart home hero background: a softly blurred modern living room scene on the right with a smart speaker, a smart light bulb and a small smart display, warm amber and teal ambient lighting, cozy yet technological mood, wide panoramic background image for a website hero slider, abstract or softly blurred subject placed on the right side, large clean empty space on the left for overlay text, smooth gradients, cinematic soft lighting, no text, no letters, no numbers, no watermark, no logo, ultra detailed, 8K, high quality",
+    "params": null,
+    "name": "slider-4.webp",
+    "seed": 8046728297981878373,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/slider/slider-4.webp"
+    ]
+  },
+  {
+    "index": 5,
+    "filename": "slider-5.webp",
+    "prompt": "Delivery hero background: a softly blurred courier parcel box and a small delivery van silhouette on the right side, bright light blue and white gradient, gentle daylight, clean friendly mood suggesting fast shipping, wide panoramic background image for a website hero slider, abstract or softly blurred subject placed on the right side, large clean empty space on the left for overlay text, smooth gradients, cinematic soft lighting, no text, no letters, no numbers, no watermark, no logo, ultra detailed, 8K, high quality",
+    "params": null,
+    "name": "slider-5.webp",
+    "seed": 3190436200384653289,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/slider/slider-5.webp"
+    ]
+  }
+]

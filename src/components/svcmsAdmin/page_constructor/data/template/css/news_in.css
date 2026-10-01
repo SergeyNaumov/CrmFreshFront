@@ -1,0 +1,266 @@
+/* ============================================================
+   Файл: templates/t1/css/news_in.css
+   Назначение: страница новости (preview/news_in.html), приложение
+   js/news_in.js. Расширяет базовые токены style.css.
+   - Статья: заголовок, обложка с датой, текст (читаемая колонка);
+   - Навигация «Предыдущая / Следующая» с кнопками на краях списка;
+   - Блок «Другие новости» — карусель Splide с карточками .news-card.
+   ============================================================ */
+
+/* ---------- Шапка страницы: eyebrow «Новости компании» + крошки ---------- */
+.news-eyebrow {
+  display: inline-block;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.news-eyebrow::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  margin-top: 10px;
+  border-radius: var(--radius-xs);
+  background: var(--gradient);
+}
+
+/* ---------- Статья ---------- */
+.news-in {
+  width: 100%;
+}
+
+/* Очистка float-обложки: навигация под статьёй не прилипает к фотографии */
+.news-in::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.news-in__title {
+  font-size: clamp(24px, 3.2vw, 34px);
+  line-height: 1.25;
+  color: var(--heading-color);
+  margin: 0 0 22px;
+}
+
+/* Обложка новости: float слева, текст обтекает её и после высоты фото
+   продолжается на всю ширину (устойчиво к сколь угодно длинному тексту).
+   aspect-ratio совпадает с нативным кадром (7:4), чтобы не кропать фото. */
+.news-in__media {
+  position: relative;
+  float: left;
+  width: 54%;
+  margin: 4px 34px 22px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--light);
+  box-shadow: var(--shadow-sm);
+  aspect-ratio: 7 / 4;
+}
+
+.news-in__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.news-in__date {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(var(--white-rgb), 0.92);
+  color: var(--heading-color);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.news-in__date .icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Текст новости: читаемая колонка */
+.news-in__body {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--body-color);
+}
+
+.news-in__body p {
+  margin: 0 0 16px;
+}
+
+.news-in__body p:last-child {
+  margin-bottom: 0;
+}
+
+/* Статус загрузки (пока данные подгружаются) */
+.news-in__status {
+  padding: 24px 0;
+  color: var(--muted);
+}
+
+/* Состояние «данные подгружаются»: статья слегка приглушена */
+.news-in.is-busy {
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* ---------- Навигация по новостям ---------- */
+.news-in__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 34px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.news-in__nav-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.news-nav__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  background: var(--white);
+  color: var(--heading-color);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition),
+              background var(--transition);
+}
+
+.news-nav__btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.news-nav__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.news-nav__btn .icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.news-in__all {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.news-in__all:hover {
+  color: var(--primary-dark);
+}
+
+/* ---------- Блок «Другие новости» ---------- */
+.news-more {
+  margin-top: 60px;
+  padding-top: 40px;
+  padding-bottom: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.news-more__title {
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.3;
+  color: var(--heading-color);
+  margin: 0 0 24px;
+}
+
+/* Карточки .news-card внутри карусели занимают всю ширину слайда */
+.news-more .news-card {
+  height: 100%;
+  max-width: none;
+}
+
+.news-more .splide__track {
+  padding: 4px 2px 0;
+}
+
+.news-more .splide__pagination {
+  position: static;
+  padding: 8px 0 0;
+}
+
+.news-more .splide__arrow {
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  opacity: 1;
+}
+
+.news-more .splide__arrow svg {
+  fill: var(--heading-color);
+}
+
+.news-more .splide__arrow:hover {
+  background: var(--white);
+  border-color: var(--primary);
+}
+
+.news-more .splide__arrow:hover svg {
+  fill: var(--primary);
+}
+
+.news-more .splide__pagination__page.is-active {
+  background: var(--primary);
+}
+
+/* ---------- Адаптив ---------- */
+/* На планшете/узком экране фото встаёт над текстом на всю ширину */
+@media (max-width: 991px) {
+  .news-in__media {
+    float: none;
+    width: 100%;
+    margin: 0 0 22px;
+  }
+}
+
+@media (max-width: 575px) {
+  .news-in__media {
+    aspect-ratio: 7 / 4;
+  }
+
+  .news-in__nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .news-in__nav-group .news-nav__btn {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .news-in__all {
+    text-align: center;
+  }
+}

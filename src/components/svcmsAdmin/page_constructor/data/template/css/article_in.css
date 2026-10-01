@@ -1,0 +1,374 @@
+/* ============================================================
+   Файл: templates/t1/css/article_in.css
+   Назначение: страница статьи (preview/article_in.html), приложение
+   js/article_in.js. Расширяет базовые токены style.css.
+   - Статья: заголовок, обложка с «рубрикой», текст (читаемая колонка);
+   - Навигация «Предыдущая / Следующая» с кнопками на краях списка;
+   - Блок «Другие статьи» — грид карточек .article-tile.
+   ============================================================ */
+
+/* ---------- Шапка страницы: eyebrow «Статьи» + крошки ---------- */
+.article-eyebrow {
+  display: inline-block;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.article-eyebrow::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  margin-top: 10px;
+  border-radius: var(--radius-xs);
+  background: var(--gradient);
+}
+
+/* ---------- Статья ---------- */
+.article-in {
+  width: 100%;
+}
+
+/* Очистка float-обложки: навигация под статьёй не прилипает к фотографии */
+.article-in::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.article-in__title {
+  font-size: clamp(24px, 3.2vw, 34px);
+  line-height: 1.25;
+  color: var(--heading-color);
+  margin: 0 0 22px;
+}
+
+/* ---------- Автор статьи (необязательное поле) ----------
+   Блок всегда в DOM, чтобы js/article_in.js мог показать автора
+   догруженной статьи; без автора он помечен hidden. Ниже — принудительный
+   display:none: без него display:flex перебил бы [hidden] из UA-стилей
+   и на странице осталась бы пустая строка с отступом. */
+/* Отступ сверху не задаём: он схлопнется с margin-bottom заголовка
+   (22px) — так ритм не «прыгает» и вёрстка остаётся предсказуемой. */
+.article-in__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0 0 20px;
+}
+
+.article-in__meta[hidden] { display: none; }
+
+.article-in__author {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+/* Иконка пользователя в 18px — .icon по умолчанию 24px, здесь мельче */
+.icon-author {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+}
+
+/* Обложка статьи: float слева, текст обтекает её и после высоты фото
+   продолжается на всю ширину (устойчиво к сколь угодно длинному тексту).
+   aspect-ratio совпадает с нативным кадром иллюстрации (4:3). */
+.article-in__media {
+  position: relative;
+  float: left;
+  width: 54%;
+  margin: 4px 34px 22px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--light);
+  box-shadow: var(--shadow-sm);
+  aspect-ratio: 4 / 3;
+}
+
+.article-in__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-in__tag {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(var(--white-rgb), 0.92);
+  color: var(--primary);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Краткое описание статьи (аннонс) — жирная врезка под заголовком */
+.article-in__anons {
+  margin: 0 0 20px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+/* Текст статьи: читаемая колонка */
+.article-in__body {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--body-color);
+}
+
+.article-in__body p {
+  margin: 0 0 16px;
+}
+
+.article-in__body p:last-child {
+  margin-bottom: 0;
+}
+
+/* Статус загрузки (пока данные подгружаются) */
+.article-in__status {
+  padding: 24px 0;
+  color: var(--muted);
+}
+
+/* Состояние «данные подгружаются»: статья слегка приглушена */
+.article-in.is-busy {
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* ---------- Навигация по статьям ---------- */
+.article-in__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 34px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.article-in__nav-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.article-nav__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  background: var(--white);
+  color: var(--heading-color);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition),
+              background var(--transition);
+}
+
+.article-nav__btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.article-nav__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.article-nav__btn .icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.article-in__all {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.article-in__all:hover {
+  color: var(--primary-dark);
+}
+
+/* ---------- Блок «Другие статьи» (грид карточек-тилов) ---------- */
+.article-more {
+  margin-top: 60px;
+  padding-top: 40px;
+  padding-bottom: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.article-more__title {
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.3;
+  color: var(--heading-color);
+  margin: 0 0 24px;
+}
+
+.article-more__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.article-tile {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition),
+              border-color var(--transition);
+}
+
+.article-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(var(--primary-rgb), 0.45);
+}
+
+.article-tile__media {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--light);
+}
+
+.article-tile__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.article-tile:hover .article-tile__media img {
+  transform: scale(1.06);
+}
+
+.article-tile__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px 20px;
+  flex: 1;
+}
+
+.article-tile__title {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--heading-color);
+}
+
+.article-tile__title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.article-tile__title a:hover {
+  color: var(--primary);
+}
+
+.article-tile__anons {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
+}
+
+.article-tile__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 6px;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.article-tile__link:hover {
+  color: var(--primary-dark);
+}
+
+.article-tile__link .icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+
+.article-tile__link:hover .icon {
+  transform: translateX(4px);
+}
+
+/* ---------- Адаптив ---------- */
+/* На планшете/узком экране фото встаёт над текстом на всю ширину */
+@media (max-width: 991px) {
+  .article-in__media {
+    float: none;
+    width: 100%;
+    margin: 0 0 22px;
+  }
+
+  .article-more__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .article-more__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 575px) {
+  .article-in__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .article-in__nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .article-in__nav-group .article-nav__btn {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .article-in__all {
+    text-align: center;
+  }
+}

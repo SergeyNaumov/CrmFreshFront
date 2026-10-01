@@ -1,0 +1,411 @@
+/* ============================================================
+   templates/t1/css/good_list.css
+   Стили страницы «Список товаров» (preview/good_list.html,
+   релиз — page/catalog_list.html).
+
+   ⚠ КОНСТРУКТОР: стили разбиты на блок-секции. Если на странице
+   удалён какой-то блок тулбара (поиск / цена / сортировка / чипы),
+   его стили можно удалить вместе с ним — на остальную вёрстку
+   это не влияет.
+
+   Все цвета/тени только через CSS-переменные темы.
+   ============================================================ */
+
+/* ---------- Сетка товаров ---------- */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 22px;
+}
+
+.products-grid .product-card {
+  height: 100%;
+}
+
+@media (max-width: 575.98px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .products-grid .product-card__body { padding: 12px 12px 14px; }
+}
+
+/* ---------- Тулбар (поиск · цена · сортировка · чипы) ---------- */
+/* Контрактная база: узел .good-list (общая разметка catalog_list/
+   catalog2/search/favorites/compare). Раньше в t1 не был описан. */
+.good-list { display: grid; gap: 24px; }
+
+.good-list > .good-list__toolbar { margin-bottom: 0; }
+
+.good-list > .gl-pagination { margin-top: 0; }
+
+.good-list__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 14px;
+  margin-bottom: 24px;
+}
+
+.gl-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gl-control__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Поиск по названию */
+.gl-search { flex: 1 1 220px; }
+
+.gl-search .form-control,
+.gl-price .form-control,
+.gl-sort .form-select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  color: var(--heading-color);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.gl-search .form-control:focus,
+.gl-price .form-control:focus,
+.gl-sort .form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+}
+
+/* Цена от/до */
+.gl-price { display: flex; flex-direction: column; gap: 6px; }
+
+.gl-price .form-control { width: 108px; }
+
+.gl-price__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gl-price__sep {
+  padding-bottom: 9px;
+  color: var(--muted);
+}
+
+/* Сортировка */
+.gl-sort { flex: 0 0 auto; }
+
+/* Бокс/высоту/паддинги наследуем из базового .form-select (style.css) и
+   select.form-select (forms.css) — так select совпадает по левому краю и
+   высоте с соседними .form-control. Здесь только ширина. */
+.gl-sort .form-select {
+  min-width: 190px;
+  cursor: pointer;
+}
+
+/* Чипы подкатегорий */
+.gl-chips { display: flex; flex-direction: column; gap: 6px; }
+
+.gl-chips__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gl-chips__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.gl-chips__chip:hover { border-color: var(--primary); color: var(--primary); }
+
+.gl-chips__chip.is-active {
+  color: var(--white);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.gl-chips__chip .gl-chips__count {
+  font-size: 11.5px;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+/* Кнопка «Сбросить» */
+.gl-reset {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--primary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.gl-reset:hover {
+  color: var(--white);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Счётчик «Найдено: N» */
+.gl-count {
+  align-self: flex-end;
+  margin-left: auto;
+  font-size: 13.5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.gl-count b { color: var(--heading-color); font-weight: 700; }
+
+/* ---------- Пустое состояние ---------- */
+.gl-empty {
+  margin: 8px 0 12px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--light);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.gl-empty__btn {
+  margin-top: 14px;
+}
+
+/* ---------- Пагинация (компонент js/perpage.js) ----------
+   Стили общие для двух контекстов: .gl-pagination (готовый контейнер)
+   и .pagination-nav (нав из block/pagination.html в общей разметке). */
+.gl-pagination,
+.pagination-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.gl-pagination .pagination,
+.pagination-nav .pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-left: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.gl-pagination .page-link,
+.pagination-nav .page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  margin: 2px;
+  padding: 7px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--heading-color);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg) !important;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.gl-pagination .page-link:hover,
+.pagination-nav .page-link:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.gl-pagination .page-item.disabled .page-link,
+.pagination-nav .page-item.disabled .page-link {
+  color: var(--muted);
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.gl-pagination .page-item.active .page-link,
+.pagination-nav .page-item.active .page-link {
+  color: var(--white);
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.gl-pagination .page-item > .page-link:not(button),
+.pagination-nav .page-item > .page-link:not(button) {
+  cursor: default;
+  border-color: transparent;
+  background: transparent;
+}
+
+/* ============================================================
+   ДВУХКОЛОНОЧНЫЙ КАТАЛОГ: сайдбар разделов + список товаров
+   (page_type: catalog2, preview/catalog2.html). Сайдбар необязателен:
+   без него .catalog-layout вырождается в одну колонку, список работает
+   как на catalog_list.
+   ============================================================ */
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+/* Сайдбар справа (параметр блока «Каталог товаров»: sidebar=right). */
+.catalog-layout--sidebar-right {
+  grid-template-columns: minmax(0, 1fr) 264px;
+}
+.catalog-layout--sidebar-right .catalog-sidebar { order: 2; }
+.catalog-layout--sidebar-right .catalog-main { order: 1; }
+
+.catalog-main { min-width: 0; }
+
+/* Контрактные узлы сайдбара (общая разметка catalog2): обёртка секции
+   и элемент подрубрики. */
+.catalog-sidebar__nav { margin-bottom: 16px; }
+
+.catalog-sidebar__subitem { display: block; }
+
+/* ---------- Сайдбар ---------- */
+.catalog-sidebar {
+  position: sticky;
+  top: calc(var(--header-height, 80px) + 12px);
+  max-height: calc(100vh - var(--header-height, 80px) - 24px);
+  overflow-y: auto;
+  padding: 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.catalog-sidebar__title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+.catalog-sidebar__list,
+.catalog-sidebar__sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.catalog-sidebar__sublist {
+  margin: 2px 0 6px;
+  padding-left: 12px;
+  gap: 1px;
+  border-left: 1px solid var(--border);
+}
+
+.catalog-sidebar__link,
+.catalog-sidebar__sublink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  color: var(--body-color, var(--heading-color));
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.catalog-sidebar__sublink {
+  padding: 6px 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.catalog-sidebar__link:hover,
+.catalog-sidebar__sublink:hover {
+  color: var(--primary);
+  background: var(--light);
+}
+
+.catalog-sidebar__link.is-active,
+.catalog-sidebar__sublink.is-active {
+  color: var(--white);
+  background: var(--primary);
+}
+
+.catalog-sidebar__count {
+  flex: 0 0 auto;
+  font-size: 11.5px;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+@media (max-width: 991px) {
+  .catalog-layout { grid-template-columns: 1fr; gap: 20px; }
+  .catalog-sidebar { position: static; max-height: 340px; }
+}
+/* ============================================================
+   СРАВНЕНИЕ ТОВАРОВ (page/compare.html, js/compare.js)
+   ============================================================ */
+.compare__toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.compare__scroll { overflow-x: auto; }
+.compare__table { border-collapse: collapse; width: 100%; min-width: 560px; }
+.compare__th,
+.compare__cell,
+.compare__row-name { border: 1px solid var(--border); padding: 12px 14px; text-align: left; vertical-align: top; }
+.compare__row-name { width: 180px; font-weight: 600; color: var(--heading-color); background: var(--light); }
+.compare__th--product { min-width: 200px; }
+.compare__product { display: flex; flex-direction: column; gap: 8px; }
+.compare__media {
+  display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.18), rgba(var(--primary-rgb), 0.05));
+}
+.compare__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.compare__name { font-weight: 600; color: var(--heading-color); text-decoration: none; }
+.compare__name:hover { color: var(--primary); }
+.compare__price { font-weight: 700; color: var(--heading-color); }
+.compare__acts { display: flex; align-items: center; gap: 8px; }
+.compare__remove {
+  width: 32px; height: 32px; font-size: 18px; line-height: 1;
+  color: var(--muted); background: transparent; border: 1px solid var(--border);
+  border-radius: 50%; cursor: pointer; transition: all var(--transition);
+}
+.compare__remove:hover { color: var(--danger); border-color: var(--danger); }
+
+/* Пустое состояние страницы сравнения: подсказка + популярные товары */
+.compare-empty__hint { margin: 8px auto 0; max-width: 520px; font-size: var(--font-size-sm); }
+.compare-suggest { margin-top: 40px; }
+.compare-suggest__title { margin: 0 0 18px; font-size: var(--font-size-h3); color: var(--heading-color); }

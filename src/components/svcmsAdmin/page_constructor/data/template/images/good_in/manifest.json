@@ -1,0 +1,62 @@
+[
+  {
+    "index": 1,
+    "filename": "good_in_1_01.webp",
+    "prompt": "Professional product photo of a modern flagship smartphone, front 3/4 view, standing upright, 6.8-inch AMOLED screen on with a clean abstract blue wallpaper, nearly bezel-less front panel, aluminum frame visible on the edges, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce product photography, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "good_in_1_01.webp",
+    "seed": 5227472444071282661,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/good_in/good_in_1_01.webp"
+    ]
+  },
+  {
+    "index": 2,
+    "filename": "good_in_1_02.webp",
+    "prompt": "Professional product photo of a modern flagship smartphone, back view, matte glass back panel with a soft satin finish, aluminum frame around the edges, clean minimal design, large camera module in the top-left corner, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce product photography, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "good_in_1_02.webp",
+    "seed": 2104101144513956322,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/good_in/good_in_1_02.webp"
+    ]
+  },
+  {
+    "index": 3,
+    "filename": "good_in_1_03.webp",
+    "prompt": "Professional product photo of a modern flagship smartphone, close-up on the rear triple camera module, macro detail of the large main lens with a metallic ring, secondary lenses and a small flash visible next to them, shallow depth of field, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce product photography, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "good_in_1_03.webp",
+    "seed": 3817811229001183156,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/good_in/good_in_1_03.webp"
+    ]
+  },
+  {
+    "index": 4,
+    "filename": "good_in_1_04.webp",
+    "prompt": "Professional product photo of a modern flagship smartphone, side profile view, showing the slim aluminum frame, volume and power buttons on the side, matte glass back gently curving into the edges, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce product photography, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "good_in_1_04.webp",
+    "seed": 3798322856578548112,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/good_in/good_in_1_04.webp"
+    ]
+  },
+  {
+    "index": 5,
+    "filename": "good_in_1_05.webp",
+    "prompt": "Professional product photo of a flagship smartphone standing upright next to a compact wall charger and a neatly coiled white USB-C cable, set arranged as a complete retail bundle on a clean surface, pure white background, no shadows under the product, soft even studio lighting, sharp focus, high detail, 8K, professional e-commerce product photography, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "good_in_1_05.webp",
+    "seed": 4275679946816821744,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/good_in/good_in_1_05.webp"
+    ]
+  }
+]

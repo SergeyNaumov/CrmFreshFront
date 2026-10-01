@@ -2,6 +2,17 @@
   Методы для FindResults
 */
 export default {
+    result_type(td){ // бэк отдаёт type='html' для всех полей без make_change_in_search
+      if(td.type!='html')
+        return td.type
+      if(!this.filters)
+        return 'html'
+      for(const f of this.filters){
+        if(f.name==td.name && (f.type=='codelist' || f.type=='code'))
+          return 'codelist'
+      }
+      return 'html'
+    },
     parent_save_func(td, value){
       td.value=value;
       console.log('DT VALUE:',value)

@@ -1,0 +1,94 @@
+/* ============================================================
+   themes/style/neumorph.css — стиль «Неоморфизм»
+
+   Soft-UI / neumorphism: поверхности «выдавлены» из фона —
+   тот же тон, что и фон, без рамок, с двойной тенью (тёмная
+   снизу-справа + светлый блик сверху-слева). Поля ввода и
+   активные состояния — «вдавленные» (inset).
+
+   Кросс-схемно безопасно: блик строится как color-mix(поверхность+
+   белый), тень — из --dark-rgb, поэтому стиль работает и на светлых
+   схемах, и на тёмной.
+
+   Стилевой слой: форма/геометрия/тени + несколько компонентных
+   правил (поверхности/поля), чтобы «выпуклость» читалась в покое.
+   ============================================================ */
+
+:root {
+  /* ---------- Скругления (мягкие, крупные) ---------- */
+  --radius: 14px;
+  --radius-xs: 10px;
+  --radius-btn: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 50px;
+
+  /* ---------- Рамок нет — границы делают тени ---------- */
+  --border-width: 0px;
+  --border-width-accent: 0px;
+
+  /* ---------- Двойная тень: тёмная + светлый блик ---------- */
+  --nm-soft: rgba(var(--dark-rgb), 0.18);
+  --nm-light: color-mix(in srgb, var(--surface) 52%, #ffffff 48%);
+  --nm-inset: inset 5px 5px 12px var(--nm-soft), inset -5px -5px 12px var(--nm-light);
+  --shadow-color: var(--nm-soft);
+
+  --shadow-sm: 5px 5px 12px var(--nm-soft), -5px -5px 12px var(--nm-light);
+  --shadow-md: 9px 9px 22px var(--nm-soft), -9px -9px 22px var(--nm-light);
+  --shadow-lg: 14px 14px 34px var(--nm-soft), -14px -14px 34px var(--nm-light);
+
+  /* На цветных кнопках inset-эффект неуместен — только деликатный блик */
+  --shadow-inset: inset 0 1px 0 rgba(var(--white-rgb), 0.35);
+  --shadow-btn-primary: 6px 6px 16px rgba(var(--secondary-rgb), 0.35);
+  --shadow-btn-primary-hover: 4px 4px 10px rgba(var(--secondary-rgb), 0.3);
+  --shadow-btn-success: 6px 6px 16px rgba(var(--success-rgb), 0.3);
+  --shadow-btn-success-hover: 4px 4px 10px rgba(var(--success-rgb), 0.26);
+  --shadow-btn-white: 6px 6px 16px var(--nm-soft), -6px -6px 16px var(--nm-light);
+  --shadow-btn-white-hover: 4px 4px 10px var(--nm-soft), -4px -4px 10px var(--nm-light);
+  --shadow-chip: 6px 6px 14px var(--nm-soft), -6px -6px 14px var(--nm-light);
+  --shadow-pill: 5px 5px 12px var(--nm-soft), -5px -5px 12px var(--nm-light);
+  --shadow-float: 8px 8px 20px var(--nm-soft), -8px -8px 20px var(--nm-light);
+  --shadow-btn-cart: 6px 6px 16px rgba(var(--btn-cart-rgb), 0.32);
+  --shadow-btn-cart-hover: 4px 4px 10px rgba(var(--btn-cart-rgb), 0.28);
+
+  /* ---------- Карточки: сливаются с фоном, «выпуклые» тенью ---------- */
+  --surface-2: var(--body-bg);
+  --card-radius: 22px;
+  --card-pad: 20px;
+  --card-hover-transform: translateY(-2px);
+
+  /* ---------- Кнопки ---------- */
+  --btn-pad-x: 24px;
+  --btn-pad-y: 12px;
+  --btn-hover-transform: none;
+  --btn-hover-shadow: var(--shadow-sm);
+
+  /* ---------- Фокус (доступность) ---------- */
+  --focus-ring: 0 0 0 4px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+/* Поверхности «выпуклые» уже в покое (иначе --shadow-md не виден) */
+.product-card,
+.news-card,
+.review-card,
+.adv-card,
+.form-card,
+.tb-feature__item,
+.service-card,
+.branch-card,
+.routes__item,
+.jmodal__dialog {
+  box-shadow: var(--shadow-md);
+}
+
+/* Поля ввода — «вдавленные», сливаются с фоном */
+.form-control,
+.qty {
+  background: var(--body-bg);
+  border-color: transparent;
+  box-shadow: var(--nm-inset);
+}
+
+.form-control:focus,
+.qty:focus {
+  box-shadow: var(--nm-inset), var(--focus-ring);
+}

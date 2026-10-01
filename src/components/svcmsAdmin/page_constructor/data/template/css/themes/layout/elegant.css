@@ -1,0 +1,29 @@
+/* ============================================================
+   themes/layout/elegant.css — элегантная компоновка.
+
+   Умеренный контейнер, просторный ритм, центрированные заголовки
+   секций, мягкая типографика. Цвет/форма — из осей color/style.
+   ============================================================ */
+:root {
+  --container: 1280px;
+  --gutter: 22px;
+  --section-gap: 96px;
+  --header-height: 84px;
+  --font-size-h1: 2.6rem;
+  --font-size-h2: 2.05rem;
+  --font-weight-heading: 600;
+  --grid-gap: 28px;
+  --head-gap: 20px;
+  --head-space: 48px;
+}
+
+/* Центрированная шапка секции */
+.section-head {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+}
+.section-head--no-flex { text-align: center; }
+.section-title { letter-spacing: 0.01em; }

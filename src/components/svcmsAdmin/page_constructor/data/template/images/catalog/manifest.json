@@ -1,0 +1,146 @@
+[
+  {
+    "index": 1,
+    "filename": "catalog-1.webp",
+    "prompt": "Professional e-commerce category cover photo: a neat group of consumer electronics — a modern smartphone, a slim laptop and a tablet arranged side by side, screens on with clean abstract wallpapers, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-1.webp",
+    "seed": 208109228073236781,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-1.webp"
+    ]
+  },
+  {
+    "index": 2,
+    "filename": "catalog-2.webp",
+    "prompt": "Professional e-commerce category cover photo: a neat group of lifestyle gadgets — a smartwatch, wireless earbuds in an open case, a compact action camera and a small portable speaker arranged together, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-2.webp",
+    "seed": 8341034170749761934,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-2.webp"
+    ]
+  },
+  {
+    "index": 3,
+    "filename": "catalog-3.webp",
+    "prompt": "Professional e-commerce category cover photo: a smart home set — a smart speaker, a smart light bulb, a small security camera and a smart thermostat arranged together on a surface, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-3.webp",
+    "seed": 3786106935027449735,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-3.webp"
+    ]
+  },
+  {
+    "index": 4,
+    "filename": "catalog-4.webp",
+    "prompt": "Professional e-commerce category cover photo: a sport and outdoor set — a fitness tracker, a sport smartwatch, wireless sport earbuds and a compact water bottle arranged together, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-4.webp",
+    "seed": 8108474365540144116,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-4.webp"
+    ]
+  },
+  {
+    "index": 5,
+    "filename": "catalog-5.webp",
+    "prompt": "Professional e-commerce category cover photo: an audio equipment set — premium over-ear wireless headphones, a portable Bluetooth speaker and a compact soundbar arranged together, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-5.webp",
+    "seed": 1116065271510210430,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-5.webp"
+    ]
+  },
+  {
+    "index": 6,
+    "filename": "catalog-6.webp",
+    "prompt": "Professional e-commerce category cover photo: a mobile accessories set — a wall charger, a coiled USB-C cable, a silicone phone case and a magnetic car phone holder arranged together, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-6.webp",
+    "seed": 2723923729381624254,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-6.webp"
+    ]
+  },
+  {
+    "index": 7,
+    "filename": "catalog-7.webp",
+    "prompt": "Professional e-commerce category cover photo: a modern flat TV on a slim stand with a soundbar in front, screen showing a clean abstract colorful image, minimalist composition, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-7.webp",
+    "seed": 586982573403807562,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-7.webp"
+    ]
+  },
+  {
+    "index": 8,
+    "filename": "catalog-8.webp",
+    "prompt": "Professional e-commerce category cover photo: a photography kit — a mirrorless camera with a lens attached, an action camera, a spare lens and a compact tripod arranged together, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-8.webp",
+    "seed": 2794414889129836839,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-8.webp"
+    ]
+  },
+  {
+    "index": 9,
+    "filename": "catalog-9.webp",
+    "prompt": "Professional e-commerce category cover photo: a computer hardware set — a desktop tower PC, a keyboard, a mouse and a graphics card arranged together, minimalist composition, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-9.webp",
+    "seed": 5048535060545864516,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-9.webp"
+    ]
+  },
+  {
+    "index": 10,
+    "filename": "catalog-10.webp",
+    "prompt": "Professional e-commerce category cover photo: a gaming set — a modern game console, a wireless gamepad and a gaming headset arranged together, subtle RGB accent lighting, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-10.webp",
+    "seed": 8391059715707828690,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-10.webp"
+    ]
+  },
+  {
+    "index": 11,
+    "filename": "catalog-11.webp",
+    "prompt": "Professional e-commerce category cover photo: a networking set — a modern Wi-Fi router with visible antennas and two compact mesh nodes arranged together, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-11.webp",
+    "seed": 1635786373122303743,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-11.webp"
+    ]
+  },
+  {
+    "index": 12,
+    "filename": "catalog-12.webp",
+    "prompt": "Professional e-commerce category cover photo: a power supply set — a portable power bank, a larger charging station and a set of rechargeable batteries arranged together, clean neutral background, soft even studio lighting, centered composition, sharp focus, high detail, 8K, professional e-commerce category cover photography, no text, no letters, no watermark, no logo",
+    "params": null,
+    "name": "catalog-12.webp",
+    "seed": 3048937049843746604,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/catalog/catalog-12.webp"
+    ]
+  }
+]

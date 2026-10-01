@@ -30,8 +30,12 @@ Shell (`/vue/...`):
 | `/vue/parser-excel/:config` | ParserExcel |
 | `/vue/Schedule/:config` | Schedule |
 | `/vue/table/:config` | Table |
+| `/vue/filenavigator/:config/:base(.*)*` | FileNavigator |
+| `/vue/page-constructor/:template_id` | PageConstructor |
 
-Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/admin_table/:config`, `/admin_tree/:config`, `/table/:config`, `/const/:config`, `/transfere_cards/:config`, `/stat-tool/:config`, `/memo-aggregate/:config`, `/parser-excel/:config`, `/documentation/:config`, `/Schedule/:config`, `/VideoList/:config`, `/login`, `/register`, `/remember`.
+Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/admin_table/:config`, `/admin_tree/:config`, `/table/:config`, `/const/:config`, `/transfere_cards/:config`, `/stat-tool/:config`, `/memo-aggregate/:config`, `/parser-excel/:config`, `/documentation/:config`, `/Schedule/:config`, `/VideoList/:config`, `/filenavigator/:config/:base(.*)*` (alias `/file-navigator`), `/page-constructor/:template_id`, `/login`, `/register`, `/remember`.
+
+`filenavigator` base dir: `:base` segments (e.g. `/filenavigator/<config>/files/sub`) or `?dir=<path>` become the navigator root (chroot); `?charset=` sets the file encoding (default utf-8).
 
 - Page props come from the `shellProps`/`blankProps` factories (`params`; full-screen also `is_headapp: '1'`).
 - **Aliases** (compatibility): `/edit-form`, `/admin-table`, `/admin-tree`, `/transfere-cards`.

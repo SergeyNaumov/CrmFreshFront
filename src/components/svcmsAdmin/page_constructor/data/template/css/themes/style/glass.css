@@ -1,0 +1,125 @@
+/* ============================================================
+   themes/style/glass.css — стиль «Стекло»
+
+   Frosted-glass UI: полупрозрачные поверхности (translucent) +
+   размытие фона (backdrop-filter), глянцевый верхний блик,
+   светящаяся грань, крупные радиусы и pill-кнопки. Цвет
+   поверхностей наследуется от цветовой схемы через color-mix,
+   поэтому сочетается с любой схемой (digitalstrateg/default/dark/…).
+
+   Стилевой слой: форма/геометрия/тени + точечные компонентные
+   правила (только в @supports с backdrop-filter). Плюс лёгкий
+   ambient-градиент на body, чтобы «морозному» стеклу было что
+   размывать даже на однотонном фоне (согласованное отступление
+   от правила «стиль не задаёт цвет» — только color-mix от бренда).
+   ============================================================ */
+
+:root {
+  /* ---------- Скругления (крупные, мягкие) ---------- */
+  --radius: 10px;
+  --radius-xs: 6px;
+  --radius-btn: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 50px;
+
+  /* ---------- Толщина рамок ---------- */
+  --border-width: 1px;
+  --border-width-accent: 2px;
+
+  /* ---------- Тени (мягкие, рассеянные) ---------- */
+  --shadow-color: rgba(var(--dark-rgb), 0.09);
+  --shadow-sm: 0 6px 20px var(--shadow-color);
+  --shadow-md: 0 16px 44px var(--shadow-color);
+  --shadow-lg: 0 28px 80px var(--shadow-color);
+
+  /* Глянцевый верхний блик + мягкие тени компонентов */
+  --shadow-inset: inset 0 1px 0 rgba(var(--white-rgb), 0.55);
+  --shadow-btn-primary: 0 12px 28px rgba(var(--secondary-rgb), 0.32);
+  --shadow-btn-primary-hover: 0 16px 38px rgba(var(--secondary-rgb), 0.44);
+  --shadow-btn-success: 0 12px 28px rgba(var(--success-rgb), 0.24);
+  --shadow-btn-success-hover: 0 16px 38px rgba(var(--success-rgb), 0.34);
+  --shadow-btn-white: 0 12px 28px rgba(var(--dark-rgb), 0.14);
+  --shadow-btn-white-hover: 0 16px 38px rgba(var(--dark-rgb), 0.2);
+  --shadow-chip: 0 10px 24px rgba(var(--primary-rgb), 0.34);
+  --shadow-pill: 0 8px 20px rgba(var(--primary-rgb), 0.28);
+  --shadow-float: 0 16px 34px rgba(var(--primary-rgb), 0.34);
+  --shadow-btn-cart: 0 12px 28px rgba(var(--btn-cart-rgb), 0.24);
+  --shadow-btn-cart-hover: 0 16px 38px rgba(var(--btn-cart-rgb), 0.34);
+
+  /* ---------- Карточки: полупрозрачная поверхность + blur ---------- */
+  --surface-2: color-mix(in srgb, var(--surface) 55%, transparent);
+  --card-radius: 20px;
+  --card-pad: 18px;
+  --card-hover-transform: translateY(-4px);
+
+  /* ---------- Кнопки (pill-геометрия, крупные) ---------- */
+  --btn-pad-x: 24px;
+  --btn-pad-y: 11px;
+  --btn-hover-transform: translateY(-2px);
+  --btn-hover-shadow: var(--shadow-sm);
+
+  /* ---------- Токены стекла ---------- */
+  --glass-blur: 20px;
+  --glass-saturate: 150%;
+  --glass-border: color-mix(in srgb, var(--white) 45%, var(--border-color));
+  --glass-highlight: inset 0 1px 0 rgba(var(--white-rgb), 0.55);
+
+  /* ---------- Фокус (доступность) ---------- */
+  --focus-ring: 0 0 0 4px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+/* Лёгкий ambient-градиент: даёт frosted-эффекту материал для размытия */
+body {
+  background-image:
+    radial-gradient(1100px 520px at 12% -8%,
+      color-mix(in srgb, var(--primary) 12%, transparent), transparent 62%),
+    radial-gradient(900px 520px at 100% 0%,
+      color-mix(in srgb, var(--secondary) 10%, transparent), transparent 60%);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .topbar,
+  .header,
+  .product-card,
+  .news-card,
+  .review-card,
+  .adv-card,
+  .form-card,
+  .nav-submenu,
+  .basket-widget__dropdown,
+  .form-control,
+  .qty,
+  .jmodal__dialog {
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  }
+
+  /* Светящаяся грань + глянцевый блик на «стеклянных» панелях */
+  .product-card,
+  .news-card,
+  .review-card,
+  .adv-card,
+  .form-card,
+  .nav-submenu,
+  .basket-widget__dropdown,
+  .jmodal__dialog {
+    border-color: var(--glass-border);
+    box-shadow: var(--glass-highlight), var(--shadow-md);
+  }
+
+  .header { border-bottom-color: var(--glass-border); }
+  .topbar { border-bottom: 1px solid color-mix(in srgb, var(--white) 12%, transparent); }
+
+  /* Поля/модалка в базе — на --surface (непрозрачные): делаем стеклянными */
+  .form-control,
+  .qty,
+  .jmodal__dialog {
+    background: color-mix(in srgb, var(--surface) 62%, transparent);
+  }
+
+  /* Всплывающие панели — чуть плотнее, чтобы текст читался */
+  .nav-submenu,
+  .basket-widget__dropdown {
+    background: color-mix(in srgb, var(--surface) 74%, transparent);
+  }
+}

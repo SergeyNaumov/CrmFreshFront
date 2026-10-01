@@ -1,0 +1,14 @@
+[
+  {
+    "index": 1,
+    "filename": "404.webp",
+    "prompt": "A cute robot vacuum cleaner comically stuck under a modern display shelf in an electronics store, one small gadget box balanced on top of it, dust bunnies and a tangled charging cable around, the robot looks guilty and surprised, warm playful atmosphere, playful photorealistic 3D render, bright modern electronics store, soft studio lighting, clean minimal background, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "404.webp",
+    "seed": 4133698338961735130,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/404/404.webp"
+    ]
+  }
+]

@@ -43,21 +43,24 @@
                                     </template>
                                     <template v-else>
                                         <!-- div squire color 20x20-->
-                                        <template v-if="h.type=='text' && h.subtype=='color'">
-                                            <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>
-                                            
-                                        </template>
-                                        <template v-if="h.type=='text' && h.subtype" >
-                                            <template  v-if="h.subtype=='qr_call'">
-                                                <qr_call :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
-                                            </template>
-                                            <template v-else-if="h.subtype=='email'">
-                                                <email :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
-                                            </template>
-
-                                        </template>
+                                        <pre v-if="h.type=='codelist'" class="codelist_slide">{{ get_value_for_slide(h,v) }}</pre>
                                         <template v-else>
-                                            <span v-html="get_value_for_slide(h,v)"></span>
+                                            <template v-if="h.type=='text' && h.subtype=='color'">
+                                                <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>
+                                                
+                                            </template>
+                                            <template v-if="h.type=='text' && h.subtype" >
+                                                <template  v-if="h.subtype=='qr_call'">
+                                                    <qr_call :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
+                                                </template>
+                                                <template v-else-if="h.subtype=='email'">
+                                                    <email :value="get_value_for_slide(h,v)" :field="h" :for_slide="true"/>
+                                                </template>
+
+                                            </template>
+                                            <template v-else>
+                                                <span v-html="get_value_for_slide(h,v)"></span>
+                                            </template>
                                         </template>
 
                                     </template>
@@ -112,10 +115,13 @@
                         <template v-else>-</template>
                     </span>
                     <span v-else>
-                        <template v-if="h.type=='text' && h.subtype=='color'">
-                                            <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>&nbsp;
+                        <pre v-if="h.type=='codelist'" class="codelist_slide">{{ get_value_for_slide(h,v) }}</pre>
+                        <template v-else>
+                            <template v-if="h.type=='text' && h.subtype=='color'">
+                                                <div class="color_squire"  :style="{'background-color': get_value_for_slide(h,v) }"></div>&nbsp;
+                            </template>
+                            <span v-html="get_value_for_slide(h,v)"></span>
                         </template>
-                        <span v-html="get_value_for_slide(h,v)"></span>
                     </span>
                 </template>
                 <!--<span v-else v-html="v[h.name]"></span>-->
@@ -257,7 +263,7 @@ export default {
             if(h.slide_code && values[name+'_slide']!==undefined && values[name+'_slide']!==null)
                 return values[name+'_slide'];
             let value=values[name];
-            if(type=='text' || type=='textarea' || type=='wysiwyg'){
+            if(type=='text' || type=='textarea' || type=='wysiwyg' || type=='codelist'){
                 return value
             }
             else if(type=='checkbox' || type=='switch'){
@@ -398,6 +404,19 @@ export default {
     .one_to_m_list .controls button {margin: 5px !important;}
     .color_squire {
         border: 1px solid gray; margin-left: 5px; width: 10px; height: 10px; display: inline-block; vertical-align: middle;
+    }
+    pre.codelist_slide {
+        font-family: var(--app-font-mono, monospace);
+        font-size: var(--app-font-desc);
+        line-height: 1.4;
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 140px;
+        overflow: auto;
+        margin: 2px 0 0;
+        padding: 6px 8px;
+        border-radius: var(--app-radius-field);
+        background-color: var(--app-tint);
     }
     
     

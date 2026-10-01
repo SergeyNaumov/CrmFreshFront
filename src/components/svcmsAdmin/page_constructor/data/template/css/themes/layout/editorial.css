@@ -1,0 +1,27 @@
+/* ============================================================
+   themes/layout/editorial.css — журнальная компоновка.
+
+   Узкая мера текста, крупная типографика, много воздуха, выключка
+   по левому краю. Цвет/форма — из осей color/style.
+   ============================================================ */
+:root {
+  --container: 1080px;
+  --gutter: 24px;
+  --section-gap: 104px;
+  --header-height: 88px;
+  --font-size-h1: 3rem;
+  --font-size-h2: 2.3rem;
+  --font-size-base: 17px;
+  --font-weight-heading: 700;
+  --grid-gap: 32px;
+  --head-gap: 18px;
+  --head-space: 52px;
+}
+
+.section-head {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 14px;
+}

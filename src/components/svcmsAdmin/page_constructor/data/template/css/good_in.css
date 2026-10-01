@@ -1,0 +1,512 @@
+/* ============================================================
+   Файл: templates/t1/css/good_in.css
+   Назначение: страница товара (preview/good_in*.html / good_in.html),
+   приложение js/good_in.js.
+   Расширяет базовые токены style.css (дизайн-система).
+   Четыре компоновки — модификаторы на корне #good_in:
+     .gv-classic   — галерея слева, инфо справа, горизонтальная лента миниатюр
+     .gv-split     — зеркало: инфо слева, галерея справа, вертикальная лента миниатюр, sticky-покупка
+     .gv-vertical  — крупное фото с вертикальной лентой миниатюр слева
+     .gv-wide      — широкий «товарный hero» на всю ширину, горизонтальная лента миниатюр, 2-колоночное инфо
+   ============================================================ */
+
+/* ---------- Базовый 2-колоночный макет ---------- */
+.good-in {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 40px 48px;
+  align-items: start;
+}
+
+.good-in__gallery { min-width: 0; }
+.good-in__info   { min-width: 0; }
+.good-in__tabs   { grid-column: 1 / -1; }
+
+/* ---------- Галерея: сцена (основное фото) ---------- */
+.gi-stage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.gi-stage__link {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+.gi-stage__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease, opacity 0.35s ease;
+  cursor: zoom-in;
+}
+.gi-stage:hover .gi-stage__img { transform: scale(1.04); }
+
+/* Пустая сцена (fallback фото) */
+.gi-stage__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.gi-stage__empty img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Стрелки на галерее */
+.gi-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(var(--white-rgb), 0.92);
+  color: var(--heading-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  z-index: 2;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.gi-nav:hover { background: var(--white); color: var(--primary); box-shadow: var(--shadow-md); }
+.gi-nav:disabled { opacity: 0.35; cursor: not-allowed; }
+.gi-nav--prev { left: 14px; }
+.gi-nav--next { right: 14px; }
+
+/* Счётчик кадров */
+.gi-count {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(var(--dark-rgb), 0.6);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Галерея: миниатюры ---------- */
+.gi-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.gi-thumb {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--light);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.gi-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.gi-thumb:hover { border-color: rgba(var(--primary-rgb), 0.45); }
+.gi-thumb:hover img { transform: scale(1.06); }
+.gi-thumb.is-active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.18); }
+
+/* ---------- Инфо-колонка: бейджи ----------
+   Вид самих плашек (.gi-badge и цвета --badge-*) — в css/style.css,
+   там же где .product-card__badge, чтобы список и карточка товара
+   выглядели одинаково. Здесь только раскладка группы. */
+.gi-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+/* ---------- Инфо: заголовок ---------- */
+.gi-name {
+  margin: 0 0 10px;
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--heading-color);
+}
+
+/* ---------- Инфо: аннонс ---------- */
+.gi-anons {
+  margin: 0 0 18px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.gi-anons b { color: var(--heading-color); font-weight: 600; }
+
+/* ---------- Цены ---------- */
+.gi-price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.gi-price__new {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 800;
+  color: var(--primary);
+}
+.gi-price__old {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.gi-save {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--success);
+  background: rgba(var(--success-rgb), 0.12);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- Кнопка покупки ---------- */
+.gi-buy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Степпер количества */
+.gi-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+  background: var(--white);
+}
+.gi-qty__btn {
+  width: 42px;
+  height: 46px;
+  border: none;
+  background: var(--light);
+  color: var(--heading-color);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.gi-qty__btn:hover { background: var(--primary); color: var(--white); }
+.gi-qty__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.gi-qty__input {
+  width: 56px;
+  height: 46px;
+  border: none;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  background: var(--white);
+  -moz-appearance: textfield;
+}
+.gi-qty__input::-webkit-outer-spin-button,
+.gi-qty__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.gi-qty__val {
+  min-width: 36px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Кнопки покупки */
+.gi-buy__btn { min-width: 210px; }
+.gi-buy__btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+.gi-buy__remove {
+  min-width: 0;
+  padding: 12px 18px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* Итого */
+.gi-total {
+  flex-basis: 100%;
+  font-size: 14px;
+  color: var(--muted);
+}
+.gi-total b { color: var(--primary); font-size: 1.15rem; }
+
+/* ---------- Описание / Характеристики (табы) ---------- */
+.good-in__tabs {
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.gi-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.gi-tab {
+  position: relative;
+  padding: 8px 2px 12px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.gi-tab::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform var(--transition);
+}
+
+.gi-tab:hover { color: var(--heading-color); }
+
+.gi-tab.is-active {
+  color: var(--primary);
+}
+
+.gi-tab.is-active::after { transform: scaleX(1); }
+
+.gi-tab-panel[hidden] { display: none; }
+
+.gi-desc__p {
+  margin: 0 0 14px;
+  max-width: none;
+  color: var(--body-color);
+  line-height: 1.7;
+}
+.gi-desc__p:last-child { margin-bottom: 0; }
+
+.good-in__specs {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.good-in__specs dt,
+.good-in__specs dd {
+  margin: 0;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.good-in__specs dt {
+  background: var(--light);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--body-color);
+}
+.good-in__specs dd {
+  font-size: 15px;
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+/* ---------- Мини-навигация по вариантам ---------- */
+.gi-mini-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.gi-mini-nav__label {
+  font-weight: 600;
+  color: var(--heading-color);
+  margin-right: 4px;
+}
+.gi-mini-nav__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--radius-btn);
+  background: var(--light);
+  color: var(--heading-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+.gi-mini-nav__link:hover,
+.gi-mini-nav__link.is-active { background: var(--primary); color: var(--white); }
+.gi-mini-nav__link.is-active { cursor: default; }
+
+/* ---------- Статусы загрузки ---------- */
+.gi-status {
+  grid-column: 1 / -1;
+  padding: 60px 20px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--muted);
+}
+.gi-status--error { color: var(--danger); }
+
+/* ---------- SEO-блок ---------- */
+.good-in__seo { display: contents; }
+
+/* ============================================================
+   ВАРИАНТ 2. gv-split — зеркало: инфо слева, галерея справа,
+   вертикальная лента миниатюр, sticky-блок покупки
+   ============================================================ */
+.gv-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+.gv-split .good-in__info   { order: 1; position: sticky; top: 24px; }
+.gv-split .good-in__gallery {
+  order: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 84px;
+  grid-template-areas: "stage thumbs";
+  gap: 12px;
+  align-items: start;
+}
+.gv-split .gi-stage         { grid-area: stage; }
+.gv-split .gi-thumbs        { grid-area: thumbs; grid-template-columns: 1fr; gap: 10px; margin-top: 0; }
+.gv-split .good-in__tabs { order: 3; }
+
+/* ============================================================
+   ВАРИАНТ 3. gv-vertical — фото + вертикальная лента слева
+   ============================================================ */
+.gv-vertical .good-in__gallery {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  grid-template-areas: "thumbs stage";
+  gap: 12px;
+  align-items: start;
+}
+.gv-vertical .gi-stage  { grid-area: stage; }
+.gv-vertical .gi-thumbs { grid-area: thumbs; grid-template-columns: 1fr; gap: 10px; margin-top: 0; }
+.gv-vertical .gi-count  { display: none; }
+
+/* ============================================================
+   ВАРИАНТ 4. gv-wide — «товарный hero» на всю ширину,
+   горизонтальная лента миниатюр, инфо под ним в 2 колонки
+   ============================================================ */
+.gv-wide { grid-template-columns: 1fr; gap: 26px; }
+.gv-wide .good-in__gallery { grid-column: 1 / -1; }
+
+.gv-wide .gi-stage {
+  aspect-ratio: 16 / 10;
+  max-height: 620px;
+  border: none;
+  border-radius: var(--radius-lg);
+}
+.gv-wide .gi-stage__img { object-fit: cover; }
+.gv-wide .gi-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(var(--ink-rgb), 0.55) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.gv-wide .gi-thumbs {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.gv-wide .gi-nav--prev { left: 20px; }
+.gv-wide .gi-nav--next { right: 20px; }
+.gv-wide .gi-count     { bottom: 16px; }
+
+.gv-wide .good-in__info {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 40px;
+}
+.gv-wide .good-in__tabs { grid-column: 1 / -1; border-top: none; padding-top: 0; }
+
+/* ============================================================
+   Адаптив
+   ============================================================ */
+@media (max-width: 991px) {
+  .good-in,
+  .gv-split,
+  .gv-wide { grid-template-columns: 1fr; gap: 28px; }
+  .gv-split .good-in__info { order: 0; position: static; }
+  .gv-wide .gi-stage { aspect-ratio: 4 / 3; }
+  .gv-wide .good-in__info { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 575px) {
+  .gi-buy { flex-direction: column; align-items: stretch; }
+  .gi-qty { justify-content: center; }
+  .gi-buy__btn { min-width: 0; width: 100%; justify-content: center; }
+  .gi-buy__remove { width: 100%; justify-content: center; }
+  .gi-total { text-align: center; }
+  .gv-wide .gi-stage { aspect-ratio: 1 / 1; }
+
+  /* Вертикальные ленты миниатюр на узких экранах — под фото */
+  .gv-split .good-in__gallery,
+  .gv-vertical .good-in__gallery {
+    grid-template-columns: 1fr;
+    grid-template-areas: "stage" "thumbs";
+  }
+  .gv-split .gi-thumbs,
+  .gv-vertical .gi-thumbs {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  }
+
+  /* Характеристики на узких экранах — в столбик */
+  .good-in__specs { grid-template-columns: 1fr; border-left: none; }
+  .good-in__specs dt,
+  .good-in__specs dd { border-right: none; }
+  .good-in__specs dt {
+    background: none;
+    padding: 10px 0 2px;
+    border-bottom: none;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .good-in__specs dd { padding: 0 0 10px; border-bottom-color: var(--border); }
+}
+/* ---------- Доп. действия на странице товара (избранное/сравнение) ---------- */
+.gi-buy__extra { display: flex; align-items: center; gap: 8px; }

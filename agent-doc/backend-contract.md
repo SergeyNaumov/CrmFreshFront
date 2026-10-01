@@ -60,6 +60,50 @@ See [components.md](components.md) and backend docs `11`/`17`.
 
 `Const.vue` understands `header`, `text`, `textarea`, `wysiwyg`, `file`, `checkbox`, `switch`, `select`.
 
+## FileNavigator
+
+`FileNavigator.vue` → `BackendBase+'/filenavigator/<config>'`. Config sets `root_directory` (`configs/svcmsadmin/filenavigator/__init__.py`, `'./'` → cwd бэкенда); chroot защищает пути. Ответы: `{success, error:[...]}` (успех — `error: []`), кроме GET.
+
+| Method | Path | Body | Success payload |
+|---|---|---|---|
+| GET | `/<config>` | — | голая строка root (`"./"`) |
+| GET | `/<config>/raw` | `?dir&download=1` | `FileResponse` (предпросмотр/скачивание; `inline`/`attachment`) |
+| POST | `/<config>/readir` | `{dir}` | `{list:[{name,type:"dir"|"file",size,mtime}]}` (`size` — байты для файлов/`null` для папок, `mtime` — unix-секунды) |
+| POST | `/<config>/readfile` | `{dir,charset="utf-8"}` | `{body}` (декод в `charset`; ошибка кодировки → `success:false`) |
+| POST | `/<config>/writefile` | `{dir,body,charset="utf-8"}` | — (создаёт/перезаписывает; родитель должен существовать) |
+| POST | `/<config>/mkdir` | `{dir}` | — (создаёт каталог; родитель должен существовать) |
+| POST | `/<config>/delete` | `{dir,name}` | — (папки рекурсивно) |
+| POST | `/<config>/move` | `{from_dir,to_dir,name}` | — |
+| POST | `/<config>/rename` | `{dir,name,new_name}` | — |
+
+`dir` — относительный путь от chroot (`.` — корень). Компонент правит файлы через `field-codelist` (язык по расширению, иначе `plain`); виды список/плитка, иконки по типу, контекстное меню (правый клик), drag&drop файлов и папок на папки и хлебные крошки. Запуск `/filenavigator/<config>/<path>` или `/filenavigator/<config>?dir=<folder>` (плюс `?charset=<cp>`, по умолчанию `utf-8`) — этот путь становится корнем навигатора (chroot), `charset` применяется к чтению/записи; изображения и pdf открываются в popup, прочие бинарные — только скачивание.
+
+Нет эндпоинтов create-folder и upload. `dir` — относительный путь от chroot (`.` — корень). Компонент правит файлы через `field-codelist` (язык по расширению, иначе `plain`).
+
+## PageConstructor
+
+`PageConstructor.vue` → `BackendBase+'/svcmsadmin/page-constructor'`. Страницы в таблице `template_page` (`id, template_id, url UNIQUE(template_id,url), header, blocks`); `blocks` — JSON-строка формата v2 (`{schema:"svcms.page_blocks", version:2, blocks:[...]}`, как в автономном `page_constructor/js/export.js`). Формат ответов `{success, errors}`.
+
+| Method | Path | Body | Payload |
+|---|---|---|---|
+| POST | `/init` | `{template_id}` | `{template:{id,header,folder}, templateBase, config:{templateBase,color,style,layout,font,engine}, theme, structure:{header,footer}, pages:[{id,url,header}]}` |
+| GET | `/page/<id>` | — | `{page:{id,template_id,url,header,blocks}}` (`blocks` — parsed) |
+| POST | `/page/save` | `{id?, template_id, url, header, blocks}` | upsert, `{id}` (url обязателен, уникален в рамках шаблона); header/footer в `blocks` заменяются канонической структурой шаблона |
+| POST | `/page/<id>/delete` | — | — |
+| GET | `/structure/<template_id>` | — | `{structure:{header,footer}}` — общие для шаблона шапка/подвал (блоки v2 или `null`); хранятся в `template_constructor.header_blocks/footer_blocks`, при пустых — берутся из первой страницы шаблона |
+| POST | `/structure/save` | `{template_id, header, footer}` | upsert шаблонных header/footer в `template_constructor` + раскладка по всем `template_page` (fan-out, пока сайт читает `blocks`) |
+| POST | `/base-pages` | `{template_id}` | `{created:[url], skipped:[url]}` — создаёт базовый набор из таблицы `template_pages_base` (19 страниц: главная, списки, детальные, 404 и пр.; блоки v2 уже с header/footer), уже существующие пропускает |
+| GET | `/theme/<id>` | — | `{theme:{color,style,layout,font}}`, каждый `{name,custom,css}`; нет строки → дефолты |
+| POST | `/theme/save` | `{template_id, axis, name, css}` | upsert оси; кастомный `css` кладётся в `template_theme_<axis>` (`is_custom=1`) и шаблон ссылается на него по имени |
+| GET | `/theme/<id>/styles.css` | — | combined `text/css`: `color → style → layout → font` из таблиц `template_theme_*` |
+| GET | `/theme-schemes/<axis>` | — | список схем (`name,label,short,descr,is_default,is_custom`) |
+| GET | `/theme-schemes/<axis>/<name>` | — | схема с `css` |
+| GET | `/theme-schemes/<axis>/<name>/file.css` | — | CSS схемы (для сайта, `text/css`) |
+| POST | `/theme-schemes/save` | `{axis,name,label,short,descr,css}` | upsert схемы (`is_custom=1` для новых) |
+| POST | `/theme-schemes/<axis>/<name>/delete` | — | удалить кастомную схему |
+
+Редактор блоков — автономный конструктор из `svcms-templates/page_constructor/`, копируется скриптом `sync_to_admin.sh` в `public/page_constructor/` и грузится в iframe. Обмен блоков через `localStorage` (`svcms.page_constructor.v1`), `templateBase` из `/init`: если http(s) — используется он, иначе локальная копия `public/page_constructor/template/` (её тоже кладёт `sync_to_admin.sh`, каталог gitignored). Базовый набор страниц — таблица `template_pages_base` (`url, header, sort, blocks`), сидируется из `base_pages.json`. Тема шаблона — таблица `template_constructor` (имена схем на шаблон) + таблицы схем `template_theme_{color,style,layout,font}` (полный CSS схем, `is_custom`); `/init` отдаёт тему в `theme`/`config`, кастомный CSS прокидывается в превью через `PAGE_CONSTRUCTOR_CONFIG.customCss` (поддержка в `preview-frame.js`). Сайт подключает `theme/<id>/styles.css` или `theme-schemes/<axis>/<name>/file.css`. Шапка и подвал шаблона — `template_constructor.header_blocks/footer_blocks` (JSON блока v2), правятся один раз на шаблон (эндпоинты `/structure/*`); на страницах в редакторе они не редактируются, а показываются плашками и подмешиваются в превью/сохранение. Миграция колонок: `routes/svcmsadmin/page_constructor/structure_migration.sql`.
+
 ## Known gaps
 
 - No `filter_extend_*` support (0 occurrences in `src/`). The backend emits such fields in `/get-filters` (except `filter_extend_checkbox/switch/datetime`, which are not converted), but `OnFilters.dynamic_component` returns `''` → the filter is not drawn.

@@ -1,0 +1,17 @@
+/* ============================================================
+   css/search.css — страница поиска (page/search.html)
+   ============================================================ */
+.search-bar { display: flex; gap: 10px; max-width: 640px; margin: 0 0 8px; }
+.search-bar .form-control { flex: 1 1 auto; }
+
+.search-section { margin-top: 44px; }
+.search-section__title { margin: 0 0 16px; font-size: var(--font-size-h3); color: var(--heading-color); }
+
+.search-results { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.search-result { padding: 16px 18px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.search-result a { font-weight: 600; color: var(--heading-color); text-decoration: none; }
+.search-result a:hover { color: var(--primary); }
+.search-result p { margin: 6px 0 0; color: var(--muted); font-size: var(--font-size-sm); line-height: 1.5; }
+.search-empty { color: var(--muted); }
+
+@media (max-width: 768px) { .search-results { grid-template-columns: 1fr; } }

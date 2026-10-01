@@ -1,0 +1,42 @@
+/* ============================================================
+   css/404.css — страница ошибки 404 (page/404.html, preview/404.html)
+   Все цвета — токены темы.
+   ============================================================ */
+.nf {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.nf__media {
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.18), rgba(var(--primary-rgb), 0.05));
+}
+
+.nf__img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.nf__code {
+  margin: 0;
+  font-size: clamp(56px, 10vw, 120px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--primary);
+}
+
+.nf__title { margin: 8px 0 14px; font-size: var(--font-size-h2); color: var(--heading-color); }
+
+.nf__text { margin: 0 0 22px; max-width: 520px; color: var(--muted); line-height: 1.65; }
+
+.nf__search { display: flex; gap: 10px; margin-bottom: 18px; max-width: 520px; }
+.nf__search .form-control { flex: 1 1 auto; }
+
+.nf__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+@media (max-width: 991px) {
+  .nf { grid-template-columns: 1fr; gap: 24px; }
+  .nf__media { order: -1; }
+}

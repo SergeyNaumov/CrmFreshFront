@@ -1,0 +1,20 @@
+/* ============================================================
+   themes/layout/compact.css — плотная компоновка.
+
+   Узкие боковые отступы, плотный вертикальный ритм, уменьшенный
+   скейл типографики. Цвет/форма — из осей color/style.
+   ============================================================ */
+:root {
+  --container: 1200px;
+  --gutter: 16px;
+  --section-gap: 56px;
+  --header-height: 68px;
+  --font-size-h1: 2.15rem;
+  --font-size-h2: 1.75rem;
+  --font-size-h3: 1.25rem;
+  --grid-gap: 16px;
+  --head-gap: 16px;
+  --head-space: 28px;
+}
+
+.section-head { gap: 16px; }

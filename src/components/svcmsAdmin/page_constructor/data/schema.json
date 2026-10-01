@@ -1,0 +1,6604 @@
+{
+  "version": 1,
+  "schema_id": "svcms.page_blocks",
+  "comment": [
+    "Источник истины для конструктора страниц (page_constructor).",
+    "Из этого файла agent-doc/tools/gen_page_constructor.py (репозиторий",
+    "svcms-templates) генерирует data/schema.js (window.PAGE_CONSTRUCTOR_SCHEMA).",
+    "Имена типов/вариантов сверяются с templates/_shared/contract/blocks.json,",
+    "значения fill/anim — с templates/_shared/contract/classes.json."
+  ],
+  "envelope": {
+    "comment": "Поля, общие для любого блока (лежат в JSON рядом с params/items).",
+    "fields": [
+      "type",
+      "variant",
+      "fill",
+      "anim",
+      "bleed"
+    ],
+    "fill": [
+      "",
+      "fill-1",
+      "fill-2",
+      "fill-3",
+      "fill-4",
+      "fill-5"
+    ],
+    "anim": [
+      "",
+      "anim-zoom",
+      "anim-clip",
+      "no-anim"
+    ],
+    "class_map": {
+      "fill": "block--<value>",
+      "anim": "block--<value>",
+      "bleed": "block--bleed"
+    }
+  },
+  "types": {
+    "text": {
+      "title": "Текстовый блок",
+      "group": "Контент",
+      "partial": "block/text_block.html",
+      "status": "planned",
+      "default_variant": "prose",
+      "variants": {
+        "prose": {
+          "title": "Проза",
+          "params": [
+            {
+              "name": "eyebrow",
+              "label": "Надзаголовок",
+              "kind": "text",
+              "default": "Раздел 01 · О компании"
+            },
+            {
+              "name": "title",
+              "label": "Заголовок (H1)",
+              "kind": "text",
+              "default": "Заголовок раздела"
+            },
+            {
+              "name": "leadOn",
+              "label": "Показывать лид",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "lead",
+              "label": "Лид",
+              "kind": "textarea",
+              "default": "Короткое вступление к разделу."
+            },
+            {
+              "name": "p1",
+              "label": "Основной текст",
+              "kind": "textarea",
+              "default": "Основной текст раздела о компании и подходе к работе."
+            },
+            {
+              "name": "list",
+              "label": "Список преимуществ",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "quote",
+              "label": "Врезная цитата",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "quoteText",
+              "label": "Текст цитаты",
+              "kind": "textarea",
+              "default": "Мы делаем сложное простым."
+            }
+          ]
+        },
+        "split": {
+          "title": "Текст + изображение",
+          "params": [
+            {
+              "name": "rev",
+              "label": "Сторона изображения",
+              "kind": "select",
+              "default": false,
+              "options": [
+                {
+                  "value": false,
+                  "label": "Слева"
+                },
+                {
+                  "value": true,
+                  "label": "Справа"
+                }
+              ]
+            },
+            {
+              "name": "eyebrow",
+              "label": "Надзаголовок",
+              "kind": "text",
+              "default": "Возможность"
+            },
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Текст рядом с изображением"
+            },
+            {
+              "name": "lead",
+              "label": "Лид",
+              "kind": "textarea",
+              "default": "Короткое пояснение к блоку."
+            },
+            {
+              "name": "p1",
+              "label": "Текст",
+              "kind": "textarea",
+              "default": "Описание возможности и выгоды для покупателя."
+            },
+            {
+              "name": "btnText",
+              "label": "Текст кнопки",
+              "kind": "text",
+              "default": "Подробнее"
+            },
+            {
+              "name": "btnUrl",
+              "label": "URL кнопки",
+              "kind": "text",
+              "default": "/catalog"
+            }
+          ]
+        },
+        "feature": {
+          "title": "Особенности",
+          "params": [
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "select",
+              "default": "3",
+              "options": [
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "3",
+                  "label": "3"
+                },
+                {
+                  "value": "4",
+                  "label": "4"
+                }
+              ]
+            },
+            {
+              "name": "count",
+              "label": "Элементов",
+              "kind": "select",
+              "default": "6",
+              "options": [
+                {
+                  "value": "3",
+                  "label": "3"
+                },
+                {
+                  "value": "6",
+                  "label": "6"
+                }
+              ]
+            },
+            {
+              "name": "iconMode",
+              "label": "Иконки",
+              "kind": "select",
+              "default": "svg",
+              "options": [
+                {
+                  "value": "svg",
+                  "label": "SVG-спрайт"
+                },
+                {
+                  "value": "emoji",
+                  "label": "Эмодзи"
+                }
+              ]
+            }
+          ],
+          "items": {
+            "singular": "особенность",
+            "fields": [
+              {
+                "name": "icon",
+                "label": "Иконка (hook)",
+                "kind": "text",
+                "default": "i-check"
+              },
+              {
+                "name": "emoji",
+                "label": "Эмодзи",
+                "kind": "text",
+                "default": "✅"
+              },
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Особенность"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Короткое описание."
+              }
+            ],
+            "default": [
+              {
+                "icon": "i-check",
+                "emoji": "✅",
+                "title": "Гарантия",
+                "text": "Гарантия на весь ассортимент."
+              },
+              {
+                "icon": "i-clock",
+                "emoji": "⏱️",
+                "title": "Быстро",
+                "text": "Доставка в день заказа."
+              },
+              {
+                "icon": "i-heart",
+                "emoji": "❤️",
+                "title": "Сервис",
+                "text": "Поддержка на всех этапах."
+              }
+            ]
+          }
+        },
+        "stats": {
+          "title": "Цифры",
+          "params": [
+            {
+              "name": "count",
+              "label": "Показателей",
+              "kind": "select",
+              "default": "4",
+              "options": [
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "4",
+                  "label": "4"
+                }
+              ]
+            }
+          ],
+          "items": {
+            "singular": "показатель",
+            "fields": [
+              {
+                "name": "num",
+                "label": "Значение",
+                "kind": "text",
+                "default": "100+"
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/preview/certificates/cert-1.webp"
+              }
+            ],
+            "default": [
+              {
+                "title": "Сертификат 1",
+                "photo": "images/preview/certificates/cert-1.webp"
+              },
+              {
+                "num": "100+",
+                "label": "позиций"
+              },
+              {
+                "num": "24/7",
+                "label": "поддержка"
+              },
+              {
+                "num": "98%",
+                "label": "довольных клиентов"
+              }
+            ]
+          }
+        },
+        "quote": {
+          "title": "Цитата",
+          "params": [
+            {
+              "name": "text",
+              "label": "Текст цитаты",
+              "kind": "textarea",
+              "default": "Работа с нами — это просто и предсказуемо."
+            },
+            {
+              "name": "name",
+              "label": "Имя",
+              "kind": "text",
+              "default": "Анна Смирнова"
+            },
+            {
+              "name": "role",
+              "label": "Роль",
+              "kind": "text",
+              "default": "постоянный покупатель, Москва"
+            }
+          ]
+        },
+        "steps": {
+          "title": "Шаги",
+          "params": [
+            {
+              "name": "count",
+              "label": "Шагов",
+              "kind": "select",
+              "default": "4",
+              "options": [
+                {
+                  "value": "3",
+                  "label": "3"
+                },
+                {
+                  "value": "4",
+                  "label": "4"
+                }
+              ]
+            }
+          ],
+          "items": {
+            "singular": "шаг",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Шаг"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Описание шага."
+              }
+            ],
+            "default": [
+              {
+                "title": "Заявка",
+                "text": "Оставьте заявку на сайте."
+              },
+              {
+                "title": "Расчёт",
+                "text": "Мы рассчитаем стоимость."
+              },
+              {
+                "title": "Оплата",
+                "text": "Удобный способ оплаты."
+              },
+              {
+                "title": "Доставка",
+                "text": "Доставим в срок."
+              }
+            ]
+          }
+        },
+        "cta": {
+          "title": "Призыв к действию",
+          "params": [
+            {
+              "name": "eyebrow",
+              "label": "Надзаголовок",
+              "kind": "text",
+              "default": "Выгодное предложение"
+            },
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "textarea",
+              "default": "−20% на все товары до конца недели"
+            },
+            {
+              "name": "text",
+              "label": "Текст",
+              "kind": "textarea",
+              "default": "Успейте оформить заказ по акции."
+            },
+            {
+              "name": "btnText",
+              "label": "Текст кнопки",
+              "kind": "text",
+              "default": "Смотреть акции"
+            },
+            {
+              "name": "btnUrl",
+              "label": "URL кнопки",
+              "kind": "text",
+              "default": "/catalog"
+            }
+          ]
+        },
+        "faq": {
+          "title": "Вопросы и ответы",
+          "params": [
+            {
+              "name": "count",
+              "label": "Вопросов",
+              "kind": "select",
+              "default": "5",
+              "options": [
+                {
+                  "value": "3",
+                  "label": "3"
+                },
+                {
+                  "value": "5",
+                  "label": "5"
+                }
+              ]
+            },
+            {
+              "name": "firstOpen",
+              "label": "Первый раскрыт",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "вопрос",
+            "fields": [
+              {
+                "name": "q",
+                "label": "Вопрос",
+                "kind": "text",
+                "default": "Вопрос"
+              },
+              {
+                "name": "a",
+                "label": "Ответ",
+                "kind": "textarea",
+                "default": "Ответ на вопрос."
+              }
+            ],
+            "default": [
+              {
+                "q": "Как оформить заказ?",
+                "a": "Через корзину на сайте или по телефону."
+              },
+              {
+                "q": "Есть ли доставка?",
+                "a": "Да, доставляем по всей России."
+              },
+              {
+                "q": "Как оплатить?",
+                "a": "Картой онлайн или при получении."
+              }
+            ]
+          }
+        },
+        "cards": {
+          "title": "Карточки",
+          "params": [
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "select",
+              "default": "3",
+              "options": [
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "3",
+                  "label": "3"
+                }
+              ]
+            },
+            {
+              "name": "linkText",
+              "label": "Текст ссылки",
+              "kind": "text",
+              "default": "Подробнее"
+            }
+          ],
+          "items": {
+            "singular": "карточка",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Карточка"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Описание карточки."
+              }
+            ],
+            "default": [
+              {
+                "title": "Каталог",
+                "text": "Широкий выбор товаров."
+              },
+              {
+                "title": "Доставка",
+                "text": "Быстро и бережно."
+              },
+              {
+                "title": "Гарантия",
+                "text": "Честные условия."
+              }
+            ]
+          }
+        },
+        "article": {
+          "title": "Статья",
+          "params": [
+            {
+              "name": "sections",
+              "label": "Разделов",
+              "kind": "select",
+              "default": "4",
+              "options": [
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "4",
+                  "label": "4"
+                }
+              ]
+            },
+            {
+              "name": "toc",
+              "label": "Оглавление",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "раздел",
+            "fields": [
+              {
+                "name": "id",
+                "label": "Anchor",
+                "kind": "text",
+                "default": "section-1"
+              },
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Раздел"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Текст раздела."
+              }
+            ],
+            "default": [
+              {
+                "id": "intro",
+                "title": "Введение",
+                "text": "О чём эта статья."
+              },
+              {
+                "id": "details",
+                "title": "Подробности",
+                "text": "Детали и примеры."
+              }
+            ]
+          }
+        },
+        "logos": {
+          "title": "Логотипы",
+          "params": [
+            {
+              "name": "count",
+              "label": "Логотипов",
+              "kind": "select",
+              "default": "6",
+              "options": [
+                {
+                  "value": "4",
+                  "label": "4"
+                },
+                {
+                  "value": "6",
+                  "label": "6"
+                }
+              ]
+            }
+          ],
+          "items": {
+            "singular": "логотип",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Название",
+                "kind": "text",
+                "default": "Бренд"
+              }
+            ],
+            "default": [
+              {
+                "name": "Бренд A"
+              },
+              {
+                "name": "Бренд B"
+              },
+              {
+                "name": "Бренд C"
+              },
+              {
+                "name": "Бренд D"
+              }
+            ]
+          }
+        },
+        "chart": {
+          "title": "График",
+          "params": [
+            {
+              "name": "count",
+              "label": "Диаграмм",
+              "kind": "select",
+              "default": "3",
+              "options": [
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "3",
+                  "label": "3"
+                }
+              ]
+            }
+          ],
+          "items": {
+            "singular": "диаграмма",
+            "fields": [
+              {
+                "name": "kind",
+                "label": "Тип",
+                "kind": "select",
+                "default": "bar",
+                "options": [
+                  {
+                    "value": "bar",
+                    "label": "Столбцы"
+                  },
+                  {
+                    "value": "line",
+                    "label": "Линия"
+                  },
+                  {
+                    "value": "donut",
+                    "label": "Кольцо"
+                  }
+                ]
+              },
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Диаграмма"
+              }
+            ],
+            "default": [
+              {
+                "kind": "bar",
+                "title": "Продажи"
+              },
+              {
+                "kind": "line",
+                "title": "Динамика"
+              },
+              {
+                "kind": "donut",
+                "title": "Структура"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "text",
+        "текст",
+        "абзац",
+        "проза",
+        "prose",
+        "feature",
+        "stats",
+        "quote",
+        "steps",
+        "cta",
+        "cards",
+        "article",
+        "logos",
+        "chart",
+        "цифры",
+        "цитата",
+        "шаги",
+        "карточки",
+        "логотипы",
+        "график"
+      ]
+    },
+    "slider": {
+      "title": "Слайдер",
+      "group": "Медиа",
+      "partial": "block/hero_slider.html",
+      "status": "planned",
+      "default_variant": "hero",
+      "variants": {
+        "hero": {
+          "title": "Hero",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "slider_list"
+            },
+            {
+              "name": "animation",
+              "label": "Анимация входа",
+              "kind": "select",
+              "default": "rise",
+              "options": [
+                {
+                  "value": "rise",
+                  "label": "Rise"
+                },
+                {
+                  "value": "fade",
+                  "label": "Fade"
+                },
+                {
+                  "value": "zoom",
+                  "label": "Zoom"
+                },
+                {
+                  "value": "left",
+                  "label": "Left"
+                },
+                {
+                  "value": "right",
+                  "label": "Right"
+                },
+                {
+                  "value": "flip",
+                  "label": "Flip"
+                },
+                {
+                  "value": "clip",
+                  "label": "Clip"
+                },
+                {
+                  "value": "blur",
+                  "label": "Blur"
+                }
+              ]
+            },
+            {
+              "name": "transition",
+              "label": "Переход",
+              "kind": "select",
+              "default": "fade",
+              "options": [
+                {
+                  "value": "fade",
+                  "label": "Fade"
+                },
+                {
+                  "value": "slide",
+                  "label": "Slide"
+                },
+                {
+                  "value": "zoom",
+                  "label": "Zoom"
+                },
+                {
+                  "value": "fly",
+                  "label": "Fly"
+                },
+                {
+                  "value": "flip",
+                  "label": "Flip"
+                },
+                {
+                  "value": "clip",
+                  "label": "Clip"
+                }
+              ]
+            },
+            {
+              "name": "speed",
+              "label": "Скорость",
+              "kind": "number",
+              "default": 0.7,
+              "step": 0.05,
+              "min": 0.1
+            },
+            {
+              "name": "autoplay",
+              "label": "Автопрокрутка, мс",
+              "kind": "number",
+              "default": 5000,
+              "step": 500,
+              "min": 0
+            },
+            {
+              "name": "duration",
+              "label": "Длительность, мс",
+              "kind": "number",
+              "default": 5000,
+              "step": 500,
+              "min": 500
+            },
+            {
+              "name": "height",
+              "label": "Высота, px",
+              "kind": "number",
+              "default": 0,
+              "step": 10,
+              "min": 0
+            },
+            {
+              "name": "start",
+              "label": "Стартовый слайд",
+              "kind": "number",
+              "default": 0,
+              "step": 1,
+              "min": 0
+            },
+            {
+              "name": "loop",
+              "label": "Зацикливать",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "arrows",
+              "label": "Стрелки",
+              "kind": "select",
+              "default": null,
+              "options": [
+                {
+                  "value": null,
+                  "label": "По умолчанию"
+                },
+                {
+                  "value": true,
+                  "label": "Да"
+                },
+                {
+                  "value": false,
+                  "label": "Нет"
+                }
+              ]
+            },
+            {
+              "name": "dots",
+              "label": "Точки",
+              "kind": "select",
+              "default": null,
+              "options": [
+                {
+                  "value": null,
+                  "label": "По умолчанию"
+                },
+                {
+                  "value": true,
+                  "label": "Да"
+                },
+                {
+                  "value": false,
+                  "label": "Нет"
+                }
+              ]
+            }
+          ],
+          "items": {
+            "singular": "слайд",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Заголовок слайда"
+              },
+              {
+                "name": "body",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Описание слайда."
+              },
+              {
+                "name": "url",
+                "label": "URL кнопки",
+                "kind": "text",
+                "default": "/catalog"
+              },
+              {
+                "name": "button",
+                "label": "Текст кнопки",
+                "kind": "text",
+                "default": "Подробнее"
+              },
+              {
+                "name": "photo",
+                "label": "Изображение",
+                "kind": "text",
+                "default": "images/slider/slider-1.webp"
+              }
+            ],
+            "default": [
+              {
+                "header": "Первый слайд",
+                "body": "Краткое описание предложения.",
+                "url": "/catalog",
+                "button": "Смотреть",
+                "photo": "images/slider/slider-1.webp"
+              },
+              {
+                "header": "Второй слайд",
+                "body": "Ещё одно преимущество.",
+                "url": "/catalog",
+                "button": "Подробнее",
+                "photo": "images/slider/slider-2.webp"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "slider",
+        "слайдер",
+        "hero",
+        "баннер",
+        "карусель",
+        "banner"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "catalog": {
+      "title": "Каталог",
+      "group": "Каталог",
+      "partial": "block/catalog.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "cat-grid",
+        "cat-card",
+        "cat-rubs",
+        "cat-grid--flip",
+        "cat-grid--rise",
+        "cat-grid--zoom",
+        "cat-enter--fade",
+        "cat-enter--rise"
+      ],
+      "default_variant": "grid",
+      "variants": {
+        "grid": {
+          "title": "Сетка рубрик",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "catalog_list"
+            },
+            {
+              "name": "columns",
+              "label": "Колонки",
+              "kind": "number",
+              "default": 3,
+              "min": 1,
+              "max": 6,
+              "step": 1
+            },
+            {
+              "name": "effect",
+              "label": "Эффект",
+              "kind": "select",
+              "default": "rise",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "Нет"
+                },
+                {
+                  "value": "rise",
+                  "label": "Rise"
+                },
+                {
+                  "value": "flip",
+                  "label": "Flip"
+                },
+                {
+                  "value": "zoom",
+                  "label": "Zoom"
+                }
+              ]
+            },
+            {
+              "name": "enter",
+              "label": "Появление",
+              "kind": "select",
+              "default": "none",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "Нет"
+                },
+                {
+                  "value": "rise",
+                  "label": "Rise"
+                },
+                {
+                  "value": "fade",
+                  "label": "Fade"
+                }
+              ]
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "text",
+              "default": "catalog"
+            }
+          ],
+          "items": {
+            "singular": "рубрика",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Название",
+                "kind": "text",
+                "default": "Рубрика"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/catalog"
+              }
+            ],
+            "default": [
+              {
+                "title": "Смартфоны",
+                "url": "/catalog/smartfony"
+              },
+              {
+                "title": "Ноутбуки",
+                "url": "/catalog/noutbuki"
+              },
+              {
+                "title": "Аксессуары",
+                "url": "/catalog/aksessuary"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "catalog",
+        "каталог",
+        "рубрикатор",
+        "категории"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "goods": {
+      "title": "Блок товаров",
+      "group": "Каталог",
+      "partial": "block/goods_block.html",
+      "status": "planned",
+      "default_variant": "grid",
+      "comment": "Товары подгружаются движком (LIST); конструктор задаёт только параметры показа.",
+      "variants": {
+        "grid": {
+          "title": "Сетка",
+          "params_ref": "goods_common"
+        },
+        "rows": {
+          "title": "Строки",
+          "params_ref": "goods_common"
+        },
+        "strip": {
+          "title": "Лента",
+          "params_ref": "goods_common"
+        }
+      },
+      "shared_params": {
+        "goods_common": [
+          {
+            "name": "varname",
+            "label": "Название переменной",
+            "kind": "text",
+            "default": "goods_list"
+          },
+          {
+            "name": "dataKey",
+            "label": "Данные превью",
+            "kind": "select",
+            "default": "goods",
+            "options": [
+              {
+                "value": "goods",
+                "label": "Общий каталог"
+              },
+              {
+                "value": "good_new",
+                "label": "Новинки"
+              },
+              {
+                "value": "good_specpredl",
+                "label": "Спецпредложения"
+              },
+              {
+                "value": "good_popular",
+                "label": "Популярные"
+              }
+            ]
+          },
+          {
+            "name": "show",
+            "label": "Тип показа",
+            "kind": "select",
+            "default": "grid",
+            "options": [
+              {
+                "value": "carousel",
+                "label": "Карусель"
+              },
+              {
+                "value": "grid",
+                "label": "Сетка"
+              },
+              {
+                "value": "compact",
+                "label": "Компакт"
+              },
+              {
+                "value": "rows",
+                "label": "Строки"
+              },
+              {
+                "value": "showmore",
+                "label": "Показать ещё"
+              },
+              {
+                "value": "feature",
+                "label": "Товар дня"
+              },
+              {
+                "value": "tabs",
+                "label": "Вкладки"
+              },
+              {
+                "value": "strip",
+                "label": "Лента"
+              }
+            ]
+          },
+          {
+            "name": "cols",
+            "label": "Колонки",
+            "kind": "select",
+            "default": "0",
+            "options": [
+              {
+                "value": "0",
+                "label": "Авто"
+              },
+              {
+                "value": "1",
+                "label": "1"
+              },
+              {
+                "value": "2",
+                "label": "2"
+              },
+              {
+                "value": "3",
+                "label": "3"
+              },
+              {
+                "value": "4",
+                "label": "4"
+              },
+              {
+                "value": "5",
+                "label": "5"
+              },
+              {
+                "value": "6",
+                "label": "6"
+              }
+            ]
+          },
+          {
+            "name": "animation",
+            "label": "Анимация",
+            "kind": "select",
+            "default": "rise",
+            "options": [
+              {
+                "value": "none",
+                "label": "Нет"
+              },
+              {
+                "value": "fade",
+                "label": "Fade"
+              },
+              {
+                "value": "rise",
+                "label": "Rise"
+              },
+              {
+                "value": "zoom",
+                "label": "Zoom"
+              },
+              {
+                "value": "flip",
+                "label": "Flip"
+              },
+              {
+                "value": "wave",
+                "label": "Wave"
+              }
+            ]
+          },
+          {
+            "name": "types",
+            "label": "Тип товаров",
+            "kind": "select",
+            "default": "1",
+            "options": [
+              {
+                "value": "0",
+                "label": "0"
+              },
+              {
+                "value": "1",
+                "label": "1"
+              },
+              {
+                "value": "2",
+                "label": "2"
+              }
+            ]
+          },
+          {
+            "name": "selection",
+            "label": "Выборка",
+            "kind": "select",
+            "default": "all",
+            "options": [
+              {
+                "value": "all",
+                "label": "Все"
+              },
+              {
+                "value": "new",
+                "label": "Новинки"
+              },
+              {
+                "value": "specpredl",
+                "label": "Спецпредложения"
+              },
+              {
+                "value": "action",
+                "label": "Акции"
+              }
+            ]
+          },
+          {
+            "name": "limit",
+            "label": "Лимит",
+            "kind": "select",
+            "default": "0",
+            "options": [
+              {
+                "value": "0",
+                "label": "Все"
+              },
+              {
+                "value": "4",
+                "label": "4"
+              },
+              {
+                "value": "6",
+                "label": "6"
+              },
+              {
+                "value": "8",
+                "label": "8"
+              },
+              {
+                "value": "12",
+                "label": "12"
+              }
+            ]
+          },
+          {
+            "name": "title",
+            "label": "Заголовок",
+            "kind": "text",
+            "default": "Новинки"
+          },
+          {
+            "name": "sub",
+            "label": "Текст под заголовком",
+            "kind": "text",
+            "default": "Самые свежие модели сезона"
+          },
+          {
+            "name": "linkText",
+            "label": "Текст ссылки",
+            "kind": "text",
+            "default": "Все товары"
+          },
+          {
+            "name": "linkHref",
+            "label": "URL ссылки",
+            "kind": "text",
+            "default": "good_list.html"
+          },
+          {
+            "name": "autoplay",
+            "label": "Автопрокрутка, мс",
+            "kind": "select",
+            "default": "0",
+            "options": [
+              {
+                "value": "0",
+                "label": "Выкл"
+              },
+              {
+                "value": "3500",
+                "label": "3500"
+              },
+              {
+                "value": "5000",
+                "label": "5000"
+              }
+            ]
+          },
+          {
+            "name": "arrows",
+            "label": "Стрелки",
+            "kind": "bool",
+            "default": true
+          }
+        ]
+      },
+      "keywords": [
+        "goods",
+        "товары",
+        "витрина",
+        "products",
+        "goods-block"
+      ],
+      "data": true,
+      "views": true
+    },
+    "advantages": {
+      "title": "Преимущества",
+      "group": "Контент",
+      "partial": "block/advantages.html",
+      "status": "used",
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Преимущества",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "advantages_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Почему мы"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "преимущество",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Преимущество"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Описание преимущества."
+              },
+              {
+                "name": "icon",
+                "label": "Иконка (hook)",
+                "kind": "text",
+                "default": "i-check"
+              }
+            ],
+            "default": [
+              {
+                "header": "Быстрая доставка",
+                "text": "Доставим за 1–2 дня по городу, бесплатно от 5 000 ₽",
+                "icon": "i-truck"
+              },
+              {
+                "header": "Официальная гарантия",
+                "text": "Все товары сертифицированы, гарантия до 24 месяцев",
+                "icon": "i-shield"
+              },
+              {
+                "header": "Удобная оплата",
+                "text": "Карты, наличные, СБП и рассрочка на 12 месяцев",
+                "icon": "i-payment"
+              },
+              {
+                "header": "Поддержка 24/7",
+                "text": "Менеджеры на связи в любое время суток",
+                "icon": "i-support"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "advantages",
+        "преимущества",
+        "фишки",
+        "плюсы"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "reviews": {
+      "title": "Отзывы",
+      "group": "Контент",
+      "partial": "block/reviews.html",
+      "status": "used",
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Отзывы",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "reviews_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Отзывы клиентов"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "отзыв",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Имя",
+                "kind": "text",
+                "default": "Имя"
+              },
+              {
+                "name": "role",
+                "label": "Роль/город",
+                "kind": "text",
+                "default": "покупатель"
+              },
+              {
+                "name": "text",
+                "label": "Текст отзыва",
+                "kind": "textarea",
+                "default": "Текст отзыва."
+              }
+            ],
+            "default": [
+              {
+                "name": "Анна",
+                "role": "Москва",
+                "text": "Всё понравилось, доставили быстро."
+              },
+              {
+                "name": "Игорь",
+                "role": "СПб",
+                "text": "Хороший сервис и цены."
+              },
+              {
+                "name": "Мария",
+                "role": "Казань",
+                "text": "Буду обращаться ещё."
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "reviews",
+        "отзывы",
+        "мнения"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "clients": {
+      "title": "Клиенты",
+      "group": "Контент",
+      "partial": "block/clients.html",
+      "status": "used",
+      "default_variant": "side",
+      "variants": {
+        "side": {
+          "title": "Клиенты (карусель)",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "clients_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Нам доверяют"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "клиент",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Название",
+                "kind": "text",
+                "default": "Клиент"
+              },
+              {
+                "name": "logo",
+                "label": "Логотип",
+                "kind": "image",
+                "default": ""
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": ""
+              }
+            ],
+            "default": [
+              {
+                "name": "Brand 1",
+                "logo": "images/brand-1.svg",
+                "url": ""
+              },
+              {
+                "name": "Brand 2",
+                "logo": "images/brand-2.svg",
+                "url": ""
+              },
+              {
+                "name": "Brand 3",
+                "logo": "images/brand-3.svg",
+                "url": ""
+              },
+              {
+                "name": "Brand 4",
+                "logo": "images/brand-4.svg",
+                "url": ""
+              },
+              {
+                "name": "Brand 5",
+                "logo": "images/brand-5.svg",
+                "url": ""
+              },
+              {
+                "name": "Brand 6",
+                "logo": "images/brand-6.svg",
+                "url": ""
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "clients",
+        "клиенты",
+        "партнёры",
+        "логотипы клиентов"
+      ],
+      "data": true,
+      "shared_params": {},
+      "views": true
+    },
+    "services": {
+      "title": "Услуги",
+      "group": "Услуги",
+      "partial": "block/services_tiles.html",
+      "status": "local:t1",
+      "unavailable_in_t2": true,
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Услуги",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "services_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Наши услуги"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "услуга",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Услуга"
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "image",
+                "default": ""
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/service"
+              }
+            ],
+            "default": [
+              {
+                "header": "Доставка и подъём техники",
+                "photo": "images/preview/service/service_1.webp",
+                "url": "/service/delivery"
+              },
+              {
+                "header": "Сборка и установка",
+                "photo": "images/preview/service/service_2.webp",
+                "url": "/service/install"
+              },
+              {
+                "header": "Настройка и подключение",
+                "photo": "images/preview/service/service_3.webp",
+                "url": "/service/setup"
+              },
+              {
+                "header": "Ремонт и диагностика",
+                "photo": "images/preview/service/service_4.webp",
+                "url": "/service/repair"
+              },
+              {
+                "header": "Установка умного дома",
+                "photo": "images/preview/service/service_5.webp",
+                "url": "/service/smarthome"
+              },
+              {
+                "header": "Обслуживание и поддержка",
+                "photo": "images/preview/service/service_6.webp",
+                "url": "/service/support"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "services",
+        "услуги",
+        "плитки услуг"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "faq": {
+      "title": "FAQ",
+      "group": "Контент",
+      "partial": "block/faq_block.html",
+      "status": "used",
+      "default_variant": "faq",
+      "variants": {
+        "faq": {
+          "title": "Вопросы и ответы",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "faq_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Частые вопросы"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "вопрос",
+            "fields": [
+              {
+                "name": "q",
+                "label": "Вопрос",
+                "kind": "text",
+                "default": "Вопрос"
+              },
+              {
+                "name": "a",
+                "label": "Ответ",
+                "kind": "textarea",
+                "default": "Ответ."
+              }
+            ],
+            "default": [
+              {
+                "q": "Как сделать заказ?",
+                "a": "Оформите заказ на сайте."
+              },
+              {
+                "q": "Сколько идёт доставка?",
+                "a": "От 1 до 5 дней."
+              },
+              {
+                "q": "Есть ли возврат?",
+                "a": "Да, в течение 14 дней."
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "faq",
+        "вопросы",
+        "ответы",
+        "частые вопросы",
+        "q&a"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "header": {
+      "title": "Шапка сайта",
+      "group": "Структура",
+      "partial": "block/header.html",
+      "status": "used",
+      "structural": true,
+      "once": true,
+      "check": "strict",
+      "contract_classes": [
+        "header",
+        "topbar",
+        "header__main",
+        "header__nav",
+        "header__actions",
+        "header__mobile"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Шапка",
+          "params": [
+            {
+              "name": "layout",
+              "label": "Вид шапки",
+              "kind": "select",
+              "default": "classic",
+              "options": [
+                {
+                  "value": "classic",
+                  "label": "Классическая"
+                },
+                {
+                  "value": "minimal",
+                  "label": "Минимальная"
+                },
+                {
+                  "value": "two",
+                  "label": "Двухстрочная"
+                },
+                {
+                  "value": "center",
+                  "label": "Центрированная"
+                },
+                {
+                  "value": "account",
+                  "label": "С акцентом на вход"
+                }
+              ]
+            },
+            {
+              "name": "sticky",
+              "label": "Прилипающая",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "topbar",
+              "label": "Верхняя полоса",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "phone",
+              "label": "Телефон",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "email",
+              "label": "E-mail",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "workTime",
+              "label": "Часы работы",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "nav",
+              "label": "Меню",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "favorite",
+              "label": "Избранное",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "compare",
+              "label": "Сравнение",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "cart",
+              "label": "Корзина",
+              "kind": "bool",
+              "default": true
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "header",
+        "шапка",
+        "верхняя панель",
+        "меню",
+        "навигация",
+        "nav",
+        "логотип",
+        "search"
+      ]
+    },
+    "footer": {
+      "title": "Подвал сайта",
+      "group": "Структура",
+      "partial": "block/footer.html",
+      "status": "used",
+      "structural": true,
+      "once": true,
+      "check": "strict",
+      "contract_classes": [
+        "footer",
+        "footer__grid",
+        "socials"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Подвал",
+          "params": [
+            {
+              "name": "columns",
+              "label": "Колонок",
+              "kind": "select",
+              "default": "4",
+              "options": [
+                {
+                  "value": "3",
+                  "label": "3"
+                },
+                {
+                  "value": "4",
+                  "label": "4"
+                }
+              ]
+            },
+            {
+              "name": "catalog",
+              "label": "Колонка каталога",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "contacts",
+              "label": "Контакты",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "socials",
+              "label": "Соцсети",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "note",
+              "label": "Дисклеймер",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "copyright",
+              "label": "Копирайт",
+              "kind": "text",
+              "default": "© 2026 Компания"
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "footer",
+        "подвал",
+        "футер",
+        "низ сайта",
+        "соцсети",
+        "copyright"
+      ]
+    },
+    "product_card": {
+      "title": "Карточка товара",
+      "group": "Каталог",
+      "partial": "block/product_card.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "product-card",
+        "product-row"
+      ],
+      "default_variant": "card",
+      "variants": {
+        "card": {
+          "title": "Карточка (сетка)",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "goods_list"
+            },
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "select",
+              "default": "4",
+              "options": [
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "3",
+                  "label": "3"
+                },
+                {
+                  "value": "4",
+                  "label": "4"
+                },
+                {
+                  "value": "5",
+                  "label": "5"
+                }
+              ]
+            },
+            {
+              "name": "showAnons",
+              "label": "Показывать анонс",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showBadges",
+              "label": "Бейджи",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showFavorite",
+              "label": "Избранное",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showCompare",
+              "label": "Сравнение",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showBuy",
+              "label": "Кнопка «В корзину»",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "товар",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Товар"
+              },
+              {
+                "name": "price",
+                "label": "Цена",
+                "kind": "text",
+                "default": "9 990 ₽"
+              },
+              {
+                "name": "oldPrice",
+                "label": "Старая цена",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/good/good_1_1.webp"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/good"
+              },
+              {
+                "name": "badge",
+                "label": "Бейдж",
+                "kind": "select",
+                "default": "",
+                "options": [
+                  {
+                    "value": "",
+                    "label": "Нет"
+                  },
+                  {
+                    "value": "new",
+                    "label": "Новинка"
+                  },
+                  {
+                    "value": "hit",
+                    "label": "Хит"
+                  },
+                  {
+                    "value": "sale",
+                    "label": "Акция"
+                  }
+                ]
+              }
+            ],
+            "default": [
+              {
+                "header": "Товар 1",
+                "price": "9 990 ₽",
+                "oldPrice": "12 990 ₽",
+                "photo": "images/good/good_1_1.webp",
+                "url": "/good/1",
+                "badge": "sale"
+              },
+              {
+                "header": "Товар 2",
+                "price": "14 500 ₽",
+                "oldPrice": "",
+                "photo": "images/good/good_2_1.webp",
+                "url": "/good/2",
+                "badge": "new"
+              },
+              {
+                "header": "Товар 3",
+                "price": "7 200 ₽",
+                "oldPrice": "",
+                "photo": "images/good/good_3_1.webp",
+                "url": "/good/3",
+                "badge": ""
+              }
+            ]
+          }
+        },
+        "row": {
+          "title": "Карточка (строка)",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "goods_list"
+            },
+            {
+              "name": "cols",
+              "label": "Колонок в строке",
+              "kind": "select",
+              "default": "2",
+              "options": [
+                {
+                  "value": "1",
+                  "label": "1"
+                },
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "3",
+                  "label": "3"
+                }
+              ]
+            },
+            {
+              "name": "showAnons",
+              "label": "Показывать анонс",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showFavorite",
+              "label": "Избранное",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showCompare",
+              "label": "Сравнение",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showBuy",
+              "label": "Кнопка «В корзину»",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "товар",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Товар"
+              },
+              {
+                "name": "price",
+                "label": "Цена",
+                "kind": "text",
+                "default": "9 990 ₽"
+              },
+              {
+                "name": "oldPrice",
+                "label": "Старая цена",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/good/good_1_1.webp"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/good"
+              },
+              {
+                "name": "badge",
+                "label": "Бейдж",
+                "kind": "select",
+                "default": "",
+                "options": [
+                  {
+                    "value": "",
+                    "label": "Нет"
+                  },
+                  {
+                    "value": "new",
+                    "label": "Новинка"
+                  },
+                  {
+                    "value": "hit",
+                    "label": "Хит"
+                  },
+                  {
+                    "value": "sale",
+                    "label": "Акция"
+                  }
+                ]
+              }
+            ],
+            "default": [
+              {
+                "header": "Товар 1",
+                "price": "9 990 ₽",
+                "oldPrice": "",
+                "photo": "images/good/good_1_1.webp",
+                "url": "/good/1",
+                "badge": ""
+              },
+              {
+                "header": "Товар 2",
+                "price": "14 500 ₽",
+                "oldPrice": "",
+                "photo": "images/good/good_2_1.webp",
+                "url": "/good/2",
+                "badge": ""
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "product card",
+        "карточка товара",
+        "товар",
+        "product",
+        "goods card",
+        "card"
+      ],
+      "data": true,
+      "shared_params": {},
+      "views": true
+    },
+    "product_list": {
+      "title": "Каталог товаров",
+      "group": "Каталог",
+      "partial": "block/product_list.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "catalog-layout",
+        "catalog-sidebar",
+        "catalog-main",
+        "good-list",
+        "good-list__toolbar",
+        "products-grid",
+        "gl-search",
+        "gl-price",
+        "gl-sort",
+        "gl-chips",
+        "gl-reset",
+        "gl-count",
+        "gl-empty"
+      ],
+      "default_variant": "listing",
+      "variants": {
+        "listing": {
+          "title": "Листинг с фильтрами",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "goods_list"
+            },
+            {
+              "name": "perpage",
+              "label": "Товаров на странице",
+              "kind": "number",
+              "default": 12,
+              "min": 4,
+              "max": 48,
+              "step": 4
+            },
+            {
+              "name": "sidebar",
+              "label": "Сайдбар рубрик",
+              "kind": "select",
+              "default": "left",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "Нет"
+                },
+                {
+                  "value": "left",
+                  "label": "Слева"
+                },
+                {
+                  "value": "right",
+                  "label": "Справа"
+                }
+              ]
+            },
+            {
+              "name": "search",
+              "label": "Поиск",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "priceFilter",
+              "label": "Фильтр по цене",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "sort",
+              "label": "Сортировка",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "chips",
+              "label": "Чипы подкатегорий",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "source",
+              "label": "Источник",
+              "kind": "text",
+              "default": "good_list"
+            }
+          ],
+          "items": {
+            "singular": "рубрика",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Рубрика",
+                "kind": "text",
+                "default": "Категория"
+              },
+              {
+                "name": "count",
+                "label": "Кол-во",
+                "kind": "text",
+                "default": "12"
+              }
+            ],
+            "default": [
+              {
+                "header": "Смартфоны",
+                "count": "24"
+              },
+              {
+                "header": "Ноутбуки",
+                "count": "18"
+              },
+              {
+                "header": "Аксессуары",
+                "count": "36"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "product list",
+        "список товаров",
+        "листинг",
+        "каталог товаров",
+        "фильтры",
+        "фильтр"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "rubric_list": {
+      "title": "Список рубрик",
+      "group": "Каталог",
+      "partial": "block/rubric_list.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "cat-grid",
+        "cat-card",
+        "cat-rubs"
+      ],
+      "default_variant": "rubs",
+      "variants": {
+        "rubs": {
+          "title": "Рубрики и подрубрики",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "catalog_list"
+            }
+          ],
+          "items": {
+            "singular": "рубрика",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Рубрика"
+              },
+              {
+                "name": "desc",
+                "label": "Описание",
+                "kind": "textarea",
+                "default": "Описание рубрики."
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/catalog"
+              },
+              {
+                "name": "sub",
+                "label": "Подрубрики",
+                "kind": "text",
+                "default": "Подрубрика 1, Подрубрика 2"
+              }
+            ]
+          }
+        },
+        "grid": {
+          "title": "Сетка рубрик",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "catalog_list"
+            },
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "number",
+              "default": 3,
+              "min": 2,
+              "max": 6,
+              "step": 1
+            },
+            {
+              "name": "effect",
+              "label": "Эффект",
+              "kind": "select",
+              "default": "flip",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "Нет"
+                },
+                {
+                  "value": "rise",
+                  "label": "Rise"
+                },
+                {
+                  "value": "flip",
+                  "label": "Flip"
+                },
+                {
+                  "value": "zoom",
+                  "label": "Zoom"
+                }
+              ]
+            },
+            {
+              "name": "enter",
+              "label": "Появление",
+              "kind": "select",
+              "default": "rise",
+              "options": [
+                {
+                  "value": "none",
+                  "label": "Нет"
+                },
+                {
+                  "value": "rise",
+                  "label": "Rise"
+                },
+                {
+                  "value": "fade",
+                  "label": "Fade"
+                }
+              ]
+            }
+          ],
+          "items": {
+            "singular": "рубрика",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Рубрика"
+              },
+              {
+                "name": "desc",
+                "label": "Описание",
+                "kind": "textarea",
+                "default": "Описание рубрики."
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/catalog"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "rubric",
+        "rubrics",
+        "рубрики",
+        "категории",
+        "подрубрики",
+        "rubricator"
+      ],
+      "data": true,
+      "shared_params": {},
+      "views": true
+    },
+    "product_detail": {
+      "title": "Товар (страница)",
+      "group": "Каталог",
+      "partial": "block/product_detail.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "good-in"
+      ],
+      "default_variant": "gv-classic",
+      "variants": {
+        "gv-classic": {
+          "title": "Классическая",
+          "params_ref": "pd_common"
+        },
+        "gv-split": {
+          "title": "Зеркальная",
+          "params_ref": "pd_common"
+        },
+        "gv-vertical": {
+          "title": "Вертикальные превью",
+          "params_ref": "pd_common"
+        },
+        "gv-wide": {
+          "title": "Широкая",
+          "params_ref": "pd_common"
+        },
+        "gv-minimal": {
+          "title": "Минимальная",
+          "params_ref": "pd_common"
+        }
+      },
+      "shared_params": {
+        "pd_common": [
+          {
+            "name": "varname",
+            "label": "Название переменной",
+            "kind": "text",
+            "default": "content"
+          },
+          {
+            "name": "galleryAutoplay",
+            "label": "Автопрокрутка галереи, мс",
+            "kind": "number",
+            "default": 0,
+            "min": 0,
+            "step": 500
+          },
+          {
+            "name": "showTabs",
+            "label": "Вкладки",
+            "kind": "bool",
+            "default": true
+          },
+          {
+            "name": "showSpecs",
+            "label": "Характеристики",
+            "kind": "bool",
+            "default": true
+          }
+        ]
+      },
+      "items_shared": {
+        "singular": "характеристика",
+        "fields": [
+          {
+            "name": "name",
+            "label": "Название",
+            "kind": "text",
+            "default": "Характеристика"
+          },
+          {
+            "name": "value",
+            "label": "Значение",
+            "kind": "text",
+            "default": "Значение"
+          }
+        ],
+        "default": [
+          {
+            "name": "Диагональ",
+            "value": "6.1\""
+          },
+          {
+            "name": "Память",
+            "value": "128 ГБ"
+          }
+        ]
+      },
+      "keywords": [
+        "product detail",
+        "карточка товара",
+        "страница товара",
+        "good_in",
+        "товар",
+        "детальная"
+      ],
+      "data": true,
+      "views": true
+    },
+    "service_card": {
+      "title": "Карточка услуги",
+      "group": "Услуги",
+      "partial": "block/service_card.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "service-card",
+        "service-tile",
+        "services-grid"
+      ],
+      "default_variant": "card",
+      "variants": {
+        "card": {
+          "title": "Карточка",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "services_list"
+            },
+            {
+              "name": "showIcon",
+              "label": "Иконка",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showPrice",
+              "label": "Цена",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showMore",
+              "label": "Ссылка «Подробнее»",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "услуга",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Услуга"
+              },
+              {
+                "name": "anons",
+                "label": "Анонс",
+                "kind": "textarea",
+                "default": "Описание услуги."
+              },
+              {
+                "name": "price_from",
+                "label": "Цена от",
+                "kind": "text",
+                "default": "1 500 ₽"
+              },
+              {
+                "name": "icon",
+                "label": "Иконка (hook)",
+                "kind": "text",
+                "default": "i-check"
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/preview/service/service_1.webp"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/service"
+              }
+            ],
+            "default": [
+              {
+                "header": "Доставка",
+                "anons": "Доставим по всей России.",
+                "price_from": "500 ₽",
+                "icon": "i-check",
+                "photo": "images/preview/service/service_1.webp",
+                "url": "/service/delivery"
+              },
+              {
+                "header": "Установка",
+                "anons": "Настроим и подключим.",
+                "price_from": "1 500 ₽",
+                "icon": "i-check",
+                "photo": "images/preview/service/service_2.webp",
+                "url": "/service/install"
+              }
+            ]
+          }
+        },
+        "tile": {
+          "title": "Плитка",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "services_list"
+            },
+            {
+              "name": "showPrice",
+              "label": "Цена",
+              "kind": "bool",
+              "default": false
+            }
+          ],
+          "items": {
+            "singular": "услуга",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Услуга"
+              },
+              {
+                "name": "anons",
+                "label": "Анонс",
+                "kind": "textarea",
+                "default": "Описание услуги."
+              },
+              {
+                "name": "price_from",
+                "label": "Цена от",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "icon",
+                "label": "Иконка (hook)",
+                "kind": "text",
+                "default": "i-check"
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/preview/service/service_1.webp"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/service"
+              }
+            ],
+            "default": [
+              {
+                "header": "Доставка",
+                "anons": "Доставим по всей России.",
+                "price_from": "",
+                "icon": "i-check",
+                "photo": "images/preview/service/service_1.webp",
+                "url": "/service/delivery"
+              },
+              {
+                "header": "Установка",
+                "anons": "Настроим и подключим.",
+                "price_from": "",
+                "icon": "i-check",
+                "photo": "images/preview/service/service_2.webp",
+                "url": "/service/install"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "service card",
+        "карточка услуги",
+        "услуга",
+        "service"
+      ],
+      "data": true,
+      "shared_params": {},
+      "views": true
+    },
+    "service_list": {
+      "title": "Список услуг",
+      "group": "Услуги",
+      "partial": "block/service_list.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "services-grid",
+        "service-others"
+      ],
+      "default_variant": "cards",
+      "variants": {
+        "cards": {
+          "title": "Карточки",
+          "params_ref": "sl_common"
+        },
+        "others": {
+          "title": "Горизонтальные строки",
+          "params_ref": "sl_common"
+        }
+      },
+      "shared_params": {
+        "sl_common": [
+          {
+            "name": "varname",
+            "label": "Название переменной",
+            "kind": "text",
+            "default": "services_list"
+          },
+          {
+            "name": "cols",
+            "label": "Колонки",
+            "kind": "number",
+            "default": 3,
+            "min": 2,
+            "max": 4,
+            "step": 1
+          },
+          {
+            "name": "noIcons",
+            "label": "Без иконок",
+            "kind": "bool",
+            "default": false
+          }
+        ]
+      },
+      "items_shared": {
+        "singular": "услуга",
+        "fields": [
+          {
+            "name": "header",
+            "label": "Название",
+            "kind": "text",
+            "default": "Услуга"
+          },
+          {
+            "name": "anons",
+            "label": "Анонс",
+            "kind": "textarea",
+            "default": "Описание услуги."
+          },
+          {
+            "name": "price_from",
+            "label": "Цена от",
+            "kind": "text",
+            "default": ""
+          },
+          {
+            "name": "icon",
+            "label": "Иконка (hook)",
+            "kind": "text",
+            "default": "i-check"
+          },
+          {
+            "name": "photo",
+            "label": "Фото",
+            "kind": "text",
+            "default": "images/preview/service/service_1.webp"
+          },
+          {
+            "name": "url",
+            "label": "URL",
+            "kind": "text",
+            "default": "/service"
+          }
+        ],
+        "default": [
+          {
+            "header": "Доставка",
+            "anons": "Доставим по всей России.",
+            "price_from": "500 ₽",
+            "icon": "i-check",
+            "photo": "images/preview/service/service_1.webp",
+            "url": "/service/delivery"
+          },
+          {
+            "header": "Установка",
+            "anons": "Настроим и подключим.",
+            "price_from": "1 500 ₽",
+            "icon": "i-check",
+            "photo": "images/preview/service/service_2.webp",
+            "url": "/service/install"
+          },
+          {
+            "header": "Сервис",
+            "anons": "Ремонт и обслуживание.",
+            "price_from": "",
+            "icon": "i-heart",
+            "photo": "images/preview/service/service_3.webp",
+            "url": "/service/support"
+          }
+        ]
+      },
+      "keywords": [
+        "service list",
+        "список услуг",
+        "услуги",
+        "service_list"
+      ],
+      "data": true,
+      "views": true
+    },
+    "service_detail": {
+      "title": "Услуга (страница)",
+      "group": "Услуги",
+      "partial": "block/service_detail.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "service-in"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Услуга",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "content"
+            },
+            {
+              "name": "noIcons",
+              "label": "Без иконок",
+              "kind": "bool",
+              "default": false
+            },
+            {
+              "name": "showPrice",
+              "label": "Цена",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showRegion",
+              "label": "Регион",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "раздел",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Раздел"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Описание раздела."
+              }
+            ],
+            "default": [
+              {
+                "title": "Как это работает",
+                "text": "Порядок оказания услуги."
+              },
+              {
+                "title": "Что входит",
+                "text": "Состав услуги."
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "service detail",
+        "услуга",
+        "страница услуги",
+        "service_in"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "team": {
+      "title": "Команда",
+      "group": "Компания",
+      "partial": "block/team.html",
+      "status": "planned",
+      "check": "preview",
+      "contract_classes": [
+        "team-card"
+      ],
+      "default_variant": "cards",
+      "variants": {
+        "cards": {
+          "title": "Карточки (карусель)",
+          "params_ref": "team_common"
+        },
+        "grid": {
+          "title": "Сетка",
+          "params_ref": "team_common"
+        },
+        "compact": {
+          "title": "Компактный",
+          "params_ref": "team_common"
+        },
+        "list": {
+          "title": "Список",
+          "params_ref": "team_common"
+        },
+        "manager": {
+          "title": "Карточка менеджера",
+          "params_ref": "team_common"
+        }
+      },
+      "shared_params": {
+        "team_common": [
+          {
+            "name": "varname",
+            "label": "Название переменной",
+            "kind": "text",
+            "default": "managers_list"
+          },
+          {
+            "name": "header",
+            "label": "Заголовок",
+            "kind": "text",
+            "default": "Наша команда"
+          },
+          {
+            "name": "sub",
+            "label": "Текст под заголовком",
+            "kind": "text",
+            "default": ""
+          },
+          {
+            "name": "cols",
+            "label": "Колонки",
+            "kind": "number",
+            "default": 4,
+            "min": 2,
+            "max": 5,
+            "step": 1
+          },
+          {
+            "name": "carousel",
+            "label": "Карусель",
+            "kind": "bool",
+            "default": false
+          },
+          {
+            "name": "contacts",
+            "label": "Показывать контакты",
+            "kind": "bool",
+            "default": true
+          },
+          {
+            "name": "autoplay",
+            "label": "Автопрокрутка, мс (0 — выкл.)",
+            "kind": "number",
+            "default": 0,
+            "min": 0,
+            "max": 10000,
+            "step": 500
+          }
+        ]
+      },
+      "items_shared": {
+        "singular": "сотрудник",
+        "fields": [
+          {
+            "name": "name",
+            "label": "Имя",
+            "kind": "text",
+            "default": "Имя Фамилия"
+          },
+          {
+            "name": "role",
+            "label": "Должность",
+            "kind": "text",
+            "default": "Должность"
+          },
+          {
+            "name": "photo",
+            "label": "Фото",
+            "kind": "text",
+            "default": "images/preview/managers/manager-1.webp"
+          },
+          {
+            "name": "phone",
+            "label": "Телефон",
+            "kind": "text",
+            "default": ""
+          },
+          {
+            "name": "email",
+            "label": "E-mail",
+            "kind": "text",
+            "default": ""
+          },
+          {
+            "name": "max",
+            "label": "Ссылка MAX",
+            "kind": "text",
+            "default": ""
+          },
+          {
+            "name": "desc",
+            "label": "Описание (вид «Карточка менеджера»)",
+            "kind": "textarea",
+            "default": ""
+          }
+        ],
+        "default": [
+          {
+            "name": "Тихонов Алексей Викторович",
+            "role": "Генеральный директор",
+            "photo": "images/preview/managers/manager-1.webp",
+            "phone": "+7 (495) 123-45-01",
+            "email": "a.tikhonov@digitalstrateg.ru",
+            "max": "",
+            "desc": ""
+          },
+          {
+            "name": "Смирнова Ольга Игоревна",
+            "role": "Коммерческий директор",
+            "photo": "images/preview/managers/manager-2.webp",
+            "phone": "+7 (495) 123-45-02",
+            "email": "o.smirnova@digitalstrateg.ru",
+            "max": "",
+            "desc": ""
+          },
+          {
+            "name": "Ковалёв Дмитрий Сергеевич",
+            "role": "Руководитель сервисного центра",
+            "photo": "images/preview/managers/manager-3.webp",
+            "phone": "+7 (495) 123-45-03",
+            "email": "d.kovalev@digitalstrateg.ru",
+            "max": "",
+            "desc": ""
+          },
+          {
+            "name": "Мельникова Ирина Павловна",
+            "role": "Руководитель отдела продаж",
+            "photo": "images/preview/managers/manager-4.webp",
+            "phone": "+7 (495) 123-45-04",
+            "email": "i.melnikova@digitalstrateg.ru",
+            "max": "",
+            "desc": ""
+          },
+          {
+            "name": "Волков Сергей Андреевич",
+            "role": "Руководитель отдела логистики",
+            "photo": "images/preview/managers/manager-5.webp",
+            "phone": "+7 (495) 123-45-05",
+            "email": "s.volkov@digitalstrateg.ru",
+            "max": "",
+            "desc": ""
+          }
+        ]
+      },
+      "keywords": [
+        "team",
+        "команда",
+        "сотрудники",
+        "менеджеры",
+        "managers",
+        "people"
+      ],
+      "data": true
+    },
+    "catalog_projects": {
+      "title": "Каталог проектов",
+      "group": "Каталог",
+      "partial": "block/catalog_projects.html",
+      "status": "planned",
+      "check": "preview",
+      "contract_classes": [
+        "prj",
+        "prj-toolbar",
+        "prj-grid",
+        "prj-card",
+        "prj-empty",
+        "prj-more"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Проекты с фильтрами",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "projects_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Каталог проектов"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "perpage",
+              "label": "Проектов на странице",
+              "kind": "number",
+              "default": 12,
+              "min": 4,
+              "max": 48,
+              "step": 4
+            },
+            {
+              "name": "segment",
+              "label": "Фильтр «сегмент»",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "floors",
+              "label": "Фильтр «этажность»",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "technology",
+              "label": "Фильтр «технология»",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "area",
+              "label": "Фильтр «площадь»",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "sort",
+              "label": "Сортировка",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "loadMore",
+              "label": "Кнопка «Показать ещё»",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "проект",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Название",
+                "kind": "text",
+                "default": "Проект"
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/preview/articles/article-1.webp"
+              },
+              {
+                "name": "url",
+                "label": "Ссылка",
+                "kind": "text",
+                "default": "/projects/project"
+              },
+              {
+                "name": "area",
+                "label": "Площадь, м²",
+                "kind": "text",
+                "default": "240"
+              },
+              {
+                "name": "floors",
+                "label": "Этажность",
+                "kind": "select",
+                "default": "2",
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "1 этаж"
+                  },
+                  {
+                    "value": "2",
+                    "label": "2 этажа"
+                  }
+                ]
+              },
+              {
+                "name": "technology",
+                "label": "Технология",
+                "kind": "select",
+                "default": "brus",
+                "options": [
+                  {
+                    "value": "brus",
+                    "label": "Клеёный брус"
+                  },
+                  {
+                    "value": "fachwerk",
+                    "label": "Фахверк"
+                  },
+                  {
+                    "value": "stone",
+                    "label": "Камень"
+                  },
+                  {
+                    "value": "ceramic",
+                    "label": "Тёплая керамика"
+                  },
+                  {
+                    "value": "monolith",
+                    "label": "Монолит"
+                  }
+                ]
+              },
+              {
+                "name": "segment",
+                "label": "Сегмент",
+                "kind": "select",
+                "default": "life",
+                "options": [
+                  {
+                    "value": "life",
+                    "label": "Для жизни"
+                  },
+                  {
+                    "value": "business",
+                    "label": "Для бизнеса"
+                  }
+                ]
+              }
+            ],
+            "default": [
+              {
+                "title": "Резиденция Keln",
+                "photo": "images/preview/articles/article-1.webp",
+                "url": "/projects/keln",
+                "area": "387",
+                "floors": "2",
+                "technology": "brus",
+                "segment": "life"
+              },
+              {
+                "title": "Дом Caston",
+                "photo": "images/preview/articles/article-2.webp",
+                "url": "/projects/caston",
+                "area": "240",
+                "floors": "2",
+                "technology": "brus",
+                "segment": "life"
+              },
+              {
+                "title": "Grand House",
+                "photo": "images/preview/articles/article-3.webp",
+                "url": "/projects/grand-house",
+                "area": "520",
+                "floors": "2",
+                "technology": "fachwerk",
+                "segment": "business"
+              },
+              {
+                "title": "Keln Nordic",
+                "photo": "images/preview/articles/article-4.webp",
+                "url": "/projects/keln-nordic",
+                "area": "310",
+                "floors": "1",
+                "technology": "brus",
+                "segment": "life"
+              },
+              {
+                "title": "Вилла Stone",
+                "photo": "images/preview/articles/article-5.webp",
+                "url": "/projects/villa-stone",
+                "area": "410",
+                "floors": "2",
+                "technology": "stone",
+                "segment": "business"
+              },
+              {
+                "title": "Дом Ceramica",
+                "photo": "images/preview/articles/article-6.webp",
+                "url": "/projects/ceramica",
+                "area": "275",
+                "floors": "1",
+                "technology": "ceramic",
+                "segment": "life"
+              },
+              {
+                "title": "Офис HASKO",
+                "photo": "images/preview/articles/article-7.webp",
+                "url": "/projects/office",
+                "area": "180",
+                "floors": "1",
+                "technology": "monolith",
+                "segment": "business"
+              },
+              {
+                "title": "Резиденция Nordic 2",
+                "photo": "images/preview/articles/article-8.webp",
+                "url": "/projects/nordic-2",
+                "area": "345",
+                "floors": "2",
+                "technology": "brus",
+                "segment": "life"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "projects",
+        "проекты",
+        "каталог проектов",
+        "портфолио",
+        "резиденции",
+        "дома"
+      ],
+      "data": true
+    },
+    "countdown": {
+      "title": "Таймер",
+      "group": "Промо",
+      "partial": "block/countdown.html",
+      "status": "planned",
+      "check": "preview",
+      "contract_classes": [
+        "countdown",
+        "countdown__unit",
+        "countdown__value"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Обратный отсчёт",
+          "params": [
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Архитектурный проект в подарок"
+            },
+            {
+              "name": "text",
+              "label": "Текст",
+              "kind": "text",
+              "default": "до 20 сентября"
+            },
+            {
+              "name": "date",
+              "label": "Дата (ISO, для режима «До даты»)",
+              "kind": "text",
+              "default": "2026-09-20T23:59:59"
+            },
+            {
+              "name": "mode",
+              "label": "Режим",
+              "kind": "select",
+              "default": "until",
+              "options": [
+                {
+                  "value": "until",
+                  "label": "До даты"
+                },
+                {
+                  "value": "daily",
+                  "label": "До конца суток"
+                }
+              ]
+            },
+            {
+              "name": "units",
+              "label": "Единицы",
+              "kind": "select",
+              "default": "days-hours-minutes-seconds",
+              "options": [
+                {
+                  "value": "days-hours-minutes-seconds",
+                  "label": "Дни · часы · минуты · секунды"
+                },
+                {
+                  "value": "days-hours-minutes",
+                  "label": "Дни · часы · минуты"
+                },
+                {
+                  "value": "hours-minutes-seconds",
+                  "label": "Часы · минуты · секунды"
+                }
+              ]
+            },
+            {
+              "name": "buttonText",
+              "label": "Текст кнопки",
+              "kind": "text",
+              "default": "Записаться на консультацию"
+            },
+            {
+              "name": "buttonUrl",
+              "label": "Ссылка кнопки",
+              "kind": "text",
+              "default": "#consultation"
+            },
+            {
+              "name": "hideAfter",
+              "label": "Скрывать после завершения",
+              "kind": "bool",
+              "default": true
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "countdown",
+        "таймер",
+        "отсчёт",
+        "обратный отсчёт",
+        "промо",
+        "акция"
+      ],
+      "data": false
+    },
+    "marquee": {
+      "title": "Бегущая строка",
+      "group": "Промо",
+      "partial": "block/marquee.html",
+      "status": "planned",
+      "check": "preview",
+      "contract_classes": [
+        "marquee",
+        "marquee__track",
+        "marquee__item"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Лента (карточки/логотипы/текст)",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "marquee_list"
+            },
+            {
+              "name": "view",
+              "label": "Вид",
+              "kind": "select",
+              "default": "cards",
+              "options": [
+                {
+                  "value": "cards",
+                  "label": "Карточки"
+                },
+                {
+                  "value": "logos",
+                  "label": "Логотипы"
+                },
+                {
+                  "value": "text",
+                  "label": "Строка-текст"
+                }
+              ]
+            },
+            {
+              "name": "speed",
+              "label": "Скорость, сек на виток",
+              "kind": "number",
+              "default": 40,
+              "min": 5,
+              "max": 180,
+              "step": 5
+            },
+            {
+              "name": "direction",
+              "label": "Направление",
+              "kind": "select",
+              "default": "left",
+              "options": [
+                {
+                  "value": "left",
+                  "label": "Влево"
+                },
+                {
+                  "value": "right",
+                  "label": "Вправо"
+                }
+              ]
+            },
+            {
+              "name": "pause",
+              "label": "Пауза при наведении",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "элемент",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Заголовок"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "photo",
+                "label": "Фото/логотип",
+                "kind": "text",
+                "default": "images/preview/articles/article-1.webp"
+              },
+              {
+                "name": "url",
+                "label": "Ссылка",
+                "kind": "text",
+                "default": ""
+              }
+            ],
+            "default": [
+              {
+                "title": "Архитектура без компромиссов",
+                "text": "Большие пролёты и панорамное остекление",
+                "photo": "images/preview/articles/article-1.webp",
+                "url": ""
+              },
+              {
+                "title": "Экологичный материал",
+                "text": "Натуральное дерево без химии",
+                "photo": "images/preview/articles/article-2.webp",
+                "url": ""
+              },
+              {
+                "title": "Ликвидный актив",
+                "text": "Ценится выше и дольше",
+                "photo": "images/preview/articles/article-3.webp",
+                "url": ""
+              },
+              {
+                "title": "Тепло зимой",
+                "text": "Низкая теплопроводность бруса",
+                "photo": "images/preview/articles/article-4.webp",
+                "url": ""
+              },
+              {
+                "title": "Северная древесина",
+                "text": "Идеальная геометрия",
+                "photo": "images/preview/articles/article-5.webp",
+                "url": ""
+              },
+              {
+                "title": "Гарантия до 100 лет",
+                "text": "Проверенная технология",
+                "photo": "images/preview/articles/article-6.webp",
+                "url": ""
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "marquee",
+        "бегущая строка",
+        "тикер",
+        "лента",
+        "ticker"
+      ],
+      "data": true
+    },
+    "certificates": {
+      "title": "Сертификаты",
+      "group": "Медиа",
+      "partial": "block/certificates.html",
+      "status": "local:t1",
+      "check": "preview",
+      "contract_classes": [
+        "cert-list",
+        "cert-card"
+      ],
+      "default_variant": "grid",
+      "variants": {
+        "grid": {
+          "title": "Сетка",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "certificates_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Сертификаты"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "number",
+              "default": 4,
+              "min": 2,
+              "max": 6,
+              "step": 1
+            },
+            {
+              "name": "fancybox",
+              "label": "Открывать в lightbox",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "сертификат",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Название",
+                "kind": "text",
+                "default": "Сертификат"
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/preview/certificates/cert-1.webp"
+              },
+              {
+                "name": "portrait",
+                "label": "Портретный документ",
+                "kind": "bool",
+                "default": false
+              }
+            ],
+            "default": [
+              {
+                "title": "Сертификат 1",
+                "photo": "images/preview/certificates/cert-1.webp"
+              },
+              {
+                "title": "Сертификат 2",
+                "photo": "images/preview/certificates/cert-2.webp"
+              }
+            ]
+          }
+        },
+        "vertical": {
+          "title": "Вертикальные",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "certificates_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Сертификаты"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "number",
+              "default": 5,
+              "min": 2,
+              "max": 6,
+              "step": 1
+            },
+            {
+              "name": "fancybox",
+              "label": "Открывать в lightbox",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "сертификат",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Название",
+                "kind": "text",
+                "default": "Сертификат"
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/preview/certificates/cert-1.webp"
+              },
+              {
+                "name": "portrait",
+                "label": "Портретный документ",
+                "kind": "bool",
+                "default": false
+              }
+            ],
+            "default": [
+              {
+                "title": "Сертификат 1",
+                "photo": "images/preview/certificates/cert-1.webp"
+              },
+              {
+                "title": "Сертификат 2",
+                "photo": "images/preview/certificates/cert-2.webp"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "certificates",
+        "сертификаты",
+        "грамоты",
+        "документы",
+        "cert"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "photo_gallery": {
+      "title": "Фотогалерея",
+      "group": "Медиа",
+      "partial": "block/photo_gallery.html",
+      "status": "local:t1",
+      "check": "strict",
+      "contract_classes": [
+        "gal-filter",
+        "gal-chip",
+        "gal-grid",
+        "gal-item",
+        "gal-item__img",
+        "gal-item__cap"
+      ],
+      "default_variant": "grid",
+      "variants": {
+        "grid": {
+          "title": "Сетка",
+          "params_ref": "gal_common"
+        },
+        "cols": {
+          "title": "Колонки",
+          "params_ref": "gal_common"
+        },
+        "bento": {
+          "title": "Bento",
+          "params_ref": "gal_common"
+        },
+        "strip": {
+          "title": "Лента",
+          "params_ref": "gal_common"
+        }
+      },
+      "shared_params": {
+        "gal_common": [
+          {
+            "name": "varname",
+            "label": "Название переменной",
+            "kind": "text",
+            "default": "galery_list"
+          },
+          {
+            "name": "header",
+            "label": "Заголовок",
+            "kind": "text",
+            "default": "Галерея"
+          },
+          {
+            "name": "sub",
+            "label": "Текст под заголовком",
+            "kind": "text",
+            "default": ""
+          },
+          {
+            "name": "filter",
+            "label": "Фильтр по тегам",
+            "kind": "bool",
+            "default": true
+          },
+          {
+            "name": "filterTags",
+            "label": "Теги (через запятую)",
+            "kind": "text",
+            "default": "Интерьер, Улица"
+          }
+        ]
+      },
+      "items_shared": {
+        "singular": "фото",
+        "fields": [
+          {
+            "name": "photo",
+            "label": "Фото",
+            "kind": "text",
+            "default": "images/preview/galery/photo-1.webp"
+          },
+          {
+            "name": "caption",
+            "label": "Подпись",
+            "kind": "text",
+            "default": "Подпись"
+          },
+          {
+            "name": "tag",
+            "label": "Тег",
+            "kind": "text",
+            "default": "Интерьер"
+          }
+        ],
+        "default": [
+          {
+            "photo": "images/preview/galery/photo-1.webp",
+            "caption": "Работа 1",
+            "tag": "Интерьер"
+          },
+          {
+            "photo": "images/preview/galery/photo-2.webp",
+            "caption": "Работа 2",
+            "tag": "Улица"
+          }
+        ]
+      },
+      "keywords": [
+        "gallery",
+        "фотогалерея",
+        "галерея",
+        "фото",
+        "gallery",
+        "photo",
+        "bento"
+      ],
+      "data": true,
+      "views": true
+    },
+    "video": {
+      "title": "Видео",
+      "group": "Медиа",
+      "partial": "block/video.html",
+      "status": "planned",
+      "data": true,
+      "check": "strict",
+      "contract_classes": [
+        "video-block",
+        "video-card",
+        "video-card__media",
+        "video-card__play",
+        "video-card__title",
+        "video-card__meta",
+        "video-cover",
+        "video-feature",
+        "video-feature__list",
+        "video-strip"
+      ],
+      "default_variant": "carousel",
+      "variants": {
+        "carousel": {
+          "title": "Карусель",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            },
+            {
+              "name": "autoplay",
+              "label": "Автопрокрутка, мс",
+              "kind": "select",
+              "default": "0",
+              "options": [
+                {
+                  "value": "0",
+                  "label": "Выкл"
+                },
+                {
+                  "value": "3500",
+                  "label": "3500"
+                },
+                {
+                  "value": "5000",
+                  "label": "5000"
+                }
+              ]
+            }
+          ]
+        },
+        "grid": {
+          "title": "Сетка",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            },
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "select",
+              "default": "3",
+              "options": [
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "3",
+                  "label": "3"
+                },
+                {
+                  "value": "4",
+                  "label": "4"
+                }
+              ]
+            }
+          ]
+        },
+        "feature": {
+          "title": "Плеер + плейлист",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            }
+          ]
+        },
+        "cover": {
+          "title": "Видео-баннер",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            }
+          ]
+        },
+        "strip": {
+          "title": "Лента",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            }
+          ]
+        }
+      },
+      "items_shared": {
+        "singular": "видео",
+        "fields": [
+          {
+            "name": "id",
+            "label": "RuTube ID",
+            "kind": "text",
+            "default": "b6ddadb11dc876d6494dffcb44e00ddf"
+          },
+          {
+            "name": "url",
+            "label": "URL ролика",
+            "kind": "text",
+            "default": "https://rutube.ru/video/b6ddadb11dc876d6494dffcb44e00ddf/"
+          },
+          {
+            "name": "title",
+            "label": "Название",
+            "kind": "text",
+            "default": "Видео"
+          },
+          {
+            "name": "duration",
+            "label": "Длительность (опц.)",
+            "kind": "text",
+            "default": ""
+          }
+        ],
+        "default": [
+          {
+            "id": "b6ddadb11dc876d6494dffcb44e00ddf",
+            "url": "https://rutube.ru/video/b6ddadb11dc876d6494dffcb44e00ddf/",
+            "title": "Животный мир Океана — живописный фильм о дикой природе с успокаивающей музыкой",
+            "duration": ""
+          },
+          {
+            "id": "bdaef120e48ab895d4e170ebb3f6b1fb",
+            "url": "https://rutube.ru/video/bdaef120e48ab895d4e170ebb3f6b1fb/",
+            "title": "ОКЕАН изучен на 5%. Что скрывается на глубине? | Документальный фильм о дикой природе",
+            "duration": ""
+          },
+          {
+            "id": "6abdf71e1895b5e45304e91688538e0f",
+            "url": "https://rutube.ru/video/6abdf71e1895b5e45304e91688538e0f/",
+            "title": "Саванна 4K | Документальный фильм о дикой природе",
+            "duration": ""
+          },
+          {
+            "id": "ea025c18e8f67f165d47c69f26df17d5",
+            "url": "https://rutube.ru/video/ea025c18e8f67f165d47c69f26df17d5/",
+            "title": "Камчатка 4K | Документальный фильм о дикой природе",
+            "duration": ""
+          }
+        ]
+      },
+      "views": true
+    },
+    "brands_grid": {
+      "title": "Бренды",
+      "group": "Каталог",
+      "partial": "block/brands.html",
+      "status": "local:t1",
+      "check": "strict",
+      "contract_classes": [
+        "brands-grid",
+        "brand-card"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Бренды",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "brands_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Бренды"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "number",
+              "default": 4,
+              "min": 2,
+              "max": 6,
+              "step": 1
+            }
+          ],
+          "items": {
+            "singular": "бренд",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Название",
+                "kind": "text",
+                "default": "Бренд"
+              },
+              {
+                "name": "logo",
+                "label": "Логотип",
+                "kind": "text",
+                "default": "images/preview/brands/brand-aura.svg"
+              },
+              {
+                "name": "desc",
+                "label": "Описание",
+                "kind": "textarea",
+                "default": "Описание бренда."
+              },
+              {
+                "name": "count",
+                "label": "Кол-во товаров",
+                "kind": "text",
+                "default": "12"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/brand"
+              }
+            ],
+            "default": [
+              {
+                "name": "Бренд A",
+                "logo": "images/preview/brands/brand-aura.svg",
+                "desc": "Описание бренда A.",
+                "count": "24",
+                "url": "/brand/a"
+              },
+              {
+                "name": "Бренд B",
+                "logo": "images/preview/brands/brand-game.svg",
+                "desc": "Описание бренда B.",
+                "count": "18",
+                "url": "/brand/b"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "brands",
+        "бренды",
+        "производители",
+        "марки",
+        "brand"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "news_list": {
+      "title": "Новости",
+      "group": "Новости и статьи",
+      "partial": "block/news_list.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "grid-news",
+        "news-card"
+      ],
+      "default_variant": "grid",
+      "variants": {
+        "grid": {
+          "title": "Сетка",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "news_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Новости"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "columns",
+              "label": "Колонки",
+              "kind": "number",
+              "default": 3,
+              "min": 1,
+              "max": 4,
+              "step": 1
+            },
+            {
+              "name": "limit",
+              "label": "Лимит",
+              "kind": "number",
+              "default": 6,
+              "min": 1,
+              "max": 24,
+              "step": 1
+            }
+          ]
+        },
+        "list": {
+          "title": "Строки",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "news_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Новости"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "limit",
+              "label": "Лимит",
+              "kind": "number",
+              "default": 6,
+              "min": 1,
+              "max": 24,
+              "step": 1
+            }
+          ]
+        },
+        "carousel": {
+          "title": "Карусель",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "news_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Новости"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "limit",
+              "label": "Лимит",
+              "kind": "number",
+              "default": 6,
+              "min": 1,
+              "max": 24,
+              "step": 1
+            },
+            {
+              "name": "autoplay",
+              "label": "Автопрокрутка, мс",
+              "kind": "select",
+              "default": "0",
+              "options": [
+                {
+                  "value": "0",
+                  "label": "Выкл"
+                },
+                {
+                  "value": "3500",
+                  "label": "3500"
+                },
+                {
+                  "value": "5000",
+                  "label": "5000"
+                }
+              ]
+            }
+          ]
+        },
+        "feature": {
+          "title": "Крупная новость",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "news_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Новости"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "news",
+        "новости",
+        "новость",
+        "news_list"
+      ],
+      "data": true,
+      "shared_params": {},
+      "views": true,
+      "items_shared": {
+        "singular": "новость",
+        "fields": [
+          {
+            "name": "date",
+            "label": "Дата",
+            "kind": "text",
+            "default": "29 сентября 2026"
+          },
+          {
+            "name": "title",
+            "label": "Заголовок",
+            "kind": "text",
+            "default": "Заголовок новости"
+          },
+          {
+            "name": "anons",
+            "label": "Анонс",
+            "kind": "textarea",
+            "default": "Краткий анонс новости."
+          },
+          {
+            "name": "photo",
+            "label": "Фото",
+            "kind": "text",
+            "default": "images/preview/articles/article-1.webp"
+          },
+          {
+            "name": "url",
+            "label": "URL",
+            "kind": "text",
+            "default": "/news"
+          }
+        ],
+        "default": [
+          {
+            "date": "29 сентября 2026",
+            "title": "Открытие нового склада",
+            "anons": "Расширяем логистику.",
+            "photo": "images/preview/articles/article-1.webp",
+            "url": "/news/1"
+          },
+          {
+            "date": "15 сентября 2026",
+            "title": "Новая коллекция",
+            "anons": "Уже в продаже.",
+            "photo": "images/preview/articles/article-2.webp",
+            "url": "/news/2"
+          }
+        ]
+      }
+    },
+    "article_list": {
+      "title": "Статьи",
+      "group": "Новости и статьи",
+      "partial": "block/article_list.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "article-list",
+        "article-row",
+        "article-tile"
+      ],
+      "default_variant": "rows",
+      "variants": {
+        "rows": {
+          "title": "Строки (шахматка)",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "articles_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Статьи"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "limit",
+              "label": "Лимит",
+              "kind": "number",
+              "default": 6,
+              "min": 1,
+              "max": 24,
+              "step": 1
+            }
+          ],
+          "items": {
+            "singular": "статья",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Заголовок статьи"
+              },
+              {
+                "name": "anons",
+                "label": "Описание",
+                "kind": "textarea",
+                "default": "Краткое описание."
+              },
+              {
+                "name": "author",
+                "label": "Автор",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/preview/articles/article-1.webp"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/article"
+              }
+            ],
+            "default": [
+              {
+                "title": "Как выбрать товар",
+                "anons": "Полезные советы.",
+                "author": "",
+                "photo": "images/preview/articles/article-1.webp",
+                "url": "/article/1"
+              },
+              {
+                "title": "Обзор новинок",
+                "anons": "Что нового на рынке.",
+                "author": "",
+                "photo": "images/preview/articles/article-2.webp",
+                "url": "/article/2"
+              }
+            ]
+          }
+        },
+        "tiles": {
+          "title": "Плитки",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "articles_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Ещё статьи"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "limit",
+              "label": "Лимит",
+              "kind": "number",
+              "default": 6,
+              "min": 1,
+              "max": 24,
+              "step": 1
+            }
+          ],
+          "items": {
+            "singular": "статья",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Заголовок статьи"
+              },
+              {
+                "name": "anons",
+                "label": "Описание",
+                "kind": "textarea",
+                "default": "Краткое описание."
+              },
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/preview/articles/article-1.webp"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/article"
+              }
+            ],
+            "default": [
+              {
+                "title": "Как выбрать товар",
+                "anons": "Полезные советы.",
+                "photo": "images/preview/articles/article-1.webp",
+                "url": "/article/1"
+              },
+              {
+                "title": "Обзор новинок",
+                "anons": "Что нового на рынке.",
+                "photo": "images/preview/articles/article-2.webp",
+                "url": "/article/2"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "articles",
+        "статьи",
+        "статья",
+        "блог",
+        "article"
+      ],
+      "data": true,
+      "shared_params": {},
+      "views": true
+    },
+    "tabs": {
+      "title": "Вкладки",
+      "group": "Контент",
+      "partial": "block/tabs.html",
+      "status": "local:t1",
+      "check": "preview",
+      "contract_classes": [
+        "tab-btn",
+        "tab-panel"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Вкладки",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "tabs_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "вкладка",
+            "fields": [
+              {
+                "name": "label",
+                "label": "Название",
+                "kind": "text",
+                "default": "Вкладка"
+              },
+              {
+                "name": "content",
+                "label": "Содержимое",
+                "kind": "textarea",
+                "default": "Содержимое вкладки."
+              }
+            ],
+            "default": [
+              {
+                "label": "Описание",
+                "content": "Текст описания."
+              },
+              {
+                "label": "Характеристики",
+                "content": "Таблица характеристик."
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "tabs",
+        "вкладки",
+        "табы",
+        "tab"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "tags": {
+      "title": "Теги",
+      "group": "Контент",
+      "partial": "block/tags.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "gl-chips"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Облако тегов",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "tags_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "тег",
+            "fields": [
+              {
+                "name": "label",
+                "label": "Тег",
+                "kind": "text",
+                "default": "Тег"
+              },
+              {
+                "name": "count",
+                "label": "Кол-во",
+                "kind": "text",
+                "default": "12"
+              }
+            ],
+            "default": [
+              {
+                "label": "Новинки",
+                "count": "24"
+              },
+              {
+                "label": "Акции",
+                "count": "12"
+              },
+              {
+                "label": "Хиты",
+                "count": "36"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "tags",
+        "теги",
+        "облако тегов",
+        "чипсы",
+        "chips"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "branches": {
+      "title": "Филиалы",
+      "group": "Контакты",
+      "partial": "block/branches.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "branches",
+        "branch-card"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Филиалы",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "branches_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Наши филиалы"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "tabs",
+              "label": "Переключатель городов",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "филиал",
+            "fields": [
+              {
+                "name": "key",
+                "label": "Ключ",
+                "kind": "text",
+                "default": "msk"
+              },
+              {
+                "name": "name",
+                "label": "Город",
+                "kind": "text",
+                "default": "Москва"
+              },
+              {
+                "name": "address",
+                "label": "Адрес",
+                "kind": "text",
+                "default": "ул. Примерная, 1"
+              },
+              {
+                "name": "phone",
+                "label": "Телефон",
+                "kind": "text",
+                "default": "+7 (495) 000-00-00"
+              },
+              {
+                "name": "phone_raw",
+                "label": "Телефон (tel:)",
+                "kind": "text",
+                "default": "+74950000000"
+              },
+              {
+                "name": "email",
+                "label": "E-mail",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "work_time",
+                "label": "Режим работы",
+                "kind": "text",
+                "default": "Пн–Пт 10:00–19:00"
+              },
+              {
+                "name": "map",
+                "label": "Карта (URL)",
+                "kind": "text",
+                "default": ""
+              }
+            ],
+            "default": [
+              {
+                "key": "msk",
+                "name": "Москва",
+                "address": "ул. Примерная, 1",
+                "phone": "+7 (495) 000-00-00",
+                "phone_raw": "+74950000000",
+                "email": "",
+                "work_time": "Пн–Пт 10:00–19:00",
+                "map": ""
+              },
+              {
+                "key": "spb",
+                "name": "Санкт-Петербург",
+                "address": "Невский пр., 10",
+                "phone": "+7 (812) 000-00-00",
+                "phone_raw": "+78120000000",
+                "email": "",
+                "work_time": "Пн–Пт 10:00–19:00",
+                "map": ""
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "branches",
+        "филиалы",
+        "адреса",
+        "офисы",
+        "отделения",
+        "branch"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "map": {
+      "title": "Карта",
+      "group": "Контакты",
+      "partial": "block/map.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "contacts-map",
+        "fullmap"
+      ],
+      "default_variant": "embed",
+      "variants": {
+        "embed": {
+          "title": "Карта с маршрутом",
+          "params": [
+            {
+              "name": "url",
+              "label": "URL карты",
+              "kind": "text",
+              "default": "https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755800&z=12&pt=37.617700%2C55.755800%2Cpm2rdm"
+            },
+            {
+              "name": "height",
+              "label": "Высота, px",
+              "kind": "number",
+              "default": 400,
+              "min": 200,
+              "max": 800,
+              "step": 20
+            }
+          ]
+        },
+        "full": {
+          "title": "Карта во всю ширину",
+          "params": [
+            {
+              "name": "url",
+              "label": "URL карты",
+              "kind": "text",
+              "default": "https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755800&z=12&pt=37.617700%2C55.755800%2Cpm2rdm"
+            },
+            {
+              "name": "height",
+              "label": "Высота, px",
+              "kind": "number",
+              "default": 500,
+              "min": 200,
+              "max": 900,
+              "step": 20
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "map",
+        "карта",
+        "гео",
+        "геолокация",
+        "координаты",
+        "yandex",
+        "maps"
+      ]
+    },
+    "requisites": {
+      "title": "Реквизиты",
+      "group": "Контакты",
+      "partial": "block/requisites.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "requisites"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Реквизиты",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "requisites_list"
+            },
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Реквизиты"
+            },
+            {
+              "name": "org",
+              "label": "Организация",
+              "kind": "text",
+              "default": "ООО «Компания»"
+            },
+            {
+              "name": "pdf",
+              "label": "Кнопка PDF",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "строка",
+            "fields": [
+              {
+                "name": "k",
+                "label": "Название",
+                "kind": "text",
+                "default": "ИНН"
+              },
+              {
+                "name": "v",
+                "label": "Значение",
+                "kind": "text",
+                "default": "0000000000"
+              }
+            ],
+            "default": [
+              {
+                "k": "ИНН",
+                "v": "0000000000"
+              },
+              {
+                "k": "КПП",
+                "v": "000000000"
+              },
+              {
+                "k": "ОГРН",
+                "v": "0000000000000"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "requisites",
+        "реквизиты",
+        "реквизит",
+        "инн",
+        "кпп",
+        "огрн",
+        "юридические данные"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "contacts_info": {
+      "title": "Контакты",
+      "group": "Контакты",
+      "partial": "block/contacts_info.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "contact"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Контактная информация",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "contacts_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Контакты"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "showMap",
+              "label": "Карта",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showSocials",
+              "label": "Соцсети",
+              "kind": "bool",
+              "default": true
+            }
+          ],
+          "items": {
+            "singular": "контакт",
+            "fields": [
+              {
+                "name": "icon",
+                "label": "Иконка (hook)",
+                "kind": "text",
+                "default": "i-phone"
+              },
+              {
+                "name": "title",
+                "label": "Подпись",
+                "kind": "text",
+                "default": "Телефон"
+              },
+              {
+                "name": "value",
+                "label": "Значение",
+                "kind": "text",
+                "default": "+7 (800) 000-00-00"
+              }
+            ],
+            "default": [
+              {
+                "icon": "i-phone",
+                "title": "Телефон",
+                "value": "+7 (800) 000-00-00"
+              },
+              {
+                "icon": "i-mail",
+                "title": "E-mail",
+                "value": "info@example.ru"
+              },
+              {
+                "icon": "i-pin",
+                "title": "Адрес",
+                "value": "Москва, ул. Примерная, 1"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "contacts",
+        "контакты",
+        "контакт",
+        "адрес",
+        "телефон",
+        "email",
+        "почта",
+        "связь"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "routes": {
+      "title": "Как добраться",
+      "group": "Контакты",
+      "partial": "block/routes.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "routes"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Способы проезда",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "routes_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Как к нам добраться"
+            },
+            {
+              "name": "note",
+              "label": "Примечание",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "способ",
+            "fields": [
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "На метро"
+              },
+              {
+                "name": "text",
+                "label": "Описание",
+                "kind": "textarea",
+                "default": "Как добраться."
+              }
+            ],
+            "default": [
+              {
+                "title": "На метро",
+                "text": "Станция «Алма-Атинская», выход №1, далее 7 минут пешком."
+              },
+              {
+                "title": "На автомобиле",
+                "text": "Парковка у входа, въезд со стороны улицы."
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "routes",
+        "как добраться",
+        "проезд",
+        "маршрут",
+        "directions"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "page_favorites": {
+      "title": "Блок страницы Избранное",
+      "group": "Страницы",
+      "partial": "block/page_favorites.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "good-list",
+        "good-list__toolbar",
+        "products-grid",
+        "gl-search",
+        "gl-price",
+        "gl-sort",
+        "gl-chips",
+        "gl-reset",
+        "gl-count",
+        "gl-empty"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Листинг избранного",
+          "params": [
+            {
+              "name": "perpage",
+              "label": "Товаров на странице",
+              "kind": "number",
+              "default": 12,
+              "min": 4,
+              "max": 48,
+              "step": 4
+            },
+            {
+              "name": "search",
+              "label": "Поиск",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "priceFilter",
+              "label": "Фильтр по цене",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "sort",
+              "label": "Сортировка",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "chips",
+              "label": "Чипы подкатегорий",
+              "kind": "bool",
+              "default": true
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "favorites",
+        "избранное",
+        "избранные",
+        "wishlist",
+        "страница избранное"
+      ],
+      "data": false,
+      "shared_params": {}
+    },
+    "page_search": {
+      "title": "Блок страницы Поиск",
+      "group": "Страницы",
+      "partial": "block/page_search.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "search-bar",
+        "search-section",
+        "search-results",
+        "search-result",
+        "search-empty",
+        "good-list",
+        "products-grid",
+        "gl-empty"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Результаты поиска",
+          "params": [
+            {
+              "name": "perpage",
+              "label": "Товаров на странице",
+              "kind": "number",
+              "default": 12,
+              "min": 4,
+              "max": 48,
+              "step": 4
+            },
+            {
+              "name": "showNews",
+              "label": "Новости",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showArticles",
+              "label": "Статьи",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showServices",
+              "label": "Услуги",
+              "kind": "bool",
+              "default": true
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "search",
+        "поиск",
+        "результаты поиска",
+        "найти",
+        "страница поиск"
+      ],
+      "data": false,
+      "shared_params": {}
+    },
+    "page_404": {
+      "title": "Блок страницы 404",
+      "group": "Страницы",
+      "partial": "block/page_404.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "nf"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Страница не найдена",
+          "params": [
+            {
+              "name": "code",
+              "label": "Код",
+              "kind": "text",
+              "default": "404"
+            },
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Страница уехала на подзарядку"
+            },
+            {
+              "name": "text",
+              "label": "Текст",
+              "kind": "textarea",
+              "default": "Похоже, страница не найдена. Вернитесь на главную, загляните в каталог или воспользуйтесь поиском."
+            },
+            {
+              "name": "image",
+              "label": "Картинка",
+              "kind": "text",
+              "default": "images/404/404.webp"
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "404",
+        "не найдена",
+        "ошибка",
+        "страница 404"
+      ],
+      "data": false,
+      "shared_params": {}
+    },
+    "page_compare": {
+      "title": "Блок страницы Сравнение",
+      "group": "Страницы",
+      "partial": "block/page_compare.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "compare",
+        "compare__table",
+        "compare__toolbar",
+        "gl-count",
+        "gl-reset",
+        "gl-empty",
+        "products-grid"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Таблица сравнения",
+          "params": []
+        }
+      },
+      "keywords": [
+        "compare",
+        "сравнение",
+        "сравнить",
+        "таблица",
+        "страница сравнение"
+      ],
+      "data": false,
+      "shared_params": {}
+    },
+    "page_basket": {
+      "title": "Блок страницы Корзина",
+      "group": "Страницы",
+      "partial": "block/page_basket.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "basket-layout",
+        "basket-items__head",
+        "basket-item",
+        "basket-summary__card",
+        "basket-summary__lines",
+        "basket-empty",
+        "basket-order"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Корзина и оформление заказа",
+          "params": []
+        }
+      },
+      "keywords": [
+        "basket",
+        "корзина",
+        "заказ",
+        "оформление",
+        "страница корзина"
+      ],
+      "data": false,
+      "shared_params": {}
+    },
+    "page_news_detail": {
+      "title": "Блок страницы Новость",
+      "group": "Новости и статьи",
+      "partial": "block/page_news_detail.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "news-in",
+        "news-in__title",
+        "news-in__media",
+        "news-in__body",
+        "news-in__nav"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Детальная новость",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "content"
+            },
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Открытие нового шоурума"
+            },
+            {
+              "name": "date",
+              "label": "Дата",
+              "kind": "text",
+              "default": "29 сентября 2026"
+            },
+            {
+              "name": "photo",
+              "label": "Фото",
+              "kind": "text",
+              "default": "images/preview/news/news-1.webp"
+            }
+          ],
+          "items": {
+            "singular": "абзац",
+            "fields": [
+              {
+                "name": "text",
+                "label": "Абзац",
+                "kind": "textarea",
+                "default": "Текст новости."
+              }
+            ],
+            "default": [
+              {
+                "text": "Текст новости: что произошло и почему это важно."
+              },
+              {
+                "text": "Второй абзац с деталями и планами."
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "news",
+        "новость",
+        "новости",
+        "страница новость",
+        "детальная новость"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "page_article_detail": {
+      "title": "Блок страницы Статья",
+      "group": "Новости и статьи",
+      "partial": "block/page_article_detail.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "article-in",
+        "article-in__title",
+        "article-in__media",
+        "article-in__body",
+        "article-in__nav",
+        "article-in__meta"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Детальная статья",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "content"
+            },
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Как выбрать смартфон в 2026 году"
+            },
+            {
+              "name": "anons",
+              "label": "Вступление",
+              "kind": "textarea",
+              "default": "Краткое вступление к статье."
+            },
+            {
+              "name": "author",
+              "label": "Автор",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "tag",
+              "label": "Тег",
+              "kind": "text",
+              "default": "Гид"
+            },
+            {
+              "name": "photo",
+              "label": "Фото",
+              "kind": "text",
+              "default": "images/preview/articles/article-1.webp"
+            }
+          ],
+          "items": {
+            "singular": "абзац",
+            "fields": [
+              {
+                "name": "text",
+                "label": "Абзац",
+                "kind": "textarea",
+                "default": "Текст статьи."
+              }
+            ],
+            "default": [
+              {
+                "text": "Основной текст статьи."
+              },
+              {
+                "text": "Второй абзац с примерами."
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "article",
+        "статья",
+        "статьи",
+        "страница статья",
+        "детальная статья"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "page_order": {
+      "title": "Блок страницы Заказ",
+      "group": "Страницы",
+      "partial": "block/page_order.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "order-items",
+        "order-status",
+        "basket-item",
+        "basket-summary__card"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Детальный заказ",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "order"
+            },
+            {
+              "name": "number",
+              "label": "Номер",
+              "kind": "text",
+              "default": "1024"
+            },
+            {
+              "name": "statusLabel",
+              "label": "Статус",
+              "kind": "text",
+              "default": "Обрабатывается"
+            },
+            {
+              "name": "statusClass",
+              "label": "Класс статуса",
+              "kind": "select",
+              "default": "processing",
+              "options": [
+                {
+                  "value": "processing",
+                  "label": "Обрабатывается"
+                },
+                {
+                  "value": "paid",
+                  "label": "Оплачен"
+                },
+                {
+                  "value": "delivered",
+                  "label": "Доставлен"
+                },
+                {
+                  "value": "canceled",
+                  "label": "Отменён"
+                }
+              ]
+            },
+            {
+              "name": "date",
+              "label": "Дата",
+              "kind": "text",
+              "default": "29 сентября 2026"
+            },
+            {
+              "name": "total",
+              "label": "Итого",
+              "kind": "text",
+              "default": "49 990 ₽"
+            },
+            {
+              "name": "address",
+              "label": "Адрес доставки",
+              "kind": "text",
+              "default": "Москва, ул. Примерная, 1"
+            }
+          ],
+          "items": {
+            "singular": "товар",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Смартфон X1 Pro"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/product/1"
+              },
+              {
+                "name": "image",
+                "label": "Фото",
+                "kind": "text",
+                "default": "images/good/good_1_1.webp"
+              },
+              {
+                "name": "price",
+                "label": "Цена",
+                "kind": "text",
+                "default": "49 990 ₽"
+              },
+              {
+                "name": "cnt",
+                "label": "Кол-во",
+                "kind": "text",
+                "default": "1"
+              },
+              {
+                "name": "sum",
+                "label": "Сумма",
+                "kind": "text",
+                "default": "49 990 ₽"
+              }
+            ],
+            "default": [
+              {
+                "header": "Смартфон X1 Pro",
+                "url": "/product/1",
+                "image": "images/good/good_1_1.webp",
+                "price": "49 990 ₽",
+                "cnt": "1",
+                "sum": "49 990 ₽"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "order",
+        "заказ",
+        "страница заказ",
+        "детальный заказ"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "page_profile": {
+      "title": "Блок страницы Профиль",
+      "group": "Страницы",
+      "partial": "block/page_profile.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "profile-tabs__nav",
+        "profile-tabs__panel",
+        "profile-form",
+        "orders-list",
+        "order-row",
+        "order-status",
+        "profile-pager"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Личный кабинет",
+          "params": [
+            {
+              "name": "name",
+              "label": "ФИО",
+              "kind": "text",
+              "default": "Иванов Иван"
+            },
+            {
+              "name": "phone",
+              "label": "Телефон",
+              "kind": "text",
+              "default": "+7 (999) 000-00-00"
+            },
+            {
+              "name": "email",
+              "label": "Email",
+              "kind": "text",
+              "default": "mail@example.ru"
+            },
+            {
+              "name": "address",
+              "label": "Адрес",
+              "kind": "text",
+              "default": "Москва, ул. Примерная, 1"
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "profile",
+        "профиль",
+        "кабинет",
+        "личный кабинет",
+        "страница профиль"
+      ],
+      "data": false,
+      "shared_params": {}
+    },
+    "page_registration": {
+      "title": "Блок страницы Регистрация",
+      "group": "Страницы",
+      "partial": "block/page_registration.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "register",
+        "register__layout",
+        "register__card",
+        "register__benefits",
+        "form-card",
+        "form-grid",
+        "form-group",
+        "form-label"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Регистрация",
+          "params": [
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Регистрация"
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "register",
+        "регистрация",
+        "аккаунт",
+        "страница регистрация"
+      ],
+      "data": false,
+      "shared_params": {}
+    },
+    "history_timeline": {
+      "title": "История",
+      "group": "Компания",
+      "partial": "block/history.html",
+      "status": "local:t1",
+      "check": "preview",
+      "contract_classes": [
+        "history"
+      ],
+      "default_variant": "vertical",
+      "variants": {
+        "vertical": {
+          "title": "Вертикальная",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "history_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "История компании"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "событие",
+            "fields": [
+              {
+                "name": "year",
+                "label": "Год",
+                "kind": "text",
+                "default": "2020"
+              },
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Событие"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Описание события."
+              }
+            ],
+            "default": [
+              {
+                "year": "2012",
+                "title": "Основание",
+                "text": "Компания начала работу."
+              },
+              {
+                "year": "2020",
+                "title": "Расширение",
+                "text": "Открыли новые направления."
+              }
+            ]
+          }
+        },
+        "horizontal": {
+          "title": "Горизонтальная",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "history_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "История компании"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "событие",
+            "fields": [
+              {
+                "name": "year",
+                "label": "Год",
+                "kind": "text",
+                "default": "2020"
+              },
+              {
+                "name": "title",
+                "label": "Заголовок",
+                "kind": "text",
+                "default": "Событие"
+              },
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "textarea",
+                "default": "Описание события."
+              }
+            ],
+            "default": [
+              {
+                "year": "2012",
+                "title": "Основание",
+                "text": "Компания начала работу."
+              },
+              {
+                "year": "2020",
+                "title": "Расширение",
+                "text": "Открыли новые направления."
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "history",
+        "история",
+        "таймлайн",
+        "timeline",
+        "этапы",
+        "годы"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "org_chart": {
+      "title": "Структура компании",
+      "group": "Компания",
+      "partial": "block/org_chart.html",
+      "status": "local:t1",
+      "check": "preview",
+      "contract_classes": [
+        "org"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Орг. структура",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "org_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Структура компании"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "подразделение",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Название",
+                "kind": "text",
+                "default": "Отдел"
+              },
+              {
+                "name": "note",
+                "label": "Примечание",
+                "kind": "text",
+                "default": ""
+              }
+            ],
+            "default": [
+              {
+                "name": "Дирекция",
+                "note": "Управление"
+              },
+              {
+                "name": "Отдел продаж",
+                "note": "8 человек"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "org chart",
+        "структура компании",
+        "оргструктура",
+        "схема компании",
+        "подразделения",
+        "org"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "reports": {
+      "title": "Документы",
+      "group": "Компания",
+      "partial": "block/reports.html",
+      "status": "local:t1",
+      "check": "preview",
+      "contract_classes": [
+        "reports",
+        "report"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Список документов",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "reports_list"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Документы"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ],
+          "items": {
+            "singular": "документ",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Название",
+                "kind": "text",
+                "default": "Документ"
+              },
+              {
+                "name": "meta",
+                "label": "Мета",
+                "kind": "text",
+                "default": "PDF · 1.2 МБ"
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "kind": "text",
+                "default": "/files/report.pdf"
+              }
+            ],
+            "default": [
+              {
+                "name": "Отчёт за 2025",
+                "meta": "PDF · 1.2 МБ",
+                "url": "/files/report-2025.pdf"
+              },
+              {
+                "name": "Презентация",
+                "meta": "PDF · 3.4 МБ",
+                "url": "/files/presentation.pdf"
+              }
+            ]
+          }
+        }
+      },
+      "keywords": [
+        "reports",
+        "отчёты",
+        "отчеты",
+        "документы",
+        "файлы",
+        "report"
+      ],
+      "data": true,
+      "shared_params": {}
+    },
+    "promo_parallax": {
+      "title": "Промо-баннер",
+      "group": "Промо",
+      "partial": "block/promo_parallax.html",
+      "status": "preview",
+      "check": "preview",
+      "contract_classes": [
+        "plx"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Параллакс-промо",
+          "params": [
+            {
+              "name": "eyebrow",
+              "label": "Надзаголовок",
+              "kind": "text",
+              "default": "Промо"
+            },
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Новая коллекция"
+            },
+            {
+              "name": "text",
+              "label": "Текст",
+              "kind": "textarea",
+              "default": "Краткое описание предложения."
+            },
+            {
+              "name": "btnText",
+              "label": "Текст кнопки",
+              "kind": "text",
+              "default": "Смотреть"
+            },
+            {
+              "name": "btnUrl",
+              "label": "URL кнопки",
+              "kind": "text",
+              "default": "/catalog"
+            },
+            {
+              "name": "photo",
+              "label": "Фон",
+              "kind": "text",
+              "default": "images/hero-1.svg"
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "promo",
+        "промо",
+        "баннер",
+        "parallax",
+        "параллакс",
+        "акция",
+        "предложение"
+      ]
+    },
+    "subscribe": {
+      "title": "Подписка",
+      "group": "Промо",
+      "partial": "block/forms/subscribe_form.html",
+      "status": "used",
+      "check": "preview",
+      "contract_classes": [
+        "form-subscribe"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Форма подписки",
+          "params": [
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Подпишитесь на новости"
+            },
+            {
+              "name": "note",
+              "label": "Примечание",
+              "kind": "textarea",
+              "default": "Никакого спама, только полезное."
+            },
+            {
+              "name": "agree",
+              "label": "Согласие на обработку ПД",
+              "kind": "bool",
+              "default": true
+            }
+          ]
+        }
+      },
+      "keywords": [
+        "subscribe",
+        "подписка",
+        "рассылка",
+        "email рассылка",
+        "newsletter"
+      ]
+    },
+    "form": {
+      "title": "Форма",
+      "group": "Формы",
+      "partial": "block/forms/callback_form.html",
+      "status": "planned",
+      "check": "preview",
+      "keywords": [
+        "form",
+        "форма",
+        "заявка",
+        "обратная связь",
+        "callback",
+        "form_builder"
+      ],
+      "contract_classes": [
+        "form-api-wrap",
+        "form-api",
+        "form-grid",
+        "form-group",
+        "form-control",
+        "form-label",
+        "form-foot"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Форма",
+          "params": [
+            {
+              "name": "form",
+              "label": "Форма",
+              "kind": "select",
+              "default": "callback",
+              "options": [
+                {
+                  "value": "callback",
+                  "label": "Обратный звонок"
+                },
+                {
+                  "value": "consultation",
+                  "label": "Консультация"
+                },
+                {
+                  "value": "calc_cost",
+                  "label": "Расчёт стоимости"
+                },
+                {
+                  "value": "booking",
+                  "label": "Бронирование"
+                },
+                {
+                  "value": "send_request",
+                  "label": "Отправить заявку"
+                },
+                {
+                  "value": "ask_question",
+                  "label": "Задать вопрос"
+                },
+                {
+                  "value": "send_review",
+                  "label": "Оставить отзыв"
+                },
+                {
+                  "value": "subscribe",
+                  "label": "Подписка"
+                },
+                {
+                  "value": "service_order",
+                  "label": "Заказать услугу"
+                }
+              ]
+            },
+            {
+              "name": "header",
+              "label": "Заголовок (опц.)",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            }
+          ]
+        }
+      }
+    },
+    "contact_form": {
+      "title": "Контакты + форма",
+      "group": "Формы",
+      "partial": "block/contact_form.html",
+      "status": "planned",
+      "check": "preview",
+      "keywords": [
+        "contacts",
+        "контакты",
+        "форма",
+        "свяжитесь",
+        "contact form"
+      ],
+      "contract_classes": [
+        "contact",
+        "contact__list",
+        "contact__item",
+        "socials",
+        "form-api-wrap",
+        "form-api"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Контакты + форма",
+          "params": [
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Свяжитесь с нами"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Ответим на вопросы в течение 15 минут."
+            }
+          ]
+        }
+      }
+    }
+  }
+}

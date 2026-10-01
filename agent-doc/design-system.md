@@ -26,7 +26,11 @@ Applied as: colors `createVuetify({ themes: { s0..s3 } })` + `theme.global.name 
 
 ## Tokens
 
-`--app-space-unit` (4px) · `--app-space-field` (between fields) · `--app-space-section` (between blocks) · `--app-space-inline` (inside groups) · `--app-field-height` (40 compact / 56 soft) · `--app-radius-field/card/btn/chip` · `--app-font-family/h1/h2/value/label/desc` · `--app-tint` (neutral background for row striping, handles, underlays; low-alpha primary rgba, works in dark).
+`--app-space-unit` (4px) · `--app-space-field` (between fields) · `--app-space-section` (between blocks) · `--app-space-inline` (inside groups) · `--app-field-height` (40 compact / 56 soft) · `--app-radius-field/card/btn/chip` · `--app-font-family/h1/h2/value/label/desc` · `--app-font-mono` (monospace stack; `--app-font-code` editor size) · `--app-tint` (neutral background for row striping, handles, underlays; low-alpha primary rgba, works in dark).
+
+## Links
+
+`main.scss`: `.v-application a { color: primary; text-decoration: underline; text-underline-offset: 2px }` — every text link is underlined so it reads as clickable. Not underlined: `a.v-btn` / `a.v-card` / `a.v-list-item` / `a.v-chip` / `a.v-breadcrumb-item` (controls), the header brand (`App.vue` `header .v-toolbar-title a`), icon-only links (`.tool a` in `1_to_m/slide.vue`, gallery/chat lists), sort arrows and `.controls a` (`FindResults.vue`), and the `.not_underline` utility. Component rules win over the global one by specificity/last-declaration — a new "no underline" rule must be scoped.
 
 ## EditForm
 

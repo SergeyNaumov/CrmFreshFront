@@ -1,0 +1,107 @@
+/* ============================================================
+   themes/colors/dark.css — цветовая схема «Ночь»
+
+   ПОЛНЫЙ набор цветовых токенов (эксклюзивная модель).
+   Брендовая пара: #818cf8 / #c084fc. Файл сгенерирован
+   agent-doc/tools/gen_t1_color_schemes.py — правки вносить в SPEC.
+   Производные токены (rgb, градиент, шторки, слоты, выноски)
+   считаются и доводятся до контраста WCAG AA автоматически.
+   ============================================================ */
+
+:root {
+  /* ---------- Брендовая пара ---------- */
+  --primary: #818cf8;
+  --primary-rgb: 129, 140, 248;
+  --primary-dark: #5160f5;
+  --secondary: #c084fc;
+  --secondary-rgb: 192, 132, 252;
+
+  /* ---------- Текст на брендовой заливке ---------- */
+  --on-primary: #111418;
+
+  /* ---------- Акцент и семантические плашки ---------- */
+  --accent: #fbbf24;
+  --badge-new: var(--primary);
+  --badge-promo: var(--accent);
+  --badge-sale: var(--danger);
+
+  /* ---------- Статусные ---------- */
+  --success: #34d399;
+  --success-rgb: 52, 211, 153;
+  --danger: #f87171;
+  --danger-rgb: 248, 113, 113;
+  --warning: #fbbf24;
+  --warning-rgb: 251, 191, 36;
+  --info: #38bdf8;
+  --info-rgb: 56, 189, 248;
+
+  /* ---------- Фон, текст, нейтрали ---------- */
+  --light: #212130;
+  --light-rgb: 33, 33, 48;
+  --dark: #0f0f15;
+  --dark-rgb: 15, 15, 21;
+  --body-bg: #13131b;
+  --body-color: #c6c6d2;
+  --muted: #9292aa;
+  --heading-color: #f1f1f4;
+  --border: #333347;
+  --border-color: #474762;
+  --callout-bg: rgba(var(--primary-rgb), 0.18);
+  --callout-border: rgba(var(--primary-rgb), 0.45);
+
+  /* ---------- Поверхности ---------- */
+  --surface: #1a1a24;
+  --surface-rgb: 26, 26, 36;
+  --on-surface: var(--heading-color);
+
+  /* ---------- Ссылки и градиент ---------- */
+  --link-color: #818cf8;
+  --link-hover: #c084fc;
+  --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  --gradient-hover: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+
+  /* ---------- Кнопка «В корзину» ---------- */
+  --btn-cart: #818cf8;
+  --btn-cart-rgb: 129, 140, 248;
+  --on-btn-cart: #111418;
+
+  /* ---------- Белое и «чернила» ---------- */
+  --white: #ffffff;
+  --white-rgb: 255, 255, 255;
+  --ink: #0a0a0f;
+  --ink-rgb: 10, 10, 15;
+  --logo-filter: brightness(0) invert(1);
+
+  /* ---------- Шторки каталога ---------- */
+  --catalog-curtain: linear-gradient(0deg, rgba(var(--primary-rgb), 0.85) 0%, rgba(var(--primary-rgb), 0.08) 48%);
+  --catalog-plate: rgba(var(--primary-rgb), 0.92);
+  --catalog-plate-text: var(--on-primary);
+  --catalog-reveal: linear-gradient(0deg, rgba(var(--primary-rgb), 0.97) 0%, rgba(var(--primary-rgb), 0.6) 100%);
+
+  /* ---------- Поиск ---------- */
+  --search-submit-bg: var(--primary);
+  --search-submit-color: var(--on-primary);
+
+  /* ---------- Тёмные инвертированные зоны ---------- */
+  --topbar-bg: #0f0f15;
+  --hero-bg: #0f0f15;
+  --hero-tint-rgb: 15, 15, 21;
+  --footer-bg: #0f0f15;
+
+  /* ---------- Слоты фоновых заливок ---------- */
+  --fill-1: var(--surface);
+  --on-fill-1: var(--body-color);
+  --fill-1-border: var(--border);
+  --fill-2: var(--light);
+  --on-fill-2: var(--body-color);
+  --fill-3: var(--callout-bg);
+  --on-fill-3: var(--body-color);
+  --fill-3-border: var(--callout-border);
+  --fill-4: var(--gradient);
+  --on-fill-4: var(--on-primary);
+  --fill-5: var(--footer-bg);
+  --on-fill-5: var(--white);
+  --fill-brand-4: var(--on-primary);
+  --fill-brand-5: var(--white);
+
+}

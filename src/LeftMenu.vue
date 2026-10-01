@@ -110,6 +110,8 @@ export default{
                   return UrlPrefix+'/vue/Schedule/'+params.config
                 if(item.value=='table')
                   return UrlPrefix+'/vue/table/'+params.config
+                if(item.value=='filenavigator')
+                  return UrlPrefix+'/vue/filenavigator/'+params.config
             }
             if(item.type=='src'){
               return UrlPrefix+'/src:'+item.value

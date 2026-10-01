@@ -23,19 +23,20 @@
             </v-card>
             
             <template v-else>
-                    <template v-if="log">
+                    <template v-if="log_html.length || log_objects.length">
                         <div>
-                            <pre v-if="typeof(log)=='string'" v-html="log"></pre>
-                            <pre v-else v-for="(l,idx) in (log)" v-bind:key="idx" v-html="l"></pre>
+                            <pre v-for="(l,idx) in log_html" :key="'lh'+idx" v-html="l"></pre>
+                            <pre v-for="(l,idx) in log_objects" :key="'lo'+idx">{{l}}</pre>
                         </div>
                     </template>
                     <v-dialog v-model="dialog" max-width="500">
                         <v-card>
                             <v-card-title  class="text-h5">{{dialog_header}}</v-card-title>
                             <v-card-text>
-                              <template v-if="log.length">
+                              <template v-if="log_html.length || log_objects.length">
                                   <b>обратитесь к разработчику: </b>
-                                  <pre v-for="(l,idx) in (log)" :key="'l2'+idx" v-html="l"></pre>
+                                  <pre v-for="(l,idx) in log_html" :key="'l2h'+idx" v-html="l"></pre>
+                                  <pre v-for="(l,idx) in log_objects" :key="'l2o'+idx">{{l}}</pre>
                               </template>
                               <errors :errors="errors"/>
                               <template v-if="!errors.length">
@@ -92,6 +93,15 @@ data:function(){
   }
 },
 computed:{
+  log_html(){
+    if(!this.log) return []
+    if(typeof this.log == 'string') return [this.log]
+    return this.log.filter(l => typeof l == 'string')
+  },
+  log_objects(){
+    if(!this.log || typeof this.log == 'string') return []
+    return this.log.filter(l => typeof l != 'string').map(l => JSON.stringify(l, null, 2))
+  },
   width(){
     if(this.form.width){
       return  this.form.width

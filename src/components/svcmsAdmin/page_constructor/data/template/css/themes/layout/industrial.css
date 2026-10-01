@@ -1,0 +1,38 @@
+/* ============================================================
+   themes/layout/industrial.css — индустриальная компоновка.
+
+   Широкий контейнер, крупный скейл, плотный вертикальный ритм,
+   видимый topbar, акцентная черта под заголовком секции, угловая
+   подача карточек. Цвет/форма — из осей color/style.
+   ============================================================ */
+:root {
+  --container: 1320px;
+  --gutter: 24px;
+  --section-gap: 72px;
+  --header-height: 72px;
+  --grid-size: 32px;
+  --font-size-h1: 2.8rem;
+  --font-size-h2: 2.15rem;
+  --font-size-h3: 1.45rem;
+  --font-weight-heading: 800;
+  --grid-gap: 24px;
+  --head-gap: 32px;
+  --head-space: 28px;
+}
+
+/* Видимый topbar (в базовой компоновке скрыт) */
+.topbar { display: block; }
+
+/* Заголовки секций — с акцентной чертой снизу */
+.section-head { align-items: center; }
+.section-title::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 3px;
+  margin-top: 12px;
+  background: var(--primary);
+}
+
+/* Карточки преимуществ — верхний акцент */
+.adv-card { border-top: var(--border-width-accent) solid var(--primary); }

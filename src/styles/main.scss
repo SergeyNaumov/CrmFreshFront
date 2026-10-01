@@ -1,5 +1,13 @@
 .v-application a {
     color: rgb(var(--v-theme-primary));
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.v-application a.v-btn,
+.v-application a.v-card,
+.v-application a.v-list-item,
+.v-application a.v-chip,
+.v-application a.v-breadcrumb-item {
     text-decoration: none;
 }
 
@@ -15,6 +23,8 @@
     --app-radius-btn: 4px;
     --app-radius-chip: 12px;
     --app-font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+    --app-font-mono: "DejaVu Sans Mono", "Liberation Mono", Consolas, monospace;
+    --app-font-code: 13px;
     --app-font-h1: 28px;
     --app-font-h1w: 700;
     --app-font-h2: 20px;

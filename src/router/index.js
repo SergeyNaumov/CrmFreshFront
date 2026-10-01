@@ -1,14 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Хелперы пропсов: компоненты страниц ожидают props 'params' и (для full-screen) 'is_headapp'.
-const shellProps = (route) => ({ params: { config: route.params.config } })
+const shellProps = (route) => ({ params: { config: route.params.config, base: route.params.base || [] } })
 const blankProps = (route) => ({
   params: {
     config: route.params.config,
     id: route.params.id != null ? route.params.id : null,
     action: route.params.id != null ? 'edit' : 'new',
+    base: route.params.base || [],
   },
   is_headapp: '1',
+})
+
+const pageConstructorProps = (route) => ({
+  params: { template_id: route.params.template_id },
+  is_headapp: '1',
+})
+const shellPageConstructorProps = (route) => ({
+  params: { template_id: route.params.template_id },
 })
 
 const MainPage = () => import('../MainPage.vue')
@@ -23,6 +32,8 @@ const ParserExcel = () => import('../components/ParserExcel/ParserExcel.vue')
 const Schedule = () => import('../components/Schedule/Schedule.vue')
 const TransfereCards = () => import('../components/TransfereCards/TransfereCards.vue')
 const TableComponent = () => import('../components/Table.vue')
+const FileNavigator = () => import('../components/FileNavigator/FileNavigator.vue')
+const PageConstructor = () => import('../components/svcmsAdmin/PageConstructor.vue')
 const Login = () => import('../components/Login.vue')
 const Register = () => import('../components/Register.vue')
 const Remember = () => import('../components/Remember.vue')
@@ -40,6 +51,8 @@ const routes = [
   { path: '/vue/parser-excel/:config', name: 'shell-parser-excel', component: ParserExcel, props: shellProps },
   { path: '/vue/Schedule/:config', name: 'shell-schedule', component: Schedule, props: shellProps },
   { path: '/vue/table/:config', name: 'shell-table', component: TableComponent, props: shellProps },
+  { path: '/vue/filenavigator/:config/:base(.*)*', name: 'shell-filenavigator', component: FileNavigator, props: shellProps },
+  { path: '/vue/page-constructor/:template_id', name: 'shell-page-constructor', component: PageConstructor, props: shellPageConstructorProps },
 
   // ---------- Full-screen (без меню), URL /... ----------
   { path: '/edit_form/:config/:id?', name: 'edit-form', component: EditForm, props: blankProps, alias: ['/edit-form/:config/:id?'], meta: { blank: true } },
@@ -47,6 +60,8 @@ const routes = [
   { path: '/admin_table/:config', name: 'headapp-admin-table', component: AdminTable, props: blankProps, alias: ['/admin-table/:config'], meta: { blank: true } },
   { path: '/admin_tree/:config', name: 'headapp-admin-tree', component: AdminTree, props: blankProps, alias: ['/admin-tree/:config'], meta: { blank: true } },
   { path: '/table/:config', name: 'headapp-table', component: TableComponent, props: blankProps, meta: { blank: true } },
+  { path: '/filenavigator/:config/:base(.*)*', name: 'file-navigator', component: FileNavigator, props: blankProps, alias: ['/file-navigator/:config/:base(.*)*'], meta: { blank: true } },
+  { path: '/page-constructor/:template_id', name: 'page-constructor', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
   { path: '/const/:config', name: 'headapp-const', component: Const, props: blankProps, meta: { blank: true } },
   { path: '/stat-tool/:config', name: 'headapp-stat-tool', component: StatTool, props: blankProps, meta: { blank: true } },
   { path: '/memo-aggregate/:config', name: 'memo-aggregate', component: Fallback, props: blankProps, meta: { blank: true } },

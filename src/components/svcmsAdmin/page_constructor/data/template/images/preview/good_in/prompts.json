@@ -1,0 +1,47 @@
+{
+  "_meta": {
+    "purpose": "Подсказки для генерации настоящих фотографий товара к страницам preview/good_in*.html",
+    "note": "На страницах good_in.* один и тот же товар (Смартфон X1 Pro, id 1). Каждая из 5 компоновок (gv-classic/split/vertical/wide/minimal) показывает его же; нужен один набор из 5 кадров галереи.",
+    "product_count": 1,
+    "resolution": "1600x1600 px, квадрат 1:1",
+    "format": "JPEG, качество q=85, sRGB",
+    "path": "templates/t1/images/preview/good_in/",
+    "naming": "good_in_1_{номер}.jpg — главное фото 01, далее кадры галереи 02–05",
+    "editorial_style": "Единая студийная съёмка: светлый градиентный фон, мягкие тени, профессиональный свет, коммерческая фотография. Товар всегда строго в фокусе, без лишних деталей на фоне. Подпись/брендинг DigitalStrateg на упаковке — мелким аккуратным шрифтом.",
+    "prompt_lang": "Поля prompt_en — на английском (совместимы с большинством генераторов изображений)."
+  },
+  "products": [
+    {
+      "id": 1,
+      "name": "Смартфон X1 Pro",
+      "color": "глубокий чёрный с глянцевой спинкой",
+      "shots": [
+        {
+          "file": "good_in_1_01.jpg", "shot": "front",
+          "alt_ru": "Смартфон X1 Pro — вид спереди на светлом фоне",
+          "prompt_en": "Studio product photo of a premium glossy black smartphone, symmetric front view, centered, large edge-to-edge AMOLED display showing an abstract blue-violet gradient wallpaper, thin bezels, small punch-hole camera at top center, professional lighting, soft shadow under device, light gray seamless gradient background, commercial e-commerce photography, ultra sharp, 8k"
+        },
+        {
+          "file": "good_in_1_02.jpg", "shot": "three_quarter",
+          "alt_ru": "Смартфон X1 Pro — три-четверти, экраном к камере",
+          "prompt_en": "Studio product photo of a glossy black smartphone seen at three-quarter angle slightly tilted toward the camera, bright AMOLED display facing camera, edge-to-edge glass, polished aluminum frame, soft studio reflections on glass, light gradient background, soft drop shadow, commercial photography, high detail"
+        },
+        {
+          "file": "good_in_1_03.jpg", "shot": "back",
+          "alt_ru": "Смартфон X1 Pro — задняя панель с камерами",
+          "prompt_en": "Studio product photo of a smartphone back panel, glossy black glass with a large rectangular camera module holding three lenses and an LED flash in the top-left corner, subtle brand text at bottom, soft light reflections, clean light-gray gradient background, soft shadow, commercial product photography"
+        },
+        {
+          "file": "good_in_1_04.jpg", "shot": "screen_ui",
+          "alt_ru": "Смартфон X1 Pro — экран с рабочим интерфейсом",
+          "prompt_en": "Studio photo of a smartphone held straight, bright home screen UI with colorful rounded app icons and a vivid abstract wallpaper, true-to-life wallpaper colors, thin bezels, centered, light gradient environment reflection, soft shadow, commercial mockup photography, 8k"
+        },
+        {
+          "file": "good_in_1_05.jpg", "shot": "package",
+          "alt_ru": "Смартфон X1 Pro — комплект и коробка",
+          "prompt_en": "Studio photo of a premium smartphone retail package: open dark box, phone inside with a USB-C cable and charger neatly placed beside, minimal dark box with small elegant white brand text, light gradient background, soft shadow, commercial unboxing photography"
+        }
+      ]
+    }
+  ]
+}

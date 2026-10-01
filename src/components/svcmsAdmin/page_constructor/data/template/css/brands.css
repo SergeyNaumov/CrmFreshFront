@@ -1,0 +1,50 @@
+/* ============================================================
+   css/brands.css — страница «Производители» (page/brands.html)
+   Все цвета — токены темы.
+   ============================================================ */
+.brands-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.brand-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  text-decoration: none;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.brand-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(var(--primary-rgb), 0.45);
+}
+
+.brand-card__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72px;
+  padding: 8px;
+  background: var(--light);
+  border-radius: var(--radius-md);
+}
+
+.brand-card__logo img { max-width: 100%; max-height: 100%; display: block; }
+
+.brand-card__name { font-weight: 700; color: var(--heading-color); }
+
+.brand-card__desc { font-size: var(--font-size-sm); color: var(--muted); line-height: 1.5; }
+
+.brand-card__count { margin-top: auto; font-size: var(--font-size-xs); font-weight: 600; color: var(--primary); }
+
+@media (max-width: 1200px) { .brands-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 991px) { .brands-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 575px) { .brands-grid { grid-template-columns: 1fr; } }

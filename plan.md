@@ -113,6 +113,54 @@
 - [x] Grep-защиты (Vue2 API / Vuetify2 / `process.env`).
 - [ ] PR `vue3 → main`.
 
+## Этап 9. Поле `codelist` (CodeMirror 6) и подчёркивание ссылок
+
+- [x] Зависимости: `@codemirror/{view,state,commands,language,search,autocomplete}`, `lang-python`, `lang-javascript`, `legacy-modes` (без мета-пакета `codemirror`).
+- [x] `src/components/fields/codelist.vue`: редактор, тема из Vuetify-токенов, `rows`, read-only, `field-buttons`, ошибки.
+- [x] Язык только из конфига: `field.language` → `lang` → `mode` → `perl`; python/js и legacy-режимы грузятся динамически (`Compartment` + token-защита от гонки).
+- [x] Регистрация: `dynamic_component_loader.js` (`field-codelist`), `EditForm/FormBlock.vue` (свитч + full-width).
+- [x] `1_to_m/form.vue`: редактор в диалоге + `codelist` в whitelist `create_edit_fields`; `1_to_m/slide.vue`: обрезанный `<pre>` в list/table + `codelist` в `get_value_for_slide`.
+- [x] `AdminTable/FindResults.vue`: read-only ячейка `pre.codelist_result`.
+- [x] Ссылки: `main.scss` underline + исключения (`.v-btn`/`.v-card`/`.v-list-item`/`.v-chip`/`.v-breadcrumb-item`, иконки, сортировка, шапка); токены `--app-font-mono`, `--app-font-code`.
+- [x] Сборки default/trade/svcms; чанк `dist/js/codelist.js` 368 kB (120 kB gzip), ленивый.
+- [x] `FindResults.vue` + `result_type(td)`: реальный тип колонки ищется в `filters` (бэк отдаёт `type='html'`); ветка `pre.codelist_result` иначе недостижима.
+- [x] Диалог `1_to_m` с `codelist` — `fullscreen` (`.one_to_m_form_wide`, `is_wide_dialog`); остальные 1_to_m остались 752px.
+- [x] `field.fast_rules` (`[{header,url}]`) → select «быстрое правило» + кнопка «применить»: `GET url` → `{success,data}` пишем в doc.
+- [x] Скролл: `CM_THEME '&' {height:100%}` — `.codelist_box` фикс. высота, колесо/полоса прокрутки работают (проверено реальным wheel через CDP).
+- [x] Высота по умолчанию: `rows` 12 → 20.
+- [x] Тулбар редактора: поиск/замена, undo/redo, свернуть/развернуть всё, перенос строк; автодополнение (`autocompletion` + `completeAnyWord`, языковые источники для python/js).
+- [x] Тулбар редактора: подсветка пробелов/табов (`highlightWhitespace()`) и переключение отступов пробелы/табы (`indentUnit`); дефолты `field.show_whitespace`/`indent_with_tabs`/`indent_size`.
+- [x] `1_to_m` при сохранении правки (update) окно не закрывает, показывает «сохранено» (~1.5с); insert закрывает как раньше.
+- [x] Smoke через CDP (без скриншотов): `edit_form/template/2504` (слайд + диалог 1600×1000 + выбор правила + payload сохранения), `edit_form/struct/12841`, `edit_form/fast_rule`, `vue/admin_table/fast_rule` — 0 ошибок консоли.
+- [ ] Ручная проверка в браузере: undo/поиск по Ctrl+Z/Ctrl+F, тёмная тема, планшетная ширина.
+
+## Этап 10. Файловый навигатор
+
+- [x] `src/components/FileNavigator/FileNavigator.vue`: список/навигация (breadcrumbs, вверх/в корень), просмотр+правка файлов через `field-codelist` (язык по расширению, иначе `plain`), создание/переименование/перемещение/удаление, вывод `error`-списка.
+- [x] Виды список/плитка (localStorage `filenavigator_view`), иконки по типу файла, размер/дата (`readir` отдаёт `size`/`mtime`), создание папок (`/mkdir`).
+- [x] Drag&drop файлов и папок на папки и хлебные крошки (нативный HTML5), guard от переноса папки в себя/потомка.
+- [x] `?dir=<folder>` — корень навигатора (chroot), `?charset=<cp>` (дефолт utf-8) в read/write; `/raw` для предпросмотра/скачивания; фото и pdf в popup, прочие бинарные — скачивание; контекстное меню (правый клик) и увеличенные иконки/шрифты.
+- [x] Фото в popup — фотогалерея со стрелками и клавишами ←/→ по всем изображениям текущей папки (счётчик, циклический переход).
+- [x] Корень навигатора также задаётся путём: `/filenavigator/<config>/<path>` (роуты `:base(.*)*`, shell и full-screen, alias `file-navigator`) в дополнение к `?dir=`.
+- [x] Роуты: `/vue/filenavigator/:config` (shell) и `/filenavigator/:config` (full-screen, alias `/file-navigator`); маппинг `value=='filenavigator'` в `LeftMenu.get_link`.
+- [x] Smoke через CDP на `/filenavigator/filenavigator`: корень `./`, вход в `configs`, open/save (`readfile`/`writefile`), rename, move, delete, ошибки списком — 0 ошибок консоли.
+
+## Этап 11. Конструктор страниц (page_constructor)
+
+- [x] Бэк `routes/svcmsadmin/page_constructor/__init__.py`: `POST /init` (template, `templateBase`/`config`, pages), `GET /page/<id>`, `POST /page/save` (upsert, `unique(template_id,url)`), `POST /page/<id>/delete`; таблица `template_page`, блоки — JSON v2.
+- [x] Frontend `src/components/svcmsAdmin/PageConstructor.vue`: список страниц (создание/параметры/удаление, сортировка по названию/url), редактор блоков в iframe.
+- [x] Редактор — автономный `svcms-templates/page_constructor` (первоисточник), вендорится скриптом `sync_to_admin.sh` в `public/page_constructor/`; обмен блоками через `localStorage`, `templateBase` из `/init` (пока `file://`).
+- [x] Роуты `/page-constructor/:template_id` (full-screen) и `/vue/page-constructor/:template_id` (shell); опциональный проп `open_mode` + комментарий (п.8).
+- [x] Инструкция по синхронизации: `svcms-templates/page_constructor/SYNC_TO_ADMIN.md`.
+- [x] Smoke через CDP: init, создание/сортировка/удаление страниц, iframe-конструктор смонтировался с `templateBase`, добавление блока и сохранение в БД, 0 ошибок консоли.
+- [x] Кнопка «создать базовый набор страниц»: бэк `POST /base-pages` сеет 19 страниц (`/`, `/galery`, `/favorites`, `/catalog` (`rubric_list`), `/goodlist` (`product_list`), `/good/{id}`, `/services/{id}`, `/news/{id}`, `/article/{id}`, `/contacts`, `/basket`, `/news`, `/certificates`, `/about`, `/reviews`, `/compare`, `/articles`, `/404`, `/services`) из таблицы `template_pages_base`, идемпотентно (существующие пропускает).
+- [x] Таблица `template_pages_base` (`url, header, sort, blocks`), сидируется из `base_pages.json`.
+- [x] Живой предпросмотр починен: `sync_to_admin.sh` копирует шаблон в `public/page_constructor/template/`, фронт использует http-`templateBase` от бэка, иначе локальную копию (каталог gitignored). Проверено: предпросмотр блока галереи и страницы рендерятся, 0 ошибок/404.
+- [x] Конструкторы темы: таблица `template_constructor` (одна строка на шаблон: `color/style/layout/font` + `*_css`), эндпоинты `GET /theme/<id>`, `POST /theme/save`, `GET /theme/<id>/styles.css` (combined CSS для сайта).
+- [x] Нативный порт 4 конструкторов (`ThemeTool.vue` + `ThemePreview.vue` + `theme_defs.js`, пресеты/`facts` из `theme-catalog.js`): кнопки «Цвет/Стиль/Компоновка/Шрифт» в тулбаре `PageConstructor`, самодостаточная мини-витрина, сохранение пресета (имя) или кастомной схемы (CSS). Кастомный CSS применяется в превью страниц (`PAGE_CONSTRUCTOR_CONFIG.customCss`).
+- [x] Схемы темы в БД: таблицы `template_theme_{color,style,layout,font}` (импорт 48 схем), эндпоинты `/theme-schemes/*`, `styles.css` из БД, кастомы сохраняются как схемы (`is_custom=1`); `ThemeTool` читает схемы из БД.
+- [x] Вынос конструктора из `svcms-templates`: движок и данные перенесены в компонент (`engine/`, `data/schema.js`, `data/demo`, `data/template`, `data/examples`), редактор блоков — **нативный** `editor/BlockEditor.vue` (без iframe); `public/page_constructor/template` генерируется из `data/template` скриптом `constructor:pack` (predev/prebuild). Правила — `RULES.md`.
+
 ## Риски и митигации
 
 | Риск | Митигация |

@@ -1,0 +1,58 @@
+/* ============================================================
+   themes/style/flat.css — стиль «Плоский»
+
+   Минимализм: почти без скруглений, практически без теней,
+   hover без «подъёма» (только цветовая реакция компонентов).
+
+   Стилевой слой: только форма/геометрия/тени.
+   ============================================================ */
+
+:root {
+  /* ---------- Скругления ---------- */
+  --radius: 2px;
+  --radius-xs: 0;
+  --radius-btn: 2px;
+  --radius-lg: 4px;
+  --radius-pill: 50px;
+
+  --border-width: 1px;
+  --border-width-accent: 2px;
+
+  /* ---------- Тени ---------- */
+  --shadow-color: rgba(var(--dark-rgb), 0.06);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  /* Тени компонентов: в плоском стиле их нет вовсе
+     (0 0 0 0 transparent — валидное значение без отрисовки) */
+  --shadow-inset: 0 0 0 0 transparent;
+  --shadow-btn-primary: 0 0 0 0 transparent;
+  --shadow-btn-primary-hover: 0 0 0 0 transparent;
+  --shadow-btn-success: 0 0 0 0 transparent;
+  --shadow-btn-success-hover: 0 0 0 0 transparent;
+  --shadow-btn-white: 0 0 0 0 transparent;
+  --shadow-btn-white-hover: 0 0 0 0 transparent;
+  --shadow-chip: 0 0 0 0 transparent;
+  --shadow-pill: 0 0 0 0 transparent;
+  --shadow-float: 0 0 0 0 transparent;
+
+  /* Кнопка «В корзину» — без тени */
+  --shadow-btn-cart: 0 0 0 0 transparent;
+  --shadow-btn-cart-hover: 0 0 0 0 transparent;
+
+  /* ---------- Карточки ---------- */
+  --surface-2: var(--surface);
+  --card-radius: 4px;
+  --card-pad: 16px;
+  --card-hover-transform: none;
+
+  /* ---------- Кнопки ---------- */
+  --btn-pad-x: 20px;
+  --btn-pad-y: 10px;
+  --btn-hover-transform: none;
+  --btn-hover-shadow: none;
+
+  /* ---------- Фокус (доступность) ---------- */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 24%, transparent);
+}

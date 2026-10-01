@@ -1,0 +1,61 @@
+/* ============================================================
+   themes/style/soft.css — стиль «Мягкий» (дефолтный)
+
+   Стилевой слой: токены ФОРМЫ И ГЕОМЕТРИИ (без цветов).
+   Единственное исключение контракта — --shadow-color
+   (прозрачная тёмная подложка теней) и --focus-ring,
+   построенный через color-mix от --primary.
+
+   Значения совпадают с текущим дизайном («софт»): скругления,
+   мягкие тени, плавные переходы, деликатный hover-подъём.
+   ============================================================ */
+
+:root {
+  /* ---------- Скругления ---------- */
+  --radius: 6px;
+  --radius-xs: 2px;
+  --radius-btn: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 50px;
+
+  /* ---------- Толщина рамок ---------- */
+  --border-width: 1px;
+  --border-width-accent: 2px; /* кольца медиа, активные плитки */
+
+  /* ---------- Тени (через прозрачный тёмный цвет) ---------- */
+  /* Базовая --shadow-color (исключение контракта) — в _tokens-base.css */
+  --shadow-sm: 0 4px 12px var(--shadow-color);
+  --shadow-md: 0 12px 32px rgba(var(--dark-rgb), 0.12);
+  --shadow-lg: 0 24px 64px rgba(var(--dark-rgb), 0.16);
+
+  /* Тени компонентов (кнопки, плитки, шапка-пилюля, всплывающие) */
+  --shadow-inset: inset 0 1px 0 rgba(var(--white-rgb), 0.25);
+  --shadow-btn-primary: 0 10px 24px rgba(var(--secondary-rgb), 0.38);
+  --shadow-btn-primary-hover: 0 14px 30px rgba(var(--secondary-rgb), 0.5);
+  --shadow-btn-success: 0 10px 24px rgba(var(--success-rgb), 0.28);
+  --shadow-btn-success-hover: 0 14px 32px rgba(var(--success-rgb), 0.4);
+  --shadow-btn-white: 0 10px 24px rgba(var(--dark-rgb), 0.18);
+  --shadow-btn-white-hover: 0 14px 32px rgba(var(--dark-rgb), 0.24);
+  --shadow-chip: 0 8px 20px rgba(var(--primary-rgb), 0.4);
+  --shadow-pill: 0 6px 16px rgba(var(--primary-rgb), 0.32);
+  --shadow-float: 0 12px 28px rgba(var(--primary-rgb), 0.4);
+
+  /* Тень кнопки «В корзину» (цвет — из токена --btn-cart/rgb) */
+  --shadow-btn-cart: 0 10px 24px rgba(var(--btn-cart-rgb), 0.28);
+  --shadow-btn-cart-hover: 0 14px 32px rgba(var(--btn-cart-rgb), 0.4);
+
+  /* ---------- Карточки ---------- */
+  --surface-2: var(--surface); /* приподнятая поверхность (карточки, шапка, дропдауны) */
+  --card-radius: var(--radius-lg);
+  --card-pad: 16px;
+  --card-hover-transform: translateY(-6px);
+
+  /* ---------- Кнопки ---------- */
+  --btn-pad-x: 22px;
+  --btn-pad-y: 10px;
+  --btn-hover-transform: translateY(-2px);
+  --btn-hover-shadow: var(--shadow-sm);
+
+  /* ---------- Фокус (доступность) ---------- */
+  --focus-ring: 0 0 0 4px color-mix(in srgb, var(--primary) 16%, transparent);
+}

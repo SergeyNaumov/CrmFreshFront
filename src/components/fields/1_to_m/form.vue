@@ -1,7 +1,7 @@
 <template>
-    <v-dialog class="one_to_m_form" justify="center" v-model="in_dialog" id="is_dialog">
+    <v-dialog class="one_to_m_form" :class="{'one_to_m_form_wide': is_wide_dialog}" justify="center" v-model="in_dialog" id="is_dialog" :fullscreen="is_wide_dialog">
 
-      <v-card class="one_to_m">
+      <v-card class="one_to_m" :class="{'one_to_m_wide': is_wide_dialog}">
 
         <div class="close">
             <v-icon @click="in_dialog=false" style="text-align: right">mdi-close</v-icon>
@@ -15,7 +15,7 @@
 
         </div>
 
-          <div v-for="cf in field.fields" :key="cf.name">
+          <div v-for="cf in field.fields" :key="cf.name" class="dialog_field" :class="{'dialog_field_wide': cf.type=='codelist'}">
 
             <template v-if="edit_fields[cf.name] && (cf.type=='text' || cf.type=='textarea')">
               
@@ -60,9 +60,18 @@
                 />
             </template>
             <template v-else-if="cf.type=='file'">
-              <form enctype="multipart-form/data"  class="upload_file" :id="'upload_'+cf.name">
-                <input type="file">
-              </form>
+               <form enctype="multipart-form/data"  class="upload_file" :id="'upload_'+cf.name">
+                 <input type="file">
+               </form>
+            </template>
+            <template v-else-if="cf.type=='codelist'">
+               <field-codelist
+                 :field="edit_fields[cf.name]"
+                 :form="form"
+                 :parent="parent_sub"
+                 :refresh="cur_refresh"
+                 :error-messages="error_messages[cf.name]"
+               />
             </template>
 
             <!-- presets: кнопки-заполнители (могут заполнять несколько полей) -->
@@ -80,11 +89,12 @@
             </ul>
           </template>
           
-          <v-btn color="primary" 
+          <v-btn color="primary" class="dialog_save"
             v-if="(!form.read_only && !field.read_only)"
             :disabled="form_disabled"
             @click="save(edit_fields,save_action)" size="small">Сохранить
           </v-btn>
+          <span class="saved" v-if="view_saved">сохранено</span>
           <div v-if="form_disabled" class="err">перед сохранением исправьте ошибки</div>
           
       </v-card>
@@ -106,7 +116,8 @@ export default {
             fields:{},
             save_action:'',
             dialog_errors:[],
-            id:null
+            id:null,
+            view_saved:false
         }
     },
 
@@ -123,6 +134,13 @@ export default {
         ()=>{
           this.open_new_dialog()}
       )
+    },
+    computed:{
+      is_wide_dialog(){ // codelist не влезает в 800px -- растягиваем окно на весь экран
+        if(!this.field || !this.field.fields)
+          return false
+        return this.field.fields.some(f=>f.type=='codelist')
+      }
     },
     watch:{
         field(){
@@ -248,7 +266,7 @@ export default {
         },
         create_edit_fields(){
           for(let f of this.field.fields){        
-            if(/^(file|text|textarea|checkbox|switch|select|select_from_table|select_values)$/.test(f.type)){
+            if(/^(file|text|textarea|checkbox|switch|select|select_from_table|select_values|codelist)$/.test(f.type)){
               if(f.type=='select_from_table' || f.type=='select_values'){ // преобразование типов
                 for(let v of this.field.values){
                   if(!v[f.name]) v[f.name]=''
@@ -258,7 +276,7 @@ export default {
               let new_fld={};
               Object.assign(new_fld,f);
               
-              if(f.type=='text' || f.type=='textarea'){
+              if(f.type=='text' || f.type=='textarea' || f.type=='codelist'){
                 new_fld.value='';
               }
               else{
@@ -348,10 +366,17 @@ export default {
                 let D=response.data;
                 if(D.success){
                   
-                  this.in_dialog=false; 
                   if(!this.id)
                     this.id=D.id
 
+                  if(save_action=='update'){
+                    this.view_saved=true
+                    clearTimeout(this._saved_timeout)
+                    this._saved_timeout=setTimeout(()=>{this.view_saved=false}, 1500)
+                  }
+                  else{
+                    this.in_dialog=false;
+                  }
                   
                   // В слайде после сохранения заставляем перечитать этот 1_to_m
                   setTimeout(
@@ -421,8 +446,18 @@ export default {
   .text-h5 {padding: 0 0 0 20px; margin: 0; color: rgb(var(--v-theme-primary));}
   .presets {margin-top: 6px; font-size: 0.85rem;}
   .presets a {color: #555;}
+  .saved {color: rgb(var(--v-theme-success)); font-weight: bold; margin-left: 10px;}
   .v-dialog {max-width: 800px;}
   .v-dialog .v-card {margin-top: 0; padding-top: 0; max-width: 800px;}
+  .v-dialog.one_to_m_form_wide {max-width: none; width: 100%; height: 100%;}
+  .v-dialog .v-card.one_to_m_wide {max-width: none; width: 100%; height: 100%; margin: 0; padding: 20px 24px; overflow: auto;}
+  .v-dialog .v-card.one_to_m_wide .close {position: fixed; width: auto; right: 18px; top: 14px; color: rgb(var(--v-theme-primary));}
+  .v-dialog .v-card.one_to_m_wide .dialog_head {margin-top: 0;}
+  .v-dialog .v-card.one_to_m_wide .dialog_field {max-width: 460px; width: 100%; align-self: flex-start;}
+  .v-dialog .v-card.one_to_m_wide .dialog_field_wide {max-width: none; width: 100%;}
+  .v-dialog .v-card.one_to_m_wide .dialog_save {align-self: flex-start; width: auto; display: inline-grid;}
+  .v-dialog .v-card.one_to_m_wide .codelist_box {min-height: 340px;}
+  .v-dialog .v-card.one_to_m_wide .presets {margin-top: 10px; font-size: 0.95rem;}
   .v-dialog > .v-card > .v-card-title {padding-left: 0; padding-bottom: 20px; color: rgb(var(--v-theme-primary));}
   .v-btn {margin-left: 0;}
   

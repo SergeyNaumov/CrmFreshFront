@@ -27,6 +27,7 @@ export const dynamic_component_loader = (app) => {
 	app.component('field-chart', defineAsyncComponent(() => import('./components/fields/chart.vue')));
 	app.component('field-checkbox', defineAsyncComponent(() => import('./components/fields/checkbox.vue')));
 	app.component('field-code', defineAsyncComponent(() => import('./components/fields/code.vue')));
+	app.component('field-codelist', defineAsyncComponent(() => import('./components/fields/codelist.vue')));
 	app.component('field-docpack', defineAsyncComponent(() => import('./components/fields/docpack.vue')));
 	app.component('field-file', defineAsyncComponent(() => import('./components/fields/file.vue')));
 	app.component('field-font-awesome', defineAsyncComponent(() => import('./components/fields/font-awesome.vue')));

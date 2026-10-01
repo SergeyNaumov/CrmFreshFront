@@ -1,0 +1,557 @@
+/* ============================================================
+   block-slider.css — единые стили Vue-компонента <block-slider>
+   (js/block_slider.js).
+
+   Один компонент рисует 10 типов слайдера в зависимости от
+   data-type: hero, split, thumbs, fade, vertical, center,
+   progress, text, parallax, coverflow. Стили всех типов собраны
+   здесь, общие кирпичи (стрелки, точки, анимации появления) —
+   одни на всех.
+
+   Параметры приходят CSS-переменными с корня компонента:
+     --slider-speed  — длительность перехода (из data-speed);
+     --slider-anim   — имя keyframes появления контента (data-animation);
+     --slider-dim    — прозрачность неактивных слайдов (data-antialias);
+     --slider-height — высота блока (data-height), если задана.
+   ============================================================ */
+
+/* Кастомный элемент — блочный */
+block-slider { display: block; }
+
+:root {
+  --slider-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --slider-anim: riseUp;
+  --slider-dim: 0.4;
+}
+
+.slider { position: relative; }
+
+.slider__status { margin: 0; padding: 60px 20px; text-align: center; color: var(--muted); font-size: 15px; }
+.slider__status--error { color: var(--danger); }
+
+/* ---------- Общие keyframes ---------- */
+@keyframes riseUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes kenburns {
+  0%   { transform: scale(1.12) translateY(-1%); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+/* ---------- Анимации появления контента (data-animation) ----------
+   rise (дефолт) — riseUp; остальные 9 задаются атрибутом
+   data-animation и выбираются переменной --slider-anim. */
+@keyframes animFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes animZoom {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes animLeft {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes animRight {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes animFlip {
+  from { opacity: 0; transform: perspective(600px) rotateY(90deg); }
+  to   { opacity: 1; transform: perspective(600px) rotateY(0); }
+}
+@keyframes animSwirl {
+  from { opacity: 0; transform: rotate(-8deg) scale(0.9); }
+  to   { opacity: 1; transform: rotate(0) scale(1); }
+}
+@keyframes animBlur {
+  from { opacity: 0; filter: blur(10px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+@keyframes animClip {
+  from { opacity: 0; clip-path: inset(0 0 100% 0); }
+  to   { opacity: 1; clip-path: inset(0); }
+}
+@keyframes animBounce {
+  0%   { opacity: 0; transform: translateY(24px); }
+  60%  { opacity: 1; transform: translateY(-6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Единый механизм появления контента ---------- */
+.slider .is-active .slider__reveal,
+.slider .is-active .slider__reveal--1,
+.slider .is-active .slider__reveal--2 {
+  animation: var(--slider-anim, riseUp) var(--slider-speed, 0.55s) var(--slider-ease) both;
+}
+.slider .is-active .slider__reveal--1 { animation-delay: 0.08s; }
+.slider .is-active .slider__reveal--2 { animation-delay: 0.16s; }
+
+/* ---------- Общие стрелки и точки ---------- */
+.slider__arrows { display: flex; align-items: center; }
+.slider__arrow { display: grid; place-items: center; width: 44px; height: 44px;
+                 border: 1px solid rgba(var(--white-rgb), 0.3); border-radius: 50%;
+                 background: rgba(var(--ink-rgb), 0.28); color: var(--white);
+                 font-size: 22px; line-height: 1; cursor: pointer;
+                 transition: background var(--transition), color var(--transition); }
+.slider__arrow:hover { background: var(--white); color: var(--primary); }
+
+.slider__dots { display: flex; gap: 8px; }
+.slider__dot { width: 10px; height: 10px; padding: 0; border: none; border-radius: var(--radius-pill);
+               background: rgba(var(--white-rgb), 0.45); cursor: pointer; transition: all var(--transition); }
+.slider__dot.is-active { width: 28px; background: var(--white); }
+
+/* ---------- Анимации перехода между слайдами (data-transition) ----------
+   10 вариантов. Non-transform (fade, blur, iris, clip) применяются ко
+   всем типам включая center/coverflow-карточки. Transform-варианты
+   (slide, zoom, fly, flip, swirl, bounce) работают на оверлей- и
+   ленточных-типах + миниатюрах; для center/coverflow создаются
+   акцентные «входы» на контентном блоке внутри карточки,
+   не трогая её inline-transform из JS. */
+@keyframes tFadeIn   { from { opacity: 0 } to { opacity: 1 } }
+@keyframes tSlideIn  { from { opacity: 0; transform: translateX(-34px) } to { opacity: 1; transform: translateX(0) } }
+@keyframes tZoomIn   { from { opacity: 0; transform: scale(0.84) } to { opacity: 1; transform: scale(1) } }
+@keyframes tFlyIn    { from { opacity: 0; transform: translateX(46px) } to { opacity: 1; transform: translateX(0) } }
+@keyframes tFlipIn   { from { opacity: 0; transform: perspective(900px) rotateY(85deg) } to { opacity: 1; transform: perspective(900px) rotateY(0) } }
+@keyframes tSwirlIn  { from { opacity: 0; transform: rotate(-12deg) scale(0.9) } to { opacity: 1; transform: rotate(0) scale(1) } }
+@keyframes tBlurIn   { from { opacity: 0; filter: blur(14px) } to { opacity: 1; filter: blur(0) } }
+@keyframes tBounceIn { 0%   { opacity: 0; transform: translateY(28px) }
+                       60%  { opacity: 1; transform: translateY(-8px) }
+                       100% { opacity: 1; transform: translateY(0) } }
+@keyframes tIrisIn   { from { opacity: 0; clip-path: circle(0% at 50% 50%) } to { opacity: 1; clip-path: circle(150% at 50% 50%) } }
+@keyframes tClipIn   { from { opacity: 0; clip-path: inset(0 0 100% 0) } to { opacity: 1; clip-path: inset(0) } }
+
+/* Наборы селекторов */
+/* non-transform: безопасно везде, включая карточки center/coverflow */
+.slider--t-fade  :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__slide.is-active, .slider--coverflow__card.is-active) { animation: tFadeIn var(--slider-speed, 0.7s) var(--slider-ease) both }
+.slider--t-blur  :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__slide.is-active, .slider--coverflow__card.is-active) { animation: tBlurIn var(--slider-speed, 0.7s) var(--slider-ease) both }
+.slider--t-iris  :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__slide.is-active, .slider--coverflow__card.is-active) { animation: tIrisIn var(--slider-speed, 0.7s) var(--slider-ease) both }
+.slider--t-clip  :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__slide.is-active, .slider--coverflow__card.is-active) { animation: tClipIn var(--slider-speed, 0.7s) var(--slider-ease) both }
+
+/* transform: оверлей + ленточные + thumbs, center/coverflow → акцент на контент */
+.slider--t-slide :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__content, .slider--coverflow__content) { animation: tSlideIn var(--slider-speed, 0.7s) var(--slider-ease) both }
+.slider--t-zoom  :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__content, .slider--coverflow__content) { animation: tZoomIn  var(--slider-speed, 0.7s) var(--slider-ease) both }
+.slider--t-fly   :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__content, .slider--coverflow__content) { animation: tFlyIn   var(--slider-speed, 0.7s) var(--slider-ease) both }
+.slider--t-flip  :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__content, .slider--coverflow__content) { animation: tFlipIn  var(--slider-speed, 0.7s) var(--slider-ease) both }
+.slider--t-swirl :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__content, .slider--coverflow__content) { animation: tSwirlIn var(--slider-speed, 0.7s) var(--slider-ease) both }
+.slider--t-bounce :is(.slider--fade__slide.is-active, .slider--progress__slide.is-active, .slider--text__slide.is-active, .slider--parallax__slide.is-active, .slider--split__slide.is-active, .slider--vertical__slide.is-active, .hero__slide.is-active, .slider--thumbs__main, .slider--center__content, .slider--coverflow__content) { animation: tBounceIn var(--slider-speed, 0.7s) var(--slider-ease) both }
+
+/* ============================================================
+   SPLIT. Сплит-слайдер
+   Лента из слайдов; каждый слайд — две колонки:
+   левая (фото на всю высоту), правая (текст на цветном фоне).
+   ============================================================ */
+.slider--split { overflow: hidden; border-radius: var(--radius-lg); }
+.slider--split__track { display: flex; transition: transform var(--slider-speed, 0.65s) var(--slider-ease); }
+.slider--split__slide { display: flex; flex: 0 0 100%; min-height: 400px; }
+.slider--split__left { flex: 0 0 50%; position: relative; overflow: hidden; background: var(--dark); }
+.slider--split__left img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slider--split__right { flex: 0 0 50%; display: flex; flex-direction: column; justify-content: center;
+                        padding: 48px; background: var(--primary); }
+.slider--split__right--alt { background: var(--primary-dark); }
+.slider--split__title { margin: 0 0 12px; font-size: 2rem; line-height: 1.2; color: var(--white); }
+.slider--split__text  { margin: 0 0 24px; font-size: 15px; line-height: 1.6;
+                        color: rgba(var(--white-rgb), 0.88); }
+.slider--split__btn { display: inline-block; align-self: flex-start; padding: 10px 24px;
+                      border-radius: var(--radius-btn); background: var(--white);
+                      font-weight: 600; font-size: 14px; color: var(--primary);
+                      text-decoration: none; transition: all var(--transition); }
+.slider--split__btn:hover { background: var(--primary-dark); color: var(--white); }
+.slider--split__arrows { position: absolute; top: 50%; left: 0; right: 0;
+                         justify-content: space-between; padding: 0 12px;
+                         transform: translateY(-50%); pointer-events: none; z-index: 3; }
+.slider--split__arrows > * { pointer-events: auto; }
+.slider--split__dots { justify-content: center; padding: 14px 0 0; }
+
+/* Анимация контента активного слайда */
+.slider--split__slide.is-active img { animation: kenburns 8s ease-out both; }
+
+/* ============================================================
+   THUMBS. Слайдер с миниатюрами
+   Главный слайд (снова монтируется при переключении — :key,
+   поэтому анимации перезапускаются) + полоса превью снизу.
+   ============================================================ */
+.slider--thumbs { border-radius: var(--radius-lg); overflow: hidden; background: var(--dark); }
+.slider--thumbs__main { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
+.slider--thumbs__main img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+                            animation: kenburns 8s ease-out both; }
+.slider--thumbs__content { position: absolute; bottom: 0; left: 0; right: 0;
+                           padding: 32px; z-index: 2;
+                           background: linear-gradient(0deg, rgba(var(--ink-rgb), 0.72) 0%, transparent 100%); }
+.slider--thumbs__title { margin: 0 0 8px; font-size: 1.6rem; color: var(--white); }
+.slider--thumbs__text  { margin: 0 0 16px; font-size: 14.5px; color: rgba(var(--white-rgb), 0.85); }
+.slider--thumbs__btn   { display: inline-block; padding: 8px 20px; border-radius: var(--radius-btn);
+                         background: var(--primary); color: var(--white); font-weight: 600;
+                         font-size: 14px; text-decoration: none; transition: background var(--transition); }
+.slider--thumbs__btn:hover { background: var(--primary-dark); }
+.slider--thumbs__thumbs { display: flex; gap: 8px; padding: 10px; }
+.slider--thumbs__thumb  { flex: 0 0 80px; height: 56px; border: 2px solid transparent;
+                          border-radius: var(--radius); overflow: hidden; cursor: pointer;
+                          transition: border-color var(--transition), transform var(--transition); }
+.slider--thumbs__thumb:hover { transform: translateY(-2px); }
+.slider--thumbs__thumb.is-active { border-color: var(--primary); }
+.slider--thumbs__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ============================================================
+   FADE. Fade-слайдер
+   Слайды меняются плавным затуханием, активный фото зумится.
+   Счётчик в правом верхнем углу, стрелки по бокам.
+   ============================================================ */
+.slider--fade { aspect-ratio: 16 / 9; background: var(--dark);
+                border-radius: var(--radius-lg); overflow: hidden; }
+.slider--fade__slide { position: absolute; inset: 0; opacity: 0;
+                       transition: opacity var(--slider-speed, 0.9s) var(--slider-ease); pointer-events: none; }
+.slider--fade__slide.is-active { opacity: 1; pointer-events: auto; }
+.slider--fade__slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slider--fade__overlay { position: absolute; inset: 0;
+                         background: linear-gradient(0deg, rgba(var(--ink-rgb), 0.65) 0%, transparent 55%); z-index: 1; }
+.slider--fade__content { position: absolute; inset: 0; z-index: 2;
+                         display: flex; flex-direction: column; justify-content: flex-end; padding: 40px; }
+.slider--fade__title { margin: 0 0 8px; font-size: 1.8rem; color: var(--white); }
+.slider--fade__text  { margin: 0 0 20px; color: rgba(var(--white-rgb), 0.85); }
+.slider--fade__btn   { display: inline-block; align-self: flex-start; padding: 10px 24px;
+                       border-radius: var(--radius-btn); background: var(--primary);
+                       color: var(--white); font-weight: 600; font-size: 14px;
+                       text-decoration: none; transition: background var(--transition); }
+.slider--fade__btn:hover { background: var(--primary-dark); }
+.slider--fade__counter { position: absolute; top: 20px; right: 24px; z-index: 3;
+                         padding: 6px 14px; border-radius: var(--radius-pill);
+                         background: rgba(var(--ink-rgb), 0.5); color: var(--white);
+                         font-size: 14px; font-weight: 600; backdrop-filter: blur(4px); }
+.slider--fade__arrows { position: absolute; top: 50%; left: 0; right: 0;
+                        justify-content: space-between; padding: 0 12px;
+                        transform: translateY(-50%); pointer-events: none; z-index: 3; }
+.slider--fade__arrows > * { pointer-events: auto; }
+.slider--fade__dots { justify-content: center; padding: 14px 0 0; }
+
+/* Анимация активного слайда */
+.slider--fade__slide.is-active img { animation: kenburns 8s ease-out both; }
+
+/* ============================================================
+   VERTICAL. Вертикальный слайдер
+   Трек — flex-колонка высотой 100% контейнера; каждый слайд
+   flex: 0 0 100%, поэтому translateY(N*100%) — один слайд.
+   Стрелки вверху/внизу по центру, точки — столбиком справа.
+   ============================================================ */
+.slider--vertical { height: var(--slider-height, 420px); border-radius: var(--radius-lg);
+                    overflow: hidden; background: var(--dark); }
+.slider--vertical__track { display: flex; flex-direction: column; height: 100%;
+                           transition: transform var(--slider-speed, 0.7s) var(--slider-ease); }
+.slider--vertical__slide { flex: 0 0 100%; height: 100%; position: relative; overflow: hidden; }
+.slider--vertical__slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slider--vertical__overlay { position: absolute; inset: 0; z-index: 1;
+                             background: linear-gradient(90deg, rgba(var(--ink-rgb), 0.72) 0%, transparent 100%); }
+.slider--vertical__content { position: absolute; inset: 0; z-index: 2;
+                             display: flex; flex-direction: column; justify-content: center; padding: 40px 60px; }
+.slider--vertical__title { margin: 0 0 10px; font-size: 2rem; color: var(--white); }
+.slider--vertical__text  { margin: 0 0 20px; color: rgba(var(--white-rgb), 0.85); }
+.slider--vertical__btn   { display: inline-block; align-self: flex-start; padding: 10px 24px;
+                           border-radius: var(--radius-btn); background: var(--primary);
+                           color: var(--white); font-weight: 600; font-size: 14px;
+                           text-decoration: none; transition: background var(--transition); }
+.slider--vertical__btn:hover { background: var(--primary-dark); }
+.slider--vertical__arrows { position: absolute; left: 50%; transform: translateX(-50%);
+                            z-index: 3; flex-direction: column; gap: 8px; top: 16px;
+                            pointer-events: none; }
+.slider--vertical__arrows > * { pointer-events: auto; }
+.slider--vertical__dots { position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+                          flex-direction: column; gap: 8px; z-index: 3; }
+.slider--vertical .slider__dot.is-active { width: 10px; height: 28px; background: var(--white); }
+
+/* Анимация контента активного слайда */
+.slider--vertical__slide.is-active img { animation: kenburns 8s ease-out both; }
+
+/* ============================================================
+   CENTER. Center mode
+   Активная карточка всегда в центре блока (трек сдвигается по JS),
+   крупнее (scale 1.18), соседние уменьшены и приглушены на
+   --slider-dim. Клик по боковой карточке делает её активной.
+   ============================================================ */
+.slider--center { padding: 40px 60px; background: var(--dark);
+                  border-radius: var(--radius-lg); overflow: hidden; }
+.slider--center__track { display: flex; align-items: center; justify-content: center;
+                         gap: 20px; will-change: transform;
+                         transition: transform var(--slider-speed, 0.55s) var(--slider-ease); }
+.slider--center__slide { flex: 0 0 300px; height: 400px; border-radius: var(--radius-lg);
+                         overflow: hidden; position: relative; cursor: pointer;
+                         z-index: 1;
+                         transition: opacity var(--slider-speed, 0.55s) var(--slider-ease),
+                                     transform var(--slider-speed, 0.55s) var(--slider-ease);
+                         opacity: var(--slider-dim, 0.4); transform: scale(0.88); }
+.slider--center__slide.is-active { opacity: 1; transform: scale(1.18); z-index: 2; }
+.slider--center__slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slider--center__overlay { position: absolute; inset: 0; z-index: 1;
+                           background: linear-gradient(0deg, rgba(var(--ink-rgb), 0.78) 0%, transparent 60%); }
+.slider--center__content { position: absolute; bottom: 0; left: 0; right: 0;
+                           padding: 20px; z-index: 2; }
+.slider--center__title { margin: 0 0 4px; font-size: 1.1rem; color: var(--white); }
+.slider--center__text  { margin: 0; font-size: 13px; color: rgba(var(--white-rgb), 0.8); }
+.slider--center__arrows { position: absolute; top: 50%; left: 0; right: 0;
+                          justify-content: space-between; padding: 0 8px;
+                          transform: translateY(-50%); pointer-events: none; z-index: 4; }
+.slider--center__arrows > * { pointer-events: auto; }
+
+/* Анимация активного слайда */
+.slider--center__slide.is-active img { animation: kenburns 7s ease-out both; }
+
+/* ============================================================
+   PROGRESS. Полноэкранный с прогресс-баром
+   Тонкая полоса прогресса сверху блока, синхронизированная с
+   автоплеем (data-duration). Текст по центру с каскадом,
+   стрелки — в правом нижнем углу, точки — слева.
+   ============================================================ */
+.slider--progress { height: var(--slider-height, 480px); border-radius: var(--radius-lg);
+                    overflow: hidden; background: var(--dark); }
+.slider--progress__progress { position: absolute; top: 0; left: 0; height: 4px;
+                              background: var(--gradient); z-index: 4;
+                              transition: width 0.1s linear; width: 0%; }
+.slider--progress__slide { position: absolute; inset: 0; opacity: 0;
+                           transition: opacity var(--slider-speed, 0.8s) var(--slider-ease); pointer-events: none; }
+.slider--progress__slide.is-active { opacity: 1; pointer-events: auto; }
+.slider--progress__slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slider--progress__overlay { position: absolute; inset: 0; z-index: 1;
+                             background: linear-gradient(180deg, rgba(var(--ink-rgb), 0.55) 0%, rgba(var(--ink-rgb), 0.55) 100%); }
+.slider--progress__content { position: absolute; inset: 0; z-index: 2;
+                             display: flex; flex-direction: column; justify-content: center;
+                             align-items: center; text-align: center; padding: 40px; }
+.slider--progress__title { margin: 0 0 12px; font-size: 2.4rem; color: var(--white); }
+.slider--progress__text  { margin: 0 0 24px; max-width: 560px; color: rgba(var(--white-rgb), 0.85); }
+.slider--progress__btn   { display: inline-block; padding: 12px 28px; border-radius: var(--radius-btn);
+                           background: var(--primary); color: var(--white); font-weight: 600;
+                           font-size: 15px; text-decoration: none; transition: background var(--transition); }
+.slider--progress__btn:hover { background: var(--primary-dark); }
+.slider--progress__arrows { position: absolute; bottom: 20px; right: 24px; z-index: 3; gap: 8px; }
+.slider--progress__dots { position: absolute; bottom: 24px; left: 28px; z-index: 3; }
+
+/* Анимация контента активного слайда */
+.slider--progress__slide.is-active img { animation: kenburns 9s ease-out both; }
+
+/* ============================================================
+   TEXT. Текстовый без фото
+   Только текст на градиентном фоне, кнопка-ссылка, счётчик
+   «1 / N» вместе со стрелками в футере.
+   ============================================================ */
+.slider--text { padding: 80px 60px;
+                background: var(--gradient); color: var(--white);
+                border-radius: var(--radius-lg); overflow: hidden; min-height: 360px;
+                display: flex; flex-direction: column; justify-content: center; }
+.slider--text__slide { display: none; }
+.slider--text__slide.is-active { display: block; }
+.slider--text__title { margin: 0 0 16px; font-size: 2.8rem; line-height: 1.15; color: var(--white); }
+.slider--text__text  { margin: 0 0 28px; font-size: 1.15rem; opacity: 0.92; max-width: 640px; }
+.slider--text__link  { display: inline-block; font-size: 1rem; font-weight: 600; color: var(--white);
+                       text-decoration: underline; text-underline-offset: 6px;
+                       transition: opacity var(--transition); }
+.slider--text__link:hover { opacity: 0.85; }
+.slider--text__footer { display: flex; align-items: center; gap: 16px; margin-top: 24px; }
+.slider--text__arrows { display: flex; gap: 10px; }
+.slider--text__arrows .slider__arrow { background: rgba(var(--white-rgb), 0.15); border-color: rgba(var(--white-rgb), 0.35); }
+.slider--text__arrows .slider__arrow:hover { background: var(--white); color: var(--primary); }
+.slider--text__counter { margin-left: auto; font-size: 14px; opacity: 0.7; }
+
+/* ============================================================
+   PARALLAX. С параллаксом
+   Фон (background-image) смещается медленнее текста при
+   переключении (background-position), текст — лёгкий сдвиг.
+   ============================================================ */
+.slider--parallax { height: var(--slider-height, 480px); border-radius: var(--radius-lg);
+                    overflow: hidden; }
+.slider--parallax__slide { position: absolute; inset: 0; background-size: cover;
+                           background-position: center; opacity: 0;
+                           transition: background-position var(--slider-speed, 0.8s) var(--slider-ease),
+                                       opacity var(--slider-speed, 0.55s) var(--slider-ease);
+                           pointer-events: none; }
+.slider--parallax__slide.is-active { opacity: 1; pointer-events: auto;
+                                     background-position: center 38%; }
+.slider--parallax__slide[data-parallax="prev"] { background-position: center 62%; }
+.slider--parallax__overlay { position: absolute; inset: 0; z-index: 1;
+                             background: linear-gradient(135deg, rgba(var(--ink-rgb), 0.6) 0%,
+                                         rgba(var(--ink-rgb), 0.2) 100%); }
+.slider--parallax__content { position: absolute; inset: 0; z-index: 2;
+                             display: flex; flex-direction: column; justify-content: center;
+                             padding: 60px; transition: transform var(--slider-speed, 0.65s) var(--slider-ease); }
+.slider--parallax__content[data-shift="down"] { transform: translateY(30px); }
+.slider--parallax__content[data-shift="up"]   { transform: translateY(-30px); }
+.slider--parallax__title { margin: 0 0 12px; font-size: 2.4rem; color: var(--white); }
+.slider--parallax__text  { margin: 0 0 24px; max-width: 540px; color: rgba(var(--white-rgb), 0.85); }
+.slider--parallax__btn   { display: inline-block; align-self: flex-start; padding: 10px 24px;
+                           border-radius: var(--radius-btn); background: var(--primary);
+                           color: var(--white); font-weight: 600; font-size: 14px;
+                           text-decoration: none; transition: background var(--transition); }
+.slider--parallax__btn:hover { background: var(--primary-dark); }
+.slider--parallax__arrows { position: absolute; top: 50%; left: 0; right: 0;
+                            justify-content: space-between; padding: 0 20px;
+                            transform: translateY(-50%); pointer-events: none; z-index: 3; }
+.slider--parallax__arrows > * { pointer-events: auto; }
+.slider--parallax__dots { position: absolute; bottom: 24px; left: 50%;
+                          transform: translateX(-50%); z-index: 3; }
+
+/* ============================================================
+   COVERFLOW. Coverflow 3D
+   Перспектива + preserve-3d; центральная карточка в фокусе,
+   соседние развёрнуты по rotateY и уходят вглубь (translateZ).
+   Раскладка считается в JS от позиции относительно активной.
+   ============================================================ */
+.slider--coverflow { height: var(--slider-height, 480px);
+                     perspective: 1200px; overflow: hidden; background: var(--dark);
+                     border-radius: var(--radius-lg); }
+.slider--coverflow__stage { position: absolute; inset: 0; transform-style: preserve-3d; }
+.slider--coverflow__card { position: absolute; top: 50%; left: 50%;
+                           width: 320px; height: 420px;
+                           transform: translate(-50%, -50%);
+                           border-radius: var(--radius-lg); overflow: hidden; cursor: pointer;
+                           background: var(--light);
+                           box-shadow: 0 24px 60px rgba(var(--ink-rgb), 0.45);
+                           backface-visibility: hidden; will-change: transform, opacity;
+                           transition: transform var(--slider-speed, 0.7s) var(--slider-ease),
+                                       opacity var(--slider-speed, 0.7s) var(--slider-ease); }
+.slider--coverflow__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slider--coverflow__overlay { position: absolute; inset: 0; z-index: 1;
+                              background: linear-gradient(0deg, rgba(var(--ink-rgb), 0.72) 0%, transparent 60%); }
+.slider--coverflow__content { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+                              padding: 18px 20px; }
+.slider--coverflow__title { margin: 0 0 4px; font-size: 1.1rem; color: var(--white); }
+.slider--coverflow__desc  { margin: 0; font-size: 13px; color: rgba(var(--white-rgb), 0.8); }
+.slider--coverflow__arrows { position: absolute; inset: 0; z-index: 6; pointer-events: none;
+                             justify-content: space-between; padding: 0 16px; }
+.slider--coverflow__arrows .slider__arrow { position: absolute; top: 50%; transform: translateY(-50%); }
+.slider--coverflow__arrows .slider__arrow--prev { left: 16px; }
+.slider--coverflow__arrows .slider__arrow--next { right: 16px; }
+.slider--coverflow__dots { position: absolute; bottom: 16px; left: 50%;
+                           transform: translateX(-50%); z-index: 6; }
+
+/* ============================================================
+   Витрина блок_sliders.html (интерактивная площадка)
+   ============================================================ */
+.slider-playground { display: grid; grid-template-columns: 320px 1fr; gap: 18px; align-items: start; }
+.slider-playground__demo { min-width: 0; }
+.slider-playground__right { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+/* Компактные размеры демо-слайдера (только в витрине, на боевые
+   страницы не влияют): все высоты ужимаются на --slider-height */
+.slider-playground__demo { --slider-height: 250px; }
+.slider-playground__demo .slider--split__slide { min-height: 250px; }
+.slider-playground__demo .slider--split__title { font-size: 1.4rem; }
+.slider-playground__demo .slider--fade__title { font-size: 1.35rem; }
+.slider-playground__demo .slider--fade { aspect-ratio: 21 / 9; }
+.slider-playground__demo .slider--thumbs__main { aspect-ratio: 21 / 9; }
+.slider-playground__demo .slider--text { min-height: 230px; padding: 40px 44px; }
+.slider-playground__demo .slider--center { padding: 20px 40px; }
+.slider-playground__demo .slider--center__slide { flex: 0 0 220px; height: 250px; }
+.slider-playground__demo .slider--coverflow { height: var(--slider-height, 250px); }
+.slider-playground__demo .slider--coverflow__card { width: 190px; height: 220px; }
+
+.slider-config { display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
+                 padding: 11px 12px; border: 1px solid var(--border); border-radius: var(--radius-lg);
+                 background: var(--light); }
+.slider-config__field { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.slider-config__field--wide { grid-column: 1 / -1; }
+.slider-config label { font-size: 11px; font-weight: 600; color: var(--muted); }
+.slider-config select, .slider-config input {
+  width: 100%; height: 29px; padding: 0 8px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--white); color: var(--ink); font-size: 12.5px; }
+.slider-config input[type="number"] { width: 100%; }
+.slider-config input[type="range"] { padding: 0; height: auto; }
+.slider-config__check { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center;
+                        align-content: flex-start; padding: 1px 0; }
+.slider-config__check label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+                              font-weight: 500; color: var(--ink); }
+.slider-config__actions { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; padding-top: 1px; }
+.slider-config__type-info { font-size: 11.5px; color: var(--muted); line-height: 1.35; margin: 0; }
+.slider-config__btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.slider-config__btns .btn { font-size: 12px; padding: 6px 11px; }
+
+/* Код вставки: внутри .slider-playground__right (колонка 2, один grid-row),
+   перенос строк вместо горизонтального скролла на широких мониторах */
+.slider-snippet { padding: 12px 14px; border: 1px solid var(--border);
+                  border-radius: var(--radius-lg); background: var(--dark); color: var(--white);
+                  max-height: 320px; overflow-y: auto; }
+.slider-snippet__head { display: flex; justify-content: space-between; align-items: center;
+                        gap: 12px; margin-bottom: 6px; }
+.slider-snippet__title { margin: 0; font-size: 12.5px; font-weight: 700; color: var(--white); }
+.slider-snippet code { display: block; padding: 8px 10px;
+                       border-radius: var(--radius); background: rgba(var(--white-rgb), 0.07);
+                       color: #dce6f2; font-size: 11.5px; line-height: 1.45;
+                       white-space: pre-wrap; overflow-wrap: anywhere; overflow-x: hidden; }
+.slider-snippet .btn { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ============================================================
+   Вариант 1 — hero в витрине: не растягиваем на 100vh (стрелки
+   висят у нижнего края экрана из-за заголовка вариата сверху).
+   Фиксируем высоту блока, стрелки остаются по центру hero.
+   ============================================================ */
+#v1 .hero { height: 330px; min-height: 330px; max-height: 400px; }
+@media (max-width: 991px) { #v1 .hero { height: 300px; min-height: 300px; } }
+@media (max-width: 575px) { #v1 .hero { height: 260px; min-height: 260px; } }
+
+/* ============================================================
+   Адаптивность
+   ============================================================ */
+@media (max-width: 991px) {
+  .slider-playground { grid-template-columns: 1fr; }
+
+  /* SPLIT: левая+правая в столбик */
+  .slider--split__slide { flex-direction: column; }
+  .slider--split__left, .slider--split__right { flex: 0 0 auto; }
+  .slider--split__left { aspect-ratio: 16 / 9; }
+  .slider--split__right { padding: 32px; }
+
+  /* VERTICAL: высота уменьшается (трек наследует 100%) */
+  .slider--vertical { height: var(--slider-height, 360px); }
+
+  /* CENTER: уменьшаем карточки */
+  .slider--center { padding: 30px 20px; }
+  .slider--center__track { gap: 14px; }
+  .slider--center__slide { flex: 0 0 220px; height: 320px; }
+
+  /* PROGRESS: высота */
+  .slider--progress { height: var(--slider-height, 400px); }
+
+  /* PARALLAX: высота */
+  .slider--parallax { height: var(--slider-height, 400px); }
+
+  /* COVERFLOW: компактнее, шаг карточек меньше */
+  .slider--coverflow { height: var(--slider-height, 400px); }
+  .slider--coverflow__card { width: 250px; height: 330px; }
+}
+
+@media (max-width: 767px) {
+  .slider--coverflow { }
+}
+
+@media (max-width: 575px) {
+  .slider--split__right { padding: 24px; }
+  .slider--split__title { font-size: 1.5rem; }
+
+  .slider--thumbs__thumb { flex: 0 0 56px; height: 40px; }
+
+  .slider--fade__title { font-size: 1.3rem; }
+
+  .slider--vertical { height: var(--slider-height, 300px); }
+
+  .slider--center__track { gap: 10px; }
+  .slider--center__slide { flex: 0 0 160px; height: 240px; }
+
+  .slider--progress { height: var(--slider-height, 340px); }
+  .slider--progress__title { font-size: 1.5rem; }
+
+  .slider--text { padding: 48px 24px; }
+  .slider--text__title { font-size: 1.7rem; }
+
+  .slider--parallax { height: var(--slider-height, 340px); }
+  .slider--parallax__content { padding: 32px; }
+  .slider--parallax__title { font-size: 1.5rem; }
+
+  .slider--coverflow { height: var(--slider-height, 340px); }
+  .slider--coverflow__card { width: 210px; height: 280px; }
+  .slider--coverflow__arrows { display: none; }
+
+  /* Стрелки скрыты на мобильных (у типов с боковым расположением) */
+  .slider--split__arrows,
+  .slider--fade__arrows,
+  .slider--vertical__arrows,
+  .slider--center__arrows,
+  .slider--parallax__arrows { display: none; }
+}

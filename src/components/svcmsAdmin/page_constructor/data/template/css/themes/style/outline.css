@@ -1,0 +1,54 @@
+/* ============================================================
+   themes/style/outline.css — стиль «Контурный»
+
+   Без теней: чёткие рамки 2px, плоские поверхности, hover — смена рамки.
+
+   Стилевой слой: только форма/геометрия/тени (см. agent-doc/themes/style.md).
+   ============================================================ */
+
+:root {
+  /* ---------- Скругления ---------- */
+  --radius: 6px;
+  --radius-xs: 3px;
+  --radius-btn: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 50px;
+
+  /* ---------- Толщина рамок ---------- */
+  --border-width: 2px;
+  --border-width-accent: 2px;
+
+  /* ---------- Тени ---------- */
+  --shadow-color: rgba(var(--dark-rgb), 0.06);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  --shadow-inset: 0 0 0 0 transparent;
+  --shadow-btn-primary: 0 0 0 0 transparent;
+  --shadow-btn-primary-hover: 0 0 0 0 transparent;
+  --shadow-btn-success: 0 0 0 0 transparent;
+  --shadow-btn-success-hover: 0 0 0 0 transparent;
+  --shadow-btn-white: 0 0 0 0 transparent;
+  --shadow-btn-white-hover: 0 0 0 0 transparent;
+  --shadow-chip: 0 0 0 0 transparent;
+  --shadow-pill: 0 0 0 0 transparent;
+  --shadow-float: 0 0 0 0 transparent;
+  --shadow-btn-cart: 0 0 0 0 transparent;
+  --shadow-btn-cart-hover: 0 0 0 0 transparent;
+
+  /* ---------- Карточки ---------- */
+  --surface-2: var(--surface);
+  --card-radius: var(--radius);
+  --card-pad: 16px;
+  --card-hover-transform: none;
+
+  /* ---------- Кнопки ---------- */
+  --btn-pad-x: 20px;
+  --btn-pad-y: 10px;
+  --btn-hover-transform: none;
+  --btn-hover-shadow: none;
+
+  /* ---------- Фокус (доступность) ---------- */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent);
+}

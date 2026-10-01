@@ -1,0 +1,98 @@
+[
+  {
+    "index": 1,
+    "filename": "article-8.webp",
+    "prompt": "Editorial photo: several modern smartphones of different tiers arranged in a row on a clean desk, screens on with clean wallpapers, a small notebook with sketches and a magnifying glass nearby, symbolizing a buying guide, clean editorial illustration for a tech blog article, modern minimal composition, soft cinematic lighting, sharp focus on the main subject, subtle depth of field, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "article-8.webp",
+    "seed": 7918832634656513773,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/articles/article-8.webp"
+    ]
+  },
+  {
+    "index": 2,
+    "filename": "article-7.webp",
+    "prompt": "Editorial photo: a smart home starter set on a light wooden table — a small smart speaker, two smart plugs, a motion sensor and a smart light bulb glowing softly, cozy warm ambient light, clean editorial illustration for a tech blog article, modern minimal composition, soft cinematic lighting, sharp focus on the main subject, subtle depth of field, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "article-7.webp",
+    "seed": 6661555356505824556,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/articles/article-7.webp"
+    ]
+  },
+  {
+    "index": 3,
+    "filename": "article-6.webp",
+    "prompt": "Editorial photo: a modern gaming laptop on the left and a desktop gaming PC tower with subtle RGB lighting on the right, placed side by side on a dark desk, cool blue and purple ambient light, comparison concept, clean editorial illustration for a tech blog article, modern minimal composition, soft cinematic lighting, sharp focus on the main subject, subtle depth of field, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "article-6.webp",
+    "seed": 6236113653772316497,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/articles/article-6.webp"
+    ]
+  },
+  {
+    "index": 4,
+    "filename": "article-5.webp",
+    "prompt": "Editorial photo: a pair of premium true wireless earbuds in an open charging case next to over-ear wireless headphones, on a clean matte surface, soft cool studio lighting, product showcase, clean editorial illustration for a tech blog article, modern minimal composition, soft cinematic lighting, sharp focus on the main subject, subtle depth of field, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "article-5.webp",
+    "seed": 7395862388716493219,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/articles/article-5.webp"
+    ]
+  },
+  {
+    "index": 5,
+    "filename": "article-4.webp",
+    "prompt": "Editorial photo: a modern widescreen monitor on a slim stand, screen glowing with a clean abstract wallpaper showing split work and gaming scenes, minimalist desk setup with a keyboard in front, soft ambient light, clean editorial illustration for a tech blog article, modern minimal composition, soft cinematic lighting, sharp focus on the main subject, subtle depth of field, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "article-4.webp",
+    "seed": 1612334944403050263,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/articles/article-4.webp"
+    ]
+  },
+  {
+    "index": 6,
+    "filename": "article-3.webp",
+    "prompt": "Editorial photo: a compact home NAS device with two drive bays glowing softly, standing on a shelf next to a small router and an external drive, clean modern interior background, warm ambient lighting, clean editorial illustration for a tech blog article, modern minimal composition, soft cinematic lighting, sharp focus on the main subject, subtle depth of field, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "article-3.webp",
+    "seed": 4547836481927905782,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/articles/article-3.webp"
+    ]
+  },
+  {
+    "index": 7,
+    "filename": "article-2.webp",
+    "prompt": "Editorial photo: a modern electric kick scooter standing on a city pavement, side profile view, pneumatic tires clearly visible, slim deck and handlebar, blurred urban background at golden hour, clean editorial illustration for a tech blog article, modern minimal composition, soft cinematic lighting, sharp focus on the main subject, subtle depth of field, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "article-2.webp",
+    "seed": 8309192887438379488,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/articles/article-2.webp"
+    ]
+  },
+  {
+    "index": 8,
+    "filename": "article-1.webp",
+    "prompt": "Editorial photo: a service counter concept — a smartphone and a laptop on a clean desk next to a clipboard with a warranty card, a small stamp and a box, subtle blue and white corporate tones, trust and care mood, clean editorial illustration for a tech blog article, modern minimal composition, soft cinematic lighting, sharp focus on the main subject, subtle depth of field, high detail, 8K, no text, no letters, no numbers, no watermark, no logo",
+    "params": null,
+    "name": "article-1.webp",
+    "seed": 247402176225054395,
+    "status": "ok",
+    "placed": [
+      "/home/sv/projects/svcms-templates/templates/t1/images/preview/articles/article-1.webp"
+    ]
+  }
+]
