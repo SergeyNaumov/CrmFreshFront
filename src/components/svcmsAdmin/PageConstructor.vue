@@ -6,8 +6,8 @@
     <template v-if="view == 'list'">
       <header class="pc_head">
         <div class="pc_head__titles">
-          <h1>Страницы шаблона</h1>
-          <div v-if="template.header" class="pc_head__sub">{{ template.header }}</div>
+          <h1>Страницы домена</h1>
+          <div v-if="domain.domain" class="pc_head__sub">{{ domain.domain }}</div>
         </div>
         <v-spacer />
         <div class="pc_head__actions">
@@ -129,7 +129,7 @@
       <div class="pc_bar">
         <v-btn variant="text" prepend-icon="mdi-arrow-left" @click="back_to_list">К списку</v-btn>
         <span class="pc_current">Шапка и подвал</span>
-        <span class="pc_current_url">общие для всех страниц шаблона</span>
+        <span class="pc_current_url">общие для всех страниц домена</span>
         <span v-if="structure_saved" class="pc_saved">сохранено</span>
         <v-spacer />
         <v-btn color="primary" prepend-icon="mdi-content-save" :loading="structure_saving" @click="save_structure">Сохранить</v-btn>
@@ -181,7 +181,7 @@
           v-if="theme_open"
           :key="theme_axis"
           :axis="theme_axis"
-          :template_id="template_id"
+          :domain_id="domain_id"
           :template_base="effective_template_base"
           :theme="theme"
           :saved="theme[theme_axis] || {}"
@@ -210,7 +210,7 @@ export default {
   data() {
     return {
       errors: [],
-      template: {},
+      domain: {},
       template_base: '',
       pc_config: {},
       theme: {},
@@ -247,8 +247,8 @@ export default {
     }
   },
   computed: {
-    template_id() {
-      return parseInt(this.params.template_id)
+    domain_id() {
+      return parseInt(this.params.domain_id)
     },
     api() {
       return BackendBase + '/svcmsadmin/page-constructor'
@@ -267,7 +267,7 @@ export default {
       )
     },
     theme_title() {
-      return 'Тема шаблона · ' + (THEME_TITLES[this.theme_axis] || this.theme_axis)
+      return 'Тема домена · ' + (THEME_TITLES[this.theme_axis] || this.theme_axis)
     }
   },
   created() {
@@ -287,12 +287,12 @@ export default {
       this.errors = Array.isArray(e) ? e.map(String) : (e ? [String(e)] : [])
     },
     init() {
-      if (!this.template_id) { this.errors = ['не указан template_id']; return }
-      this.$http.post(this.api + '/init', { template_id: this.template_id }).then(r => {
+      if (!this.domain_id) { this.errors = ['не указан domain_id']; return }
+      this.$http.post(this.api + '/init', { domain_id: this.domain_id }).then(r => {
         const d = r.data || {}
         this.set_errors(d)
         if (!d.success) return
-        this.template = d.template || {}
+        this.domain = d.domain || {}
         this.template_base = d.templateBase || ''
         this.theme = d.theme || {}
         this.structure = d.structure || { header: null, footer: null }
@@ -351,7 +351,7 @@ export default {
     },
     load_scheme_lists() {
       ;['color', 'style', 'layout', 'font'].forEach(axis => {
-        this.$http.get(this.api + '/theme-schemes/' + axis).then(r => {
+        this.$http.get(this.api + '/theme-schemes/' + axis + '?domain_id=' + this.domain_id).then(r => {
           const d = r.data || {}
           if (!d.success) return
           this.scheme_lists = Object.assign({}, this.scheme_lists, { [axis]: d.schemes || [] })
@@ -362,11 +362,11 @@ export default {
       const cur = this.theme[axis] || {}
       if (!name || name === cur.name) return
       this.theme_saving = axis
-      this.$http.post(this.api + '/theme/save', { template_id: this.template_id, axis, name, css: '' }).then(r => {
+      this.$http.post(this.api + '/theme/save', { domain_id: this.domain_id, axis, name, css: '' }).then(r => {
         const d = r.data || {}
         this.set_errors(d)
         if (!d.success) { this.theme_saving = ''; return }
-        const scheme = (this.scheme_lists[axis] || []).find(s => s.name === name) || {}
+        const scheme = (this.scheme_lists[axis] || []).find(s => s.header === name) || {}
         const apply = (css) => {
           this.theme = Object.assign({}, this.theme, {
             [axis]: { name: d.name || name, custom: !!scheme.is_custom, css: css || '' }
@@ -379,7 +379,7 @@ export default {
           this.theme_saving = ''
         }
         if (scheme.is_custom) {
-          this.$http.get(this.api + '/theme-schemes/' + axis + '/' + encodeURIComponent(name)).then(sr => {
+          this.$http.get(this.api + '/theme-schemes/' + axis + '/' + encodeURIComponent(name) + '?domain_id=' + this.domain_id).then(sr => {
             apply(((sr.data || {}).scheme || {}).css || '')
           }).catch(() => apply(''))
         } else {
@@ -406,7 +406,7 @@ export default {
     create_base_pages() {
       this.base_loading = true
       this.base_result = ''
-      this.$http.post(this.api + '/base-pages', { template_id: this.template_id }).then(r => {
+      this.$http.post(this.api + '/base-pages', { domain_id: this.domain_id }).then(r => {
         this.base_loading = false
         const d = r.data || {}
         this.set_errors(d)
@@ -451,6 +451,9 @@ export default {
       window.PAGE_CONSTRUCTOR_CONFIG = Object.assign({}, this.pc_config, {
         templateBase: this.effective_template_base,
         dataBase: BaseUrl + 'page_constructor/js/data/',
+        filesBase: this.pc_config.filesBase || '',
+        api: this.api,
+        domain_id: this.domain_id,
         customCss: this.build_custom_css()
       })
     },
@@ -462,7 +465,7 @@ export default {
       const blocks = this.current_doc ? JSON.stringify(this.current_doc) : JSON.stringify(BLOCKS_EMPTY)
       this.$http.post(this.api + '/page/save', {
         id: this.current.id,
-        template_id: this.template_id,
+        domain_id: this.domain_id,
         url: this.current.url,
         header: this.current.header,
         blocks
@@ -493,7 +496,7 @@ export default {
       const footer = (doc.blocks || []).find(b => b.type === 'footer') || null
       this.structure_saving = true
       this.$http.post(this.api + '/structure/save', {
-        template_id: this.template_id,
+        domain_id: this.domain_id,
         header,
         footer
       }).then(r => {
@@ -522,7 +525,7 @@ export default {
     },
     save_page_meta() {
       this.meta_saving = true
-      const body = { id: this.meta_form.id, template_id: this.template_id, url: this.meta_form.url, header: this.meta_form.header }
+      const body = { id: this.meta_form.id, domain_id: this.domain_id, url: this.meta_form.url, header: this.meta_form.header }
       if (this.meta_form.id && this.current.id === this.meta_form.id) {
         body.blocks = this.current_doc ? JSON.stringify(this.current_doc) : JSON.stringify(BLOCKS_EMPTY)
       }

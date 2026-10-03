@@ -30,7 +30,7 @@
   var COLORS = ['digitalstrateg', 'default', 'ocean', 'forest', 'warm', 'gold', 'cherry', 'mint', 'dark', 'mono', 'slate', 'violet', 'coral', 'emerald', 'sky', 'rose'];
   var STYLES = ['soft', 'flat', 'brutal', 'glass', 'neumorph', 'card', 'compact', 'outline', 'rounded', 'paper', 'luxe', 'neo'];
   /* Ось компоновки (layout): эксклюзивно, дефолт standard. */
-  var LAYOUTS = ['standard', 'industrial', 'elegant', 'editorial', 'wide', 'compact'];
+  var LAYOUTS = ['standard', 'industrial', 'elegant', 'editorial', 'wide', 'compact', 'technical'];
   var DEFAULT_LAYOUT = 'standard';
   var DEFAULT_COLOR = 'digitalstrateg';
 

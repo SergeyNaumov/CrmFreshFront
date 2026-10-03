@@ -56,24 +56,24 @@ RULES.md                     этот файл
 ```json
 { "schema": "svcms.page_blocks", "version": 2, "blocks": [ { "type": "...", "variant": "...", "params": {}, "items": [], "fill": "1", "anim": "" } ] }
 ```
-Хранится в `template_page.blocks`; совместим с автономным конструктором (`export.js`).
+Хранится в `domain_page.blocks`; совместим с автономным конструктором (`export.js`).
 
-## Шапка и подвал (уровень шаблона)
+## Шапка и подвал (уровень домена)
 
-- Хранятся отдельно от страниц: `template_constructor.header_blocks/footer_blocks` (JSON блока v2). Эндпоинты `GET /structure/<template_id>`, `POST /structure/save` (тело `{template_id, header, footer}`).
-- Если колонки пусты, структура берётся из первой страницы шаблона (обратная совместимость).
-- `POST /structure/save` дополнительно раскладывает шапку/подвал по всем `template_page` (fan-out), пока сайт-рендер читает `blocks`.
+- Хранятся отдельно от страниц: `domain_constructor.header_blocks/footer_blocks` (JSON блока v2). Эндпоинты `GET /structure/<domain_id>`, `POST /structure/save` (тело `{domain_id, header, footer}`).
+- Если колонки пусты, структура берётся из первой страницы домена (fallback).
+- `POST /structure/save` дополнительно раскладывает шапку/подвал по всем `domain_page` домена (fan-out), пока сайт-рендер читает `blocks`.
 - `POST /page/save` при сохранении страницы заменяет присланные header/footer канонической структурой.
 - В `BlockEditor.vue` вызывается с `role="structure"` (только structural-блоки) и `role="page"` (контент; header/footer отфильтрованы и подмешиваются в превью/экспорт из props `header`/`footer`).
-- Список страниц: селекты осей темы сохраняются сразу (`POST /theme/save {axis, name, css:''}`), иконка «tune» открывает `ThemeTool`; колонки сортируются кликом по заголовку (по умолчанию — по названию).
-- Миграция БД: `CrmFreshBackend-python-async/routes/svcmsadmin/page_constructor/structure_migration.sql`.
+- Список страниц: селекты осей темы сохраняются сразу (`POST /theme/save {domain_id, axis, name, css:''}`), иконка «tune» открывает `ThemeTool`; колонки сортируются кликом по заголовку (по умолчанию — по названию).
+- Миграция БД: `CrmFreshBackend-python-async/routes/svcmsadmin/page_constructor/domain_migration.sql`.
 
 ## Тема
 
-- Схемы: `template_theme_color/style/layout/font` (`name PK, label, short, descr, css, sort, is_default, is_custom`).
-- Выбор на шаблон: `template_constructor` (`template_id PK`, имена осей). Кастом сохраняется в таблицу схем (`is_custom=1`).
-- Эндпоинты: `GET /theme-schemes/<axis>`, `GET /theme-schemes/<axis>/<name>`, `GET /theme-schemes/<axis>/<name>/file.css`, `POST /theme-schemes/save`, `POST /theme-schemes/<axis>/<name>/delete`, `GET/POST /theme/<id>`, `GET /theme/<id>/styles.css`.
-- Сайт подключает: `<link rel="stylesheet" href="…/page-constructor/theme/<template_id>/styles.css">`.
+- Схемы: `domain_theme_color/style/layout/font` (`domain_id, header` — составной PK, `label, short, descr, css, sort, is_default, is_custom`). `domain_id=0` — общий пресет, `>0` — индивидуальный схема домена.
+- Выбор на домен: `domain_constructor` (`domain_id PK`, имена осей). Кастом сохраняется в таблицу схем домена (`is_custom=1`); общая схема не перетирается — индивидуальный домен заводит свою копию. В `ThemeTool` чекбокс «Общая схема (для всех доменов)» → `scope: shared`.
+- Эндпоинты: `GET /theme-schemes/<axis>?domain_id=`, `GET /theme-schemes/<axis>/<name>?domain_id=`, `GET /theme-schemes/<axis>/<name>/file.css`, `POST /theme-schemes/save`, `POST /theme-schemes/<axis>/<name>/delete`, `GET/POST /theme/<domain_id>`, `GET /theme/<domain_id>/styles.css`. Список отдаёт общие + индивидуальные схемы домена, одноимённая индивидуальная перекрывает общую; ключ схемы — `header`.
+- Сайт подключает: `<link rel="stylesheet" href="…/page-constructor/theme/<domain_id>/styles.css">`.
 - В интерфейсе `ThemeAxes.vue` (4 селекта + `tune`) доступен и в списке (слева, с живым превью), и в редакторе страницы (кнопка «Тема»). Смена сохраняется сразу (`POST /theme/save`) и обновляет `window.PAGE_CONSTRUCTOR_CONFIG` + `theme_rev`.
 - `BlockEditor` проп `configRev` → пересобирает открытые превью (aside/страница/блок). Список пересобирает `list_preview_src` из закэшированного документа выбранной страницы.
 - В холсте блоков: при hover подсвечивается заголовок (`.pcb-card:hover .pcb-head`), при раскрытии блок автоматически прокручивается в зону видимости (`scrollToBlock`, `scroll-margin-top`).
@@ -93,10 +93,17 @@ RULES.md                     этот файл
 
 ### Добавилась/изменилась схема темы
 1. В `svcms-templates`: `templates/<t>/css/themes/<axis>/<name>.css` (шрифт — JS `FONTS`).
-2. Импорт в `template_theme_<axis>` (`name,label,short,descr,css,sort`).
+2. Импорт в `domain_theme_<axis>` (`domain_id,header,label,short,descr,css,sort`; `domain_id=0` — общий).
+3. Зеркало в компоненте: `data/template/css|js` → копия `templates/<t>/css|js`; для
+   оси `layout` — пресет в `theme_defs.js` (`LAYOUT_PRESETS`) и новое поле
+   акцента в `AXES.layout.fields` + генератор в `build_layout()`, если схема
+   приносит структурное правило (например `.section-title::before`).
+4. `npm run constructor:pack` из корня админки (агент делает сам): `data/template` →
+   `public/page_constructor/template`, иначе превью конструктора отдаёт старые файлы.
+   Проверка: `git status --porcelain public/page_constructor` (эти пути в `.gitignore`).
 
 ## Правила совместимости
-- Не менять формат v2 без миграции `template_page.blocks`.
+- Не менять формат v2 без миграции `domain_page.blocks`.
 - Пресеты/кастомы хранят полный набор токенов; шрифт — CSS `:root{--font…}`.
 - `name` схемы — идентификатор (латиница/дефисы) в URL.
 - `PAGE_CONSTRUCTOR_CONFIG` (глобал) задаёт `templateBase`, оси темы и `customCss` для превью.

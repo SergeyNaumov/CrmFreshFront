@@ -91,23 +91,24 @@ window.get_triade = get_triade;
 
 /* ============================================================
    КОРЗИНА
-   На ЛЮБОЙ странице сайта при загрузке отправляется
-   GET /basket-full-info — сервер возвращает актуальное содержимое
-   корзины (независимо от того, есть ли на странице товарные блоки).
+   На ЛЮБОЙ странице сайта корзина синхронизируется c сервером:
+   клиент отправляет содержимое из localStorage ({ "<id>": count })
+   на POST /ajax/basket, сервер возвращает подробную информацию о
+   товарах (название/цена/фото) и суммы. Работает и загрузка
+   страницы, и локальные изменения (add/del/change).
 
-     Релиз: axios.get('/basket-full-info') → { success, basket: { ... } }
+     Релиз: POST /ajax/basket  (через хелпер POST из form_builder.js)
      Preview: фейковый script-запрос к js/preview/basket_info.js,
               который эмулирует ответ сервера (событие t1:basket-info).
 
    Ответ нормализуется в apply_basket_full_info(data) и целиком
    заменяет store.state.basket (все Vue-приложения перерисовываются).
-   При локальном изменении корзины (add/del/change) в релизе клиент
-   дополнительно синхронизируется через POST /init-basket
-   (init_basket_release), в preview localStorage меняется напрямую.
    ============================================================ */
 window.init_basket = function (change) {
-  // Preview: axios не подключён ЛИБО явный признак preview — фейковый GET /basket-full-info
-  if (window.__T1_PREVIEW__ || typeof axios === 'undefined' || !axios.post) {
+  // Preview: присутствует axios-эмуляция (js/preview/forms.js) или явный флаг
+  var isPreview = window.__T1_PREVIEW__ ||
+    (typeof window.axios !== 'undefined' && window.axios && window.axios.post);
+  if (isPreview) {
     init_basket_preview(change);
     return;
   }
@@ -117,30 +118,18 @@ window.init_basket = function (change) {
 
 /* ---------- Релиз: синхронизация корзины с сервером ---------- */
 function init_basket_release(change) {
-  var last_update_basket = 0;
-  if (window.localStorage.getItem('last_update_basket')) {
-    last_update_basket = parseInt(window.localStorage.getItem('last_update_basket'), 10);
-  }
+  // Отправляем текущее содержимое корзины из localStorage; сервер
+  // вернёт подробности по id/количествам.
+  var payload = { basket: loadLS('basket') };
+  if (change) payload.change = 1;
 
-  // Локальное изменение (add/del/change) — уводим на сервер POST-ом
-  var sync = function (d) {
-    if (!d || !d.success) return;
-    apply_basket_full_info(d);
-  };
-
-  if (change) {
-    axios.post('/init-basket', {
-      basket: loadLS('basket'),
-      last_update_basket: last_update_basket,
-      change: 1
-    }).then(function (r) { sync(r.data); });
-    return;
-  }
-
-  // Загрузка страницы (все страницы): актуальное содержимое корзины
-  axios.get('/basket-full-info')
-    .then(function (r) { if (r.data && r.data.success) apply_basket_full_info(r.data); })
-    .catch(function () {});
+  POST({
+    url: '/ajax/basket',
+    data: payload,
+    success: function (d) {
+      if (d && d.success) apply_basket_full_info(d);
+    }
+  });
 }
 
 /* ---------- Preview: фейковое /basket-full-info ----------
@@ -385,11 +374,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!blocks.length || typeof window.HeroSlider === 'undefined') return;
 
     blocks.forEach(function (el) {
-      var url = el.getAttribute('data-url');
-      if (!url) return;
+      var url = el.getAttribute('data-url') || '';
+      var list = el.getAttribute('data-list') || '';
+      if (!url && !list) return;
       Vue.createApp(window.HeroSlider, {
         dataId: el.id || '',
         dataUrl: url,
+        dataList: list,
         autoplay: parseInt(el.getAttribute('autoplay'), 10) || 0
       }).mount(el);
     });
@@ -430,16 +421,35 @@ document.addEventListener('DOMContentLoaded', function () {
   function initTabs() {
     document.querySelectorAll('[data-tabs]').forEach(function (root) {
       var btns = Array.prototype.slice.call(root.querySelectorAll('[data-tab]'));
-      var panels = Array.prototype.slice.call(root.querySelectorAll('[data-panel]'));
+      /* Панели могут находиться вне контейнера [data-tabs] (например,
+         в отдельном .branches-panels), поэтому ищем их в родителе. */
+      var scope = root.parentElement || document;
+      var panels = Array.prototype.slice.call(scope.querySelectorAll('[data-panel]'));
+
+      /* Ленивые iframe карт в табах: грузим при показе панели
+         (lazy-iframe внутри display:none может не загрузиться). */
+      function loadPanel(panel) {
+        if (!panel) return;
+        Array.prototype.forEach.call(panel.querySelectorAll('iframe[data-src]'), function (f) {
+          if (!f.getAttribute('src')) f.setAttribute('src', f.getAttribute('data-src'));
+        });
+      }
 
       btns.forEach(function (btn) {
         btn.addEventListener('click', function () {
           var name = btn.getAttribute('data-tab');
           btns.forEach(function (b) { b.classList.toggle('is-active', b === btn); });
           panels.forEach(function (p) {
-            p.classList.toggle('is-active', p.getAttribute('data-panel') === name);
+            var active = p.getAttribute('data-panel') === name;
+            p.classList.toggle('is-active', active);
+            if (active) loadPanel(p);
           });
         });
+      });
+
+      // Карта(ы) активной при загрузке панели.
+      panels.forEach(function (p) {
+        if (p.classList.contains('is-active')) loadPanel(p);
       });
     });
   }
@@ -614,7 +624,7 @@ document.addEventListener('DOMContentLoaded', function () {
   window.store.state.compare = loadLS('compare');
 
   /* ---------- Корзина: инициализация виджета в шапке ----------
-     На всех страницах отправляется GET /basket-full-info
+     На всех страницах корзина синхронизируется через POST /ajax/basket
      (в preview — фейковый script-запрос к js/preview/basket_info.js),
      чтобы шапка показывала актуальную корзину даже на страницах без
      товарных блоков. Если страница содержит товарные блоки, их

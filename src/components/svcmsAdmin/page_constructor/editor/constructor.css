@@ -176,6 +176,15 @@
 }
 .pc-emoji:hover { background: #eef1f7; border-color: #d8dde8; }
 .pc-picker__body--image { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.pc-bi { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.pc-bi__upload {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  padding: 6px 12px; border: 1px solid #4a3fd0; border-radius: 8px;
+  color: #4a3fd0; font-weight: 600; font-size: 13px; background: #f4f2ff;
+}
+.pc-bi__upload input { display: none; }
+.pc-bi__hint { color: #8a93a6; font-size: 12px; }
+.pc-bi__empty { grid-column: 1 / -1; color: #8a93a6; font-size: 13px; }
 .pc-img {
   border: 1px solid #e3e6ea; background: #fff; border-radius: 8px; padding: 0;
   overflow: hidden; cursor: pointer; aspect-ratio: 1 / 1; display: flex;

@@ -43,8 +43,8 @@ window.__T1_GB_TYPES = [
 window.__T1_GB_SEL = [
   { v: 'all', label: 'Все товары' },
   { v: 'new', label: 'Новинки' },
-  { v: 'specpredl', label: 'Спецпредложения' },
-  { v: 'action', label: 'Хиты' }
+  { v: 'spec', label: 'Спецпредложения' },
+  { v: 'hit', label: 'Хиты' }
 ];
 
 window.__T1_GB_SRC = [
@@ -55,15 +55,15 @@ window.__T1_GB_SRC = [
 ];
 
 window.__T1_GB_PRESETS = [
-  { name: 'Карусель', cfg: { show: 'carousel', cols: 0, animation: 'rise', types: 1, selection: 'specpredl', limit: 0, title: 'Хиты продаж', sub: 'Спецпредложения и популярные товары', autoplay: 3500 } },
+  { name: 'Карусель', cfg: { show: 'carousel', cols: 0, animation: 'rise', types: 1, selection: 'spec', limit: 0, title: 'Спецпредложения', sub: 'Спецпредложения и популярные товары', autoplay: 3500 } },
   { name: 'Сетка 4×2', cfg: { show: 'grid', cols: 4, animation: 'rise', types: 1, selection: 'new', limit: 8, title: 'Новинки', linkText: 'Смотреть все', linkHref: 'good_list.html' } },
   { name: 'Сетка 3×2', cfg: { show: 'grid', cols: 3, animation: 'fade', types: 2, selection: 'all', limit: 6, title: 'Каталог' } },
   { name: 'Компакт 6', cfg: { show: 'compact', cols: 6, animation: 'none', types: 2, selection: 'all', limit: 12 } },
-  { name: 'Строки', cfg: { show: 'rows', cols: 2, animation: 'fade', types: 1, selection: 'action', limit: 6, title: 'Хиты' } },
+  { name: 'Строки', cfg: { show: 'rows', cols: 2, animation: 'fade', types: 1, selection: 'hit', limit: 6, title: 'Хиты' } },
   { name: 'Показать ещё', cfg: { show: 'showmore', cols: 4, animation: 'rise', types: 1, selection: 'all', limit: 8, title: 'Все товары' } },
-  { name: 'Товар дня', cfg: { show: 'feature', cols: 0, animation: 'fade', types: 1, selection: 'specpredl', limit: 4 } },
+  { name: 'Товар дня', cfg: { show: 'feature', cols: 0, animation: 'fade', types: 1, selection: 'spec', limit: 4 } },
   { name: 'Вкладки', cfg: { show: 'tabs', cols: 4, animation: 'fade', types: 1, selection: 'all', limit: 4, title: 'Подборки' } },
-  { name: 'Лента', cfg: { show: 'strip', cols: 0, animation: 'none', types: 1, selection: 'action', limit: 12 } }
+  { name: 'Лента', cfg: { show: 'strip', cols: 0, animation: 'none', types: 1, selection: 'hit', limit: 12 } }
 ];
 
 /* ---------- Фолбэк копирования ---------- */

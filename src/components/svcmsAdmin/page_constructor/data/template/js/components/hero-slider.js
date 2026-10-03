@@ -28,7 +28,9 @@ window.HeroSlider = {
 
   props: {
     dataId: { type: String, default: '' },
-    dataUrl: { type: String, required: true },
+    dataUrl: { type: String, default: '' },
+    // Инлайн-список слайдов блока (per-block), JSON-строка. Приоритетнее data-url.
+    dataList: { type: String, default: '' },
     autoplay: { type: Number, default: 0 },
     fadeOut: { type: Number, default: 350 },
     fadeIn: { type: Number, default: 650 },
@@ -98,6 +100,15 @@ window.HeroSlider = {
   methods: {
     load: function () {
       var vm = this;
+
+      // Слайды блока (инлайн JSON) — приоритетнее серверного data-url.
+      if (vm.dataList) {
+        var list = null;
+        try { list = JSON.parse(vm.dataList); } catch (e) { list = null; }
+        if (Array.isArray(list)) { vm.recv(list); return; }
+      }
+
+      if (!vm.dataUrl) { vm.fail(); return; }
 
       if (/\.json$/i.test(vm.dataUrl)) {
         // Релиз/статический JSON: обычный запрос

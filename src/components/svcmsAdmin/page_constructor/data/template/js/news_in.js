@@ -1,41 +1,29 @@
 /* ============================================================
    Файл: templates/t1/js/news_in.js
-   Приложение страницы новости (preview/news_in.html, релиз —
-   page/news_in.html). Обычный JS, без Vue (как news-list.js).
-
-   ПРИНЦИП «SEO + догрузка» (как в good_in.js):
-   В #newsIn лежит статический блок — «серверная» версия самой
-   свежей новости (id 14) для поисковиков. Поверх него приложение
-   подгружает актуальную новость по ?id= из URL и перерисовывает
-   заголовок, обложку, дату, текст, хлебные крошки и <title>.
+   Приложение страницы новости (/news/{id}). Обычный JS, без Vue.
 
    РЕЖИМЫ ДАННЫХ:
-   - Preview: script-запрос js/preview/news_ajax_{id}.js (файл
-     публикует событие t1:news_in с detail { id, news });
-   - Release: AJAX GET /ajax/news/{id} → JSON (та же запись).
-   Режим и базовый путь задаются атрибутами #newsIn:
-     data-mode="preview|release", data-url="{префикс до id}".
+   - Preview: script-запрос js/preview/news_ajax_{id}.js (событие
+     t1:news_in с detail { id, news });
+   - Release: GET /ajax/news/{id} → JSON (запись + prev_id, next_id, url).
 
    НАВИГАЦИЯ:
-   - «Предыдущая» — более старая новость (id−1), «Следующая» — более
-     новая (id+1); кнопки отключаются на краях списка (1 и 14);
-   - клик по карточке в карусели «Другие новости» — то же переключение;
-   - при переходе обновляются URL (history.pushState), <title>, og/tw,
-     хлебные крошки, активность кнопок; popstate возвращает назад.
+   - id берётся из пути (/news/{id}) либо из ?id=;
+   - «Предыдущая»/«Следующая» — prev_id/next_id из ответа сервера;
+   - URL меняется через history.pushState на канонический url (data.url);
+   - клик по карточке «Другие новости» (#newsMoreSplide) — та же навигация;
+   - popstate возвращает назад.
    Гонки обрабатываются токеном запроса: применяется только ответ
    последнего загруженного id.
    ============================================================ */
-window.__T1_NEWS_IN_VER = '2026-09-22';
+window.__T1_NEWS_IN_VER = '2026-10-02';
 
 (function () {
   'use strict';
 
   var MONTHS = ['января','февраля','марта','апреля','мая','июня',
                 'июля','августа','сентября','октября','ноября','декабря'];
-  var MIN_ID = 1;
-  var MAX_ID = 14;
 
-  /* ---------- Формат "DD месяц ГГГГ" ---------- */
   function fmtDate(iso) {
     if (!iso) return '';
     var d = new Date(iso);
@@ -43,11 +31,14 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
     return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
   }
 
+  /* id из /news/{id} или ?id= */
   function idFromURL() {
     try {
+      var m = window.location.pathname.match(/\/(\d+)\/?$/);
+      if (m) return parseInt(m[1], 10);
       var p = new URL(window.location.href).searchParams.get('id');
       var n = parseInt(p, 10);
-      return !isNaN(n) && n >= MIN_ID && n <= MAX_ID ? n : null;
+      return isNaN(n) ? null : n;
     } catch (e) {
       return null;
     }
@@ -57,7 +48,7 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
     var root = document.getElementById('newsIn');
     if (!root) return;
 
-    var basePath  = root.getAttribute('data-url') || '';
+    var basePath  = root.getAttribute('data-url') || '/ajax/news/';
     var isPreview = root.getAttribute('data-mode') === 'preview';
 
     var titleEl  = document.getElementById('newsInTitle');
@@ -69,22 +60,24 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
     var prevBtn  = document.getElementById('newsPrev');
     var nextBtn  = document.getElementById('newsNext');
 
-    var currentId = null; // показанная новость
-    var req      = 0;     // токен против гонок (быстрые переходы)
+    var currentId = null;
+    var prevId = null, nextId = null;
+    var req = 0; // токен против гонок
 
     /* ---------- Применение записи новости ---------- */
     function apply(data, push) {
       var id = Number(data.id);
+      if (!id) return;
       currentId = id;
 
-      if (titleEl) titleEl.textContent = data.title;
+      if (titleEl) titleEl.textContent = data.title || data.header || '';
       if (imgEl) {
         imgEl.src = data.photo || '';
-        imgEl.alt = data.title + ' — DigitalStrateg';
+        imgEl.alt = (data.title || data.header || '') + ' — DigitalStrateg';
       }
       if (dateEl) {
-        dateEl.setAttribute('datetime', data.date || '');
-        dateEl.textContent = fmtDate(data.date);
+        dateEl.setAttribute('datetime', data.registered_iso || data.date || '');
+        dateEl.textContent = data.date || fmtDate(data.registered_iso);
       }
       if (bodyEl) {
         bodyEl.innerHTML = '';
@@ -96,17 +89,21 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
           bodyEl.appendChild(p);
         });
       }
-      if (crumbEl) crumbEl.textContent = data.title;
+      if (crumbEl) crumbEl.textContent = data.title || data.header || '';
 
-      syncDocTitle(data.title);
-      syncButtons(id);
+      prevId = data.prev_id || null;
+      nextId = data.next_id || null;
 
-      if (push) history.pushState(null, '', window.location.pathname + '?id=' + id);
+      syncDocTitle(data.title || data.header);
+      syncButtons();
+
+      if (push) {
+        history.pushState({ id: id }, '', data.url || ('/news/' + id));
+      }
     }
 
     function syncDocTitle(title) {
       if (!title) return;
-      // Меняем title только если на странице шаблон DigitalStrateg
       if (document.title.indexOf('DigitalStrateg') === -1) return;
       var t = title + ' — DigitalStrateg: новости компании';
       document.title = t;
@@ -116,9 +113,9 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
       if (tw) tw.setAttribute('content', t);
     }
 
-    function syncButtons(id) {
-      if (prevBtn) prevBtn.disabled = (id <= MIN_ID);
-      if (nextBtn) nextBtn.disabled = (id >= MAX_ID);
+    function syncButtons() {
+      if (prevBtn) prevBtn.disabled = !prevId;
+      if (nextBtn) nextBtn.disabled = !nextId;
     }
 
     function setBusy(busy) {
@@ -129,13 +126,13 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
     /* ---------- Загрузка данных по id ---------- */
     function load(id, push) {
       id = parseInt(id, 10);
-      if (isNaN(id) || id < MIN_ID || id > MAX_ID) return;
+      if (isNaN(id)) return;
 
       var num = ++req;
       setBusy(true);
 
       var done = function () {
-        if (num !== req) return; // пришёл более новый запрос — игнорируем
+        if (num !== req) return;
         setBusy(false);
       };
       var fail = function () {
@@ -155,9 +152,7 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
         };
         window.addEventListener('t1:news_in', listener);
         var s = document.createElement('script');
-        /* Метка сброса кеша: в data-url стоит ПРЕФИКС (id дописывается
-           здесь), поэтому суффикс добавляется после .js.
-           Инструмент: agent-doc/tools/preview_nocache.py */
+        /* Метка сброса кеша (preview): см. preview_nocache.py */
         s.src = basePath + id + '.js?nocache=[]';
         s.onerror = function () {
           window.removeEventListener('t1:news_in', listener);
@@ -169,23 +164,53 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
 
       fetch(basePath + id)
         .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-        .then(function (d) { apply(d || {}, push); done(); })
-        .catch(fail);
+        .then(function (d) { if (num !== req) return; apply(d || {}, push); done(); })
+        .catch(function () {
+          /* Fallback: если детальный API недоступен, загружаем список
+             новостей и определяем prev/next по порядку в списке. */
+          fetch(basePath + '?limit=100')
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function (list) {
+              if (num !== req) return;
+              if (!Array.isArray(list) || !list.length) return fail();
+              /* Соседей ищем по id (как серверный _prev_next), а не по
+                 порядку выдачи списка (он отсортирован по дате). */
+              var rows = list.slice().sort(function (a, b) {
+                return Number(a.id) - Number(b.id);
+              });
+              var ids = rows.map(function (n) { return Number(n.id); });
+              var idx = ids.indexOf(Number(id));
+              if (idx === -1) return fail();
+              var prev = idx > 0 ? ids[idx - 1] : null;
+              var next = idx < ids.length - 1 ? ids[idx + 1] : null;
+              apply({
+                id: id,
+                title: (rows[idx].title || rows[idx].header || ''),
+                photo: rows[idx].photo || '',
+                body: rows[idx].body || [],
+                date: rows[idx].date || '',
+                prev_id: prev,
+                next_id: next,
+                url: rows[idx].url || ('/news/' + id)
+              }, push);
+              done();
+            })
+            .catch(fail);
+        });
     }
 
     /* ---------- Навигация ---------- */
     function navigate(id, push) {
       id = parseInt(id, 10);
-      if (isNaN(id) || id < MIN_ID || id > MAX_ID) return;
-      if (id === currentId) return;
+      if (isNaN(id) || id === currentId) return;
       load(id, push);
     }
 
     if (prevBtn) prevBtn.addEventListener('click', function () {
-      navigate((currentId || MAX_ID) - 1, true);
+      if (prevId) navigate(prevId, true);
     });
     if (nextBtn) nextBtn.addEventListener('click', function () {
-      navigate((currentId || MIN_ID) + 1, true);
+      if (nextId) navigate(nextId, true);
     });
 
     /* Карусель «Другие новости»: клик по карточке — та же навигация */
@@ -202,25 +227,20 @@ window.__T1_NEWS_IN_VER = '2026-09-22';
 
       if (window.Splide) {
         new Splide(more, {
-          type: 'loop',
-          perPage: 3,
-          perMove: 1,
-          gap: 24,
-          arrows: true,
-          pagination: true,
-          breakpoints: {
-            991: { perPage: 2 },
-            575: { perPage: 1 }
-          }
+          type: 'loop', perPage: 3, perMove: 1, gap: 24,
+          arrows: true, pagination: true,
+          breakpoints: { 991: { perPage: 2 }, 575: { perPage: 1 } }
         }).mount();
       }
     }
 
     /* ---------- Старт и история ---------- */
-    navigate(idFromURL() || MAX_ID, false);
+    var startId = idFromURL() || parseInt(root.getAttribute("data-id"), 10) || null;
+    if (startId) load(startId, false);
 
     window.addEventListener('popstate', function () {
-      navigate(idFromURL() || MAX_ID, false);
+      var id = idFromURL();
+      if (id) load(id, false);
     });
   });
 })();

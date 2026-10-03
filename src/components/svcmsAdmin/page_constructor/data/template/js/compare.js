@@ -12,7 +12,17 @@
   'use strict';
   if (typeof window.Vue === 'undefined') return;
 
-  window.__T1_COMPARE_VER = '2026-09-25-compare';
+  window.__T1_COMPARE_VER = '2026-10-02-compare';
+
+  // spec товара: массив [[key, value], …]; из API может прийти JSON-строкой.
+  function specList(g) {
+    var s = g && g.spec;
+    if (Array.isArray(s)) return s;
+    if (typeof s === 'string' && s.trim()) {
+      try { var a = JSON.parse(s); if (Array.isArray(a)) return a; } catch (e) { /* не JSON */ }
+    }
+    return [];
+  }
 
   document.addEventListener('DOMContentLoaded', function () {
     var root = document.getElementById('compare');
@@ -35,7 +45,7 @@
         specKeys: function () {
           var keys = [];
           this.selected.forEach(function (g) {
-            (g.spec || []).forEach(function (s) { if (keys.indexOf(s[0]) < 0) keys.push(s[0]); });
+            specList(g).forEach(function (s) { if (keys.indexOf(s[0]) < 0) keys.push(s[0]); });
           });
           return keys;
         },
@@ -54,6 +64,13 @@
       methods: {
         load: function () {
           var vm = this;
+          if (dataUrl && /\.json$/i.test(dataUrl)) {
+            fetch(dataUrl)
+              .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+              .then(function (list) { vm.recv(list || []); })
+              .catch(function () { vm.fail(); });
+            return;
+          }
           if (dataUrl) {
             var listener = function (e) {
               var d = e.detail;
@@ -83,7 +100,7 @@
         fail: function () { this.error = true; this.loading = false; },
 
         specValue: function (g, key) {
-          var found = (g.spec || []).filter(function (s) { return s[0] === key; })[0];
+          var found = specList(g).filter(function (s) { return s[0] === key; })[0];
           return found ? found[1] : '—';
         },
         photo: function (g) { return Array.isArray(g.photo) ? (g.photo[0] || '') : (g.photo || ''); },

@@ -24,7 +24,11 @@
     nunito: { body: "'Nunito', 'Inter', system-ui, sans-serif", heading: '' },
     ptserif: { body: "'PT Serif', Georgia, 'Times New Roman', serif", heading: "'PT Serif', Georgia, serif" },
     'inter-manrope': { body: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif", heading: "'Manrope', 'Inter', system-ui, sans-serif" },
-    'manrope-ptserif': { body: "'Manrope', 'Inter', system-ui, sans-serif", heading: "'PT Serif', Georgia, 'Times New Roman', serif" }
+    'manrope-ptserif': { body: "'Manrope', 'Inter', system-ui, sans-serif", heading: "'PT Serif', Georgia, 'Times New Roman', serif" },
+    geometric: { body: "system-ui, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif", heading: '' },
+    elegant: { body: "Georgia, 'Times New Roman', 'PT Serif', serif", heading: "Georgia, 'Times New Roman', 'PT Serif', serif" },
+    rounded: { body: "ui-rounded, 'SF Pro Rounded', 'Nunito', 'Segoe UI', system-ui, sans-serif", heading: '' },
+    condensed: { body: "'Arial Narrow', 'Roboto Condensed', 'Segoe UI', system-ui, sans-serif", heading: '' }
   };
 
   function cfg() {

@@ -106,6 +106,26 @@ document.addEventListener('DOMContentLoaded', function () {
     form.querySelectorAll('.is-invalid').forEach(function (f) { f.classList.remove('is-invalid'); });
   }
 
+  /* Маска телефона — общий хелпер из form_builder.js */
+  var phoneEl = form.querySelector('[name="phone"]');
+  if (phoneEl && typeof replace_phone === 'function') {
+    phoneEl.addEventListener('input', function () {
+      phoneEl.value = replace_phone(phoneEl.value);
+    });
+  }
+
+  /* Адрес обязателен только для доставки (не для самовывоза) */
+  var deliveryEl = form.querySelector('[name="delivery"]');
+  var addressEl = form.querySelector('[name="address"]');
+  function syncDelivery() {
+    if (!deliveryEl || !addressEl) return;
+    var need = deliveryEl.value !== 'pickup';
+    addressEl.required = need;
+    var label = addressEl.closest('div') ? addressEl.closest('div').querySelector('label') : null;
+    if (label) label.textContent = need ? 'Адрес доставки *' : 'Адрес доставки';
+  }
+  if (deliveryEl) { deliveryEl.addEventListener('change', syncDelivery); syncDelivery(); }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     resetErrors();
@@ -128,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
         name: field('name'),
         phone: field('phone'),
         email: field('email'),
-        company: field('company'),
+        delivery: field('delivery'),
         address: field('address'),
         comment: field('comment'),
         capcha_key: (t && t.capcha_key) || '',

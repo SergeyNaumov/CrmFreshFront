@@ -1,0 +1,51 @@
+/* ============================================================
+   themes/layout/technical.css — «чертёжная» компоновка.
+
+   Заголовки секций с вертикальной акцентной чертой слева (подача t2),
+   умеренно широкий контейнер, ровный вертикальный ритм, левая выключка.
+   Цвет/форма — из осей color/style (цвет черты = --primary, в тёплых
+   схемах — оранжевый).
+   ============================================================ */
+:root {
+  --container: 1300px;
+  --gutter: 24px;
+  --section-gap: 80px;
+  --header-height: 76px;
+  --grid-gap: 24px;
+  --head-gap: 28px;
+  --head-space: 36px;
+  --font-size-h1: 2.6rem;
+  --font-size-h2: 2.05rem;
+  --font-size-h3: 1.4rem;
+  --font-weight-heading: 700;
+  --grid-size: 32px;
+}
+
+/* Шапка секции — по левому краю, заголовок и ссылка по одной оси */
+.section-head {
+  align-items: flex-end;
+  text-align: left;
+}
+
+/* Заголовок секции — вертикальная черта слева вместо линии снизу.
+   Регистр и трекинг сняты: подача t2 — обычный текст, а не капс. */
+.section-title {
+  padding-left: 22px;
+  font-size: var(--font-size-h2);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.section-title::after { content: none; }
+
+/* min() по толщине из оси style: neumorph обнуляет --border-width-accent,
+   а полоска — смысловой элемент компоновки и должна оставаться. */
+.section-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.12em;
+  width: max(4px, var(--border-width-accent, 4px));
+  height: 0.9em;
+  background: var(--primary);
+}

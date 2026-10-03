@@ -277,6 +277,11 @@
   align-items: start;
 }
 
+/* У категории нет подкатегорий — сайдбар не рендерится, список на всю ширину. */
+.catalog-layout--full {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 /* Сайдбар справа (параметр блока «Каталог товаров»: sidebar=right). */
 .catalog-layout--sidebar-right {
   grid-template-columns: minmax(0, 1fr) 264px;
@@ -387,17 +392,24 @@
 .compare__cell,
 .compare__row-name { border: 1px solid var(--border); padding: 12px 14px; text-align: left; vertical-align: top; }
 .compare__row-name { width: 180px; font-weight: 600; color: var(--heading-color); background: var(--light); }
-.compare__th--product { min-width: 200px; }
-.compare__product { display: flex; flex-direction: column; gap: 8px; }
+.compare__th--product { min-width: 200px; vertical-align: top; }
+/* Колонки сравнения разной высоты (названия/цены в разное число строк) —
+   прижимаем кнопки «В корзину» к низу, чтобы они были на одной линии. */
+.compare__product { display: flex; flex-direction: column; gap: 8px; height: 100%; }
 .compare__media {
   display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius-lg);
   background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.18), rgba(var(--primary-rgb), 0.05));
 }
 .compare__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.compare__name { font-weight: 600; color: var(--heading-color); text-decoration: none; }
+/* Название — ровно 2 строки у всех колонок (иначе кнопки на разной высоте). */
+.compare__name {
+  font-weight: 600; color: var(--heading-color); text-decoration: none;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; line-height: 1.35; min-height: 2.7em;
+}
 .compare__name:hover { color: var(--primary); }
-.compare__price { font-weight: 700; color: var(--heading-color); }
-.compare__acts { display: flex; align-items: center; gap: 8px; }
+.compare__price { font-weight: 700; color: var(--heading-color); white-space: nowrap; }
+.compare__acts { display: flex; align-items: center; flex-wrap: nowrap; gap: 8px; margin-top: auto; }
 .compare__remove {
   width: 32px; height: 32px; font-size: 18px; line-height: 1;
   color: var(--muted); background: transparent; border: 1px solid var(--border);

@@ -18,7 +18,7 @@
             v-model="preset"
             :items="scheme_items"
             item-title="label"
-            item-value="name"
+            item-value="header"
             label="Схема"
             density="compact"
             variant="outlined"
@@ -33,7 +33,7 @@
             <v-select
               v-if="f.type == 'select'"
               v-model="values[f.id]"
-              :items="f.options.map(o => ({ value: o[0], title: o[1] }))"
+              :items="select_items(f)"
               :label="f.label"
               density="compact"
               variant="outlined"
@@ -88,6 +88,12 @@
               hide-details
             />
           </template>
+          <v-checkbox
+            v-model="shared_scope"
+            label="Общая схема (для всех доменов)"
+            density="compact"
+            hide-details
+          />
           <v-btn v-if="axis != 'font'" variant="text" size="small" @click="mode = 'preset'">вернуться к готовым</v-btn>
         </template>
 
@@ -113,7 +119,7 @@ export default {
   components: { ThemePreview },
   props: {
     axis: { type: String, required: true },
-    template_id: { type: Number, required: true },
+    domain_id: { type: Number, required: true },
     template_base: { type: String, default: '' },
     theme: { type: Object, default: () => ({}) },
     saved: { type: Object, default: () => ({}) }
@@ -126,6 +132,7 @@ export default {
       values: default_values(this.axis),
       schemes: [],
       scheme_cache: {},
+      shared_scope: false,
       preview_styles: [],
       saving: false,
       saved_flag: false
@@ -136,10 +143,10 @@ export default {
     def() { return AXES[this.axis] },
     fields() { return this.def.fields },
     scheme_items() {
-      return this.schemes.map(s => ({ name: s.name, label: s.label || s.name }))
+      return this.schemes.map(s => ({ header: s.header, label: s.label || s.header }))
     },
     preset_short() {
-      const s = this.schemes.find(x => x.name === this.preset)
+      const s = this.schemes.find(x => x.header === this.preset)
       return s ? (s.short || '') : ''
     },
     preset_items() {
@@ -157,6 +164,7 @@ export default {
     axis() {
       this.values = default_values(this.axis)
       this.preset = ''
+      this.shared_scope = false
       this.schemes = []
       this.scheme_cache = {}
       this.load_schemes()
@@ -169,12 +177,12 @@ export default {
   },
   methods: {
     load_schemes() {
-      this.$http.get(this.api + '/theme-schemes/' + this.axis).then(r => {
+      this.$http.get(this.api + '/theme-schemes/' + this.axis + '?domain_id=' + this.domain_id).then(r => {
         const d = r.data || {}
         this.schemes = d.schemes || []
         if (!this.preset) {
           const def = this.schemes.find(s => s.is_default) || this.schemes[0]
-          this.preset = def ? def.name : ''
+          this.preset = def ? def.header : ''
         }
       }).catch(() => { this.schemes = [] })
     },
@@ -182,11 +190,19 @@ export default {
       if (!name) return Promise.resolve('')
       const key = axis + '/' + name
       if (this.scheme_cache[key] !== undefined) return Promise.resolve(this.scheme_cache[key])
-      return this.$http.get(this.api + '/theme-schemes/' + axis + '/' + encodeURIComponent(name)).then(r => {
+      const url = this.api + '/theme-schemes/' + axis + '/' + encodeURIComponent(name)
+      return this.$http.get(url + '?domain_id=' + this.domain_id).then(r => {
         const css = ((r.data || {}).scheme || {}).css || ''
         this.scheme_cache[key] = css
         return css
       }).catch(() => '')
+    },
+    // Опция ['#', 'Заголовок'] превращается в группу — длинные списки
+    // (например, украшения заголовка) читаются по разделам.
+    select_items(f) {
+      return (f.options || []).map(o => o[0] === '#'
+        ? { header: o[1] }
+        : { value: o[0], title: o[1] })
     },
     async refresh_preview() {
       const order = ['color', 'style', 'layout', 'font']
@@ -226,6 +242,13 @@ export default {
         if (f.type === 'number' || f.type === 'range') v = parseFloat(v)
         this.values[map[cssVar]] = v
       })
+      // Поля без CSS-токена (facts их не покрывают) берём из пресета,
+      // иначе decor сбрасывается в base и украшение заголовка теряется.
+      const preset = LAYOUT_PRESETS[this.preset]
+      if (preset) this.fields.forEach(f => {
+        if (map['--' + f.id] !== undefined) return
+        if (preset[f.id] !== undefined) this.values[f.id] = preset[f.id]
+      })
       if (this.preset) this.values.name = this.preset + '-custom'
       this.mode = 'custom'
     },
@@ -240,10 +263,11 @@ export default {
       const is_font = this.axis === 'font'
       const preset = this.mode === 'preset' && !is_font
       const body = {
-        template_id: this.template_id,
+        domain_id: this.domain_id,
         axis: this.axis,
         name: preset ? this.preset : (this.values.name || this.axis),
-        css: preset ? '' : this.css
+        css: preset ? '' : this.css,
+        scope: this.mode === 'custom' && this.shared_scope ? 'shared' : 'domain'
       }
       this.$http.post(this.api + '/theme/save', body).then(r => {
         this.saving = false

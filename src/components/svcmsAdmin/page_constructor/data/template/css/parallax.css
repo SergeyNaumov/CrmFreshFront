@@ -1,0 +1,156 @@
+/* ============================================================
+   parallax.css — примитив параллакса + блок .plx (промо-баннер).
+
+   Два режима, оба на одном классе .plx:
+   1) CSS-режим (основной) — @supports (animation-timeline: view()):
+      фоновый слой едет медленнее страницы, JS не нужен вовсе.
+   2) JS-fallback — js/parallax.js (IntersectionObserver + rAF) пишет
+      --plx-y в transform; включается только если режим (1) не
+      поддерживается. Разметка и результат совпадают.
+
+   Токены (задаются на .plx или инлайном style):
+     --plx-speed   амплитуда сдвига в единицах --plx-unit (по умолчанию 12);
+     --plx-unit    длина одной единицы амплитуды (по умолчанию 5px);
+     --plx-shift   = speed × unit — и сдвиг, и перекрытие слоя (px);
+     --plx-min-h   минимальная высота блока, px (по умолчанию 420);
+     --plx-pad     внутренний отступ по вертикали, px (по умолчанию 72).
+
+   Сдвиг задан в px и совпадает с перекрытием слоя, поэтому в единицах
+   блока/слоя ничего пересчитывать не нужно: --plx-shift всегда хватает,
+   чтобы не было видно пустых краёв. JS-fallback читает те же два токена.
+
+   Цвета — только токены темы (как у .hero__overlay).
+   ============================================================ */
+.plx {
+  --plx-speed: 12;
+  --plx-unit: 5px;
+  --plx-shift: calc(var(--plx-speed) * var(--plx-unit));
+  --plx-min-h: 420px;
+  --plx-pad: 72px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--plx-min-h);
+  padding: var(--plx-pad) 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--hero-bg);
+}
+
+/* Фоновый слой: он крупнее блока на 2×--plx-shift, ровно настолько, на
+   сколько уезжает, — пустых краёв не бывает. object-fit — по образцу
+   .hero__media. */
+.plx__media {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--plx-shift) * -1);
+  height: calc(100% + var(--plx-shift) * 2);
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: translate3d(0, var(--plx-y, 0px), 0);
+}
+
+/* Затемняющая подложка под текст (гасится на --plx-tint-rgb темы) */
+.plx__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--hero-tint-rgb), 0.78) 0%,
+    rgba(var(--hero-tint-rgb), 0.55) 55%,
+    rgba(var(--hero-tint-rgb), 0.15) 100%
+  );
+}
+
+.plx__content {
+  position: relative;
+  z-index: var(--z-2, 2);
+  max-width: 620px;
+  color: var(--white);
+}
+
+.plx--center .plx__content {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.plx__eyebrow {
+  margin: 0 0 10px;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(var(--white-rgb), 0.75);
+}
+
+.plx__title {
+  margin: 0 0 12px;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.15;
+  color: var(--white);
+}
+
+.plx__text {
+  margin: 0 0 24px;
+  max-width: 54ch;
+  font-size: 1.05rem;
+  color: rgba(var(--white-rgb), 0.85);
+}
+
+.plx__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.plx--center .plx__actions { justify-content: center; }
+
+@media (max-width: 767px) {
+  .plx { --plx-min-h: 320px; --plx-pad: 48px; --plx-unit: 4px; }
+  .plx__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(var(--hero-tint-rgb), 0.35) 0%,
+      rgba(var(--hero-tint-rgb), 0.75) 70%
+    );
+  }
+}
+
+@keyframes plxShift {
+  from { transform: translate3d(0, var(--plx-shift), 0); }
+  to   { transform: translate3d(0, calc(var(--plx-shift) * -1), 0); }
+}
+
+/* ---------- Режим 1: CSS, без JS ----------
+   Таймлайн вешаем на сам блок (.plx), а не на слой: view()-таймлайн
+   строится по видимости САМОГО анимируемого элемента, а .plx__media
+   крупнее блока и обрезан overflow:hidden — прогресс по нему вырождается
+   в 0. Именованный таймлайн --plx живёт на блоке, слой его наследует
+   (имя ищется по предкам). */
+@supports (animation-timeline: view()) {
+  .plx {
+    view-timeline-name: --plx;
+    view-timeline-axis: block;
+  }
+
+  .plx__media {
+    animation: plxShift linear both;
+    animation-timeline: --plx;
+    animation-range: cover 0% cover 100%;
+    will-change: transform;
+  }
+}
+
+/* ---------- Режим 2: JS-fallback (js/parallax.js) ---------- */
+.plx[data-plx] .plx__media { will-change: transform; }
+
+/* ---------- Уважаем системную настройку движения ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .plx__media {
+    animation: none !important;
+    animation-timeline: auto;
+    transform: none;
+    will-change: auto;
+  }
+}

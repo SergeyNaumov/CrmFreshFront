@@ -1,71 +1,60 @@
-                 const MAX_TRY_FETCH=1
+const MAX_TRY_FETCH=1
 var capcha_cache=null, capcha_reading=0
-const GET=(arg, try_cnt=0)=>{
-    
-    // fetch(arg.url).then(
-    //     r=>{
-    //         r.text().then(
-    //             d=>{
-    //                 d=JSON.parse(d)
-    //                 if(arg.success){ arg.success(d) }
-    //             }
-    //         ).catch(
-    //             err=>{
-    //                 try_cnt++;
-    //                 if(arg.error){  arg.error(err) }
-    //                 if(try_cnt<MAX_TRY_FETCH){ setTimeout(()=>{ GET(arg, try_cnt)},2000) }
-    //             }
-    //         )
-    //     }
-    // )
-    axios.get(arg.url).then(
-        r=>{
-            let d=r.data
-            if(arg.success){ arg.success(d) }
-        }
-    ).catch(
-        err=>{
-            try_cnt++;
-            if(arg.error){  arg.error(err) }
-            if(try_cnt<MAX_TRY_FETCH){ setTimeout(()=>{ GET(arg, try_cnt)},2000) }
-        }
-    )
 
+/* HTTP-хелперы. В проде axios не подключён — работаем нативным fetch.
+   В preview определён window.axios (js/preview/forms.js), тогда используем
+   его, чтобы работала офлайн-эмуляция. */
+function http_has_axios(){
+    return (typeof window.axios !== 'undefined') && window.axios && typeof window.axios.get === 'function'
 }
-const POST=(arg)=>{
-    axios.post(arg.url,arg.data).then(
-        r=>{
-            let d=r.data
-            if(arg.success){ arg.success(d) }
-        }
-    ).catch(
-        err=>{
-            if(arg.error){ arg.error(err) }
-        }
-    )
-    // fetch(arg['url'], {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json;charset=utf-8'
-    //     },
-    //     body: JSON.stringify(arg['data'])
-    //   }).then(
-    //     r=>{
-    //         r.text().then(
-    //             d=>{
-    //                 d=JSON.parse(d)
-    //                 if(arg.success){ arg.success(d) }
-    //             }
-    //         ).catch(
-    //             err=>{
-    //                 try_cnt++;
-    //                 if(arg.error){  arg.error(err) }
-    //                 if(try_cnt<MAX_TRY_FETCH){ setTimeout(()=>{ POST(arg, try_cnt)},2000) }
-    //             }
-    //         )
-    //     }  
-    // )
+
+/* GET({ url, success, error }) */
+function GET(arg, try_cnt=0){
+    const on_data = (d) => { if(arg.success){ arg.success(d) } };
+    const on_error = (err) => {
+        try_cnt++;
+        if(arg.error){ arg.error(err) }
+        if(try_cnt<MAX_TRY_FETCH){ setTimeout(()=>{ GET(arg, try_cnt) },2000) }
+    };
+    if(http_has_axios()){
+        window.axios.get(arg.url).then(r=>on_data(r.data)).catch(on_error);
+        return;
+    }
+    fetch(arg.url, { credentials: 'same-origin' })
+        .then(r=>r.text())
+        .then(t=>{
+            let d=t;
+            try{ d=JSON.parse(t) }catch(e){ /* не JSON — отдаём как есть */ }
+            on_data(d);
+        })
+        .catch(on_error);
 }
+
+/* POST({ url, data, success, error }) */
+function POST(arg){
+    const on_data = (d) => { if(arg.success){ arg.success(d) } };
+    const on_error = (err) => { if(arg.error){ arg.error(err) } };
+    if(http_has_axios()){
+        window.axios.post(arg.url,arg.data).then(r=>on_data(r.data)).catch(on_error);
+        return;
+    }
+    fetch(arg.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        credentials: 'same-origin',
+        body: JSON.stringify(arg.data || {})
+    })
+        .then(r=>r.text())
+        .then(t=>{
+            let d=t;
+            try{ d=JSON.parse(t) }catch(e){ /* не JSON — отдаём как есть */ }
+            on_data(d);
+        })
+        .catch(on_error);
+}
+
+window.GET = GET;
+window.POST = POST;
 
 
 //test_post()

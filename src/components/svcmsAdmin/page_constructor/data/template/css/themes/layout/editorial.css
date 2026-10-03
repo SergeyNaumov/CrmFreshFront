@@ -24,4 +24,10 @@
   justify-content: flex-start;
   text-align: left;
   gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-color);
 }
+
+/* Журнальная подача: без короткой черты, вместо неё — линия секции
+   на всю ширину (см. .section-head выше). */
+.section-title::after { content: none; }

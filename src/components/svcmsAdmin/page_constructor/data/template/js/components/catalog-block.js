@@ -72,12 +72,25 @@ window.CatalogBlock = {
   methods: {
     load: function () {
       var vm = this;
+      var attempt = 0;
+      var maxAttempts = 3;
 
-      if (/\.json$/i.test(vm.dataUrl)) {
+      var tryFetch = function () {
+        attempt++;
         fetch(vm.dataUrl)
           .then(function (r) { return r.json(); })
           .then(function (list) { vm.recv(list); })
-          .catch(function () { vm.fail(); });
+          .catch(function () {
+            if (attempt < maxAttempts) {
+              setTimeout(tryFetch, 500 * attempt);
+            } else {
+              vm.fail();
+            }
+          });
+      };
+
+      if (/\.json$/i.test(vm.dataUrl)) {
+        tryFetch();
         return;
       }
 
@@ -141,7 +154,7 @@ window.CatalogBlock = {
         <meta itemprop="url" :content="c.url">
         <div class="cat-card__inner">
           <div class="cat-card__face cat-card__face--front">
-            <img class="cat-card__img" :src="c.photo" :alt="c.header" loading="lazy">
+            <img v-if="c.photo" class="cat-card__img" :src="c.photo" :alt="c.header" loading="lazy">
             <h3 class="cat-card__name" itemprop="name">{{ c.header }}</h3>
           </div>
           <div class="cat-card__face cat-card__face--back">

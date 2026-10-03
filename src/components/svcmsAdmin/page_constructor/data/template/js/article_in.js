@@ -1,48 +1,33 @@
 /* ============================================================
    Файл: templates/t1/js/article_in.js
-   Приложение страницы статьи (preview/article_in.html, релиз —
-   page/article_in.html). Обычный JS, без Vue (как news_in.js).
-
-   ПРИНЦИП «SEO + догрузка»:
-   В #articleIn лежит статический блок — «серверная» версия самой
-   свежей статьи (id 8) для поисковиков. Поверх него приложение
-   подгружает актуальную статью по ?id= из URL и перерисовывает
-   заголовок, обложку, текст, автора, хлебные крошки и <title>.
-
-   АВТОР (поле необязательное):
-   Блок #articleInMeta рендерится сервером всегда, но пустое значение
-   даёт атрибут hidden (в CSS для .article-in__meta[hidden] жёстко
-   задан display:none). Здесь он точно так же показывается/гасится по
-   data.author — иначе при переходе на статью с автором он бы не появился.
+   Приложение страницы статьи (/article/{id}). Обычный JS, без Vue.
 
    РЕЖИМЫ ДАННЫХ:
-   - Preview: script-запрос js/preview/article_ajax_{id}.js (файл
-     публикует событие t1:article_in с detail { id, article });
-   - Release: AJAX GET /ajax/articles/{id} → JSON (та же запись).
-   Режим и базовый путь задаются атрибутами #articleIn:
-     data-mode="preview|release", data-url="{префикс до id}".
+   - Preview: script-запрос js/preview/article_ajax_{id}.js (событие
+     t1:article_in с detail { id, article });
+   - Release: GET /ajax/articles/{id} → JSON (запись + prev_id, next_id, url).
 
    НАВИГАЦИЯ:
-   - «Предыдущая» — более старая статья (id−1), «Следующая» — более
-     новая (id+1); кнопки отключаются на краях списка (1 и 8);
-   - при переходе обновляются URL (history.pushState), <title>, og/tw,
-     хлебные крошки и активность кнопок; popstate возвращает назад.
+   - id берётся из пути (/article/{id}) либо из ?id=;
+   - «Предыдущая»/«Следующая» — prev_id/next_id из ответа сервера;
+   - URL меняется через history.pushState на канонический url (data.url);
+   - popstate возвращает назад.
    Гонки обрабатываются токеном запроса: применяется только ответ
    последнего загруженного id.
    ============================================================ */
-window.__T1_ARTICLE_IN_VER = '2026-09-25';
+window.__T1_ARTICLE_IN_VER = '2026-10-02';
 
 (function () {
   'use strict';
 
-  var MIN_ID = 1;
-  var MAX_ID = 8;
-
+  /* id из /article/{id} или ?id= */
   function idFromURL() {
     try {
+      var m = window.location.pathname.match(/\/(\d+)\/?$/);
+      if (m) return parseInt(m[1], 10);
       var p = new URL(window.location.href).searchParams.get('id');
       var n = parseInt(p, 10);
-      return !isNaN(n) && n >= MIN_ID && n <= MAX_ID ? n : null;
+      return isNaN(n) ? null : n;
     } catch (e) {
       return null;
     }
@@ -52,7 +37,7 @@ window.__T1_ARTICLE_IN_VER = '2026-09-25';
     var root = document.getElementById('articleIn');
     if (!root) return;
 
-    var basePath  = root.getAttribute('data-url') || '';
+    var basePath  = root.getAttribute('data-url') || '/ajax/articles/';
     var isPreview = root.getAttribute('data-mode') === 'preview';
 
     var titleEl   = document.getElementById('articleInTitle');
@@ -67,24 +52,22 @@ window.__T1_ARTICLE_IN_VER = '2026-09-25';
     var authorEl  = document.getElementById('articleInAuthor');
 
     var currentId = null;
-    var req      = 0; // токен против гонок (быстрые переходы)
+    var prevId = null, nextId = null;
+    var req = 0; // токен против гонок
 
     /* ---------- Применение записи статьи ---------- */
     function apply(data, push) {
       var id = Number(data.id);
+      if (!id) return;
       currentId = id;
 
-      if (titleEl) titleEl.textContent = data.title;
+      if (titleEl) titleEl.textContent = data.title || data.header || '';
       if (imgEl) {
         imgEl.src = data.photo || '';
-        imgEl.alt = data.title + ' — DigitalStrateg';
+        imgEl.alt = (data.title || data.header || '') + ' — DigitalStrateg';
       }
       if (anonsEl) anonsEl.textContent = data.anons || '';
 
-      // Автор — необязательное поле. Блок .article-in__meta есть в DOM
-      // всегда, поэтому здесь только наполняем и гасим/показываем его:
-      // у догруженной статьи автор может быть, а у серверной — нет
-      // (и наоборот).
       if (authorEl) authorEl.textContent = data.author || '';
       if (metaEl) {
         if (data.author) metaEl.removeAttribute('hidden');
@@ -101,12 +84,17 @@ window.__T1_ARTICLE_IN_VER = '2026-09-25';
           bodyEl.appendChild(p);
         });
       }
-      if (crumbEl) crumbEl.textContent = data.title;
+      if (crumbEl) crumbEl.textContent = data.title || data.header || '';
 
-      syncDocTitle(data.title);
-      syncButtons(id);
+      prevId = data.prev_id || null;
+      nextId = data.next_id || null;
 
-      if (push) history.pushState(null, '', window.location.pathname + '?id=' + id);
+      syncDocTitle(data.title || data.header);
+      syncButtons();
+
+      if (push) {
+        history.pushState({ id: id }, '', data.url || ('/article/' + id));
+      }
     }
 
     function syncDocTitle(title) {
@@ -120,9 +108,9 @@ window.__T1_ARTICLE_IN_VER = '2026-09-25';
       if (tw) tw.setAttribute('content', t);
     }
 
-    function syncButtons(id) {
-      if (prevBtn) prevBtn.disabled = (id <= MIN_ID);
-      if (nextBtn) nextBtn.disabled = (id >= MAX_ID);
+    function syncButtons() {
+      if (prevBtn) prevBtn.disabled = !prevId;
+      if (nextBtn) nextBtn.disabled = !nextId;
     }
 
     function setBusy(busy) {
@@ -133,7 +121,7 @@ window.__T1_ARTICLE_IN_VER = '2026-09-25';
     /* ---------- Загрузка данных по id ---------- */
     function load(id, push) {
       id = parseInt(id, 10);
-      if (isNaN(id) || id < MIN_ID || id > MAX_ID) return;
+      if (isNaN(id)) return;
 
       var num = ++req;
       setBusy(true);
@@ -159,9 +147,7 @@ window.__T1_ARTICLE_IN_VER = '2026-09-25';
         };
         window.addEventListener('t1:article_in', listener);
         var s = document.createElement('script');
-        /* Метка сброса кеша: в data-url стоит ПРЕФИКС (id дописывается
-           здесь), поэтому суффикс добавляется после .js.
-           Инструмент: agent-doc/tools/preview_nocache.py */
+        /* Метка сброса кеша (preview): см. preview_nocache.py */
         s.src = basePath + id + '.js?nocache=[]';
         s.onerror = function () {
           window.removeEventListener('t1:article_in', listener);
@@ -173,30 +159,31 @@ window.__T1_ARTICLE_IN_VER = '2026-09-25';
 
       fetch(basePath + id)
         .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-        .then(function (d) { apply(d || {}, push); done(); })
+        .then(function (d) { if (num !== req) return; apply(d || {}, push); done(); })
         .catch(fail);
     }
 
     /* ---------- Навигация ---------- */
     function navigate(id, push) {
       id = parseInt(id, 10);
-      if (isNaN(id) || id < MIN_ID || id > MAX_ID) return;
-      if (id === currentId) return;
+      if (isNaN(id) || id === currentId) return;
       load(id, push);
     }
 
     if (prevBtn) prevBtn.addEventListener('click', function () {
-      navigate((currentId || MAX_ID) - 1, true);
+      if (prevId) navigate(prevId, true);
     });
     if (nextBtn) nextBtn.addEventListener('click', function () {
-      navigate((currentId || MIN_ID) + 1, true);
+      if (nextId) navigate(nextId, true);
     });
 
     /* ---------- Старт и история ---------- */
-    navigate(idFromURL() || MAX_ID, false);
+    var startId = idFromURL() || parseInt(root.getAttribute("data-id"), 10) || null;
+    if (startId) load(startId, false);
 
     window.addEventListener('popstate', function () {
-      navigate(idFromURL() || MAX_ID, false);
+      var id = idFromURL();
+      if (id) load(id, false);
     });
   });
 })();

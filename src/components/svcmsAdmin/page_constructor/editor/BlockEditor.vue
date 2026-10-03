@@ -270,7 +270,17 @@
             <button v-for="e in emojiPresets" :key="e" class="pc-emoji" type="button" @click="pickValue(e)">{{ e }}</button>
           </template>
           <template v-else>
-            <button v-for="src in imagePresets" :key="src" class="pc-img" type="button" @click="pickValue(src)" :title="src"><img :src="thumb(src)" alt=""></button>
+            <div class="pc-bi">
+              <label class="pc-bi__upload">
+                <input type="file" accept="image/*" :disabled="blockUploading" @change="onUpload">
+                <span>{{ blockUploading ? 'Загрузка…' : 'Загрузить картинку' }}</span>
+              </label>
+              <span class="pc-bi__hint">Картинки проекта: /files/project_&lt;id&gt;/block-images</span>
+            </div>
+            <div v-if="!projectImages.length" class="pc-bi__empty">Нет картинок — загрузите первую.</div>
+            <button v-for="f in projectImages" :key="f.name" class="pc-img" type="button" @click="pickValue(f.path)" :title="f.name">
+              <img :src="thumb(f.path)" alt="">
+            </button>
           </template>
         </div>
       </div>
@@ -376,6 +386,8 @@ export default {
       picker: null,
       imagePresets: IMAGE_PRESETS,
       emojiPresets: EMOJI_PRESETS,
+      projectImages: [],
+      blockUploading: false,
       forceJson: false,
       dragIndex: null,
       dragOverIndex: null,
@@ -556,10 +568,50 @@ export default {
       this.picker = {
         uid: block._uid, scope: scope, name: def.name,
         index: (typeof index === 'number' ? index : -1),
-        kind: this.isEmojiField(def) ? 'emoji' : 'image'
+        kind: this.isEmojiField(def) ? 'emoji' : 'image',
+        folder: def.folder || ''
       }
+      if (this.picker.kind === 'image') this.loadBlockImages(this.picker.folder)
+    },
+    // Список картинок проекта (/files/project_<id>/block-images[/<folder>]/).
+    loadBlockImages(folder) {
+      const cfg = (typeof window !== 'undefined' && window.PAGE_CONSTRUCTOR_CONFIG) || {}
+      if (!cfg.api || typeof fetch === 'undefined') { this.projectImages = []; return }
+      const url = cfg.api + '/block-images?domain_id=' + encodeURIComponent(cfg.domain_id || 0) +
+        '&folder=' + encodeURIComponent(folder || '')
+      fetch(url)
+        .then(r => r.json())
+        .then(d => { this.projectImages = (d && d.files) || [] })
+        .catch(() => { this.projectImages = [] })
+    },
+    // Загрузка картинки в папку проекта; после — сразу выбрать.
+    onUpload(ev) {
+      const input = ev && ev.target
+      const file = input && input.files && input.files[0]
+      if (!file) return
+      const cfg = window.PAGE_CONSTRUCTOR_CONFIG || {}
+      const fd = new FormData()
+      fd.append('domain_id', cfg.domain_id || 0)
+      fd.append('folder', (this.picker && this.picker.folder) || '')
+      fd.append('file', file)
+      this.blockUploading = true
+      fetch(cfg.api + '/block-images/upload', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(d => {
+          this.blockUploading = false
+          if (d && d.success && d.path) {
+            this.pickValue(d.path)
+            this.loadBlockImages((this.picker && this.picker.folder) || '')
+          } else if (d && d.errors && d.errors.length) {
+            this.toast = d.errors.join('; ')
+          }
+        })
+        .catch(() => { this.blockUploading = false })
+      if (input) input.value = ''
     },
     thumb(src) {
+      const cfg = (typeof window !== 'undefined' && window.PAGE_CONSTRUCTOR_CONFIG) || {}
+      if (src && String(src).indexOf('block-images/') === 0) return (cfg.filesBase || '') + src
       try { return PC.tplAsset(src) } catch (e) { return src }
     },
     closePicker() { this.picker = null },

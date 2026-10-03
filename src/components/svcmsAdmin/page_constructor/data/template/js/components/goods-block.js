@@ -18,7 +18,7 @@
 
    Витрина разновидностей (preview/good_blocks.html, V1…V9):
      <goods-block data-url="./js/preview/good_list.js" variant="grid"
-                  cols="4" limit="8" selection="specpredl"
+                  cols="4" limit="8" selection="spec"
                   title="Хиты продаж" sub="…" link-text="Все товары"></goods-block>
 
    Props (все в data-* либо атрибуте компонента):
@@ -33,7 +33,7 @@
                               compact — 6, rows — 2; свой дефолт в компоненте);
      - limit       number   сколько карточек показывать (0 = все);
      - step        number   шаг «Показать ещё» (showmore, default 8);
-     - selection   string   all|new|specpredl|action — подборка товаров
+     - selection   string   all|new|hit|spec — подборка товаров
                               (default: all);
      - types       number   data-types: 0 — не выводить бейджи, 1 — надписи,
                               2 — SVG-иконки (default: -1 → берётся badges);
@@ -63,13 +63,13 @@
                     через window.store, фото-галерея директивой
                     v-photo-gallery.
    ============================================================ */
-window.__T1_GOODS_BLOCK_VER = '2026-09-23-builder';
+window.__T1_GOODS_BLOCK_VER = '2026-10-01-builder';
 
 /* ---------- SVG-иконки бейджей (спарклайны, режим badges="icons") ---------- */
 window.__T1_BADGE_ICONS = {
   new: '<svg class="product-card__badge-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.5 1.5M16.9 16.9l1.5 1.5M18.4 5.6l-1.5 1.5M7.1 16.9l-1.5 1.5"/></svg>',
-  specpredl: '<svg class="product-card__badge-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
-  action: '<svg class="product-card__badge-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>'
+  hit: '<svg class="product-card__badge-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  spec: '<svg class="product-card__badge-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>'
 };
 
 /* ============================================================
@@ -102,12 +102,12 @@ window.GoodsCard = {
       <span v-if="g.new" class="product-card__badge product-card__badge--new"
             :role="badges === 'icons' ? 'img' : null"
             :aria-label="badges === 'icons' ? badgeLabel('new') : null" v-html="badgeContent('new')"></span>
-      <span v-if="g.specpredl" class="product-card__badge product-card__badge--hit"
+      <span v-if="g.hit" class="product-card__badge product-card__badge--hit"
             :role="badges === 'icons' ? 'img' : null"
-            :aria-label="badges === 'icons' ? badgeLabel('specpredl') : null" v-html="badgeContent('specpredl')"></span>
-      <span v-if="g.action" class="product-card__badge product-card__badge--sale"
+            :aria-label="badges === 'icons' ? badgeLabel('hit') : null" v-html="badgeContent('hit')"></span>
+      <span v-if="g.spec" class="product-card__badge product-card__badge--spec"
             :role="badges === 'icons' ? 'img' : null"
-            :aria-label="badges === 'icons' ? badgeLabel('action') : null" v-html="badgeContent('action')"></span>
+            :aria-label="badges === 'icons' ? badgeLabel('spec') : null" v-html="badgeContent('spec')"></span>
     </div>
   </div>
   <div class="product-row__body">
@@ -159,12 +159,12 @@ window.GoodsCard = {
       <span v-if="g.new" class="product-card__badge product-card__badge--new"
             :role="badges === 'icons' ? 'img' : null"
             :aria-label="badges === 'icons' ? badgeLabel('new') : null" v-html="badgeContent('new')"></span>
-      <span v-if="g.specpredl" class="product-card__badge product-card__badge--hit"
+      <span v-if="g.hit" class="product-card__badge product-card__badge--hit"
             :role="badges === 'icons' ? 'img' : null"
-            :aria-label="badges === 'icons' ? badgeLabel('specpredl') : null" v-html="badgeContent('specpredl')"></span>
-      <span v-if="g.action" class="product-card__badge product-card__badge--sale"
+            :aria-label="badges === 'icons' ? badgeLabel('hit') : null" v-html="badgeContent('hit')"></span>
+      <span v-if="g.spec" class="product-card__badge product-card__badge--spec"
             :role="badges === 'icons' ? 'img' : null"
-            :aria-label="badges === 'icons' ? badgeLabel('action') : null" v-html="badgeContent('action')"></span>
+            :aria-label="badges === 'icons' ? badgeLabel('spec') : null" v-html="badgeContent('spec')"></span>
     </div>
     <div v-if="photoCount(g) > 1" class="product-card__dots">
       <button v-for="i in photoCount(g)" :key="i" class="product-card__dot"
@@ -217,10 +217,10 @@ window.GoodsCard = {
     hasBadge: function () {
       var g = this.g;
       if (this.badges === 'none') return false; // data-types="0"
-      return !!(g && (g.new || g.specpredl || g.action));
+      return !!(g && (g.new || g.hit || g.spec));
     },
     badgeLabel: function (type) {
-      return { new: 'Новинка', specpredl: 'Спецпредложение', action: 'Хит' }[type] || type;
+      return { new: 'Новинка', hit: 'Хит', spec: 'Спецпредложение' }[type] || type;
     },
     badgeContent: function (type) {
       if (this.badges === 'icons') {
@@ -452,9 +452,11 @@ window.GoodsBlock = {
     selectionList: function () {
       var vm = this;
       var list = vm.goods || [];
-      if (vm.selection === 'new') return list.filter(function (g) { return g.new; });
-      if (vm.selection === 'specpredl') return list.filter(function (g) { return g.specpredl; });
-      if (vm.selection === 'action') return list.filter(function (g) { return g.action; });
+      // specpredl/action — значения сохранённых в конструкторе страниц
+      var sel = { specpredl: 'spec', action: 'hit' }[vm.selection] || vm.selection;
+      if (sel === 'new') return list.filter(function (g) { return g.new; });
+      if (sel === 'spec') return list.filter(function (g) { return g.spec || g.specpredl; });
+      if (sel === 'hit') return list.filter(function (g) { return g.hit || g.action; });
       return list;
     },
 
@@ -481,8 +483,8 @@ window.GoodsBlock = {
       var vm = this;
       var order = [
         { key: 'new', label: 'Новинки' },
-        { key: 'specpredl', label: 'Хиты продаж' },
-        { key: 'action', label: 'Акции' },
+        { key: 'hit', label: 'Хиты продаж' },
+        { key: 'spec', label: 'Спецпредложения' },
         { key: 'all', label: 'Все товары' }
       ];
       var out = [];
@@ -535,8 +537,9 @@ window.GoodsBlock = {
       var list = this.goods || [];
       if (key === 'all') return list.length;
       if (key === 'new') return list.filter(function (g) { return g.new; }).length;
-      if (key === 'specpredl') return list.filter(function (g) { return g.specpredl; }).length;
-      if (key === 'action') return list.filter(function (g) { return g.action; }).length;
+      var k = { specpredl: 'spec', action: 'hit' }[key] || key;
+      if (k === 'spec') return list.filter(function (g) { return g.spec || g.specpredl; }).length;
+      if (k === 'hit') return list.filter(function (g) { return g.hit || g.action; }).length;
       return 0;
     },
 
@@ -544,8 +547,9 @@ window.GoodsBlock = {
       var list = this.goods || [];
       if (key === 'all') return list;
       if (key === 'new') return list.filter(function (g) { return g.new; });
-      if (key === 'specpredl') return list.filter(function (g) { return g.specpredl; });
-      if (key === 'action') return list.filter(function (g) { return g.action; });
+      var k = { specpredl: 'spec', action: 'hit' }[key] || key;
+      if (k === 'spec') return list.filter(function (g) { return g.spec || g.specpredl; });
+      if (k === 'hit') return list.filter(function (g) { return g.hit || g.action; });
       return list;
     },
 

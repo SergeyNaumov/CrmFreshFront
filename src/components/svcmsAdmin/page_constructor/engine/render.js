@@ -42,8 +42,17 @@
     '<rect width="100%" height="100%" fill="#eef1f7"/>' +
     '<text x="50%" y="50%" fill="#a3abbd" font-family="sans-serif" font-size="14" ' +
     'text-anchor="middle" dominant-baseline="middle">нет фото</text></svg>');
+  function mediaUrl(src) {
+    if (!src) return src;
+    // Картинки блоков проекта (block-images/…) резолвятся от filesBase.
+    if (src.indexOf('block-images/') === 0) {
+      var fb = (global.PAGE_CONSTRUCTOR_CONFIG && global.PAGE_CONSTRUCTOR_CONFIG.filesBase) || '';
+      return fb + src;
+    }
+    return src;
+  }
   function img(src, alt, cls) {
-    var s = src || FALLBACK_IMG;
+    var s = mediaUrl(src) || FALLBACK_IMG;
     return '<img src="' + esc(s) + '" alt="' + esc(alt || '') + '"' +
       (cls ? ' class="' + esc(cls) + '"' : '') +
       ' decoding="async" onerror="this.onerror=null;this.src=\'' + FALLBACK_IMG + '\'">';
@@ -281,7 +290,23 @@
         '</ul>' + socials + '</div>'
       : '';
 
-    var grid = '<div class="footer__grid">' + brand + footerMenu(d.bottom_menu) + contacts + '</div>';
+    // Колонки ссылок из конструктора (block.items: {group, header, url})
+    var groupsMap = {}, groupsOrder = [];
+    items(block).forEach(function (it) {
+      var g = it.group || 'Меню';
+      if (!groupsMap[g]) { groupsMap[g] = []; groupsOrder.push(g); }
+      groupsMap[g].push(it);
+    });
+    var linksCols = groupsOrder.map(function (g) {
+      return el('div', { class: 'footer__col' },
+        el('h4', { class: 'footer__title' }, esc(g)) +
+        el('ul', { class: 'footer__links' },
+          groupsMap[g].map(function (it) {
+            return el('li', null, link(it.url || '#', null, esc(it.header || '')));
+          }).join('')));
+    }).join('');
+
+    var grid = '<div class="footer__grid">' + brand + linksCols + footerMenu(d.bottom_menu) + contacts + '</div>';
 
     var catalog = bool(block, 'catalog')
       ? '<div class="footer__catalog"><h4 class="footer__title">Каталог</h4><ul class="footer__catalog-list">' +
@@ -388,8 +413,19 @@
 
   // -------- компонентные --------
   function renderSlider(block) {
+    // Слайды — из items блока (per-block), инлайн data-list; фото block-images/… через filesBase.
+    var slides = (block.items || []).map(function (it) {
+      return {
+        header: it.header || '',
+        body: it.body || it.text || '',
+        url: it.url || '',
+        button: it.button || '',
+        photo: mediaUrl(it.photo || '')
+      };
+    });
     return el('hero-slider', {
-      id: 'heroSlider', 'data-data-key': 'slider', autoplay: p(block, 'autoplay', '5000')
+      'data-list': JSON.stringify(slides),
+      autoplay: p(block, 'autoplay', '5000')
     });
   }
   function renderCatalog(block) {
@@ -490,8 +526,8 @@
     s.push('<img class="product-card__img" :src="curPhoto(g)" :alt="g.header" width="400" height="400" loading="lazy"></a>');
     s.push('<div class="product-card__badges">');
     s.push('<span v-if="g.new" class="product-card__badge product-card__badge--new">Новинка</span>');
-    s.push('<span v-if="g.specpredl" class="product-card__badge product-card__badge--hit">Хит</span>');
-    s.push('<span v-if="g.action" class="product-card__badge product-card__badge--sale">Акция</span>');
+    s.push('<span v-if="g.hit" class="product-card__badge product-card__badge--hit">Хит</span>');
+    s.push('<span v-if="g.spec" class="product-card__badge product-card__badge--spec">Спецпредложение</span>');
     s.push('</div>');
     s.push('<div v-if="photoCount(g) > 1" class="product-card__dots">');
     s.push("<button v-for=\"i in photoCount(g)\" :key=\"i\" class=\"product-card__dot\" :class=\"{ 'is-active': i === photoIndex(g) + 1 }\" type=\"button\" @click.prevent.stop=\"setPhoto(g, i - 1)\"></button>");
@@ -860,6 +896,44 @@
         el('p', { class: 'adv-card__text' }, esc(a.text)));
     }).join(''));
   }
+  function renderAbout(block) {
+    var title = p(block, 'title', 'О компании');
+    var feats = items(block).map(function (f) {
+      return el('div', { class: 'about__feature' },
+        el('svg', { class: 'icon icon-check', 'aria-hidden': 'true' }, el('use', { href: '#i-check' })) +
+        esc(f.text || ''));
+    }).join('');
+    var badge = p(block, 'badgeNum')
+      ? el('div', { class: 'about__badge' },
+          el('span', { class: 'about__badge-num' }, esc(p(block, 'badgeNum'))) +
+          el('span', { class: 'about__badge-txt' }, p(block, 'badgeText')))
+      : '';
+    return el('div', { class: 'about' },
+      el('div', { class: 'about__media' },
+        img(p(block, 'image', 'block-images/about.png'), title) + badge) +
+      el('div', null,
+        el('h2', { class: 'section-title' }, esc(title)) +
+        el('p', { class: 'about__text' }, esc(p(block, 'text'))) +
+        (feats ? el('div', { class: 'about__features' }, feats) : '') +
+        el('div', { class: 'hero__actions' },
+          (p(block, 'btn1Text') ? link(p(block, 'btn1Url', '#'), 'btn btn-primary', esc(p(block, 'btn1Text'))) : '') +
+          (p(block, 'btn2Text') ? link(p(block, 'btn2Url', '#'), 'btn btn-outline', esc(p(block, 'btn2Text'))) : ''))
+      ));
+  }
+  function renderPageContacts(block) {
+    return '<section class="section" aria-label="Контакты"><div class="container">' +
+      '<div class="section-head section-head--no-flex"><div><h1 class="section-title">Контакты</h1></div></div>' +
+      '<div class="contacts-layout">' +
+        '<div class="contacts-panel"><h2>Как нас найти</h2>' +
+          '<ul class="contact__list"><li class="contact__item"><span class="contact__item-icon"><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg></span><div><div class="contact__item-title">Адрес шоурума</div><div class="contact__item-value">Москва, ул. Перерва, д.11</div></div></li></ul>' +
+        '</div>' +
+        '<div class="contacts-map"></div>' +
+      '</div>' +
+      '<div class="branches"><h2 class="section-title">Наши филиалы</h2><div class="tabs branches-tabs" data-tabs><button type="button" class="tab-btn is-active" data-tab="msk">Москва</button></div></div>' +
+      '<div class="requisites"><h2 class="section-title">Наши реквизиты</h2><div class="requisites-wrap"><table class="requisites-table"><tbody><tr><td>ИНН</td><td>—</td></tr></tbody></table></div></div>' +
+      '</div></section>' +
+      '<section class="fullmap"><div class="fullmap__frame"></div></section>';
+  }
   function renderFaq(block) {
     return el('div', { class: 'faq-block' }, items(block).map(function (i, n) {
       return el('details', { class: 'faq-item', open: n === 0 ? true : null },
@@ -1028,7 +1102,7 @@
       " data-badges='" + attrJson(badges) + "'" +
       " data-photos='" + attrJson(photos) + "'" +
       " data-desc='" + attrJson(desc) + "'" +
-      " data-specs='" + attrJson(specs) + "'";
+      " data-specifications='" + attrJson(specs) + "'";
     return '<div id="good_in" ' + attrs + ' class="good-in ' + esc(v) + '">' +
       '<template id="good_in_tpl">' + tpl.join('') + '</template>' + seo + '</div>';
   }
@@ -1502,20 +1576,24 @@
     }).join(''));
   }
   function renderPromo(block) {
-    return el('div', { class: 'plx' }, el('div', { class: 'plx__content' },
-      el('div', { class: 'plx__eyebrow' }, esc(p(block, 'eyebrow'))) +
-      el('h2', { class: 'plx__title' }, esc(p(block, 'title'))) +
-      el('div', { class: 'plx__text' }, esc(p(block, 'text'))) +
-      (p(block, 'btnText') ? el('div', { class: 'plx__actions' }, link(p(block, 'btnUrl'), 'btn', esc(p(block, 'btnText')))) : '')));
+    /* Разметка 1:1 с templates/t1/block/promo_parallax.html.
+       Фон — .plx__media (img), подложка — .plx__overlay, текст — .plx__content.
+       data-plx + --plx-* включает примитив css/parallax.css. */
+    var amplitude = p(block, 'amplitude', 12);
+    var minH = p(block, 'minH', 420);
+    var cls = 'plx' + (p(block, 'align', 'left') === 'center' ? ' plx--center' : '');
+    return el('section', { class: cls, 'data-plx': true,
+      style: '--plx-speed:' + esc(amplitude) + ';--plx-min-h:' + esc(minH) + 'px' },
+      img(p(block, 'photo'), '', 'plx__media') +
+      (defBool(block, 'overlay', true) ? el('div', { class: 'plx__overlay' }) : '') +
+      el('div', { class: 'container' },
+        el('div', { class: 'plx__content' },
+          (p(block, 'eyebrow') ? el('p', { class: 'plx__eyebrow' }, esc(p(block, 'eyebrow'))) : '') +
+          (p(block, 'title') ? el('h2', { class: 'plx__title' }, esc(p(block, 'title'))) : '') +
+          (p(block, 'text') ? el('p', { class: 'plx__text' }, esc(p(block, 'text'))) : '') +
+          (p(block, 'btnText') ? el('div', { class: 'plx__actions' },
+            link(p(block, 'btnUrl'), 'btn btn-primary', esc(p(block, 'btnText')))) : ''))));
   }
-  function renderSubscribe(block) {
-    return el('div', { class: 'form-subscribe' }, el('div', { class: 'form-subscribe__title' }, esc(p(block, 'title', 'Подписка'))) +
-      (p(block, 'note') ? el('p', { class: 'form-subscribe__note' }, esc(p(block, 'note'))) : '') +
-      el('form', { class: 'form-subscribe__form' }, el('div', { class: 'form-subscribe__field' }, el('input', { type: 'email', placeholder: 'E-mail' })) +
-        el('button', { class: 'btn', type: 'submit' }, 'Подписаться')) +
-      (bool(block, 'agree') ? el('label', { class: 'form-subscribe__agree' }, el('input', { type: 'checkbox' }) + ' Согласен на обработку персональных данных') : ''));
-  }
-
   // -------- видео (RuTube, click-to-play) --------
   var PLAY_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
   var VIDEO_THUMB = 'https://rutube.ru/api/video/';
@@ -1595,6 +1673,7 @@
     catalog: { raw: false, fn: renderCatalog },
     goods: { raw: false, fn: renderGoods },
     advantages: { raw: false, fn: renderAdvantages },
+    about: { raw: false, fn: renderAbout },
     reviews: { raw: false, fn: function (b) { return renderCarousel(b, 'reviews'); } },
     clients: { raw: false, fn: function (b) { return renderCarousel(b, 'clients'); } },
     services: { raw: false, fn: renderServicesTiles },
@@ -1610,6 +1689,7 @@
     page_basket: { raw: false, fn: renderPageBasket },
     page_news_detail: { raw: false, fn: renderPageNewsDetail },
     page_article_detail: { raw: false, fn: renderPageArticleDetail },
+    page_contacts: { raw: true, fn: renderPageContacts },
     page_order: { raw: false, fn: renderPageOrder },
     page_profile: { raw: false, fn: renderPageProfile },
     page_registration: { raw: false, fn: renderPageRegistration },
@@ -1639,7 +1719,6 @@
     org_chart: { raw: false, fn: renderOrg },
     reports: { raw: false, fn: renderReports },
     promo_parallax: { raw: false, fn: renderPromo },
-    subscribe: { raw: false, fn: renderSubscribe },
     form: { raw: false, fn: renderForm },
     contact_form: { raw: false, fn: renderContactForm }
   };

@@ -759,12 +759,6 @@
           "title": "Hero",
           "params": [
             {
-              "name": "varname",
-              "label": "Название переменной",
-              "kind": "text",
-              "default": "slider_list"
-            },
-            {
               "name": "animation",
               "label": "Анимация входа",
               "kind": "select",
@@ -953,8 +947,9 @@
               {
                 "name": "photo",
                 "label": "Изображение",
-                "kind": "text",
-                "default": "images/slider/slider-1.webp"
+                "kind": "image",
+                "folder": "slider",
+                "default": "block-images/slider/slider-1.webp"
               }
             ],
             "default": [
@@ -963,14 +958,14 @@
                 "body": "Краткое описание предложения.",
                 "url": "/catalog",
                 "button": "Смотреть",
-                "photo": "images/slider/slider-1.webp"
+                "photo": "block-images/slider/slider-1.webp"
               },
               {
                 "header": "Второй слайд",
                 "body": "Ещё одно преимущество.",
                 "url": "/catalog",
                 "button": "Подробнее",
-                "photo": "images/slider/slider-2.webp"
+                "photo": "block-images/slider/slider-2.webp"
               }
             ]
           }
@@ -991,7 +986,7 @@
       "title": "Каталог",
       "group": "Каталог",
       "partial": "block/catalog.html",
-      "status": "planned",
+      "status": "used",
       "check": "strict",
       "contract_classes": [
         "cat-grid",
@@ -1072,6 +1067,30 @@
               "label": "Источник данных",
               "kind": "text",
               "default": "catalog"
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Каталог товаров"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "linkText",
+              "label": "Ссылка — текст",
+              "kind": "text",
+              "default": "Весь каталог"
+            },
+            {
+              "name": "linkHref",
+              "label": "Ссылка — href",
+              "kind": "text",
+              "default": "/catalog"
             }
           ],
           "items": {
@@ -1312,12 +1331,12 @@
                 "label": "Новинки"
               },
               {
-                "value": "specpredl",
+                "value": "spec",
                 "label": "Спецпредложения"
               },
               {
-                "value": "action",
-                "label": "Акции"
+                "value": "hit",
+                "label": "Хиты"
               }
             ]
           },
@@ -2019,7 +2038,30 @@
               "kind": "text",
               "default": "© 2026 Компания"
             }
-          ]
+          ],
+          "items": {
+            "singular": "ссылка",
+            "fields": [
+              {
+                "name": "group",
+                "label": "Группа (колонка)",
+                "kind": "text",
+                "default": "Компания"
+              },
+              {
+                "name": "header",
+                "label": "Текст",
+                "kind": "text",
+                "default": "Ссылка"
+              },
+              {
+                "name": "url",
+                "label": "Ссылка (href)",
+                "kind": "text",
+                "default": "/"
+              }
+            ]
+          }
         }
       },
       "keywords": [
@@ -6374,7 +6416,10 @@
       "status": "preview",
       "check": "preview",
       "contract_classes": [
-        "plx"
+        "plx",
+        "plx__media",
+        "plx__overlay",
+        "plx__content"
       ],
       "default_variant": "default",
       "variants": {
@@ -6414,8 +6459,45 @@
             {
               "name": "photo",
               "label": "Фон",
-              "kind": "text",
+              "kind": "image",
               "default": "images/hero-1.svg"
+            },
+            {
+              "name": "amplitude",
+              "label": "Амплитуда сдвига (ед. × 5px)",
+              "kind": "number",
+              "default": 12,
+              "min": 0,
+              "max": 40,
+              "step": 1
+            },
+            {
+              "name": "align",
+              "label": "Выравнивание текста",
+              "kind": "select",
+              "options": [
+                {
+                  "value": "left",
+                  "label": "По левому краю"
+                },
+                {
+                  "value": "center",
+                  "label": "По центру"
+                }
+              ],
+              "default": "left"
+            },
+            {
+              "name": "minH",
+              "label": "Мин. высота, px",
+              "kind": "number",
+              "default": 420
+            },
+            {
+              "name": "overlay",
+              "label": "Затемняющая подложка",
+              "kind": "bool",
+              "default": true
             }
           ]
         }
@@ -6428,49 +6510,6 @@
         "параллакс",
         "акция",
         "предложение"
-      ]
-    },
-    "subscribe": {
-      "title": "Подписка",
-      "group": "Промо",
-      "partial": "block/forms/subscribe_form.html",
-      "status": "used",
-      "check": "preview",
-      "contract_classes": [
-        "form-subscribe"
-      ],
-      "default_variant": "default",
-      "variants": {
-        "default": {
-          "title": "Форма подписки",
-          "params": [
-            {
-              "name": "title",
-              "label": "Заголовок",
-              "kind": "text",
-              "default": "Подпишитесь на новости"
-            },
-            {
-              "name": "note",
-              "label": "Примечание",
-              "kind": "textarea",
-              "default": "Никакого спама, только полезное."
-            },
-            {
-              "name": "agree",
-              "label": "Согласие на обработку ПД",
-              "kind": "bool",
-              "default": true
-            }
-          ]
-        }
-      },
-      "keywords": [
-        "subscribe",
-        "подписка",
-        "рассылка",
-        "email рассылка",
-        "newsletter"
       ]
     },
     "form": {
@@ -6602,6 +6641,125 @@
           ]
         }
       }
+    },
+    "about": {
+      "title": "О компании",
+      "group": "Контент",
+      "partial": "block/about.html",
+      "status": "used",
+      "check": "strict",
+      "contract_classes": [
+        "about",
+        "about__media",
+        "about__badge",
+        "about__features",
+        "about__feature"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "О компании",
+          "params": [
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "О компании"
+            },
+            {
+              "name": "text",
+              "label": "Текст",
+              "kind": "textarea",
+              "default": "Более 12 лет мы помогаем выбирать надёжную технику."
+            },
+            {
+              "name": "image",
+              "label": "Изображение",
+              "kind": "image",
+              "default": "block-images/about.png"
+            },
+            {
+              "name": "badgeNum",
+              "label": "Бейдж — число",
+              "kind": "text",
+              "default": "12+"
+            },
+            {
+              "name": "badgeText",
+              "label": "Бейдж — текст",
+              "kind": "textarea",
+              "default": "лет опыта<br>на рынке техники"
+            },
+            {
+              "name": "btn1Text",
+              "label": "Кнопка 1 — текст",
+              "kind": "text",
+              "default": "Узнать больше"
+            },
+            {
+              "name": "btn1Url",
+              "label": "Кнопка 1 — ссылка",
+              "kind": "text",
+              "default": "/about"
+            },
+            {
+              "name": "btn2Text",
+              "label": "Кнопка 2 — текст",
+              "kind": "text",
+              "default": "Наши контакты"
+            },
+            {
+              "name": "btn2Url",
+              "label": "Кнопка 2 — ссылка",
+              "kind": "text",
+              "default": "/contacts"
+            }
+          ],
+          "items": {
+            "singular": "преимущество",
+            "fields": [
+              {
+                "name": "text",
+                "label": "Текст",
+                "kind": "text",
+                "default": "Преимущество"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "page_contacts": {
+      "title": "Страница «Контакты»",
+      "group": "Страницы",
+      "partial": "block/page_contacts.html",
+      "status": "used",
+      "check": "preview",
+      "contract_classes": [
+        "section",
+        "contacts-layout",
+        "contacts-panel",
+        "contacts-map",
+        "map-route",
+        "routes",
+        "branches",
+        "requisites-table",
+        "fullmap"
+      ],
+      "default_variant": "default",
+      "variants": {
+        "default": {
+          "title": "Контакты",
+          "params": []
+        }
+      },
+      "keywords": [
+        "контакты",
+        "contacts",
+        "карта",
+        "филиалы",
+        "реквизиты"
+      ]
     }
   }
 };

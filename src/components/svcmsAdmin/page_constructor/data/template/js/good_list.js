@@ -108,6 +108,23 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
     } catch (e) { return null; }
   }
 
+  // Данные категории для /catalog/{id}: scope, дети, view, selected.
+  function readCat(root) {
+    var el = document.getElementById('good_list_cat');
+    if (!el) return null;
+    try { return JSON.parse(el.textContent || 'null'); } catch (e) { return null; }
+  }
+
+  // Нормализация «all» → 0.
+  function normRubric(id) {
+    return (id === 'all' || id == null || id === '') ? 0 : (Number(id) || 0);
+  }
+
+  // Путь без завершающего слэша для сравнения с location.pathname.
+  function normPath(u) {
+    return String(u || '').replace(/\/+$/, '');
+  }
+
   // Стандартный порядок меток подкатегорий для чипов.
   var CATEGORY_ORDER = {
     new: 0,
@@ -151,6 +168,8 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
     var favoritesOnly = root.hasAttribute('data-favorites');
     var initialPage = getPageFromURL();
     var rubrics = readRubrics(root);
+    var cat = readCat(root) || {};
+    var orgname = root.getAttribute('data-orgname') || '';
 
     var app = Vue.createApp({
       components: { Perpage: window.Perpage || {} },
@@ -172,9 +191,16 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           priceMax: '',   // цена «до»
           sort: 'views',  // views | price_asc | price_desc | published
           category: 'all',// all | подкатегория из данных товара
-          rubric: 'all',  // all | id рубрики/подрубрики (сайдбар catalog2)
+          rubric: normRubric(cat.selected), // 0/all | id подкатегории
           rubrics: rubrics, // дерево рубрик {id, header, child?}
+          rubricCounts: {}, // счётчики товаров по рубрикам
+          // --- страница категории /catalog/{id} ---
+          cat: cat,                          // {current, scope, view, selected, children}
+          scope: cat.scope || {},            // категория, чьи дети показаны
+          sidebarKids: cat.children || [],   // дети scope (сайдбар/фильтр)
+          orgname: orgname,
           page: initialPage,
+          _suppressUrl: false, // не пушить URL во время SPA-навигации/popstate
           photoIdx: {}    // текущее фото по id товара (для галереи)
         };
       },
@@ -211,7 +237,7 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
               var list = categoryList(g);
               if (list.indexOf(vm.category) === -1) return false;
             }
-            if (vm.rubric !== 'all') {
+            if (normRubric(vm.rubric)) {
               if (rubricatorList(g).indexOf(Number(vm.rubric)) === -1) return false;
             }
             var p = Number(g.price) || 0;
@@ -257,7 +283,6 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
         priceMax: 'resetPage',
         sort: 'resetPage',
         category: 'resetPage',
-        rubric: 'resetPage',
         page: 'syncURL'
       },
 
@@ -267,8 +292,14 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
 
       mounted: function () {
         var vm = this;
+        // back/forward работают симметрично: подкатегория — из пути.
         window.addEventListener('popstate', function () {
+          var r = vm.rubricFromPath();
+          if (r !== null) vm.rubric = r;
+          vm._suppressUrl = true;     // history уже применила URL
           vm.page = getPageFromURL();
+          vm.$nextTick(function () { vm._suppressUrl = false; });
+          vm.updateMeta(vm.kidById(vm.rubric) || vm.scope || {});
         });
       },
 
@@ -297,6 +328,9 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
             document.head.appendChild(s);
           } else {
             // РЕЛИЗ: /ajax?catalog_id=..&last_id=..&limit=..
+            // Грузим товары scope (родителя), чтобы соседние подкатегории
+            // фильтровались мгновенно без догрузки.
+            vm._fetchId = (vm.scope && vm.scope.id) ? vm.scope.id : vm.catalogId;
             vm.fetchAll(0, []); // lastId = 0 → «грузить всё, что есть»
           }
         },
@@ -304,10 +338,12 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
         // Релиз: итеративная подгрузка всех товаров раздела
         fetchAll: function (lastId, acc) {
           var vm = this;
-          // Первая порция уже отрисована сервером в HTML (для SEO) — её id (<= perpage)
-          // не запрашиваем повторно, если она была передана последним загруженным id.
-          var last = lastId || vm.perpage;
-          fetch('/ajax?catalog_id=' + vm.catalogId + '&last_id=' + last + '&limit=' + vm.perpage)
+          // Грузим с начала (lastId=0): серверная часть SSR заменяется, зато
+          // корректно работают страницы-рубрики (/catalog/{id}), где выборка
+          // отфильтрована и нумерация id не совпадает с perpage.
+          var last = lastId || 0;
+          var cid = vm._fetchId || vm.catalogId;
+          fetch('/ajax?catalog_id=' + cid + '&last_id=' + last + '&limit=' + vm.perpage)
             .then(function (r) { return r.json(); })
             .then(function (arr) {
               if (!Array.isArray(arr)) return vm.finishFetch(acc);
@@ -328,6 +364,29 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           // догруженные обновляют базовую (серверную) часть
           vm.goods = list;
           vm.recv(list);
+          vm.loadCounts();
+        },
+
+        // Загрузка всех товаров каталога для счётчиков рубрик в сайдбаре.
+        // Без этого в подкаталоге остальные рубрики показывают 0.
+        loadCounts: function () {
+          var vm = this;
+          if (vm._countsLoaded) return;
+          vm._countsLoaded = true;
+          fetch('/ajax?catalog_id=0&last_id=0&limit=1000')
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function (all) {
+              if (!Array.isArray(all) || !all.length) return;
+              var counts = {};
+              for (var i = 0; i < all.length; i++) {
+                var ids = rubricatorList(all[i]);
+                for (var j = 0; j < ids.length; j++) {
+                  counts[ids[j]] = (counts[ids[j]] || 0) + 1;
+                }
+              }
+              vm.rubricCounts = counts;
+            })
+            .catch(function () { /* счётчики не критичны */ });
         },
 
         recv: function (list, rubrics) {
@@ -372,12 +431,13 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           this.priceMax = '';
           this.sort = 'views';
           this.category = 'all';
-          this.rubric = 'all';
           this.page = 1;
+          this.setRubric(0);
         },
 
         // ---------- URL (?page=N) ----------
         syncURL: function () {
+          if (this._suppressUrl) return; // SPA-навигация сама ставит URL
           try {
             var u = new URL(window.location.href);
             if (this.page > 1) u.searchParams.set('page', String(this.page));
@@ -404,19 +464,93 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           return n;
         },
 
-        // ---------- Сайдбар рубрик (catalog2) ----------
+        // ---------- Сайдбар подкатегорий (страница категории) ----------
+        kidById: function (id) {
+          id = Number(id) || 0;
+          if (!id) return null;
+          for (var i = 0; i < this.sidebarKids.length; i++) {
+            if (Number(this.sidebarKids[i].id) === id) return this.sidebarKids[i];
+          }
+          return null;
+        },
+
+        // Выбор подкатегории: фильтр + URL + title/H1/крошки (без перезагрузки).
         setRubric: function (id) {
+          id = normRubric(id);
+          var node = this.kidById(id);
+          var target = node || this.scope || {};
+          var changed = Number(this.rubric) !== id;
+          var vm = this;
           this.rubric = id;
+          this._suppressUrl = true;   // URL ставим вручную ниже
+          this.page = 1;
+          this.$nextTick(function () { vm._suppressUrl = false; });
+          // reset_filters целевой категории → сбросить и остальные фильтры.
+          if (changed && target && target.reset) {
+            this.q = '';
+            this.priceMin = '';
+            this.priceMax = '';
+            this.sort = 'views';
+            this.category = 'all';
+          }
+          if (changed) {
+            this.pushRubricUrl(target);
+            this.updateMeta(target);
+          }
         },
 
         rubricActive: function (id) {
-          return String(this.rubric) === String(id);
+          return normRubric(this.rubric) === normRubric(id);
+        },
+
+        pushRubricUrl: function (node) {
+          try {
+            var url = (node && node.url) ? node.url : window.location.pathname;
+            history.pushState({ rubric: Number(this.rubric) }, '', url);
+          } catch (e) { /* file:// и т.п. — URL не меняем */ }
+        },
+
+        // Обновить <title>, og/twitter, H1 и активную крошку.
+        updateMeta: function (node) {
+          var title = (node && node.header) || '';
+          if (!title) return;
+          var full = this.orgname ? (title + ' — ' + this.orgname) : title;
+          document.title = full;
+          var og = document.querySelector('meta[property="og:title"]');
+          if (og) og.setAttribute('content', full);
+          var tw = document.querySelector('meta[name="twitter:title"]');
+          if (tw) tw.setAttribute('content', full);
+          var h1 = document.getElementById('catTitle');
+          if (h1) h1.textContent = title;
+          var crumbs = document.querySelectorAll('.breadcrumbs__item');
+          if (crumbs.length) {
+            var last = crumbs[crumbs.length - 1];
+            var span = last.querySelector('span[itemprop="name"]') || last.querySelector('span');
+            if (span) span.textContent = title;
+          }
+        },
+
+        // Подкатегория по текущему пути (для popstate back/forward).
+        rubricFromPath: function () {
+          var p = normPath(window.location.pathname);
+          for (var i = 0; i < this.sidebarKids.length; i++) {
+            if (normPath(this.sidebarKids[i].url) === p) {
+              return Number(this.sidebarKids[i].id);
+            }
+          }
+          if (this.scope && normPath(this.scope.url) === p) return 0;
+          return null;
         },
 
         // Счётчик товаров рубрики/подрубрики; 0/'all' → все товары.
+        // Если загружены глобальные счётчики (loadCounts) — используем их,
+        // иначе считаем по текущему набору товаров.
         rubricCount: function (id) {
           var k = Number(id);
           if (!k) return this.goods.length;
+          if (this.rubricCounts && this.rubricCounts[k] !== undefined) {
+            return this.rubricCounts[k];
+          }
           var n = 0;
           for (var i = 0; i < this.goods.length; i++) {
             if (rubricatorList(this.goods[i]).indexOf(k) !== -1) n++;

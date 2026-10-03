@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     scheme_items(axis) {
-      return (this.schemeLists[axis] || []).map(s => ({ name: s.name, label: s.label || s.name }))
+      return (this.schemeLists[axis] || []).map(s => ({ name: s.header, label: s.label || s.header }))
     }
   }
 }

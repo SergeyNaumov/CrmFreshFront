@@ -65,9 +65,9 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
     }
   }
 
-  // Тексты плашек. Контракт — new | sale | promo; hit/specpredl — синонимы
-  // «Хита» на случай карточки товара (см. .gi-badge--hit/--specpredl).
-  var BADGE_LABELS = { new: 'Новинка', sale: 'Распродажа', promo: 'Акция', hit: 'Хит', specpredl: 'Хит' };
+  // Тексты плашек. Контракт good_in — new | sale | promo; hit/spec —
+  // подборки из карточек товара (см. .gi-badge--hit/--spec).
+  var BADGE_LABELS = { new: 'Новинка', sale: 'Распродажа', promo: 'Акция', hit: 'Хит', spec: 'Спецпредложение' };
 
   document.addEventListener('DOMContentLoaded', function () {
     var root = document.getElementById('good_in');
@@ -89,7 +89,9 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
             header: root.getAttribute('data-title') || '',
             anons: root.getAttribute('data-anons') || '',
             desc: jsonAttr(root, 'data-desc', []),
-            specs: jsonAttr(root, 'data-specs', []),
+            // Атрибут спецификаций: data-specifications (page/good_in.html)
+            // или data-specs (block/product_detail.html).
+            specs: jsonAttr(root, 'data-specifications', null) || jsonAttr(root, 'data-specs', []),
             price: numAttr(root, 'data-price', 0),
             old_price: numAttr(root, 'data-old-price', 0),
             photo: '',
@@ -232,7 +234,7 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
           vm.product.header = rec.header || vm.product.header;
           vm.product.anons = rec.anons || vm.product.anons;
           vm.product.desc = (rec.desc && rec.desc.length ? rec.desc : vm.product.desc).slice();
-          vm.product.specs = (rec.specs && rec.specs.length ? rec.specs : vm.product.specs).slice();
+          vm.product.specs = (rec.specifications && rec.specifications.length ? rec.specifications : vm.product.specs).slice();
           vm.product.price = Number(rec.price || 0);
           vm.product.old_price = Number(rec.old_price || 0);
           vm.product.photo = rec.photo || '';
@@ -282,6 +284,19 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
             Carousel: { infinite: true },
             transition: 'fade'
           });
+        },
+
+        // Открыть лайтбокс всей галереи (все фото товара), с текущего кадра.
+        openLightbox: function () {
+          var nodes = root.querySelectorAll('.gi-lightbox [data-fancybox="gi-gallery"]');
+          if (!nodes.length) return;
+          var i = Math.max(0, Math.min(this.cur || 0, nodes.length - 1));
+          if (nodes[i]) { nodes[i].click(); return; }
+          if (window.Fancybox && typeof Fancybox.show === 'function') {
+            Fancybox.show(Array.prototype.map.call(nodes, function (n) {
+              return { src: n.getAttribute('href'), type: 'image' };
+            }), { startIndex: i });
+          }
         },
 
         _setupKeys: function () {

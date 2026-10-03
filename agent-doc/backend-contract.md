@@ -82,27 +82,27 @@ See [components.md](components.md) and backend docs `11`/`17`.
 
 ## PageConstructor
 
-`PageConstructor.vue` → `BackendBase+'/svcmsadmin/page-constructor'`. Страницы в таблице `template_page` (`id, template_id, url UNIQUE(template_id,url), header, blocks`); `blocks` — JSON-строка формата v2 (`{schema:"svcms.page_blocks", version:2, blocks:[...]}`, как в автономном `page_constructor/js/export.js`). Формат ответов `{success, errors}`.
+`PageConstructor.vue` → `BackendBase+'/svcmsadmin/page-constructor'`. Привязка к `domain_id` (не `template_id`); роут `/page-constructor/:domain_id`. Страницы в таблице `domain_page` (`id, domain_id, url UNIQUE(domain_id,url), header, blocks`); `blocks` — JSON-строка формата v2 (`{schema:"svcms.page_blocks", version:2, blocks:[...]}`, как в автономном `page_constructor/js/export.js`). Формат ответов `{success, errors}`.
 
 | Method | Path | Body | Payload |
 |---|---|---|---|
-| POST | `/init` | `{template_id}` | `{template:{id,header,folder}, templateBase, config:{templateBase,color,style,layout,font,engine}, theme, structure:{header,footer}, pages:[{id,url,header}]}` |
-| GET | `/page/<id>` | — | `{page:{id,template_id,url,header,blocks}}` (`blocks` — parsed) |
-| POST | `/page/save` | `{id?, template_id, url, header, blocks}` | upsert, `{id}` (url обязателен, уникален в рамках шаблона); header/footer в `blocks` заменяются канонической структурой шаблона |
+| POST | `/init` | `{domain_id}` | `{domain:{id,domain,template_id,header,folder}, templateBase, config:{templateBase,color,style,layout,font,engine}, theme, structure:{header,footer}, pages:[{id,url,header}]}` |
+| GET | `/page/<id>` | — | `{page:{id,domain_id,url,header,blocks}}` (`blocks` — parsed) |
+| POST | `/page/save` | `{id?, domain_id, url, header, blocks}` | upsert, `{id}` (url обязателен, уникален в рамках домена); header/footer в `blocks` заменяются канонической структурой домена |
 | POST | `/page/<id>/delete` | — | — |
-| GET | `/structure/<template_id>` | — | `{structure:{header,footer}}` — общие для шаблона шапка/подвал (блоки v2 или `null`); хранятся в `template_constructor.header_blocks/footer_blocks`, при пустых — берутся из первой страницы шаблона |
-| POST | `/structure/save` | `{template_id, header, footer}` | upsert шаблонных header/footer в `template_constructor` + раскладка по всем `template_page` (fan-out, пока сайт читает `blocks`) |
-| POST | `/base-pages` | `{template_id}` | `{created:[url], skipped:[url]}` — создаёт базовый набор из таблицы `template_pages_base` (19 страниц: главная, списки, детальные, 404 и пр.; блоки v2 уже с header/footer), уже существующие пропускает |
-| GET | `/theme/<id>` | — | `{theme:{color,style,layout,font}}`, каждый `{name,custom,css}`; нет строки → дефолты |
-| POST | `/theme/save` | `{template_id, axis, name, css}` | upsert оси; кастомный `css` кладётся в `template_theme_<axis>` (`is_custom=1`) и шаблон ссылается на него по имени |
-| GET | `/theme/<id>/styles.css` | — | combined `text/css`: `color → style → layout → font` из таблиц `template_theme_*` |
-| GET | `/theme-schemes/<axis>` | — | список схем (`name,label,short,descr,is_default,is_custom`) |
-| GET | `/theme-schemes/<axis>/<name>` | — | схема с `css` |
+| GET | `/structure/<domain_id>` | — | `{structure:{header,footer}}` — общие для домена шапка/подвал (блоки v2 или `null`); хранятся в `domain_constructor.header_blocks/footer_blocks`, при пустых — берутся из первой страницы домена |
+| POST | `/structure/save` | `{domain_id, header, footer}` | upsert доменных header/footer в `domain_constructor` + раскладка по всем `domain_page` домена (fan-out, пока сайт читает `blocks`) |
+| POST | `/base-pages` | `{domain_id}` | `{created:[url], skipped:[url]}` — создаёт базовый набор из таблицы `template_pages_base` (19 страниц: главная, списки, детальные, 404 и пр.; блоки v2 уже с header/footer), уже существующие пропускает |
+| GET | `/theme/<domain_id>` | — | `{theme:{color,style,layout,font}}`, каждый `{name,custom,css}`; нет строки → дефолты |
+| POST | `/theme/save` | `{domain_id, axis, name, css, scope?}` | upsert оси в `domain_constructor`; кастомный `css` кладётся в `domain_theme_<axis>` (`is_custom=1`) — в домен (`scope=domain`, по умолчанию) или в общие (`scope=shared` → `domain_id=0`); общая схема не перетирается, домен заводит свою копию |
+| GET | `/theme/<domain_id>/styles.css` | — | combined `text/css`: `color → style → layout → font` из таблиц `domain_theme_*` (индивидуальная схема приоритетнее общей) |
+| GET | `/theme-schemes/<axis>?domain_id=` | — | список схем (`header,label,short,descr,is_default,is_custom,domain_id`): общие (`domain_id=0`) + индивидуальные домена, одноимённая индивидуальная перекрывает общую |
+| GET | `/theme-schemes/<axis>/<name>?domain_id=` | — | схема с `css` (индивидуальная, иначе общая) |
 | GET | `/theme-schemes/<axis>/<name>/file.css` | — | CSS схемы (для сайта, `text/css`) |
-| POST | `/theme-schemes/save` | `{axis,name,label,short,descr,css}` | upsert схемы (`is_custom=1` для новых) |
-| POST | `/theme-schemes/<axis>/<name>/delete` | — | удалить кастомную схему |
+| POST | `/theme-schemes/save` | `{axis,name,label,short,descr,css,domain_id?,scope?}` | upsert схемы (`is_custom=1` для новых); `scope=shared` → `domain_id=0` |
+| POST | `/theme-schemes/<axis>/<name>/delete?domain_id=` | — | удалить индивидуальную кастомную схему домена (`is_custom=1`); общие не удаляются |
 
-Редактор блоков — автономный конструктор из `svcms-templates/page_constructor/`, копируется скриптом `sync_to_admin.sh` в `public/page_constructor/` и грузится в iframe. Обмен блоков через `localStorage` (`svcms.page_constructor.v1`), `templateBase` из `/init`: если http(s) — используется он, иначе локальная копия `public/page_constructor/template/` (её тоже кладёт `sync_to_admin.sh`, каталог gitignored). Базовый набор страниц — таблица `template_pages_base` (`url, header, sort, blocks`), сидируется из `base_pages.json`. Тема шаблона — таблица `template_constructor` (имена схем на шаблон) + таблицы схем `template_theme_{color,style,layout,font}` (полный CSS схем, `is_custom`); `/init` отдаёт тему в `theme`/`config`, кастомный CSS прокидывается в превью через `PAGE_CONSTRUCTOR_CONFIG.customCss` (поддержка в `preview-frame.js`). Сайт подключает `theme/<id>/styles.css` или `theme-schemes/<axis>/<name>/file.css`. Шапка и подвал шаблона — `template_constructor.header_blocks/footer_blocks` (JSON блока v2), правятся один раз на шаблон (эндпоинты `/structure/*`); на страницах в редакторе они не редактируются, а показываются плашками и подмешиваются в превью/сохранение. Миграция колонок: `routes/svcmsadmin/page_constructor/structure_migration.sql`.
+Редактор блоков — автономный конструктор из `svcms-templates/page_constructor/`, копируется скриптом `sync_to_admin.sh` в `public/page_constructor/` и грузится в iframe. Обмен блоков через `localStorage` (`svcms.page_constructor.v1`), `templateBase` из `/init`: если http(s) — используется он, иначе локальная копия `public/page_constructor/template/` (её тоже кладёт `sync_to_admin.sh`, каталог gitignored). Базовый набор страниц — таблица `template_pages_base` (`url, header, sort, blocks`), сидируется из `base_pages.json`. Тема — таблица `domain_constructor` (`domain_id PK`, имена осей на домен) + таблицы схем `domain_theme_{color,style,layout,font}` (составной PK `domain_id,header`; полный CSS схем, `is_custom`; `domain_id=0` — общий пресет, `>0` — индивидуальный домена); `/init` отдаёт тему в `theme`/`config`, кастомный CSS прокидывается в превью через `PAGE_CONSTRUCTOR_CONFIG.customCss` (поддержка в `preview-frame.js`). Сайт подключает `theme/<id>/styles.css` или `theme-schemes/<axis>/<name>/file.css`. Шапка и подвал домена — `domain_constructor.header_blocks/footer_blocks` (JSON блока v2), правятся один раз на домен (эндпоинты `/structure/*`); на страницах в редакторе они не редактируются, а показываются плашками и подмешиваются в превью/сохранение. Миграция: `routes/svcmsadmin/page_constructor/domain_migration.sql`. `template_pages_base` — общий справочник базовых страниц, не переносится.
 
 ## Known gaps
 

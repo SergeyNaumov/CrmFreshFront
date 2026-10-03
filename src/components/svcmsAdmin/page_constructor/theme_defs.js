@@ -175,11 +175,100 @@ function build_layout(v) {
     + '  --font-weight-heading: ' + v.hw + ';\n'
     + '  --grid-size: ' + v['grid-size'] + 'px;\n'
     + '}\n'
-  if (v.accent) {
-    css += '\n.section-title::after {\n  content: "";\n  display: block;\n  width: 48px;\n'
-      + '  height: 3px;\n  margin-top: 12px;\n  background: var(--primary);\n}\n'
-  }
+  /* Украшение заголовка секции (поле decor). Правила переопределяют
+     базовый .section-title::after из style.css, поэтому каждый вариант
+     явно снимает/переопределяет градиентную линию. */
+  css += DECOR_CSS[v.decor] || ''
   return css
+}
+
+/* Варианты украшения заголовка секции. Ось layout не задаёт цвета:
+   используются только токены (var(--primary) и т.п.), без литералов.
+   Порядок и названия совпадают с полем decor в AXES.layout.fields. */
+const DECOR_CSS = {
+  none:
+    '\n.section-title::before {\n  content: none;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n',
+  base: '',
+  line:
+    '\n.section-title::after {\n  content: "";\n  display: block;\n  width: 48px;\n'
+    + '  height: 3px;\n  margin-top: 12px;\n  border-radius: 0;\n  background: var(--primary);\n}\n',
+  double:
+    '\n.section-title::after {\n  content: "";\n  display: block;\n  width: 64px;\n'
+    + '  height: 6px;\n  margin-top: 12px;\n  border-radius: 0;\n  background: none;\n'
+    + '  border-top: 3px solid var(--primary);\n  border-bottom: 1px solid var(--primary);\n}\n',
+  full:
+    '\n.section-head {\n  padding-bottom: 18px;\n'
+    + '  border-bottom: 1px solid var(--border-color);\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n',
+  under:
+    '\n.section-title {\n  text-decoration: underline;\n  text-decoration-thickness: 2px;\n'
+    + '  text-underline-offset: 7px;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n',
+  top:
+    '\n.section-title {\n  padding-top: 14px;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n'
+    + '.section-title::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  top: 0;\n'
+    + '  width: 100%;\n  height: max(3px, var(--border-width-accent, 3px));\n'
+    + '  background: var(--primary);\n}\n',
+  'rule-both':
+    '\n.section-title {\n  padding-top: 12px;\n  padding-bottom: 12px;\n'
+    + '  border-top: 2px solid var(--primary);\n'
+    + '  border-bottom: 2px solid var(--primary);\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n',
+  left:
+    '\n.section-title {\n  padding-left: 22px;\n'
+    + '  font-size: var(--font-size-h2);\n  letter-spacing: normal;\n  text-transform: none;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n'
+    + '.section-title::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  top: 0.12em;\n'
+    + '  width: max(4px, var(--border-width-accent, 4px));\n  height: 0.9em;\n'
+    + '  background: var(--primary);\n}\n',
+  slash:
+    '\n.section-title {\n  padding-left: 20px;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n'
+    + '.section-title::before {\n  content: "";\n  position: absolute;\n  left: 2px;\n  top: 0.1em;\n'
+    + '  width: 3px;\n  height: 0.95em;\n  background: var(--primary);\n'
+    + '  transform: rotate(18deg);\n}\n',
+  dot:
+    '\n.section-title {\n  padding-left: 20px;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n'
+    + '.section-title::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  top: 0.4em;\n'
+    + '  width: 9px;\n  height: 9px;\n  border-radius: 50%;\n'
+    + '  background: var(--primary);\n}\n',
+  corner:
+    '\n.section-title {\n  padding-left: 18px;\n  padding-right: 18px;\n}\n'
+    + '.section-title::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  top: 0;\n'
+    + '  width: 10px;\n  height: 10px;\n  border-left: 2px solid var(--primary);\n'
+    + '  border-top: 2px solid var(--primary);\n}\n'
+    + '.section-title::after {\n  content: "";\n  position: absolute;\n  right: 0;\n  bottom: 0;\n'
+    + '  width: 10px;\n  height: 10px;\n  border-right: 2px solid var(--primary);\n'
+    + '  border-bottom: 2px solid var(--primary);\n}\n',
+  'corner-tl':
+    '\n.section-title {\n  padding-top: 12px;\n  padding-left: 12px;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n'
+    + '.section-title::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  top: 0;\n'
+    + '  width: 14px;\n  height: 14px;\n  border-left: 2px solid var(--primary);\n'
+    + '  border-top: 2px solid var(--primary);\n}\n',
+  'corner-br':
+    '\n.section-title {\n  padding-right: 12px;\n  padding-bottom: 12px;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n'
+    + '.section-title::before {\n  content: "";\n  position: absolute;\n  right: 0;\n  bottom: 0;\n'
+    + '  width: 14px;\n  height: 14px;\n  border-right: 2px solid var(--primary);\n'
+    + '  border-bottom: 2px solid var(--primary);\n}\n',
+  bracket:
+    '\n.section-title {\n  padding-left: 14px;\n  padding-bottom: 12px;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n'
+    + '.section-title::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  bottom: 0;\n'
+    + '  width: 12px;\n  height: 12px;\n  border-left: 2px solid var(--primary);\n'
+    + '  border-bottom: 2px solid var(--primary);\n}\n'
+    + '.section-title::after {\n  content: "";\n  position: absolute;\n  right: 0;\n  bottom: 0;\n'
+    + '  width: 12px;\n  height: 12px;\n  border-right: 2px solid var(--primary);\n'
+    + '  border-bottom: 2px solid var(--primary);\n}\n',
+  pill:
+    '\n.section-title {\n  padding: 8px 20px;\n  border-radius: var(--radius-pill, 999px);\n'
+    + '  background: var(--primary);\n  color: var(--on-primary);\n}\n'
+    + '.section-title::before {\n  content: none;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n'
 }
 
 function build_font(v) {
@@ -197,12 +286,13 @@ function build_font(v) {
 }
 
 export const LAYOUT_PRESETS = {
-  standard: { container: 1240, gutter: 20, 'section-gap': 88, 'header-height': 80, 'grid-gap': 24, 'head-gap': 24, 'head-space': 44, h1: 2.5, h2: 2, h3: 1.35, base: 16, hw: 700, 'grid-size': 32, accent: false },
-  industrial: { container: 1320, gutter: 24, 'section-gap': 72, 'header-height': 72, 'grid-gap': 24, 'head-gap': 32, 'head-space': 28, h1: 2.8, h2: 2.15, h3: 1.45, base: 16, hw: 800, 'grid-size': 32, accent: true },
-  elegant: { container: 1280, gutter: 22, 'section-gap': 96, 'header-height': 84, 'grid-gap': 28, 'head-gap': 20, 'head-space': 48, h1: 2.6, h2: 2.05, h3: 1.35, base: 16, hw: 600, 'grid-size': 32, accent: false },
-  editorial: { container: 1080, gutter: 24, 'section-gap': 104, 'header-height': 88, 'grid-gap': 32, 'head-gap': 18, 'head-space': 52, h1: 3, h2: 2.3, h3: 1.5, base: 17, hw: 700, 'grid-size': 32, accent: false },
-  wide: { container: 1440, gutter: 28, 'section-gap': 80, 'header-height': 84, 'grid-gap': 28, 'head-gap': 28, 'head-space': 44, h1: 2.7, h2: 2.1, h3: 1.4, base: 16, hw: 700, 'grid-size': 32, accent: false },
-  compact: { container: 1200, gutter: 16, 'section-gap': 56, 'header-height': 68, 'grid-gap': 16, 'head-gap': 16, 'head-space': 28, h1: 2.15, h2: 1.75, h3: 1.25, base: 15, hw: 700, 'grid-size': 24, accent: false }
+  standard: { container: 1240, gutter: 20, 'section-gap': 88, 'header-height': 80, 'grid-gap': 24, 'head-gap': 24, 'head-space': 44, h1: 2.5, h2: 2, h3: 1.35, base: 16, hw: 700, 'grid-size': 32, decor: 'base' },
+  industrial: { container: 1320, gutter: 24, 'section-gap': 72, 'header-height': 72, 'grid-gap': 24, 'head-gap': 32, 'head-space': 28, h1: 2.8, h2: 2.15, h3: 1.45, base: 16, hw: 800, 'grid-size': 32, decor: 'line' },
+  elegant: { container: 1280, gutter: 22, 'section-gap': 96, 'header-height': 84, 'grid-gap': 28, 'head-gap': 20, 'head-space': 48, h1: 2.6, h2: 2.05, h3: 1.35, base: 16, hw: 600, 'grid-size': 32, decor: 'base' },
+  editorial: { container: 1080, gutter: 24, 'section-gap': 104, 'header-height': 88, 'grid-gap': 32, 'head-gap': 18, 'head-space': 52, h1: 3, h2: 2.3, h3: 1.5, base: 17, hw: 700, 'grid-size': 32, decor: 'full' },
+  wide: { container: 1440, gutter: 28, 'section-gap': 80, 'header-height': 84, 'grid-gap': 28, 'head-gap': 28, 'head-space': 44, h1: 2.7, h2: 2.1, h3: 1.4, base: 16, hw: 700, 'grid-size': 32, decor: 'base' },
+  compact: { container: 1200, gutter: 16, 'section-gap': 56, 'header-height': 68, 'grid-gap': 16, 'head-gap': 16, 'head-space': 28, h1: 2.15, h2: 1.75, h3: 1.25, base: 15, hw: 700, 'grid-size': 24, decor: 'base' },
+  technical: { container: 1300, gutter: 24, 'section-gap': 80, 'header-height': 76, 'grid-gap': 24, 'head-gap': 28, 'head-space': 36, h1: 2.6, h2: 2.05, h3: 1.4, base: 16, hw: 700, 'grid-size': 32, decor: 'left' }
 }
 
 export const AXES = {
@@ -261,7 +351,29 @@ export const AXES = {
       { id: 'base', label: 'Базовый размер', type: 'number', def: 16, min: 14, max: 20, unit: 'px' },
       { id: 'hw', label: 'Вес заголовков', type: 'number', def: 700, min: 400, max: 900, step: 100 },
       { id: 'grid-size', label: 'Шаг декоративной сетки', type: 'number', def: 32, min: 0, max: 80, step: 8, unit: 'px' },
-      { id: 'accent', label: 'Акцентная черта под заголовком секции', type: 'checkbox', def: false }
+      { id: 'decor', label: 'Украшение заголовка секции', type: 'select', def: 'base', options: [
+        ['#', 'Без оформления'],
+        ['none', 'Без украшения'],
+        ['#', 'Линии и полосы'],
+        ['base', 'Градиентная линия (по умолчанию)'],
+        ['line', 'Короткая черта снизу'],
+        ['double', 'Двойная черта снизу'],
+        ['full', 'Линия во всю ширину'],
+        ['top', 'Полоска сверху'],
+        ['rule-both', 'Линии сверху и снизу'],
+        ['under', 'Подчёркивание текста'],
+        ['#', 'Акцентные маркеры'],
+        ['left', 'Полоска слева'],
+        ['slash', 'Косая черта'],
+        ['dot', 'Точка-маркер'],
+        ['#', 'Уголки'],
+        ['corner', 'Угловые метки (диагональ)'],
+        ['corner-tl', 'Уголок сверху слева'],
+        ['corner-br', 'Уголок снизу справа'],
+        ['bracket', 'Уголки-скобки по краям'],
+        ['#', 'Заливка'],
+        ['pill', 'Заголовок на плашке']
+      ] }
     ]
   },
   font: {
@@ -299,10 +411,84 @@ export const SHOWCASE_CSS = `
 .ed-badge--promo { background: var(--badge-promo, var(--accent)); }
 .ed-badge--sale { background: var(--badge-sale, var(--danger)); }
 .ed-callout { padding: 12px 14px; color: var(--body-color); background: var(--callout-bg); border-left: 3px solid var(--callout-border); border-radius: var(--radius); }
+.ed-head { margin-top: 6px; }
+.ed-head .section-sub { margin-top: 14px; max-width: 560px; }
+
+/* --- Демонстрация оси layout: каждый параметр виден в превью ---
+   Разметка использует настоящие классы шаблона (.container, .section,
+   .section-head, .section-title, .header__main), поэтому превью
+   показывает ровно те токены, которые меняет редактор компоновки. */
+.ed-tokens { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; padding: 0; list-style: none; }
+.ed-tokens li { padding: 3px 8px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--body-color); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-pill); }
+.ed-header { background: var(--surface-2); border-bottom: 1px solid var(--border); }
+.ed-header__main { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 16px; padding-bottom: 16px; min-height: var(--header-height, 80px); }
+.ed-logo { font-size: var(--font-size-h4, 18px); font-weight: 800; color: var(--heading-color); }
+.ed-header__nav { display: flex; gap: 18px; }
+.ed-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap, 24px); }
+.ed-tile { padding: 14px; font-size: var(--font-size-sm, 13px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.ed-type > * { margin: 0 0 8px; }
+.ed-type p { margin: 0; font-size: var(--font-size-base, 16px); }
+.ed-gridsize { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--grid-size, 32px), 1fr)); gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.ed-gridsize i { height: var(--grid-size, 32px); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 `
 
 export const SHOWCASE_HTML = `
 <div class="ed-play">
+  <ul class="ed-tokens">
+    <li>--container</li><li>--gutter</li><li>--section-gap</li><li>--header-height</li>
+    <li>--grid-gap</li><li>--head-gap</li><li>--head-space</li><li>--grid-size</li>
+    <li>--font-size-h1/h2/h3</li><li>--font-size-base</li><li>--font-weight-heading</li>
+  </ul>
+
+  <div class="ed-header">
+    <div class="ed-header__main container">
+      <span class="ed-logo">Логотип</span>
+      <nav class="ed-header__nav"><a href="#">Услуги</a><a href="#">Товары</a><a href="#">О компании</a><a href="#">Контакты</a></nav>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">Наши преимущества</h2>
+        <a class="section-head__link" href="#">Все услуги</a>
+      </div>
+      <p class="section-sub">Подзаголовок секции — проверка отступа <b>--head-space</b> и промежутка <b>--head-gap</b> между заголовком и ссылкой.</p>
+      <div class="ed-grid3">
+        <div class="ed-tile">Плитка 1 — зазор <b>--grid-gap</b></div>
+        <div class="ed-tile">Плитка 2 — зазор <b>--grid-gap</b></div>
+        <div class="ed-tile">Плитка 3 — зазор <b>--grid-gap</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">Типографика</h2>
+      </div>
+      <div class="ed-type">
+        <h1>Заголовок H1 — кегль и начертание</h1>
+        <h2>Заголовок H2 — как в секциях</h2>
+        <h3>Заголовок H3 — подзаголовок блока</h3>
+        <p>Базовый текст задаёт <b>--font-size-base</b>. Вес всех заголовков — <b>--font-weight-heading</b>: видно, что он применяется к H1, H2 и H3.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">Шаг сетки</h2>
+      </div>
+      <div class="ed-gridsize">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+  </section>
+
   <div class="ed-card">
     <h3 class="ed-card__title">Кнопки и бейджи</h3>
     <div class="ed-grid">

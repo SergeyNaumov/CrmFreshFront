@@ -66,7 +66,7 @@ a:hover {
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--tb-heading, var(--heading-color));
-  font-weight: 700;
+  font-weight: var(--font-weight-heading, 700);
   line-height: 1.25;
   margin: 0 0 0.5em;
 }
@@ -303,6 +303,7 @@ button {
   justify-content: space-between;
   gap: 24px;
   padding: 16px 0;
+  min-height: var(--header-height, 80px);
 }
 
 /* Логотип */
@@ -1410,7 +1411,8 @@ catalog-block { display: block; }
 
 /* Один и тот же вид плашки в списке товаров (.product-card__badge) и на
    странице товара (.gi-badge): единая геометрия, типографика и цвета
-   --badge-*. Классы-синонимы: --hit/--specpredl = --promo (Хит). */
+   --badge-*. Модификаторы: --new (новинка), --hit (хит), --spec
+   (спецпредложение). --promo оставлен синонимом --hit. */
 .product-card__badge,
 .gi-badge {
   display: inline-flex;
@@ -1428,13 +1430,12 @@ catalog-block { display: block; }
 .product-card__badge--new,
 .gi-badge--new { background: var(--badge-new); }
 
-.product-card__badge--sale,
-.gi-badge--sale { background: var(--badge-sale); }
+.product-card__badge--spec,
+.gi-badge--spec { background: var(--badge-sale); }
 
 .product-card__badge--hit,
 .gi-badge--hit,
-.gi-badge--promo,
-.gi-badge--specpredl { background: var(--badge-promo); }
+.gi-badge--promo { background: var(--badge-promo); }
 
 /* Действия: избранное / сравнить */
 .product-card__actions {
@@ -2060,6 +2061,21 @@ catalog-block { display: block; }
 .review-card__star.is-on { color: var(--warning); }
 
 .review-card__text { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+/* Плитка отзывов (вариант grid блока reviews) + сентинел догрузки. */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+.reviews-grid .review-card { height: 100%; }
+#reviewsSentinel { height: 1px; }
+@media (max-width: 991px) {
+  .reviews-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 575px) {
+  .reviews-grid { grid-template-columns: 1fr; }
+}
 
 /* ---------- Наша команда (карусель карточек сотрудников) ---------- */
 /* Карточек в кадре: 4 (десктоп) → 3 (≤1199) → 2 (≤767) → 1 (≤575). */

@@ -1,30 +1,19 @@
 /* ============================================================
    Файл: templates/t1/js/service_in.js
-   Приложение страницы услуги (preview/service_in.html, релиз —
-   page/service_in.html). Обычный JS, без Vue (как article_in.js).
-
-   ПРИНЦИП «SEO + догрузка»:
-   В #serviceIn лежит статический блок — «серверная» версия последней
-   услуги (id 8) для поисковиков. Поверх него приложение подгружает
-   актуальную услугу по ?id= из URL и перерисовывает заголовок, обложку,
-   иконку, аннонс, текст, хлебные крошки и <title>, а также название
-   услуги в попапе «Заказать услугу».
+   Приложение страницы услуги (/service/{id}). Обычный JS, без Vue.
 
    РЕЖИМЫ ДАННЫХ:
-   - Preview: script-запрос js/preview/service_ajax_{id}.js (файл публикует
-     событие t1:service_in с detail { id, service });
-   - Release: AJAX GET /ajax/services/{id} → JSON (та же запись).
-   Режим и базовый путь задаются атрибутами #serviceIn:
-     data-mode="preview|release", data-url="{префикс до id}",
-     data-min / data-max — границы списка.
+   - Preview: script-запрос js/preview/service_ajax_{id}.js (событие
+     t1:service_in с detail { id, service });
+   - Release: GET /ajax/services/{id} → JSON (запись + prev_id, next_id, url).
 
    НАВИГАЦИЯ:
-   - «Предыдущая» — услуга с меньшим id, «Следующая» — с большим;
-     кнопки отключаются на краях; при переходе обновляются URL
-     (history.pushState), <title>, og, крошки и активность кнопок;
-     popstate возвращает назад. Гонки гасятся токеном запроса.
+   - id берётся из пути (/service/{id}) либо из ?id=;
+   - «Предыдущая»/«Следующая» — prev_id/next_id из ответа сервера;
+   - URL меняется через history.pushState на канонический url (data.url,
+     ЧПУ-слаг при наличии); popstate возвращает назад.
    ============================================================ */
-window.__T1_SERVICE_IN_VER = '2026-09-29';
+window.__T1_SERVICE_IN_VER = '2026-10-02';
 
 (function () {
   'use strict';
@@ -40,14 +29,25 @@ window.__T1_SERVICE_IN_VER = '2026-09-29';
     }
   }
 
+  /* id из /service/{id} или ?id= */
+  function idFromURL() {
+    try {
+      var m = window.location.pathname.match(/\/(\d+)\/?$/);
+      if (m) return parseInt(m[1], 10);
+      var p = new URL(window.location.href).searchParams.get('id');
+      var n = parseInt(p, 10);
+      return isNaN(n) ? null : n;
+    } catch (e) {
+      return null;
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     var root = document.getElementById('serviceIn');
     if (!root) return;
 
-    var basePath  = root.getAttribute('data-url') || '';
+    var basePath  = root.getAttribute('data-url') || '/ajax/services/';
     var isPreview = root.getAttribute('data-mode') === 'preview';
-    var MIN_ID = parseInt(root.getAttribute('data-min'), 10) || 1;
-    var MAX_ID = parseInt(root.getAttribute('data-max'), 10) || 8;
 
     var titleEl  = document.getElementById('serviceInTitle');
     var imgEl    = document.getElementById('serviceInMedia');
@@ -62,26 +62,19 @@ window.__T1_SERVICE_IN_VER = '2026-09-29';
     var nextBtn  = document.getElementById('serviceNext');
 
     var currentId = null;
+    var prevId = null, nextId = null;
     var req = 0; // токен против гонок
-
-    function idFromURL() {
-      try {
-        var p = new URL(window.location.href).searchParams.get('id');
-        var n = parseInt(p, 10);
-        return !isNaN(n) && n >= MIN_ID && n <= MAX_ID ? n : null;
-      } catch (e) {
-        return null;
-      }
-    }
 
     function apply(data, push) {
       var id = Number(data.id);
+      if (!id) return;
       currentId = id;
 
-      if (titleEl) titleEl.textContent = data.title || '';
+      var title = data.header || data.title || '';
+      if (titleEl) titleEl.textContent = title;
       if (imgEl) {
         imgEl.src = data.photo || '';
-        imgEl.alt = (data.title || 'Услуга') + ' — DigitalStrateg';
+        imgEl.alt = (title || 'Услуга') + ' — DigitalStrateg';
       }
       setIcon(iconEl, data.icon || '');
       if (priceEl) priceEl.textContent = data.price_from || '';
@@ -96,17 +89,21 @@ window.__T1_SERVICE_IN_VER = '2026-09-29';
           bodyEl.appendChild(p);
         });
       }
-      if (crumbEl) crumbEl.textContent = data.title || '';
+      if (crumbEl) crumbEl.textContent = title;
 
-      // Название услуги в попапе и на кнопках «Заказать услугу»
-      if (window.serviceOrderSet) window.serviceOrderSet(data.title || '');
+      if (window.serviceOrderSet) window.serviceOrderSet(title);
       document.querySelectorAll('.js-service-order').forEach(function (b) {
-        b.setAttribute('data-service', data.title || '');
+        b.setAttribute('data-service', title);
       });
 
-      syncDocTitle(data.title);
-      syncButtons(id);
-      if (push) history.pushState(null, '', 'service_in.html?id=' + id);
+      prevId = data.prev_id || null;
+      nextId = data.next_id || null;
+
+      syncDocTitle(title);
+      syncButtons();
+      if (push) {
+        history.pushState({ id: id }, '', data.url || ('/service/' + id));
+      }
     }
 
     function syncDocTitle(title) {
@@ -119,9 +116,9 @@ window.__T1_SERVICE_IN_VER = '2026-09-29';
       if (tw) tw.setAttribute('content', t);
     }
 
-    function syncButtons(id) {
-      if (prevBtn) prevBtn.disabled = (id <= MIN_ID);
-      if (nextBtn) nextBtn.disabled = (id >= MAX_ID);
+    function syncButtons() {
+      if (prevBtn) prevBtn.disabled = !prevId;
+      if (nextBtn) nextBtn.disabled = !nextId;
     }
 
     function setBusy(busy) {
@@ -131,7 +128,7 @@ window.__T1_SERVICE_IN_VER = '2026-09-29';
 
     function load(id, push) {
       id = parseInt(id, 10);
-      if (isNaN(id) || id < MIN_ID || id > MAX_ID) return;
+      if (isNaN(id)) return;
 
       var num = ++req;
       setBusy(true);
@@ -165,22 +162,25 @@ window.__T1_SERVICE_IN_VER = '2026-09-29';
 
       fetch(basePath + id)
         .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-        .then(function (d) { apply(d || {}, push); done(); })
+        .then(function (d) { if (num !== req) return; apply(d || {}, push); done(); })
         .catch(fail);
     }
 
     function navigate(id, push) {
       id = parseInt(id, 10);
-      if (isNaN(id) || id < MIN_ID || id > MAX_ID) return;
-      if (id === currentId) return;
+      if (isNaN(id) || id === currentId) return;
       load(id, push);
     }
 
-    if (prevBtn) prevBtn.addEventListener('click', function () { navigate((currentId || MAX_ID) - 1, true); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { navigate((currentId || MIN_ID) + 1, true); });
+    if (prevBtn) prevBtn.addEventListener('click', function () { if (prevId) navigate(prevId, true); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { if (nextId) navigate(nextId, true); });
 
-    navigate(idFromURL() || MAX_ID, false);
+    var startId = idFromURL() || parseInt(root.getAttribute("data-id"), 10) || null;
+    if (startId) load(startId, false);
 
-    window.addEventListener('popstate', function () { navigate(idFromURL() || MAX_ID, false); });
+    window.addEventListener('popstate', function () {
+      var id = idFromURL();
+      if (id) load(id, false);
+    });
   });
 })();
