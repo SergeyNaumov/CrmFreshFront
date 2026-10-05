@@ -112,6 +112,8 @@ export default{
                   return UrlPrefix+'/vue/table/'+params.config
                 if(item.value=='filenavigator')
                   return UrlPrefix+'/vue/filenavigator/'+params.config
+                if(item.value=='svcmsadmin-createproject')
+                  return UrlPrefix+'/vue/svcmsadmin-createproject'
             }
             if(item.type=='src'){
               return UrlPrefix+'/src:'+item.value

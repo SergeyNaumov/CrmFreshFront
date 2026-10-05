@@ -10,6 +10,13 @@
 .v-application a.v-breadcrumb-item {
     text-decoration: none;
 }
+/* Vuetify 3 (ress.css, main.css:2382) обнуляет padding/margin у всех элементов:
+   ul/ol из v-html (wysiwyg, статичные страницы, письма) теряют отступ и маркер.
+   Возвращаем отступ уровня вложенности. */
+ul,
+ol {
+    padding-left: 1.5em;
+}
 
 /* Дизайн-токены (значения по умолчанию; схема переопределяет через JS) */
 :root {
@@ -205,9 +212,10 @@ textarea,
 .onfilter .v-field {
     min-height: 40px !important;
 }
-// Компактная пагинация (как в Vuetify 2)
+// Компактная пагинация (как в Vuetify 2). v-pagination рисует голый <ul> без padding.
 .v-pagination__list {
     gap: 2px;
+    padding-left: 0;
 }
 .v-pagination__item,
 .v-pagination__first,

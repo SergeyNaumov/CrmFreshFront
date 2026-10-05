@@ -37,7 +37,7 @@ export default {
   name:'left_menu_item',
   props:["manager","item","get_link","go_link"],
   created(){
-    if(this.item.show || this.hasActiveChild){
+    if(this.is_open(this.item) || this.item.show || this.hasActiveChild){
       this.show=true
     }
   },
@@ -57,6 +57,10 @@ export default {
     }
   },
   methods:{
+    is_open(item){
+      let v=(item||{}).open
+      return v===true || v===1 || v==='1' || v==='true'
+    },
     link_of(item){
       return this.get_link ? this.get_link(item) : ''
     },

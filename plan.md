@@ -184,3 +184,97 @@
 - Ветка `vue3` собирается в 3 mode с контрактом `dist/{js,css,index.html,fonts}`. [x]
 - Smoke пройден, серверный JS исполняется, иконки сохранены. [ ]
 - `main` не затронут. [x]
+
+## Правки 05.10.2026
+
+### Пикер иконок: набор не переключает список
+
+`src/components/fields/font-awesome.vue` — `@input` на `v-select` не работает в Vuetify 3 (`VSelect` эмитит только `update:modelValue`). Список оставался на `fa`, а префикс брался из нового набора: `brands` (`fab fa-address-book`) давал пустые глифы, `far` — частично. Правки: watcher по `cur_struct` вместо `@input`, `fonts_struct` → `font_struct`, восстановление набора из сохранённого значения в `load()`, `v-progress-linear` через `v-if`.
+
+Проверено (headless Chrome, `/edit_form/admin_menu/2`): набор из значения — `fas`/956; brands — 252, `fab fa-500px`, `Font Awesome 5 Brands`; far — 151; fa — 687; выбор даёт `fab fa-github`. Ошибок консоли нет.
+
+### Левое меню: раскрытие ветки по `open`
+
+`src/components/left_menu_item.vue` — бэкенд уже шлёт `open` (`left_menu_admin.py`, SELECT `amn.open`; редактор — чекбокс «Сразу показывать подпункты»), а компонент смотрел только на `show`, которого этот эндпоинт не отдаёт. Добавлен `is_open(item)` (`true|1|'1'|'true'`), `show` и `hasActiveChild` сохранены.
+
+Проверено (headless Chrome, `/`): «Сайты» (`open=1`) раскрыта при загрузке — 14 подпунктов, `fa fa-chevron-down`; «Хостинг»/«Другое» (`open=0`) свёрнуты, `fa fa-chevron-right`; клик сворачивает. Ошибок консоли нет.
+
+Docs: `agent-doc/router.md` (Menu), `agent-doc/backend-contract.md` (Menu).
+
+### Списки: отступы, обнулённые ресетом Vuetify 3
+
+`/edit_form/rkn_template/1` — в тексте (wysiwyg, `div.read_only`) маркеры `ul` ложились на первые символы: Vuetify 3 содержит `ress.css` (`node_modules/vuetify/lib/styles/main.css:2382`) `* { padding: 0; margin: 0 }`, которого не было в Vuetify 2. Правка в `src/styles/main.scss`: `ul, ol { padding-left: 1.5em }` + `padding-left: 0` для `.v-pagination__list` (её `v-pagination` рисует голым `<ul>`).
+
+Проверено (headless Chrome, `/edit_form/rkn_template/1`, снимок 298..458 px, анализ пикселей): после фикса маркер — отдельная полоса чернил на css 16..20 при начале текста на 32; до фикса текст начинался на 10 (на краю `ul`), маркер рисовался поверх символов. Каскад: `ul`/`ol` — 21px (disc/decimal), `ul.v-pagination__list` — 0px, `ul.v-breadcrumbs` — 12px, `ul.v-list` — 0px. Пикер иконок (`/edit_form/admin_menu/2`) — 956 иконок на месте. Ошибок консоли нет.
+
+### Быстрое создание проекта (`svcmsadmin-createproject`)
+
+Аналог legacy `legacy/svcms-admin/fast_create.pl` на новом каркасе. Поле «место хранения» убрано, создание менеджера — опционально.
+
+Backend (новый модуль `routes/svcmsadmin/project_create.py`, синхронный):
+- `GET /svcmsadmin/project/create/templates` — шаблоны `type=6` (маркер DS Конструктора; колонка `template.ds_constructor` удалена миграцией `routes/svcmsadmin/project_create.sql`).
+- `POST /svcmsadmin/project/create/start` — `project` → `admin_project` → `domain(server_type=4, not_cache_nginx=1)` → `const` (имена из проекта-эталона `5837` из `fast_create.source_project_id`, значения пустые) → опц. `manager` + `manager_project_access` → конструктор (`domain_constructor` с осями темы эталона и header/footer из `page_constructor/base_pages.json`; `domain_page` из `template_pages_base`) → при `demo=true` копирование `ds_*` эталона и каталогов `sites/files/project_<id>`, `sites/projects/project_<id>`, `conf_projects/project_<id>`. Компенсирующий откат при ошибке.
+
+Frontend: `src/components/svcmsAdmin/CreateProject.vue` (форма: название, домен, шаблон, чекбокс менеджера, чекбокс демо, результат со ссылками), роуты `/vue/svcmsadmin-createproject` и `/svcmsadmin-createproject`, ветка в `LeftMenu.get_link()`, пункт меню `admin_menu_new` (id=8) включён миграцией.
+
+Проверено: `GET /templates` → `2504`; создание без менеджера/демо (project 5852/domain 9721: 38 `const`, 1 `domain_constructor`, 19 `domain_page`, `server_type=4`); с менеджером и демо (project 5854/domain 9723: `manager`+access, `ds_good`=54, `ds_catalog`=21, `ds_slider`=5, каталоги файлов проекта скопированы); негативные кейсы (домен-дубль, шаблон не type=6, пустой логин). Headless Chrome: страница `/vue/svcmsadmin-createproject` рендерится, шаблон и проект-эталон `#5837` подтягиваются. Тестовые проекты и каталоги удалены. `npm run build_svcms` — успешно.
+
+### Совместимость паролей с MySQL 8
+
+MySQL 8 удалил `ENCRYPT()`, из-за чего SQL-проверка `password=encrypt(%s,password)` в `lib/session.py` падала, и вход в админку/панель сайта не работал (на dev маскировался debug-обходом). Существующие записи: `admin` — DES/ENCRYPT (13 символов), `manager` — md5 (32) и DES (13), новые — sha2 (64).
+
+Добавлен `lib/password.py`:
+- `verify_password(plain, stored)` — plaintext, sha2-256, md5 и crypt (DES/ENCRYPT + `$1$/$5$/$6$`);
+- `hash_password(plain, method)` — `mysql_encrypt` → DES-совместимый crypt, `mysql_sha2` → sha2-256.
+
+`lib/session.py` (`session_create`) после SQL-проверки делает резервную Python-проверку по строке из БД. Хэширование на запись: создание менеджера в `routes/svcmsadmin/project_create.py`, поле `password` в `lib/CRM/form/save_form.py` (insert и update), смена пароля в `routes/password.py`.
+
+Проверено: вход `POST /login` (svcmsadmin) с legacy DES-паролем — `success:true`, неверный пароль — отказ; пароль нового менеджера из fast-create хэшируется в 13-символьный DES и проходит `verify_password`; unit-проверки форматов. Тестовые записи удалены.
+
+### Обязательные поля с многострочным значением
+
+`/edit_form/pxls/1` (поле `body` типа `codelist`) при правке выдавало «Поле обязательно для заполнения», хотя текст есть. Причина: правило `regexp_rules: ['/^.+$/', ...]` в JS не матчит многострочное значение (`.` не проходит через `\n`), а `check_fld` вызывается только при вводе — поэтому ошибка всплывала при первой же правке. Существующие хэши/значения не при чём.
+
+`src/components/fields/field_functions.js`: `to_regex(rule, dotall)` — для `regexp_rules` заякоренные правила с точкой (`^...+$`) получают флаг `s` (dotAll); `replace_rules` не затронуты. `src/components/fields/select.vue`: `regexp_check()` переведён с `eval(rule+'.test(...)')` на общий `to_regex` (eval падал на правилах-строках без слэшей).
+
+Проверено (headless Chrome, `/edit_form/pxls/1`): правка больше не даёт ошибки; очистка поля — ошибка «Поле обязательно для заполнения» появляется; `npm run build_svcms` — ок.
+
+### FileNavigator: симлинки внутри chroot
+
+`/filenavigator/filenavigator?dir=templates/2026/ds-constructor` ругался «путь вне chroot», хотя `templates` — симлинк на `/var/www/svcms-async/sites/templates` в корне навигатора. Причина: `_safe_path`/`_safe_child` в `routes/filenavigator/__init__.py` использовали `Path.resolve()`, который раскрывает симлинк и сравнивает уже реальный путь с chroot.
+
+Правка: проверка лексическая (`os.path.normpath`, без раскрытия симлинков), абсолютные пути запрещены; в `move` вместо `resolve()` — `_safe_child`. Симлинки внутри chroot разрешены и раскрываются при доступе к ФС.
+
+Проверено: `readir`/`readfile` по `templates/2026/ds-constructor` работают, `../../etc` и `/etc` по-прежнему отвергаются; браузер открывает страницу без ошибки и показывает файлы.
+
+### Форма на всю ширину при `form.wide_form`
+
+`/edit_form/project/5837`: бэкенд отдаёт `wide_form: 1`, но контейнер `.container_wide` ограничен `max-width: 1440px`. В `src/components/EditForm.vue` для `form.wide_form` добавлен модификатор `container_full` (`max-width: none`); формы с несколькими колонками без `wide_form` по-прежнему 1440px.
+
+Проверено (headless Chrome, viewport 1920): `container_wide container_full`, ширина 1920; `npm run build_svcms` — ок.
+
+### Ссылка на конструктор в блоке «Домены» и ширина карточки
+
+`configs/svcmsadmin/project/__init__.py`, `domain_slide_code`: для домена, у которого `template.type=6`, в строку админ-ссылок добавлена «конструктор» → `/page-constructor/<domain_id>` (full-screen, новая вкладка). Тип шаблона читается запросом `SELECT type FROM template WHERE template_id=%s` по `data.template_id`.
+
+`src/components/fields/1_to_m/slide.vue`: `field.cols` ранее игнорировался, карточка всегда `display:inline-block`. Добавлен `list_item_style`: `cols=1` → карточка на всю ширину (`display:block; width:100%`), `cols>1` → ширина по колонкам. Для списков без `cols` поведение прежнее.
+
+Проверено: `domain_slide` проекта 5837 содержит `/page-constructor/9706`; у проекта с `template.type<>6` ссылки нет; в браузере карточка домена = ширина колонки (882px, display:block), ссылка ведёт на `/page-constructor/9706`.
+
+### Наборы базовых страниц конструктора + document.title
+
+- `document.title` конструктора = `Конструктор шаблона <домен>` (+ `· Тема` / `· <страница>` / `· Шапка и подвал`); прежний title возвращается при уходе (`PageConstructor.vue`).
+- Мультинаборы: таблица `base_pages_set` (`id,name,sort,is_default`), `template_pages_base.set_id` (`UNIQUE(set_id,url)`), `domain_constructor.base_set_id`. Текущий набор — `etalon-1` (`is_default=1`). Миграция — `routes/svcmsadmin/page_constructor/base_sets_migration.sql`.
+- Backend: `GET /base-sets`, `POST /base-sets/create|rename|update-from-domain|delete`; `POST /base-pages` теперь `{domain_id,set_id?,overwrite?}` — существующие по `url` при `overwrite` обновляются, кастомные страницы целы; `/init` отдаёт `base_sets` и `base_set_id`. Удаление запрещено для дефолтного/последнего набора.
+- Frontend: кнопка «Базовый набор» открывает диалог — выбор набора, галочка «Перезаписать», плюс управление (создать из домена/пустой, переименовать, обновить из домена, удалить).
+- Fast-create берёт страницы дефолтного набора (`project_create.py`).
+
+Проверено: py_compile + build_svcms; `/base-sets` → etalon-1 (19); создание из домена, переименование, guard-удаление, apply (skipped/created); в headless Chrome заголовок `Конструктор шаблона demo1.digitalstrateg.ru`, диалог открывается, создание набора из UI работает; тестовые наборы и добавленные страницы удалены.
+
+### Удаление админских схем темы
+
+`POST /theme-schemes/<axis>/<name>/delete?domain_id=<0|домен>` (`page_constructor/__init__.py`): теперь удаляет любую админскую схему (`is_custom=1`) — и общую (`domain_id=0`), и доменную; системные (`is_custom=0`) и используемые в `domain_constructor.<axis>` (для общей — любым доменом) запрещены с понятной ошибкой. Заодно в `SchemeSaveIn` добавлен `domain_id` (эндпоинт `/theme-schemes/save` падал 500).
+
+`ThemeTool.vue` (режим «Готовая схема»): кнопка-корзина рядом с выбором схемы, активна только для `is_custom=1`; confirm → удаление → перезагрузка списка.
+
+Проверено: system `color/digitalstrateg` — «системную нельзя»; используемая `style/armit` — «используется в 1 домене(ах)»; созданная общая/доменная схемы удаляются; в headless Chrome у системной корзина disabled, у админской активна, confirm и удаление из UI работают. Тестовые схемы удалены (в БД только `style/armit`).

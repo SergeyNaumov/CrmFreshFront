@@ -37,7 +37,7 @@
         <v-spacer />
         <div class="pc_head__actions">
           <v-btn color="primary" prepend-icon="mdi-plus" @click="open_page_meta(null)">Создать страницу</v-btn>
-          <v-btn variant="outlined" prepend-icon="mdi-auto-fix" :loading="base_loading" @click="create_base_pages">Базовый набор</v-btn>
+          <v-btn variant="outlined" prepend-icon="mdi-auto-fix" :loading="base_loading" @click="open_base">Базовый набор</v-btn>
           <v-btn variant="outlined" prepend-icon="mdi-page-layout-header-footer" @click="open_structure()">Шапка и подвал</v-btn>
         </div>
       </header>
@@ -232,6 +232,53 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="base_open" max-width="640">
+      <v-card>
+        <v-card-title class="text-h5">Базовый набор страниц</v-card-title>
+        <v-card-text>
+          <v-select
+            v-model="base_set_id"
+            :items="base_sets"
+            item-title="name"
+            item-value="id"
+            label="Набор"
+            density="compact"
+            variant="outlined"
+            hide-details
+            class="mb-2"
+          >
+            <template #item="{ props, item }">
+              <v-list-item v-bind="props" :subtitle="item.raw.pages + ' стр.' + (item.raw.is_default ? ' · по умолчанию' : '')" />
+            </template>
+          </v-select>
+          <v-checkbox
+            v-model="base_overwrite"
+            density="compact"
+            hide-details
+            label="Перезаписать существующие страницы набора"
+          />
+
+          <v-divider class="my-3" />
+          <div class="pc_base_manage_title">Управление наборами</div>
+          <div class="pc_base_new">
+            <v-text-field v-model="base_new_name" label="Имя нового набора" density="compact" variant="outlined" hide-details />
+            <v-checkbox v-model="base_new_from_domain" density="compact" hide-details label="из текущего домена" />
+            <v-btn variant="outlined" :disabled="!base_new_name" :loading="base_manage_loading" @click="create_base_set">Создать</v-btn>
+          </div>
+          <div class="pc_base_actions">
+            <v-btn size="small" variant="text" :disabled="!base_set_id" @click="update_base_set_from_domain">Обновить из домена</v-btn>
+            <v-btn size="small" variant="text" :disabled="!base_set_id" @click="rename_base_set">Переименовать</v-btn>
+            <v-btn size="small" variant="text" color="error" :disabled="!base_set_id || is_default_set" @click="delete_base_set">Удалить</v-btn>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn @click="base_open = false">Отмена</v-btn>
+          <v-btn color="primary" :loading="base_loading" :disabled="!base_set_id" @click="create_base_pages">Применить</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="theme_open" fullscreen>
       <v-card class="pc_theme_dialog">
         <div class="pc_theme_head">
@@ -310,6 +357,13 @@ export default {
       saved: false,
       base_loading: false,
       base_result: '',
+      base_open: false,
+      base_sets: [],
+      base_set_id: null,
+      base_overwrite: false,
+      base_new_name: '',
+      base_new_from_domain: true,
+      base_manage_loading: false,
       theme_open: false,
       theme_axis: 'color',
       theme_saving: '',
@@ -365,11 +419,24 @@ export default {
         dir * String(a[key] || '').localeCompare(String(b[key] || ''), 'ru')
       )
     },
+    is_default_set() {
+      const s = this.base_sets.find(x => x.id === this.base_set_id)
+      return !!(s && s.is_default)
+    },
+    doc_title() {
+      const dom = (this.domain && this.domain.domain) || this.domain_id || ''
+      let title = 'Конструктор шаблона' + (dom ? ' ' + dom : '')
+      if (this.theme_open) title += ' · Тема'
+      else if (this.view === 'editor') title += ' · ' + (this.current.header || this.current.url || 'страница')
+      else if (this.view === 'structure') title += ' · Шапка и подвал'
+      return title
+    },
     theme_title() {
       return 'Тема домена · ' + (THEME_TITLES[this.theme_axis] || this.theme_axis)
     }
   },
   created() {
+    this._prev_title = document.title
     this.init()
   },
   mounted() {
@@ -385,6 +452,7 @@ export default {
     if (this._theme_beforeunload) {
       window.removeEventListener('beforeunload', this._theme_beforeunload)
     }
+    if (this._prev_title !== undefined) document.title = this._prev_title
   },
   // Уход из раздела конструктора с несохранённой темой — диалог подтверждения.
   // Внутренние переходы (список ↔ редактор ↔ структура ↔ тема) — это смена
@@ -399,7 +467,8 @@ export default {
   },
   watch: {
     // Назад/вперёд в браузере: повторно разбираем URL.
-    '$route.fullPath'() { this.on_route_change() }
+    '$route.fullPath'() { this.on_route_change() },
+    doc_title(v) { if (v) document.title = v }
   },
   methods: {
     build_custom_css(theme) {
@@ -430,9 +499,13 @@ export default {
         this.apply_pc_config()
         this.load_asset_rev()
         this.pages = d.pages || []
+        this.base_sets = d.base_sets || []
+        const def_set = this.base_sets.find(s => s.is_default) || this.base_sets[0]
+        this.base_set_id = d.base_set_id || (def_set ? def_set.id : null)
         this.load_scheme_lists()
         this.read_route()
         this.ensure_preview()
+        document.title = this.doc_title
       }).catch(e => { this.errors = ['ошибка запроса: ' + e] })
     },
     ensure_preview() {
@@ -678,22 +751,105 @@ export default {
     load_pages() {
       this.init()
     },
+    open_base() {
+      if (!this.base_set_id && this.base_sets.length) this.base_set_id = this.base_sets[0].id
+      this.base_new_name = ''
+      this.base_open = true
+    },
+    reload_base_sets() {
+      return this.$http.get(this.api + '/base-sets').then(r => {
+        const d = r.data || {}
+        this.set_errors(d)
+        if (!d.success) return
+        this.base_sets = d.sets || []
+        if (!this.base_sets.some(s => s.id === this.base_set_id)) {
+          this.base_set_id = d.default_set_id || (this.base_sets[0] ? this.base_sets[0].id : null)
+        }
+      })
+    },
     create_base_pages() {
       this.base_loading = true
       this.base_result = ''
-      this.$http.post(this.api + '/base-pages', { domain_id: this.domain_id }).then(r => {
+      this.$http.post(this.api + '/base-pages', {
+        domain_id: this.domain_id,
+        set_id: this.base_set_id,
+        overwrite: this.base_overwrite
+      }).then(r => {
         this.base_loading = false
         const d = r.data || {}
         this.set_errors(d)
         if (!d.success) return
-        const created = d.created || []
-        const skipped = d.skipped || []
-        this.base_result = 'создано: ' + created.length + ', пропущено: ' + skipped.length
+        this.base_result = 'набор «' + (d.set_name || '') + '»: создано ' + (d.created || []).length +
+          ', обновлено ' + (d.updated || []).length + ', пропущено ' + (d.skipped || []).length
+        this.base_open = false
         this.preview_docs = {}
         clearTimeout(this._base_timer)
-        this._base_timer = setTimeout(() => { this.base_result = '' }, 5000)
+        this._base_timer = setTimeout(() => { this.base_result = '' }, 6000)
         this.load_pages()
       }).catch(e => { this.base_loading = false; this.errors = ['ошибка запроса: ' + e] })
+    },
+    create_base_set() {
+      const name = (this.base_new_name || '').trim()
+      if (!name) return
+      this.base_manage_loading = true
+      this.$http.post(this.api + '/base-sets/create', {
+        name: name,
+        domain_id: this.base_new_from_domain ? this.domain_id : null
+      }).then(r => {
+        this.base_manage_loading = false
+        const d = r.data || {}
+        this.set_errors(d)
+        if (!d.success) return
+        this.base_new_name = ''
+        return this.reload_base_sets().then(() => {
+          if (d.set && d.set.id) this.base_set_id = d.set.id
+        })
+      }).catch(e => { this.base_manage_loading = false; this.errors = ['ошибка запроса: ' + e] })
+    },
+    update_base_set_from_domain() {
+      const cur = this.base_sets.find(s => s.id === this.base_set_id)
+      if (!cur) return
+      if (!confirm('Заменить страницы набора «' + cur.name + '» текущими страницами домена?')) return
+      this.base_manage_loading = true
+      this.$http.post(this.api + '/base-sets/update-from-domain', {
+        set_id: this.base_set_id,
+        domain_id: this.domain_id
+      }).then(r => {
+        this.base_manage_loading = false
+        const d = r.data || {}
+        this.set_errors(d)
+        if (!d.success) return
+        this.base_result = 'набор «' + (d.set_name || cur.name) + '» обновлён: ' + (d.pages || 0) + ' стр.'
+        this.reload_base_sets()
+      }).catch(e => { this.base_manage_loading = false; this.errors = ['ошибка запроса: ' + e] })
+    },
+    rename_base_set() {
+      const cur = this.base_sets.find(s => s.id === this.base_set_id)
+      if (!cur) return
+      const name = prompt('Новое имя набора', cur.name)
+      if (!name || name === cur.name) return
+      this.base_manage_loading = true
+      this.$http.post(this.api + '/base-sets/rename', { set_id: this.base_set_id, name: name }).then(r => {
+        this.base_manage_loading = false
+        const d = r.data || {}
+        this.set_errors(d)
+        if (!d.success) return
+        this.reload_base_sets()
+      }).catch(e => { this.base_manage_loading = false; this.errors = ['ошибка запроса: ' + e] })
+    },
+    delete_base_set() {
+      const cur = this.base_sets.find(s => s.id === this.base_set_id)
+      if (!cur) return
+      if (!confirm('Удалить набор «' + cur.name + '»?')) return
+      this.base_manage_loading = true
+      this.$http.post(this.api + '/base-sets/delete', { set_id: this.base_set_id }).then(r => {
+        this.base_manage_loading = false
+        const d = r.data || {}
+        this.set_errors(d)
+        if (!d.success) return
+        this.base_set_id = null
+        this.reload_base_sets()
+      }).catch(e => { this.base_manage_loading = false; this.errors = ['ошибка запроса: ' + e] })
     },
     sort_by(key) {
       if (this.sort_key === key) {
@@ -1082,6 +1238,12 @@ export default {
   .pc_act--del:hover {color: rgb(var(--v-theme-error)); background: rgba(var(--v-theme-error), .12);}
   .pc_empty {color: rgba(var(--v-theme-on-surface), .55); padding: 28px 4px; text-align: center;}
   .pc_base_result {color: rgb(var(--v-theme-success)); font-size: var(--app-font-desc); margin: -8px 0 14px;}
+  .pc_base_manage_title {font-weight: 600; font-size: var(--app-font-label); margin-bottom: 8px;}
+  .pc_base_new {display: flex; gap: 10px; align-items: center;}
+  .pc_base_new .v-input {margin: 0;}
+  .pc_base_new .v-checkbox {flex: 0 0 auto;}
+  .pc_base_actions {display: flex; gap: 6px; margin-top: 6px;}
+  .pc_base_actions .v-btn {margin: 0;}
 
   /* ---------- бары редакторов ---------- */
   .pc_bar {display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid rgba(var(--v-theme-on-surface), .12);}

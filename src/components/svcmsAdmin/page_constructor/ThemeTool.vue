@@ -14,16 +14,29 @@
     <div class="tt_body" :style="{ '--tt-left-w': left_w + 'px' }">
       <div class="tt_controls">
         <template v-if="mode == 'preset' && axis != 'font'">
-          <v-select
-            v-model="preset"
-            :items="scheme_items"
-            item-title="label"
-            item-value="header"
-            label="Схема"
-            density="compact"
-            variant="outlined"
-            hide-details
-          />
+          <div class="tt_row">
+            <v-select
+              v-model="preset"
+              :items="scheme_items"
+              item-title="label"
+              item-value="header"
+              label="Схема"
+              density="compact"
+              variant="outlined"
+              hide-details
+            />
+            <v-btn
+              icon
+              size="small"
+              variant="text"
+              color="error"
+              :disabled="!selected_scheme || !selected_scheme.is_custom"
+              :title="selected_scheme && selected_scheme.is_custom ? 'Удалить схему' : 'Системную схему удалить нельзя'"
+              @click="delete_scheme"
+            >
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </div>
           <p v-if="preset_short" class="tt_short">{{ preset_short }}</p>
           <v-btn variant="text" size="small" @click="make_custom">настроить вручную</v-btn>
         </template>
@@ -152,6 +165,9 @@ export default {
       const s = this.schemes.find(x => x.header === this.preset)
       return s ? (s.short || '') : ''
     },
+    selected_scheme() {
+      return this.schemes.find(x => x.header === this.preset) || null
+    },
     preset_items() {
       return Object.keys(LAYOUT_PRESETS).map(k => ({ value: k, title: k }))
     },
@@ -204,6 +220,21 @@ export default {
           this.preset = def ? def.header : ''
         }
       }).catch(() => { this.schemes = [] })
+    },
+    delete_scheme() {
+      const s = this.selected_scheme
+      if (!s || !s.is_custom) return
+      if (!confirm('Удалить схему «' + (s.label || s.header) + '»?')) return
+      this.$http.post(
+        this.api + '/theme-schemes/' + this.axis + '/' + encodeURIComponent(s.header) +
+        '/delete?domain_id=' + (s.domain_id || 0)
+      ).then(r => {
+        const d = r.data || {}
+        if (!d.success) { alert((d.errors && d.errors[0]) || 'не удалось удалить схему'); return }
+        this.scheme_cache = {}
+        this.preset = ''
+        this.load_schemes()
+      }).catch(() => alert('ошибка запроса удаления схемы'))
     },
     scheme_css(axis, name) {
       if (!name) return Promise.resolve('')
@@ -326,6 +357,8 @@ export default {
   .tt_color input[type="color"] {flex: 0 0 46px; width: 46px; height: 34px; padding: 2px; border: 1px solid rgba(var(--v-theme-on-surface), .24); border-radius: var(--app-radius-field); cursor: pointer; background: transparent;}
   .tt_hex {flex: 1 1 auto; min-width: 0; padding: 7px 9px; font-family: var(--app-font-mono, monospace); font-size: 13px; color: inherit; background: transparent; border: 1px solid rgba(var(--v-theme-on-surface), .24); border-radius: var(--app-radius-field);}
   .tt_short {font-size: var(--app-font-desc); color: rgba(var(--v-theme-on-surface), .6); margin: 0;}
+  .tt_row {display: flex; gap: 6px; align-items: center;}
+  .tt_row .v-select {flex: 1 1 auto; min-width: 0;}
   /* «Результат» забирает свободное место, освободившееся от select. */
   .tt_out {margin-top: 6px; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0;}
   .tt_out_head {font-size: var(--app-font-desc); color: rgba(var(--v-theme-on-surface), .6); margin-bottom: 4px;}

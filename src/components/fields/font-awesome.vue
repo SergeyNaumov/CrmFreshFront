@@ -12,7 +12,7 @@
             </div>
             <div ></div>
             <v-progress-linear
-              :active="loading"
+              v-if="loading"
               :indeterminate="loading"
               absolute
               bottom
@@ -27,7 +27,6 @@
                 label="Набор иконок"
                 item-value="v"
                 item-title="d"
-                @input="list=font_struct[cur_struct];"
               ></v-select>
               <v-text-field v-model="filter" 
 
@@ -56,7 +55,7 @@ export default {
   data:function(){
     return {
       filter:'',
-      fonts_struct:{},
+      font_struct:{},
       struct_list:[],
       cur_struct:'fa',
       list:[],
@@ -67,7 +66,10 @@ export default {
   },
   props:['field'],
   watch:{
-
+    cur_struct(v){
+      this.list=(this.font_struct && this.font_struct[v]) || []
+      this.filter=''
+    }
   },
   created(){
 
@@ -100,8 +102,8 @@ export default {
 
             this.struct_list=response.data.struct_list;
             this.font_struct=response.data.font_struct;
-            //console.log(struct_list);
-            this.cur_struct=this.struct_list[0].v;
+            const cur=(this.selected_icon||'').split(' ')[0];
+            this.cur_struct=(cur && this.font_struct[cur]) ? cur : this.struct_list[0].v;
             this.list=this.font_struct[this.cur_struct];
 
             this.loading=false;

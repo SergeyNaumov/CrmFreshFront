@@ -32,6 +32,10 @@ Applied as: colors `createVuetify({ themes: { s0..s3 } })` + `theme.global.name 
 
 `main.scss`: `.v-application a { color: primary; text-decoration: underline; text-underline-offset: 2px }` — every text link is underlined so it reads as clickable. Not underlined: `a.v-btn` / `a.v-card` / `a.v-list-item` / `a.v-chip` / `a.v-breadcrumb-item` (controls), the header brand (`App.vue` `header .v-toolbar-title a`), icon-only links (`.tool a` in `1_to_m/slide.vue`, gallery/chat lists), sort arrows and `.controls a` (`FindResults.vue`), and the `.not_underline` utility. Component rules win over the global one by specificity/last-declaration — a new "no underline" rule must be scoped.
 
+## Lists
+
+Vuetify 3 ships `ress.css` (`vuetify/lib/styles/main.css:2382`): `* { padding: 0; margin: 0 }` — unlike Vuetify 2. Lists in `v-html` content (wysiwyg `read_only`, static pages, letters) lose the marker gutter: the bullet paints over the first characters. `main.scss` restores `ul, ol { padding-left: 1.5em }`. Any new component that renders a bare `ul`/`ol` and wants it flush must set its own `padding-left: 0` — the Vuetify components that do (`.v-pagination__list`, guarded in `main.scss`; `.v-breadcrumbs`, `.v-list`) use class selectors, which beat the bare element rule.
+
 ## EditForm
 
 - `.field { margin-bottom: var(--app-space-field) }`; `.field .v-input { margin-bottom: 0 }`; description `margin: 0 0 4px`; clear link `margin-top: 4`; blocks toolbar 40 / body 16, `var(--app-space-section)` between blocks.

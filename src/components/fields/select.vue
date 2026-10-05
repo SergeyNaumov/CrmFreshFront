@@ -117,7 +117,7 @@
 
 <script>
 import { bus } from '../../main'
-import { field_update,check_fld } from './field_functions'
+import { field_update,check_fld,to_regex } from './field_functions'
 export default {
   
   data:function(){
@@ -276,23 +276,22 @@ export default {
       }
     },
     regexp_check(){
-      console.log('regexp check')
       let f=this.field;
-      if(f.regexp_rules){
-        let i=0, error_message='';
-        while(i<f.regexp_rules.length){
-          let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
-          console.log('rule: ',rule)
-          let test=eval(rule+'.test(this.value)');
-          
-          if(!test)
-            error_message=msg;
-          
-          i=i+2;
+      if(!f.regexp_rules) return;
+      let i=0, error_message='';
+      while(i<f.regexp_rules.length){
+        let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
+        let test=true;
+        try{
+          test=to_regex(rule, true).test(this.value===null||this.value===undefined?'':String(this.value));
+        }catch(e){
+          console.error('regexp_check error', rule, e);
         }
-        this.error_message=error_message;
-        
+        if(!test)
+          error_message=msg;
+        i=i+2;
       }
+      this.error_message=error_message;
     }
   }
 }

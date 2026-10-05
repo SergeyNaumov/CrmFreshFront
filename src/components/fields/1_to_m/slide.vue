@@ -24,7 +24,7 @@
                     :draggable="field.sort?'.v-card':false"
                 >
                 <template #item="{ element: v, index: vi }">
-                    <v-card class="one_to_m one_to_m_list"> <!--:style="{'background-color': $color.secondary}"-->
+                    <v-card class="one_to_m one_to_m_list" :style="list_item_style"> <!--:style="{'background-color': $color.secondary}"-->
                         <template v-for="(h,hidx) in field.headers" :key="hidx">
                             <div v-if="v[h.name] && fields_hash[h.name] ">
                                 <template v-if="h.change_in_slide">
@@ -194,6 +194,15 @@ export default {
         },
         make_delete(){  
             return !this.form.read_only && this.field.make_delete && (!this.field.read_only || this.field.make_delete)
+        },
+        // Ширина карточки в списке: cols=1 — на всю ширину, cols>1 — по колонкам.
+        list_item_style(){
+            const cols = parseInt(this.field.cols)
+            if(!(cols > 0))
+                return {}
+            if(cols === 1)
+                return { display: 'block', width: '100%', marginRight: '0' }
+            return { width: 'calc(' + (100 / cols).toFixed(4) + '% - 16px)' }
         },
         //list(){
         //    return this.values

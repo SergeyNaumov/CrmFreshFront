@@ -48,6 +48,7 @@ const TransfereCards = () => import('../components/TransfereCards/TransfereCards
 const TableComponent = () => import('../components/Table.vue')
 const FileNavigator = () => import('../components/FileNavigator/FileNavigator.vue')
 const PageConstructor = () => import('../components/svcmsAdmin/PageConstructor.vue')
+const CreateProject = () => import('../components/svcmsAdmin/CreateProject.vue')
 const Login = () => import('../components/Login.vue')
 const Register = () => import('../components/Register.vue')
 const Remember = () => import('../components/Remember.vue')
@@ -71,6 +72,7 @@ const routes = [
   { path: '/vue/page-constructor/:domain_id/:view(page)/:page_id', name: 'shell-page-constructor-page', component: PageConstructor, props: shellPageConstructorProps },
   { path: '/vue/page-constructor/:domain_id/:view(page)/:page_id/block/:block_id', name: 'shell-page-constructor-block', component: PageConstructor, props: shellPageConstructorProps },
   { path: '/vue/page-constructor/:domain_id/theme/:axis(color|style|layout|font)', name: 'shell-page-constructor-theme', component: PageConstructor, props: shellPageConstructorProps },
+  { path: '/vue/svcmsadmin-createproject', name: 'shell-create-project', component: CreateProject, props: shellProps },
 
   // ---------- Full-screen (без меню), URL /... ----------
   { path: '/edit_form/:config/:id?', name: 'edit-form', component: EditForm, props: blankProps, alias: ['/edit-form/:config/:id?'], meta: { blank: true } },
@@ -84,6 +86,7 @@ const routes = [
   { path: '/page-constructor/:domain_id/:view(page)/:page_id', name: 'page-constructor-page', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
   { path: '/page-constructor/:domain_id/:view(page)/:page_id/block/:block_id', name: 'page-constructor-block', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
   { path: '/page-constructor/:domain_id/theme/:axis(color|style|layout|font)', name: 'page-constructor-theme', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
+  { path: '/svcmsadmin-createproject', name: 'headapp-create-project', component: CreateProject, props: blankProps, meta: { blank: true } },
   { path: '/const/:config', name: 'headapp-const', component: Const, props: blankProps, meta: { blank: true } },
   { path: '/stat-tool/:config', name: 'headapp-stat-tool', component: StatTool, props: blankProps, meta: { blank: true } },
   { path: '/memo-aggregate/:config', name: 'memo-aggregate', component: Fallback, props: blankProps, meta: { blank: true } },

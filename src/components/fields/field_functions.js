@@ -40,12 +40,21 @@ export function field_update(new_data, self){
     }
 }
 
-function to_regex(rule){
+export function to_regex(rule, dotall){
     if(rule instanceof RegExp) return rule;
     let s=String(rule);
     let m=s.match(/^\/(.*)\/([a-z]*)$/);
-    if(m) return new RegExp(m[1], m[2]);
-    return new RegExp(s);
+    let pattern = m ? m[1] : s;
+    let flags = m ? m[2] : '';
+    // Поля «обязательно для заполнения» обычно задают правило '^.+$'.
+    // В JS точка не матчит перевод строки, поэтому многострочные значения
+    // (codelist, textarea) ошибочно считались пустыми. Для заякоренных
+    // правил с точкой включаем dotAll (только при проверке regexp_rules).
+    if(dotall && !flags.includes('s') && !flags.includes('m')
+        && pattern.startsWith('^') && pattern.endsWith('$') && pattern.includes('.')){
+      flags += 's';
+    }
+    return new RegExp(pattern, flags);
 }
 
 export function check_fld(self){
@@ -81,7 +90,7 @@ export function check_fld(self){
               let rule=f.regexp_rules[i]; let msg=f.regexp_rules[i+1];
               let test=true;
               try{
-                test=to_regex(rule).test(self.value===null||self.value===undefined?'':String(self.value));
+                test=to_regex(rule, true).test(self.value===null||self.value===undefined?'':String(self.value));
               }catch(e){
                 console.error('check_fld regexp error', rule, e);
                 test=true;

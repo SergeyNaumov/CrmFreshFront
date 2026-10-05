@@ -109,7 +109,10 @@ computed:{
     return '';
   },
   containerClass(){
-    return (this.form.wide_form || (this.cols && this.cols.length > 1)) ? 'container_wide' : 'container'
+    if(this.form.wide_form){
+      return 'container_wide container_full'
+    }
+    return (this.cols && this.cols.length > 1) ? 'container_wide' : 'container'
   },
 
 },
@@ -187,6 +190,8 @@ methods: {
     .container {max-width: 960px; width: 100%;}
     .container.onecol {max-width: 960px;}
     .container_wide {max-width: 1440px; width: 100%; margin: 0 auto; padding: 0 24px;}
+    /* form.wide_form с бэкенда — форма на всю ширину окна */
+    .container_wide.container_full {max-width: none;}
     header {margin-top: 1rem;}  
     .v-list-item {min-height: 25px !important;}
     .form_header {margin-bottom: 20px;}

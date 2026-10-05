@@ -32,8 +32,9 @@ Shell (`/vue/...`):
 | `/vue/table/:config` | Table |
 | `/vue/filenavigator/:config/:base(.*)*` | FileNavigator |
 | `/vue/page-constructor/:template_id` | PageConstructor |
+| `/vue/svcmsadmin-createproject` | CreateProject (быстрое создание проекта) |
 
-Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/admin_table/:config`, `/admin_tree/:config`, `/table/:config`, `/const/:config`, `/transfere_cards/:config`, `/stat-tool/:config`, `/memo-aggregate/:config`, `/parser-excel/:config`, `/documentation/:config`, `/Schedule/:config`, `/VideoList/:config`, `/filenavigator/:config/:base(.*)*` (alias `/file-navigator`), `/page-constructor/:template_id`, `/login`, `/register`, `/remember`.
+Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/admin_table/:config`, `/admin_tree/:config`, `/table/:config`, `/const/:config`, `/transfere_cards/:config`, `/stat-tool/:config`, `/memo-aggregate/:config`, `/parser-excel/:config`, `/documentation/:config`, `/Schedule/:config`, `/VideoList/:config`, `/filenavigator/:config/:base(.*)*` (alias `/file-navigator`), `/page-constructor/:template_id`, `/svcmsadmin-createproject`, `/login`, `/register`, `/remember`.
 
 `filenavigator` base dir: `:base` segments (e.g. `/filenavigator/<config>/files/sub`) or `?dir=<path>` become the navigator root (chroot); `?charset=` sets the file encoding (default utf-8).
 
@@ -46,6 +47,7 @@ Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/ad
 
 - `LeftMenu.get_link(item)` builds the path (`/vue/...`, `/`, `/src:<url>`); `go_link` → `router.push/replace` (type `newtab` → `window.open`).
 - Active item: `left_menu_item.vue` compares `get_link(item)` with `$route.path`; a parent is highlighted/expanded by `hasActiveChild`.
+- A branch is expanded on the first render when the backend sends a true `open` (`is_open`: `true|1|'1'|'true'`, MySQL tinyint) — editor checkbox «Сразу показывать подпункты», `admin_menu_new.open`. Legacy key `show` (hand-written SV-CMS project menus) is honored too.
 - On `config` change in `AdminTable` the filter state resets (watch `params`, remount `OnFilters` via `:key`).
 
 ## Other
