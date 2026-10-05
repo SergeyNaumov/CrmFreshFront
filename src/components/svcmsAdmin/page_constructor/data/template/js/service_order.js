@@ -14,6 +14,10 @@
   function fill(modal, name) {
     var nameEl = modal.querySelector('[data-service-name]');
     if (nameEl) nameEl.textContent = name || '—';
+    // Поле service — модель Vue-формы (form_builder). Пишем в неё, иначе
+    // v-model перезапишет значение при следующем рендере.
+    var app = window.BuildedForms && window.BuildedForms['form_service_order_wrap'];
+    if (app) { app.service = name || ''; return; }
     var hidden = modal.querySelector('input[name="service"]');
     if (hidden) hidden.value = name || '';
   }

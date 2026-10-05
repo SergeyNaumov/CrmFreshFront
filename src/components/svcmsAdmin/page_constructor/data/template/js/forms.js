@@ -30,6 +30,8 @@
   var theme_list = ['Общие вопросы', 'Выбор техники', 'Настройка оборудования', 'Сервис и ремонт'];
   var time_list = ['8:00-13:00', '13:00-18:00'];
   var type_list = ['Жалоба', 'Предложение', 'Благодарность'];
+  /* F-06 · Заказать в 1 клик: способы доставки. Адрес нужен только курьеру. */
+  var delivery_list = ['Курьером', 'Самовывоз из магазина'];
 
 
 
@@ -155,7 +157,9 @@
 
 
 
-  /* F-06 · Купить в 1 клик (/ajax/buy-one-click) */
+  /* F-06 · Заказать в 1 клик (/ajax/buy-one-click).
+     Товар (good_id/good_name) подставляет карточка товара, из которой
+     нажали кнопку (js/good_in.js пишет их в атрибуты модалки). */
   var buy_one_click = Form({
     el: '#form_buy_one_click_wrap',
     action_url: '/ajax/buy-one-click',
@@ -166,6 +170,11 @@
     { name:'good_name', value:'Смартфон X1 Pro' },
     { name:'name', chk:'name', value:'' },
     { name:'phone', repl:'phone', chk:'phone', value:'' },
+    { name:'delivery', value:delivery_list[0], chk:'required' },
+    { name:'delivery_list', value:delivery_list, not_submit:true },
+    /* need_address — адрес обязателен только при доставке курьером
+       (правило читает поле delivery; см. form_builder.js). */
+    { name:'address', chk:'need_address', value:'' },
       { name:'capcha', chk:'required', value:'', not_submit:false },
       { name:'accept', chk:'required', value:false, not_submit:true },
     ],
@@ -883,6 +892,31 @@
     success: function (d) {
       var yid = (window.CNST && window.CNST.ym_id) || 0;
       if (typeof ym !== 'undefined' && yid) ym(yid, 'reachGoal', 'sendorder');
+      if (window.jmodalOpen) jmodalOpen('modal_thanks');
+    }
+  });
+
+
+
+  /* F-32 · Заказать услугу (попап на странице услуги, /ajax/modal-send-request).
+     Разметка — block/service_order.html (#form_service_order_wrap). Маска
+     телефона, капча, отправка и «спасибо» — через form_builder. */
+  var service_order = Form({
+    el: '#form_service_order_wrap',
+    action_url: '/ajax/modal-send-request',
+    formdata: false,
+    fields: [
+      { name:'service', value:'' },
+      { name:'name', chk:'name', value:'' },
+      { name:'phone', repl:'phone', chk:'phone', value:'' },
+      { name:'comment', value:'' },
+      { name:'capcha', chk:'required', value:'', not_submit:false },
+      { name:'accept', chk:'required', value:false, not_submit:true },
+    ],
+    success: function (d) {
+      var yid = (window.CNST && window.CNST.ym_id) || 0;
+      if (typeof ym !== 'undefined' && yid) ym(yid, 'reachGoal', 'sendorder');
+      if (window.jmodalClose) jmodalClose('serviceOrderModal');
       if (window.jmodalOpen) jmodalOpen('modal_thanks');
     }
   });

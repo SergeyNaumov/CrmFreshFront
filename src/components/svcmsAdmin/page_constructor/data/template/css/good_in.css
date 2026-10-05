@@ -245,6 +245,8 @@
 /* Кнопки покупки */
 .gi-buy__btn { min-width: 210px; }
 .gi-buy__btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+/* «Заказать в 1 клик» (F-06) — появляется по галочке one_click */
+.gi-buy__oneclick { font-weight: 600; }
 .gi-buy__remove {
   min-width: 0;
   padding: 12px 18px;
@@ -388,8 +390,19 @@
 }
 .gi-status--error { color: var(--danger); }
 
-/* ---------- SEO-блок ---------- */
-.good-in__seo { display: contents; }
+/* ---------- SEO-блок ----------
+   До инициализации Vue он лежит в DOM как SSR-фолбэк для микроразметки.
+   Визуально скрыт (иначе до JS дублирует название/цену с H1 и карточкой);
+   после монтирования Vue убирает его из разметки. */
+.good-in__seo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 /* ============================================================
    ВАРИАНТ 2. gv-split — зеркало: инфо слева, галерея справа,

@@ -35,19 +35,32 @@
 
 /* ---------- раскладка ---------- */
 .pc-shell {
-  display: grid; grid-template-columns: minmax(0, 1fr) 380px;
+  display: grid; grid-template-columns: minmax(0, 1fr) 10px var(--pc-aside-w, 380px);
   align-items: start; min-height: calc(100vh - 56px);
-  transition: grid-template-columns .18s ease;
 }
 .pc-canvas, .pc-aside { min-width: 0; }
-/* при редактировании: форма уже, превью шире */
+/* Ручка ширины колонок: sticky под аппбаром (как .pc-aside), заметная зона
+   захвата и «грип». Иначе при скролле точка захвата уходит и кажется, что
+   колонка «залипла». НЕ убирать position:sticky/touch-action. */
+.pc-resizer {
+  position: sticky; top: 56px; align-self: start; height: calc(100vh - 56px);
+  cursor: col-resize; border-radius: 6px; z-index: 5;
+  touch-action: none; user-select: none;
+  background: linear-gradient(90deg, transparent 4px, rgba(120, 130, 160, .5) 4px, rgba(120, 130, 160, .5) 6px, transparent 6px);
+}
+.pc-resizer::after {
+  content: ''; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%); width: 3px; height: 40px; border-radius: 3px;
+  background: rgba(120, 130, 160, .55);
+}
+.pc-resizer:hover::after { background: rgba(74, 63, 208, .95); }
+/* при редактировании: подпись поля уже; ширину панели задаёт drag */
 @media (min-width: 901px) {
-  .pc-shell.is-editing-preview { grid-template-columns: minmax(0, 40%) minmax(0, 60%); }
   .pc-shell.is-editing-preview .pcb-row > label { flex-basis: 118px; }
 }
 
 /* ---------- холст ---------- */
-.pc-canvas { padding: 16px; min-height: calc(100vh - 56px); }
+.pc-canvas { padding: 16px; min-height: calc(100vh - 56px); container-type: inline-size; }
 .pc-canvas__bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .pc-add-btn {
   border: none; background: #4a3fd0; color: #fff; font-weight: 600;
@@ -70,18 +83,19 @@
 }
 .pcb-head {
   display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  flex-wrap: wrap; row-gap: 6px;
   background: #f7f9fc; border-bottom: 1px solid #e6eaf2;
   transition: background .12s, color .12s;
 }
 .pcb-card.is-collapsed .pcb-head { border-bottom: none; }
-.pcb-head__title { font-weight: 600; font-size: 13px; transition: color .12s; }
+.pcb-head__title { font-weight: 600; font-size: 13px; transition: color .12s; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 /* hover: заголовок блока подсвечивается */
 .pcb-card:hover { border-color: #c7cde0; box-shadow: 0 3px 12px rgba(74, 63, 208, .10); }
 .pcb-card:hover .pcb-head { background: #eef1f7; }
 .pcb-card:hover .pcb-head__title { color: #4a3fd0; }
 .pcb-card.is-structural:hover .pcb-head { background: #ece8ff; }
 .pcb-head__index { color: #98a0b8; font-size: 12px; }
-.pcb-head__summary { color: #98a0b8; font-size: 12px; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pcb-head__summary { color: #98a0b8; font-size: 12px; max-width: 260px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pcb-head__spacer { flex: 1; }
 .pcb-ico {
   border: 1px solid #dfe4ee; background: #fff; color: #566077;
@@ -145,9 +159,9 @@
 /* ---------- форма ---------- */
 .pcb-form { border-top: 1px solid #e6eaf2; padding: 12px; background: #fdfdff; }
 .pcb-form__section { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #98a0b8; margin: 4px 0 8px; }
-.pcb-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.pcb-row { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 8px; row-gap: 4px; margin-bottom: 8px; }
 .pcb-row > label { flex: 0 0 150px; font-size: 12px; color: #586079; padding-top: 6px; }
-.pcb-row__control { flex: 1; min-width: 0; display: flex; gap: 6px; align-items: center; }
+.pcb-row__control { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px; row-gap: 6px; align-items: center; }
 .pcb-row__control > .pcb-field { flex: 1; min-width: 0; }
 .pcb-row__control > label.pcb-switch { flex: 0 0 auto; }
 .pcb-pick { flex: 0 0 auto; font-size: 15px; }
@@ -222,10 +236,14 @@ textarea.pcb-field { min-height: 56px; resize: vertical; }
 .pc-aside__head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #232a44; }
 .pc-aside__head b { font-size: 13px; color: #fff; }
 .pc-aside__stats { font-size: 12px; color: #8a93a6; }
-.pc-aside__body { flex: 1; overflow: auto; }
+.pc-aside__body { flex: 1; overflow: auto; min-width: 0; }
 .pc-aside__body.is-preview { background: #eef1f6; }
+/* JSON занимает ровно ту же область, что и превью (вся ширина панели). */
+.pc-aside__body.is-json { background: #0f1320; }
 .pc-json {
-  margin: 0; padding: 12px; font-family: "SF Mono", Menlo, Consolas, monospace;
+  display: block; width: 100%; min-height: 100%; margin: 0; padding: 12px;
+  box-sizing: border-box;
+  font-family: "SF Mono", Menlo, Consolas, monospace;
   font-size: 12px; line-height: 1.55; color: #b9c3da; white-space: pre;
 }
 .pc-frame {
@@ -233,6 +251,11 @@ textarea.pcb-field { min-height: 56px; resize: vertical; }
   background: #fff; border-radius: 8px;
 }
 .pc-frame--modal { min-height: 62vh; }
+/* Заглушка правой панели, когда блок не выбран (JSON скрыт). */
+.pc-aside__idle {
+  padding: 24px 16px; text-align: center; font-size: 13px; line-height: 1.6;
+  color: #8a93a6;
+}
 
 /* бейджи шапки карточки (тип/вариант/fill/anim) */
 .pc-badge {
@@ -298,9 +321,22 @@ textarea.pcb-field { min-height: 56px; resize: vertical; }
 }
 
 /* ---------- адаптив ---------- */
-@media (max-width: 1100px) { .pc-shell { grid-template-columns: minmax(0, 1fr) 320px; } }
+@media (max-width: 1100px) {
+  /* Ручку оставляем (скрываем только <=900) — иначе на ноутбуках колонки
+     «не тянутся». */
+  .pc-shell { grid-template-columns: minmax(0, 1fr) 10px minmax(0, var(--pc-aside-w, 320px)); }
+}
 @media (max-width: 900px) {
   .pc-shell { grid-template-columns: minmax(0, 1fr); }
+  .pc-resizer { display: none; }
   .pc-aside { position: static; max-height: none; order: -1; }
   .pc-modal__dialog { width: 100%; }
+}
+
+/* Узкий холст: элементы блоков переносим построчно, подписи — над полями.
+   Без этого при сужении левой колонки поля накладываются. */
+@container (max-width: 480px) {
+  .pcb-row > label,
+  .pcb-item .pcb-row > label { flex-basis: 100%; padding-top: 0; }
+  .pcb-head__summary { display: none; }
 }

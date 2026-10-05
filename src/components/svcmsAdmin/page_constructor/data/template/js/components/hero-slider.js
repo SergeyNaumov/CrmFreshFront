@@ -34,7 +34,18 @@ window.HeroSlider = {
     autoplay: { type: Number, default: 0 },
     fadeOut: { type: Number, default: 350 },
     fadeIn: { type: Number, default: 650 },
-    slideSpeed: { type: Number, default: 700 }
+    slideSpeed: { type: Number, default: 700 },
+    // Параметры блока (конструктор): стрелки, точки, зацикливание,
+    // стартовый слайд и высота. По умолчанию — как было (всё включено).
+    arrows: { type: Boolean, default: true },
+    dots: { type: Boolean, default: true },
+    loop: { type: Boolean, default: true },
+    start: { type: Number, default: 0 },
+    height: { type: Number, default: 0 },
+    // Анимация появления контента: rise|fade|zoom|left|right|flip|clip|blur
+    animation: { type: String, default: 'rise' },
+    // Переход между слайдами: slide|fade|zoom|fly|flip|clip
+    transition: { type: String, default: 'slide' }
   },
 
   data: function () {
@@ -62,11 +73,13 @@ window.HeroSlider = {
     },
     // CSS-переменные для длительностей анимаций (пишутся на корне секции)
     heroStyle: function () {
-      return {
+      var s = {
         '--hero-fade-in': (this.fadeIn / 1000) + 's',
         '--hero-fade-out': (this.fadeOut / 1000) + 's',
         '--hero-slide-speed': (this.slideSpeed / 1000) + 's'
       };
+      if (this.height > 0) s['--hero-height'] = this.height + 'px';
+      return s;
     }
   },
 
@@ -145,9 +158,11 @@ window.HeroSlider = {
       vm.slides = list || [];
       vm.loading = false;
       if (!vm.slides.length) vm.error = true;
-      // Начальная позиция: первый слайд, его контент проявляется сразу
-      vm.index = 0;
-      vm.activeIndex = 0;
+      // Начальная позиция: стартовый слайд (start), его контент проявляется сразу
+      var n = vm.slides.length;
+      var st = Math.min(Math.max(0, vm.start | 0), Math.max(0, n - 1));
+      vm.index = st;
+      vm.activeIndex = st;
       vm.restart();
     },
 
@@ -162,7 +177,12 @@ window.HeroSlider = {
       var count = vm.slides.length;
       if (!count || vm.loading || vm.error || vm.busy) return;
 
-      i = (i + count) % count;
+      if (vm.loop) {
+        i = (i + count) % count;
+      } else {
+        if (i < 0) i = 0;
+        if (i > count - 1) i = count - 1;
+      }
       if (i === vm.index) { vm.restart(); return; }
 
       vm.busy = true;
@@ -196,7 +216,9 @@ window.HeroSlider = {
   },
 
   template: `
-<section class="hero" aria-label="Главный слайдер" :style="heroStyle">
+<section class="hero" aria-label="Главный слайдер" :style="heroStyle"
+         :class="['hero--anim-' + (animation || 'rise'), 'hero--tr-' + (transition || 'slide'),
+                  { 'hero--no-arrows': !arrows, 'hero--no-dots': !dots }]">
   <p v-if="loading" class="hero__status">Загружаем слайды…</p>
   <p v-else-if="error" class="hero__status hero__status--error">Не удалось загрузить слайды.</p>
 
@@ -219,10 +241,10 @@ window.HeroSlider = {
       </div>
     </div>
 
-    <button class="hero__arrow hero__arrow--prev" type="button" aria-label="Предыдущий слайд" @click="prev">‹</button>
-    <button class="hero__arrow hero__arrow--next" type="button" aria-label="Следующий слайд" @click="next">›</button>
+    <button v-if="arrows" class="hero__arrow hero__arrow--prev" type="button" aria-label="Предыдущий слайд" @click="prev">‹</button>
+    <button v-if="arrows" class="hero__arrow hero__arrow--next" type="button" aria-label="Следующий слайд" @click="next">›</button>
 
-    <div class="hero__dots" role="group" aria-label="Навигация по слайдам">
+    <div v-if="dots && slides.length > 1" class="hero__dots" role="group" aria-label="Навигация по слайдам">
       <button v-for="(s, i) in slides"
               :key="'dot-' + s.id"
               type="button"

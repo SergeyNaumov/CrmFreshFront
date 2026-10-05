@@ -12,12 +12,26 @@ const blankProps = (route) => ({
   is_headapp: '1',
 })
 
+// Разбор конструктора: view/page_id — для переходов внутри конструктора
+// (/page/<id>, /structure, /theme/<axis>), см. PageConstructor.apply_route().
 const pageConstructorProps = (route) => ({
-  params: { domain_id: route.params.domain_id },
+  params: {
+    domain_id: route.params.domain_id,
+    view: route.params.view || '',
+    page_id: route.params.page_id || '',
+    block_id: route.params.block_id || '',
+    axis: route.params.axis || ''
+  },
   is_headapp: '1',
 })
 const shellPageConstructorProps = (route) => ({
-  params: { domain_id: route.params.domain_id },
+  params: {
+    domain_id: route.params.domain_id,
+    view: route.params.view || '',
+    page_id: route.params.page_id || '',
+    block_id: route.params.block_id || '',
+    axis: route.params.axis || ''
+  },
 })
 
 const MainPage = () => import('../MainPage.vue')
@@ -53,6 +67,10 @@ const routes = [
   { path: '/vue/table/:config', name: 'shell-table', component: TableComponent, props: shellProps },
   { path: '/vue/filenavigator/:config/:base(.*)*', name: 'shell-filenavigator', component: FileNavigator, props: shellProps },
   { path: '/vue/page-constructor/:domain_id', name: 'shell-page-constructor', component: PageConstructor, props: shellPageConstructorProps },
+  { path: '/vue/page-constructor/:domain_id/:view(page|structure)', name: 'shell-page-constructor-view', component: PageConstructor, props: shellPageConstructorProps },
+  { path: '/vue/page-constructor/:domain_id/:view(page)/:page_id', name: 'shell-page-constructor-page', component: PageConstructor, props: shellPageConstructorProps },
+  { path: '/vue/page-constructor/:domain_id/:view(page)/:page_id/block/:block_id', name: 'shell-page-constructor-block', component: PageConstructor, props: shellPageConstructorProps },
+  { path: '/vue/page-constructor/:domain_id/theme/:axis(color|style|layout|font)', name: 'shell-page-constructor-theme', component: PageConstructor, props: shellPageConstructorProps },
 
   // ---------- Full-screen (без меню), URL /... ----------
   { path: '/edit_form/:config/:id?', name: 'edit-form', component: EditForm, props: blankProps, alias: ['/edit-form/:config/:id?'], meta: { blank: true } },
@@ -62,6 +80,10 @@ const routes = [
   { path: '/table/:config', name: 'headapp-table', component: TableComponent, props: blankProps, meta: { blank: true } },
   { path: '/filenavigator/:config/:base(.*)*', name: 'file-navigator', component: FileNavigator, props: blankProps, alias: ['/file-navigator/:config/:base(.*)*'], meta: { blank: true } },
   { path: '/page-constructor/:domain_id', name: 'page-constructor', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
+  { path: '/page-constructor/:domain_id/:view(page|structure)', name: 'page-constructor-view', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
+  { path: '/page-constructor/:domain_id/:view(page)/:page_id', name: 'page-constructor-page', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
+  { path: '/page-constructor/:domain_id/:view(page)/:page_id/block/:block_id', name: 'page-constructor-block', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
+  { path: '/page-constructor/:domain_id/theme/:axis(color|style|layout|font)', name: 'page-constructor-theme', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
   { path: '/const/:config', name: 'headapp-const', component: Const, props: blankProps, meta: { blank: true } },
   { path: '/stat-tool/:config', name: 'headapp-stat-tool', component: StatTool, props: blankProps, meta: { blank: true } },
   { path: '/memo-aggregate/:config', name: 'memo-aggregate', component: Fallback, props: blankProps, meta: { blank: true } },

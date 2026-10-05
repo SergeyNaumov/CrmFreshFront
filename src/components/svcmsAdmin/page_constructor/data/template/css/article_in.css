@@ -79,20 +79,20 @@
   color: var(--primary);
 }
 
-/* Обложка статьи: float слева, текст обтекает её и после высоты фото
-   продолжается на всю ширину (устойчиво к сколь угодно длинному тексту).
-   aspect-ratio совпадает с нативным кадром иллюстрации (4:3). */
+/* Обложка статьи: обычный блок над текстом (БЕЗ float). Обтекание текстом
+   запрещено: длинный абзац рвался на строки вокруг картинки и хвост уезжал
+   под неё. Обложка во всю ширину колонки, текст — ниже. */
 .article-in__media {
   position: relative;
-  float: left;
-  width: 54%;
-  margin: 4px 34px 22px 0;
+  float: none;
+  width: 100%;
+  margin: 0 0 24px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--light);
   box-shadow: var(--shadow-sm);
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
 }
 
 .article-in__media img {
@@ -336,9 +336,11 @@
 /* ---------- Адаптив ---------- */
 /* На планшете/узком экране фото встаёт над текстом на всю ширину */
 @media (max-width: 991px) {
-  .article-in__media {
+  .article-in__media,
+  .article-in--split .article-in__media {
     float: none;
     width: 100%;
+    max-width: none;
     margin: 0 0 22px;
   }
 
@@ -370,5 +372,39 @@
 
   .article-in__all {
     text-align: center;
+  }
+}
+/* ============================================================
+   Варианты страницы «Статья» (block variant):
+   classic (по умолчанию) | magazine | split.
+   ============================================================ */
+/* magazine: широкая обложка сверху, узкая центрированная колонка текста. */
+.article-in--magazine .article-in__media { width: 100%; aspect-ratio: 21 / 9; }
+.article-in--magazine .article-in__title { max-width: 920px; margin: 0 auto 10px; text-align: center; }
+.article-in--magazine .breadcrumbs-wrap { justify-content: center; }
+.article-in--magazine .article-in__meta { justify-content: center; }
+.article-in--magazine .article-in__body { max-width: 760px; margin: 0 auto; }
+.article-in--magazine .article-in__anons { font-size: 1.15rem; }
+
+/* split: обложка слева (4:3), текст обтекает её и после высоты фото
+   продолжается во всю ширину. Обтекание (float), а не вторая колонка —
+   иначе длинный текст не заходит под картинку. */
+.article-in--split .article-in__media {
+  float: left;
+  width: 48%;
+  max-width: 560px;
+  aspect-ratio: 4 / 3;
+  margin: 0 36px 24px 0;
+}
+
+/* Адаптив для варианта split: на планшете/телефоне обложка встаёт сверху
+   на всю ширину (правило должно идти ПОСЛЕ .article-in--split — иначе
+   равная специфичность и поздний порядок оставят float). */
+@media (max-width: 991px) {
+  .article-in--split .article-in__media {
+    float: none;
+    width: 100%;
+    max-width: none;
+    margin: 0 0 22px;
   }
 }

@@ -31,8 +31,8 @@
 
 .nf__text { margin: 0 0 22px; max-width: 520px; color: var(--muted); line-height: 1.65; }
 
-.nf__search { display: flex; gap: 10px; margin-bottom: 18px; max-width: 520px; }
-.nf__search .form-control { flex: 1 1 auto; }
+/* Поиск на 404: .hsearch (css/header-search.css) внутри .nf__search */
+.nf__search { margin-bottom: 18px; max-width: 520px; }
 
 .nf__actions { display: flex; flex-wrap: wrap; gap: 12px; }
 

@@ -114,14 +114,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* Адрес обязателен только для доставки (не для самовывоза) */
+  /* Адрес нужен только для доставки: при самовывозе поле СКРЫВАЕМ
+     (и обнуляем), при доставке — показываем и делаем обязательным.
+     НЕ УБИРАТЬ: это уже регрессировало — при самовывозе требовался адрес. */
   var deliveryEl = form.querySelector('[name="delivery"]');
   var addressEl = form.querySelector('[name="address"]');
   function syncDelivery() {
     if (!deliveryEl || !addressEl) return;
     var need = deliveryEl.value !== 'pickup';
+    var wrap = addressEl.closest('div');
     addressEl.required = need;
-    var label = addressEl.closest('div') ? addressEl.closest('div').querySelector('label') : null;
+    if (wrap) wrap.hidden = !need;
+    if (!need) addressEl.value = '';
+    var label = wrap ? wrap.querySelector('label') : null;
     if (label) label.textContent = need ? 'Адрес доставки *' : 'Адрес доставки';
   }
   if (deliveryEl) { deliveryEl.addEventListener('change', syncDelivery); syncDelivery(); }

@@ -37,3 +37,9 @@
 
 /* Карточки преимуществ — верхний акцент */
 .adv-card { border-top: var(--border-width-accent) solid var(--primary); }
+
+/* На узком экране .section-head — колонка; align-items:center давал бы
+   центрирование заголовка. Держим по левому краю. НЕ УБИРАТЬ. */
+@media (max-width: 767px) {
+  .section-head { align-items: flex-start; }
+}

@@ -117,6 +117,17 @@ const func_email_check=(v)=>{
 const clear_errors=(self)=>{
     for(let e in self.error ) self.error[e]=''
 }
+/* Условная обязательность: поле нужно заполнить только при «доставке
+   курьером» (delivery). При самовывозе адрес не требуется.
+   Проверка получает значение поля и саму форму (t) — из неё берём delivery. */
+const make_need_address_check=(v,t)=>{
+    const d = t ? t.delivery : '';
+    if(d && d!=='Курьером') return '';
+    return (v===undefined || v===null || v==='')?'укажите адрес доставки':'';
+};
+const need_checks={
+    need_address: make_need_address_check,
+};
 const check_hash={
     required:func_required_check,
     name: func_name_check,
@@ -128,7 +139,7 @@ const check_form=(t)=>{
     for(let f of t.check_fields){
 
       if('chk' in f){
-        let v=t[f.name], err=f.chk(v)
+        let v=t[f.name], err=f.chk(v, t)
         if(err){ t.error[f.name]=err, exists_errors=true }
       }
     }
@@ -178,7 +189,7 @@ const Form=(a)=>{
         else{
             data_hash[f.name]=f.value?f.value:''
         }
-        c_fn=check_hash[f.chk]    
+        c_fn=check_hash[f.chk] || need_checks[f.chk]
         if(c_fn){
             data_hash.error[f.name]=''
             check_fields.push({name:f.name,chk:c_fn}) 

@@ -98,6 +98,13 @@
               "label": "Текст цитаты",
               "kind": "textarea",
               "default": "Мы делаем сложное простым."
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         },
@@ -155,6 +162,13 @@
               "label": "URL кнопки",
               "kind": "text",
               "default": "/catalog"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         },
@@ -212,6 +226,13 @@
                   "label": "Эмодзи"
                 }
               ]
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -282,6 +303,13 @@
                   "label": "4"
                 }
               ]
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -340,6 +368,13 @@
               "label": "Роль",
               "kind": "text",
               "default": "постоянный покупатель, Москва"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         },
@@ -361,6 +396,13 @@
                   "label": "4"
                 }
               ]
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -431,6 +473,13 @@
               "label": "URL кнопки",
               "kind": "text",
               "default": "/catalog"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         },
@@ -458,6 +507,13 @@
               "label": "Первый раскрыт",
               "kind": "bool",
               "default": true
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -516,6 +572,13 @@
               "label": "Текст ссылки",
               "kind": "text",
               "default": "Подробнее"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -574,6 +637,13 @@
               "label": "Оглавление",
               "kind": "bool",
               "default": true
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -630,6 +700,13 @@
                   "label": "6"
                 }
               ]
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -676,6 +753,13 @@
                   "label": "3"
                 }
               ]
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -915,6 +999,77 @@
                   "label": "Нет"
                 }
               ]
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "slider_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
             }
           ],
           "items": {
@@ -996,7 +1151,8 @@
         "cat-grid--rise",
         "cat-grid--zoom",
         "cat-enter--fade",
-        "cat-enter--rise"
+        "cat-enter--rise",
+        "page-head"
       ],
       "default_variant": "grid",
       "variants": {
@@ -1091,6 +1247,13 @@
               "label": "Ссылка — href",
               "kind": "text",
               "default": "/catalog"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -1133,6 +1296,7 @@
         "категории"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "goods": {
@@ -1145,15 +1309,306 @@
       "variants": {
         "grid": {
           "title": "Сетка",
-          "params_ref": "goods_common"
+          "params_ref": "goods_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "goods_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1 and new=1",
+              "hint": "Готовые условия из разрешённых полей: new, old_price, rubricator_id, action, enabled, price, id, brand, anons, header, specpredl. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=1 and new=1",
+                  "label": "новинки"
+                },
+                {
+                  "value": "enabled=1 and action=1",
+                  "label": "спецпредложения"
+                },
+                {
+                  "value": "enabled=1 and specpredl=1",
+                  "label": "популярные"
+                },
+                {
+                  "value": "enabled=1 and price>0",
+                  "label": "в наличии по цене"
+                },
+                {
+                  "value": "enabled=1 and old_price>0",
+                  "label": "со скидкой"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "id desc",
+              "options": [
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "price asc",
+                  "label": "price asc"
+                },
+                {
+                  "value": "price desc",
+                  "label": "price desc"
+                },
+                {
+                  "value": "rubricator_id asc",
+                  "label": "rubricator_id asc"
+                },
+                {
+                  "value": "rubricator_id desc",
+                  "label": "rubricator_id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: id desc, id asc, price asc, price desc, rubricator_id asc, rubricator_id desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         },
         "rows": {
           "title": "Строки",
-          "params_ref": "goods_common"
+          "params_ref": "goods_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "goods_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1 and new=1",
+              "hint": "Готовые условия из разрешённых полей: new, old_price, rubricator_id, action, enabled, price, id, brand, anons, header, specpredl. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=1 and new=1",
+                  "label": "новинки"
+                },
+                {
+                  "value": "enabled=1 and action=1",
+                  "label": "спецпредложения"
+                },
+                {
+                  "value": "enabled=1 and specpredl=1",
+                  "label": "популярные"
+                },
+                {
+                  "value": "enabled=1 and price>0",
+                  "label": "в наличии по цене"
+                },
+                {
+                  "value": "enabled=1 and old_price>0",
+                  "label": "со скидкой"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "id desc",
+              "options": [
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "price asc",
+                  "label": "price asc"
+                },
+                {
+                  "value": "price desc",
+                  "label": "price desc"
+                },
+                {
+                  "value": "rubricator_id asc",
+                  "label": "rubricator_id asc"
+                },
+                {
+                  "value": "rubricator_id desc",
+                  "label": "rubricator_id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: id desc, id asc, price asc, price desc, rubricator_id asc, rubricator_id desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         },
         "strip": {
           "title": "Лента",
-          "params_ref": "goods_common"
+          "params_ref": "goods_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "goods_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1 and new=1",
+              "hint": "Готовые условия из разрешённых полей: new, old_price, rubricator_id, action, enabled, price, id, brand, anons, header, specpredl. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=1 and new=1",
+                  "label": "новинки"
+                },
+                {
+                  "value": "enabled=1 and action=1",
+                  "label": "спецпредложения"
+                },
+                {
+                  "value": "enabled=1 and specpredl=1",
+                  "label": "популярные"
+                },
+                {
+                  "value": "enabled=1 and price>0",
+                  "label": "в наличии по цене"
+                },
+                {
+                  "value": "enabled=1 and old_price>0",
+                  "label": "со скидкой"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "id desc",
+              "options": [
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "price asc",
+                  "label": "price asc"
+                },
+                {
+                  "value": "price desc",
+                  "label": "price desc"
+                },
+                {
+                  "value": "rubricator_id asc",
+                  "label": "rubricator_id asc"
+                },
+                {
+                  "value": "rubricator_id desc",
+                  "label": "rubricator_id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: id desc, id asc, price asc, price desc, rubricator_id asc, rubricator_id desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         }
       },
       "shared_params": {
@@ -1447,6 +1902,63 @@
               "default": "advantages_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "1=1",
+              "hint": "Готовые условия из разрешённых полей: sort, id, body, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -1513,6 +2025,7 @@
         "плюсы"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "reviews": {
@@ -1532,6 +2045,67 @@
               "default": "reviews_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "1=1",
+              "hint": "Готовые условия из разрешённых полей: body, sort, id, rate, registered, name. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "id desc",
+              "options": [
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "rate desc",
+                  "label": "rate desc"
+                },
+                {
+                  "value": "registered desc",
+                  "label": "registered desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: id desc, id asc, sort asc, rate desc, registered desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -1542,6 +2116,13 @@
               "label": "Текст под заголовком",
               "kind": "text",
               "default": ""
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -1592,6 +2173,7 @@
         "мнения"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "clients": {
@@ -1609,6 +2191,67 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "clients_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -1687,6 +2330,7 @@
         "логотипы клиентов"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {},
       "views": true
     },
@@ -1708,6 +2352,79 @@
               "default": "services_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, parent_id, enabled, id, anons, price_from, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=1 and price_from>0",
+                  "label": "с ценой «от»"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "price_from asc",
+                  "label": "price_from asc"
+                },
+                {
+                  "value": "price_from desc",
+                  "label": "price_from desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc, price_from asc, price_from desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -1718,6 +2435,13 @@
               "label": "Текст под заголовком",
               "kind": "text",
               "default": ""
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -1783,6 +2507,7 @@
         "плитки услуг"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "faq": {
@@ -1796,12 +2521,6 @@
           "title": "Вопросы и ответы",
           "params": [
             {
-              "name": "varname",
-              "label": "Название переменной",
-              "kind": "text",
-              "default": "faq_list"
-            },
-            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -1812,6 +2531,13 @@
               "label": "Текст под заголовком",
               "kind": "text",
               "default": ""
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -1855,6 +2581,7 @@
         "q&a"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "header": {
@@ -1871,6 +2598,7 @@
         "header__main",
         "header__nav",
         "header__actions",
+        "header__search",
         "header__mobile"
       ],
       "default_variant": "default",
@@ -1894,7 +2622,11 @@
                 },
                 {
                   "value": "two",
-                  "label": "Двухстрочная"
+                  "label": "Двухстрочная (поиск в строке)"
+                },
+                {
+                  "value": "search-row",
+                  "label": "С поиском в строке"
                 },
                 {
                   "value": "center",
@@ -1904,7 +2636,8 @@
                   "value": "account",
                   "label": "С акцентом на вход"
                 }
-              ]
+              ],
+              "hint": "Вид шапки. Разметка одна, различается только CSS (header--<layout>): classic — поиск отдельной строкой; search-row/two — логотип, поиск и виджеты в одной строке, меню под ними; minimal — без топбара и меню; center — всё по центру. На мобильном (≤991px) поиск всегда отдельной строкой."
             },
             {
               "name": "sticky",
@@ -1937,6 +2670,19 @@
               "default": true
             },
             {
+              "name": "search",
+              "label": "Строка поиска",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "search_hints",
+              "label": "Фразы для поиска",
+              "kind": "textarea",
+              "hint": "Фразы печатаются в подсказке строки поиска, каждая с новой строки",
+              "default": "ноутбук\nигровой ноутбук\nсмартфон\nкамера"
+            },
+            {
               "name": "nav",
               "label": "Меню",
               "kind": "bool",
@@ -1959,8 +2705,108 @@
               "label": "Корзина",
               "kind": "bool",
               "default": true
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
+            },
+            {
+              "name": "page_head_hidden",
+              "label": "Скрытый заголовок",
+              "kind": "bool",
+              "default": false,
+              "hint": "H1 в разметке, но визуально ничего не выводится (главная страница)"
+            },
+            {
+              "name": "source",
+              "label": "Источник меню",
+              "kind": "select",
+              "default": "template_var",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная (top_menu)"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Пункты ниже"
+                }
+              ],
+              "hint": "А — меню из таблицы ds_top_menu (переменная top_menu). Б — меню из пунктов этого блока. Пункт с url=/catalog в обоих режимах автоматически получает разделы каталога."
+            },
+            {
+              "name": "varname",
+              "label": "Переменная меню",
+              "kind": "text",
+              "default": "top_menu"
             }
-          ]
+          ],
+          "items": {
+            "singular": "пункт",
+            "fields": [
+              {
+                "name": "header",
+                "label": "Название",
+                "kind": "text",
+                "default": "Новый пункт"
+              },
+              {
+                "name": "url",
+                "label": "Ссылка",
+                "kind": "text",
+                "default": "/"
+              },
+              {
+                "name": "level",
+                "label": "Уровень",
+                "kind": "select",
+                "default": 0,
+                "options": [
+                  {
+                    "value": 0,
+                    "label": "0 · верхний"
+                  },
+                  {
+                    "value": 1,
+                    "label": "1 · подпункт"
+                  },
+                  {
+                    "value": 2,
+                    "label": "2 · под-подпункт"
+                  }
+                ]
+              },
+              {
+                "name": "description",
+                "label": "Описание",
+                "kind": "text",
+                "default": ""
+              }
+            ],
+            "default": [
+              {
+                "header": "Главная",
+                "url": "/",
+                "level": 0,
+                "description": ""
+              },
+              {
+                "header": "Каталог",
+                "url": "/catalog",
+                "level": 0,
+                "description": ""
+              },
+              {
+                "header": "О компании",
+                "url": "/about",
+                "level": 0,
+                "description": ""
+              }
+            ]
+          }
         }
       },
       "keywords": [
@@ -2377,6 +3223,7 @@
         "card"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {},
       "views": true
     },
@@ -2514,6 +3361,7 @@
         "фильтр"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "rubric_list": {
@@ -2682,23 +3530,63 @@
       "variants": {
         "gv-classic": {
           "title": "Классическая",
-          "params_ref": "pd_common"
+          "params_ref": "pd_common",
+          "params": [
+            {
+              "name": "one_click",
+              "label": "Кнопка «Заказать в 1 клик»",
+              "kind": "bool",
+              "default": false
+            }
+          ]
         },
         "gv-split": {
           "title": "Зеркальная",
-          "params_ref": "pd_common"
+          "params_ref": "pd_common",
+          "params": [
+            {
+              "name": "one_click",
+              "label": "Кнопка «Заказать в 1 клик»",
+              "kind": "bool",
+              "default": false
+            }
+          ]
         },
         "gv-vertical": {
           "title": "Вертикальные превью",
-          "params_ref": "pd_common"
+          "params_ref": "pd_common",
+          "params": [
+            {
+              "name": "one_click",
+              "label": "Кнопка «Заказать в 1 клик»",
+              "kind": "bool",
+              "default": false
+            }
+          ]
         },
         "gv-wide": {
           "title": "Широкая",
-          "params_ref": "pd_common"
+          "params_ref": "pd_common",
+          "params": [
+            {
+              "name": "one_click",
+              "label": "Кнопка «Заказать в 1 клик»",
+              "kind": "bool",
+              "default": false
+            }
+          ]
         },
         "gv-minimal": {
           "title": "Минимальная",
-          "params_ref": "pd_common"
+          "params_ref": "pd_common",
+          "params": [
+            {
+              "name": "one_click",
+              "label": "Кнопка «Заказать в 1 клик»",
+              "kind": "bool",
+              "default": false
+            }
+          ]
         }
       },
       "shared_params": {
@@ -2767,6 +3655,7 @@
         "детальная"
       ],
       "data": true,
+      "items_are_data": true,
       "views": true
     },
     "service_card": {
@@ -2790,6 +3679,79 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "services_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, parent_id, enabled, id, anons, price_from, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=1 and price_from>0",
+                  "label": "с ценой «от»"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "price_from asc",
+                  "label": "price_from asc"
+                },
+                {
+                  "value": "price_from desc",
+                  "label": "price_from desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc, price_from asc, price_from desc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "showIcon",
@@ -2880,6 +3842,79 @@
               "default": "services_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, parent_id, enabled, id, anons, price_from, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=1 and price_from>0",
+                  "label": "с ценой «от»"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "price_from asc",
+                  "label": "price_from asc"
+                },
+                {
+                  "value": "price_from desc",
+                  "label": "price_from desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc, price_from asc, price_from desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "showPrice",
               "label": "Цена",
               "kind": "bool",
@@ -2954,6 +3989,7 @@
         "service"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {},
       "views": true
     },
@@ -2971,11 +4007,173 @@
       "variants": {
         "cards": {
           "title": "Карточки",
-          "params_ref": "sl_common"
+          "params_ref": "sl_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "services_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, parent_id, enabled, id, anons, price_from, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=1 and price_from>0",
+                  "label": "с ценой «от»"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "price_from asc",
+                  "label": "price_from asc"
+                },
+                {
+                  "value": "price_from desc",
+                  "label": "price_from desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc, price_from asc, price_from desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         },
         "others": {
           "title": "Горизонтальные строки",
-          "params_ref": "sl_common"
+          "params_ref": "sl_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "services_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, parent_id, enabled, id, anons, price_from, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=1 and price_from>0",
+                  "label": "с ценой «от»"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "price_from asc",
+                  "label": "price_from asc"
+                },
+                {
+                  "value": "price_from desc",
+                  "label": "price_from desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc, price_from asc, price_from desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         }
       },
       "shared_params": {
@@ -3077,6 +4275,7 @@
         "service_list"
       ],
       "data": true,
+      "items_are_data": true,
       "views": true
     },
     "service_detail": {
@@ -3154,6 +4353,7 @@
         "service_in"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "team": {
@@ -3169,23 +4369,368 @@
       "variants": {
         "cards": {
           "title": "Карточки (карусель)",
-          "params_ref": "team_common"
+          "params_ref": "team_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "managers_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: position, sort, enabled, email, id, header, phone. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         },
         "grid": {
           "title": "Сетка",
-          "params_ref": "team_common"
+          "params_ref": "team_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "managers_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: position, sort, enabled, email, id, header, phone. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         },
         "compact": {
           "title": "Компактный",
-          "params_ref": "team_common"
+          "params_ref": "team_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "managers_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: position, sort, enabled, email, id, header, phone. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         },
         "list": {
           "title": "Список",
-          "params_ref": "team_common"
+          "params_ref": "team_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "managers_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: position, sort, enabled, email, id, header, phone. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         },
         "manager": {
           "title": "Карточка менеджера",
-          "params_ref": "team_common"
+          "params_ref": "team_common",
+          "params": [
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "managers_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: position, sort, enabled, email, id, header, phone. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc. Свою можно вписать через «Свой вариант…»."
+            }
+          ]
         }
       },
       "shared_params": {
@@ -3342,7 +4887,8 @@
         "managers",
         "people"
       ],
-      "data": true
+      "data": true,
+      "items_are_data": true
     },
     "catalog_projects": {
       "title": "Каталог проектов",
@@ -3600,7 +5146,8 @@
         "резиденции",
         "дома"
       ],
-      "data": true
+      "data": true,
+      "items_are_data": true
     },
     "countdown": {
       "title": "Таймер",
@@ -3853,7 +5400,8 @@
         "лента",
         "ticker"
       ],
-      "data": true
+      "data": true,
+      "items_are_data": true
     },
     "certificates": {
       "title": "Сертификаты",
@@ -3863,7 +5411,8 @@
       "check": "preview",
       "contract_classes": [
         "cert-list",
-        "cert-card"
+        "cert-card",
+        "page-head"
       ],
       "default_variant": "grid",
       "variants": {
@@ -3875,6 +5424,67 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "certificates_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: enabled, sort, id, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -3902,6 +5512,13 @@
               "label": "Открывать в lightbox",
               "kind": "bool",
               "default": true
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -3948,6 +5565,67 @@
               "default": "certificates_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: enabled, sort, id, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -3973,6 +5651,13 @@
               "label": "Открывать в lightbox",
               "kind": "bool",
               "default": true
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -4018,6 +5703,7 @@
         "cert"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "photo_gallery": {
@@ -4032,25 +5718,865 @@
         "gal-grid",
         "gal-item",
         "gal-item__img",
-        "gal-item__cap"
+        "gal-item__cap",
+        "page-head"
       ],
       "default_variant": "grid",
       "variants": {
+        "mosaic": {
+          "title": "Мозаика",
+          "params_ref": "gal_common",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "galery_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: tag, alt, sort, enabled, id, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ],
+          "items": {
+            "singular": "кадр",
+            "fields": [
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "image",
+                "default": ""
+              },
+              {
+                "name": "caption",
+                "label": "Подпись",
+                "kind": "text",
+                "default": "Кадр"
+              },
+              {
+                "name": "tag",
+                "label": "Тег",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "tag_label",
+                "label": "Подпись тега",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "width",
+                "label": "Ширина",
+                "kind": "number",
+                "default": 1600
+              },
+              {
+                "name": "height",
+                "label": "Высота",
+                "kind": "number",
+                "default": 1067
+              }
+            ],
+            "default": [
+              {
+                "photo": "images/preview/galery/photo-1.webp",
+                "caption": "Флагманский магазин на Тверской",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-2.webp",
+                "caption": "Витрина смартфонов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-4.webp",
+                "caption": "Консультант помогает с выбором",
+                "tag": "team",
+                "tag_label": "Команда",
+                "width": 1000,
+                "height": 1500
+              },
+              {
+                "photo": "images/preview/galery/photo-5.webp",
+                "caption": "Касса и зона выдачи заказов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-7.webp",
+                "caption": "Открытие нового пункта выдачи",
+                "tag": "events",
+                "tag_label": "Мероприятия",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-9.webp",
+                "caption": "Переговорная комната",
+                "tag": "office",
+                "tag_label": "Офис",
+                "width": 1200,
+                "height": 1200
+              }
+            ]
+          }
+        },
         "grid": {
           "title": "Сетка",
-          "params_ref": "gal_common"
+          "params_ref": "gal_common",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "galery_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: tag, alt, sort, enabled, id, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ],
+          "items": {
+            "singular": "кадр",
+            "fields": [
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "image",
+                "default": ""
+              },
+              {
+                "name": "caption",
+                "label": "Подпись",
+                "kind": "text",
+                "default": "Кадр"
+              },
+              {
+                "name": "tag",
+                "label": "Тег",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "tag_label",
+                "label": "Подпись тега",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "width",
+                "label": "Ширина",
+                "kind": "number",
+                "default": 1600
+              },
+              {
+                "name": "height",
+                "label": "Высота",
+                "kind": "number",
+                "default": 1067
+              }
+            ],
+            "default": [
+              {
+                "photo": "images/preview/galery/photo-1.webp",
+                "caption": "Флагманский магазин на Тверской",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-2.webp",
+                "caption": "Витрина смартфонов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-4.webp",
+                "caption": "Консультант помогает с выбором",
+                "tag": "team",
+                "tag_label": "Команда",
+                "width": 1000,
+                "height": 1500
+              },
+              {
+                "photo": "images/preview/galery/photo-5.webp",
+                "caption": "Касса и зона выдачи заказов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-7.webp",
+                "caption": "Открытие нового пункта выдачи",
+                "tag": "events",
+                "tag_label": "Мероприятия",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-9.webp",
+                "caption": "Переговорная комната",
+                "tag": "office",
+                "tag_label": "Офис",
+                "width": 1200,
+                "height": 1200
+              }
+            ]
+          }
         },
         "cols": {
           "title": "Колонки",
-          "params_ref": "gal_common"
+          "params_ref": "gal_common",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "galery_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: tag, alt, sort, enabled, id, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ],
+          "items": {
+            "singular": "кадр",
+            "fields": [
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "image",
+                "default": ""
+              },
+              {
+                "name": "caption",
+                "label": "Подпись",
+                "kind": "text",
+                "default": "Кадр"
+              },
+              {
+                "name": "tag",
+                "label": "Тег",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "tag_label",
+                "label": "Подпись тега",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "width",
+                "label": "Ширина",
+                "kind": "number",
+                "default": 1600
+              },
+              {
+                "name": "height",
+                "label": "Высота",
+                "kind": "number",
+                "default": 1067
+              }
+            ],
+            "default": [
+              {
+                "photo": "images/preview/galery/photo-1.webp",
+                "caption": "Флагманский магазин на Тверской",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-2.webp",
+                "caption": "Витрина смартфонов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-4.webp",
+                "caption": "Консультант помогает с выбором",
+                "tag": "team",
+                "tag_label": "Команда",
+                "width": 1000,
+                "height": 1500
+              },
+              {
+                "photo": "images/preview/galery/photo-5.webp",
+                "caption": "Касса и зона выдачи заказов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-7.webp",
+                "caption": "Открытие нового пункта выдачи",
+                "tag": "events",
+                "tag_label": "Мероприятия",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-9.webp",
+                "caption": "Переговорная комната",
+                "tag": "office",
+                "tag_label": "Офис",
+                "width": 1200,
+                "height": 1200
+              }
+            ]
+          }
         },
         "bento": {
           "title": "Bento",
-          "params_ref": "gal_common"
+          "params_ref": "gal_common",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "galery_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: tag, alt, sort, enabled, id, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ],
+          "items": {
+            "singular": "кадр",
+            "fields": [
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "image",
+                "default": ""
+              },
+              {
+                "name": "caption",
+                "label": "Подпись",
+                "kind": "text",
+                "default": "Кадр"
+              },
+              {
+                "name": "tag",
+                "label": "Тег",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "tag_label",
+                "label": "Подпись тега",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "width",
+                "label": "Ширина",
+                "kind": "number",
+                "default": 1600
+              },
+              {
+                "name": "height",
+                "label": "Высота",
+                "kind": "number",
+                "default": 1067
+              }
+            ],
+            "default": [
+              {
+                "photo": "images/preview/galery/photo-1.webp",
+                "caption": "Флагманский магазин на Тверской",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-2.webp",
+                "caption": "Витрина смартфонов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-4.webp",
+                "caption": "Консультант помогает с выбором",
+                "tag": "team",
+                "tag_label": "Команда",
+                "width": 1000,
+                "height": 1500
+              },
+              {
+                "photo": "images/preview/galery/photo-5.webp",
+                "caption": "Касса и зона выдачи заказов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-7.webp",
+                "caption": "Открытие нового пункта выдачи",
+                "tag": "events",
+                "tag_label": "Мероприятия",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-9.webp",
+                "caption": "Переговорная комната",
+                "tag": "office",
+                "tag_label": "Офис",
+                "width": 1200,
+                "height": 1200
+              }
+            ]
+          }
         },
         "strip": {
           "title": "Лента",
-          "params_ref": "gal_common"
+          "params_ref": "gal_common",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "galery_list"
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: tag, alt, sort, enabled, id, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            }
+          ],
+          "items": {
+            "singular": "кадр",
+            "fields": [
+              {
+                "name": "photo",
+                "label": "Фото",
+                "kind": "image",
+                "default": ""
+              },
+              {
+                "name": "caption",
+                "label": "Подпись",
+                "kind": "text",
+                "default": "Кадр"
+              },
+              {
+                "name": "tag",
+                "label": "Тег",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "tag_label",
+                "label": "Подпись тега",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "width",
+                "label": "Ширина",
+                "kind": "number",
+                "default": 1600
+              },
+              {
+                "name": "height",
+                "label": "Высота",
+                "kind": "number",
+                "default": 1067
+              }
+            ],
+            "default": [
+              {
+                "photo": "images/preview/galery/photo-1.webp",
+                "caption": "Флагманский магазин на Тверской",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-2.webp",
+                "caption": "Витрина смартфонов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-4.webp",
+                "caption": "Консультант помогает с выбором",
+                "tag": "team",
+                "tag_label": "Команда",
+                "width": 1000,
+                "height": 1500
+              },
+              {
+                "photo": "images/preview/galery/photo-5.webp",
+                "caption": "Касса и зона выдачи заказов",
+                "tag": "shop",
+                "tag_label": "Магазин",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-7.webp",
+                "caption": "Открытие нового пункта выдачи",
+                "tag": "events",
+                "tag_label": "Мероприятия",
+                "width": 1600,
+                "height": 1067
+              },
+              {
+                "photo": "images/preview/galery/photo-9.webp",
+                "caption": "Переговорная комната",
+                "tag": "office",
+                "tag_label": "Офис",
+                "width": 1200,
+                "height": 1200
+              }
+            ]
+          }
         }
       },
       "shared_params": {
@@ -4132,6 +6658,7 @@
         "bento"
       ],
       "data": true,
+      "items_are_data": true,
       "views": true
     },
     "video": {
@@ -4140,6 +6667,7 @@
       "partial": "block/video.html",
       "status": "planned",
       "data": true,
+      "items_are_data": true,
       "check": "strict",
       "contract_classes": [
         "video-block",
@@ -4163,6 +6691,71 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "video_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -4208,6 +6801,71 @@
               "default": "video_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -4251,6 +6909,71 @@
               "default": "video_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -4274,6 +6997,71 @@
               "default": "video_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -4295,6 +7083,71 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "video_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -4376,7 +7229,8 @@
       "check": "strict",
       "contract_classes": [
         "brands-grid",
-        "brand-card"
+        "brand-card",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
@@ -4388,6 +7242,71 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "brands_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, country, url, name. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "name asc",
+                  "label": "name asc"
+                },
+                {
+                  "value": "country asc",
+                  "label": "country asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, name asc, country asc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -4409,6 +7328,13 @@
               "min": 2,
               "max": 6,
               "step": 1
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -4472,6 +7398,7 @@
         "brand"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "news_list": {
@@ -4482,7 +7409,8 @@
       "check": "strict",
       "contract_classes": [
         "grid-news",
-        "news-card"
+        "news-card",
+        "page-head"
       ],
       "default_variant": "grid",
       "variants": {
@@ -4494,6 +7422,71 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "news_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: enabled, id, anons, header, registered. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "опубликованные"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "неопубликованные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "registered desc",
+              "options": [
+                {
+                  "value": "registered desc",
+                  "label": "registered desc"
+                },
+                {
+                  "value": "registered asc",
+                  "label": "registered asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: registered desc, registered asc, id desc, id asc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -4524,6 +7517,13 @@
               "min": 1,
               "max": 24,
               "step": 1
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         },
@@ -4535,6 +7535,71 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "news_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: enabled, id, anons, header, registered. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "опубликованные"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "неопубликованные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "registered desc",
+              "options": [
+                {
+                  "value": "registered desc",
+                  "label": "registered desc"
+                },
+                {
+                  "value": "registered asc",
+                  "label": "registered asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: registered desc, registered asc, id desc, id asc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -4556,6 +7621,13 @@
               "min": 1,
               "max": 24,
               "step": 1
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         },
@@ -4567,6 +7639,71 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "news_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: enabled, id, anons, header, registered. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "опубликованные"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "неопубликованные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "registered desc",
+              "options": [
+                {
+                  "value": "registered desc",
+                  "label": "registered desc"
+                },
+                {
+                  "value": "registered asc",
+                  "label": "registered asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: registered desc, registered asc, id desc, id asc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -4608,6 +7745,13 @@
                   "label": "5000"
                 }
               ]
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         },
@@ -4621,6 +7765,71 @@
               "default": "news_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: enabled, id, anons, header, registered. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "опубликованные"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "неопубликованные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "registered desc",
+              "options": [
+                {
+                  "value": "registered desc",
+                  "label": "registered desc"
+                },
+                {
+                  "value": "registered asc",
+                  "label": "registered asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: registered desc, registered asc, id desc, id asc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -4631,6 +7840,13 @@
               "label": "Текст под заголовком",
               "kind": "text",
               "default": ""
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         }
@@ -4642,6 +7858,7 @@
         "news_list"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {},
       "views": true,
       "items_shared": {
@@ -4705,7 +7922,8 @@
       "contract_classes": [
         "article-list",
         "article-row",
-        "article-tile"
+        "article-tile",
+        "page-head"
       ],
       "default_variant": "rows",
       "variants": {
@@ -4717,6 +7935,71 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "articles_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: enabled, id, anons, header, registered. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "опубликованные"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "неопубликованные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "registered desc",
+              "options": [
+                {
+                  "value": "registered desc",
+                  "label": "registered desc"
+                },
+                {
+                  "value": "registered asc",
+                  "label": "registered asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: registered desc, registered asc, id desc, id asc. Свою можно вписать через «Свой вариант…»."
             },
             {
               "name": "header",
@@ -4738,6 +8021,13 @@
               "min": 1,
               "max": 24,
               "step": 1
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -4802,6 +8092,71 @@
               "default": "articles_list"
             },
             {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: enabled, id, anons, header, registered. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "опубликованные"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "неопубликованные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "registered desc",
+              "options": [
+                {
+                  "value": "registered desc",
+                  "label": "registered desc"
+                },
+                {
+                  "value": "registered asc",
+                  "label": "registered asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: registered desc, registered asc, id desc, id asc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -4821,6 +8176,13 @@
               "min": 1,
               "max": 24,
               "step": 1
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -4876,6 +8238,7 @@
         "article"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {},
       "views": true
     },
@@ -4949,6 +8312,7 @@
         "tab"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "tags": {
@@ -5025,6 +8389,7 @@
         "chips"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "branches": {
@@ -5063,6 +8428,21 @@
             {
               "name": "tabs",
               "label": "Переключатель городов",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "zoom",
+              "label": "Масштаб карты (zoom)",
+              "kind": "number",
+              "default": 16,
+              "min": 1,
+              "max": 20,
+              "step": 1
+            },
+            {
+              "name": "showRoute",
+              "label": "Кнопка «Построить маршрут»",
               "kind": "bool",
               "default": true
             }
@@ -5117,6 +8497,27 @@
                 "label": "Карта (URL)",
                 "kind": "text",
                 "default": ""
+              },
+              {
+                "name": "lat",
+                "label": "Широта (lat)",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "lon",
+                "label": "Долгота (lon)",
+                "kind": "text",
+                "default": ""
+              },
+              {
+                "name": "zoom",
+                "label": "Zoom филиала",
+                "kind": "number",
+                "default": 16,
+                "min": 1,
+                "max": 20,
+                "step": 1
               }
             ],
             "default": [
@@ -5128,7 +8529,10 @@
                 "phone_raw": "+74950000000",
                 "email": "",
                 "work_time": "Пн–Пт 10:00–19:00",
-                "map": ""
+                "map": "",
+                "lat": "55.7558",
+                "lon": "37.6173",
+                "zoom": 16
               },
               {
                 "key": "spb",
@@ -5138,7 +8542,10 @@
                 "phone_raw": "+78120000000",
                 "email": "",
                 "work_time": "Пн–Пт 10:00–19:00",
-                "map": ""
+                "map": "",
+                "lat": "59.9343",
+                "lon": "30.3351",
+                "zoom": 16
               }
             ]
           }
@@ -5153,6 +8560,7 @@
         "branch"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "map": {
@@ -5177,6 +8585,34 @@
               "default": "https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755800&z=12&pt=37.617700%2C55.755800%2Cpm2rdm"
             },
             {
+              "name": "center",
+              "label": "Центр (lat,lon)",
+              "kind": "text",
+              "default": "",
+              "hint": "Например: 55.7558,37.6173"
+            },
+            {
+              "name": "zoom",
+              "label": "Масштаб (zoom)",
+              "kind": "number",
+              "default": 15,
+              "min": 1,
+              "max": 20,
+              "step": 1
+            },
+            {
+              "name": "marker",
+              "label": "Метка на карте",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showRoute",
+              "label": "Кнопка маршрута",
+              "kind": "bool",
+              "default": true
+            },
+            {
               "name": "height",
               "label": "Высота, px",
               "kind": "number",
@@ -5195,6 +8631,34 @@
               "label": "URL карты",
               "kind": "text",
               "default": "https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755800&z=12&pt=37.617700%2C55.755800%2Cpm2rdm"
+            },
+            {
+              "name": "center",
+              "label": "Центр (lat,lon)",
+              "kind": "text",
+              "default": "",
+              "hint": "Например: 55.7558,37.6173"
+            },
+            {
+              "name": "zoom",
+              "label": "Масштаб (zoom)",
+              "kind": "number",
+              "default": 15,
+              "min": 1,
+              "max": 20,
+              "step": 1
+            },
+            {
+              "name": "marker",
+              "label": "Метка на карте",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "showRoute",
+              "label": "Кнопка маршрута",
+              "kind": "bool",
+              "default": true
             },
             {
               "name": "height",
@@ -5300,6 +8764,7 @@
         "юридические данные"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "contacts_info": {
@@ -5400,6 +8865,7 @@
         "связь"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "routes": {
@@ -5472,6 +8938,7 @@
         "directions"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "page_favorites": {
@@ -5490,7 +8957,8 @@
         "gl-chips",
         "gl-reset",
         "gl-count",
-        "gl-empty"
+        "gl-empty",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
@@ -5529,6 +8997,13 @@
               "label": "Чипы подкатегорий",
               "kind": "bool",
               "default": true
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         }
@@ -5550,29 +9025,20 @@
       "status": "preview",
       "check": "preview",
       "contract_classes": [
-        "search-bar",
+        "search-page",
+        "search-hits",
+        "search-hit",
         "search-section",
-        "search-results",
-        "search-result",
-        "search-empty",
-        "good-list",
-        "products-grid",
-        "gl-empty"
+        "search-block",
+        "search-more",
+        "search-sentinel",
+        "search-empty"
       ],
       "default_variant": "default",
       "variants": {
         "default": {
           "title": "Результаты поиска",
           "params": [
-            {
-              "name": "perpage",
-              "label": "Товаров на странице",
-              "kind": "number",
-              "default": 12,
-              "min": 4,
-              "max": 48,
-              "step": 4
-            },
             {
               "name": "showNews",
               "label": "Новости",
@@ -5582,12 +9048,6 @@
             {
               "name": "showArticles",
               "label": "Статьи",
-              "kind": "bool",
-              "default": true
-            },
-            {
-              "name": "showServices",
-              "label": "Услуги",
               "kind": "bool",
               "default": true
             }
@@ -5667,13 +9127,22 @@
         "gl-count",
         "gl-reset",
         "gl-empty",
-        "products-grid"
+        "products-grid",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
         "default": {
           "title": "Таблица сравнения",
-          "params": []
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
+            }
+          ]
         }
       },
       "keywords": [
@@ -5699,13 +9168,22 @@
         "basket-summary__card",
         "basket-summary__lines",
         "basket-empty",
-        "basket-order"
+        "basket-order",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
         "default": {
           "title": "Корзина и оформление заказа",
-          "params": []
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
+            }
+          ]
         }
       },
       "keywords": [
@@ -5790,6 +9268,7 @@
         "детальная новость"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "page_article_detail": {
@@ -5816,36 +9295,6 @@
               "label": "Название переменной",
               "kind": "text",
               "default": "content"
-            },
-            {
-              "name": "title",
-              "label": "Заголовок",
-              "kind": "text",
-              "default": "Как выбрать смартфон в 2026 году"
-            },
-            {
-              "name": "anons",
-              "label": "Вступление",
-              "kind": "textarea",
-              "default": "Краткое вступление к статье."
-            },
-            {
-              "name": "author",
-              "label": "Автор",
-              "kind": "text",
-              "default": ""
-            },
-            {
-              "name": "tag",
-              "label": "Тег",
-              "kind": "text",
-              "default": "Гид"
-            },
-            {
-              "name": "photo",
-              "label": "Фото",
-              "kind": "text",
-              "default": "images/preview/articles/article-1.webp"
             }
           ],
           "items": {
@@ -5860,10 +9309,106 @@
             ],
             "default": [
               {
-                "text": "Основной текст статьи."
+                "text": "Выбор смартфона в 2026 году начинается не с бренда, а с задач. Определите, что для вас важнее: долгая автономность, качество камеры, производительность в играх или компактный корпус. От этого зависит не только модель, но и бюджет, который придётся заложить."
               },
               {
-                "text": "Второй абзац с примерами."
+                "text": "Обратите внимание на экран: диагональ, разрешение и частоту обновления. Панели с частотой 120 Гц делают прокрутку заметно плавнее, а технология LTPO помогает экономить заряд, снижая частоту в статичных сценах. Яркость важна, если вы часто пользуетесь телефоном на улице."
+              },
+              {
+                "text": "Процессор и объём памяти определяют запас производительности на годы вперёд. Для повседневных задач достаточно 8 ГБ оперативной памяти, но если вы снимаете видео в 4K или играете, стоит смотреть на 12–16 ГБ и накопитель от 256 ГБ без слота расширения."
+              },
+              {
+                "text": "Камеры — самая маркетинговая часть. Смотрите не на число мегапикселей, а на размер сенсора, наличие оптической стабилизации и качество ночных снимков. Хороший основной модуль важнее, чем четыре вспомогательных, которыми вы почти не будете пользоваться."
+              },
+              {
+                "text": "И последнее: автономность и зарядка. Батарея от 5000 мА·ч — разумный минимум, а быстрая зарядка на 65–120 Вт позволяет забыть о розетке на день. Проверьте поддержку беспроводной зарядки, если она для вас принципиальна."
+              },
+              {
+                "text": "Подводя итог: составьте список из трёх обязательных требований и двух желательных, сравните 3–4 модели в этом диапазоне и только потом принимайте решение. Так вы получите телефон, который будет радовать, а не разочаровывать через месяц."
+              }
+            ]
+          }
+        },
+        "magazine": {
+          "title": "Журнальная",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "content"
+            }
+          ],
+          "items": {
+            "singular": "абзац",
+            "fields": [
+              {
+                "name": "text",
+                "label": "Абзац",
+                "kind": "textarea",
+                "default": "Текст статьи."
+              }
+            ],
+            "default": [
+              {
+                "text": "Выбор смартфона в 2026 году начинается не с бренда, а с задач. Определите, что для вас важнее: долгая автономность, качество камеры, производительность в играх или компактный корпус. От этого зависит не только модель, но и бюджет, который придётся заложить."
+              },
+              {
+                "text": "Обратите внимание на экран: диагональ, разрешение и частоту обновления. Панели с частотой 120 Гц делают прокрутку заметно плавнее, а технология LTPO помогает экономить заряд, снижая частоту в статичных сценах. Яркость важна, если вы часто пользуетесь телефоном на улице."
+              },
+              {
+                "text": "Процессор и объём памяти определяют запас производительности на годы вперёд. Для повседневных задач достаточно 8 ГБ оперативной памяти, но если вы снимаете видео в 4K или играете, стоит смотреть на 12–16 ГБ и накопитель от 256 ГБ без слота расширения."
+              },
+              {
+                "text": "Камеры — самая маркетинговая часть. Смотрите не на число мегапикселей, а на размер сенсора, наличие оптической стабилизации и качество ночных снимков. Хороший основной модуль важнее, чем четыре вспомогательных, которыми вы почти не будете пользоваться."
+              },
+              {
+                "text": "И последнее: автономность и зарядка. Батарея от 5000 мА·ч — разумный минимум, а быстрая зарядка на 65–120 Вт позволяет забыть о розетке на день. Проверьте поддержку беспроводной зарядки, если она для вас принципиальна."
+              },
+              {
+                "text": "Подводя итог: составьте список из трёх обязательных требований и двух желательных, сравните 3–4 модели в этом диапазоне и только потом принимайте решение. Так вы получите телефон, который будет радовать, а не разочаровывать через месяц."
+              }
+            ]
+          }
+        },
+        "split": {
+          "title": "Обложка слева",
+          "params": [
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "content"
+            }
+          ],
+          "items": {
+            "singular": "абзац",
+            "fields": [
+              {
+                "name": "text",
+                "label": "Абзац",
+                "kind": "textarea",
+                "default": "Текст статьи."
+              }
+            ],
+            "default": [
+              {
+                "text": "Выбор смартфона в 2026 году начинается не с бренда, а с задач. Определите, что для вас важнее: долгая автономность, качество камеры, производительность в играх или компактный корпус. От этого зависит не только модель, но и бюджет, который придётся заложить."
+              },
+              {
+                "text": "Обратите внимание на экран: диагональ, разрешение и частоту обновления. Панели с частотой 120 Гц делают прокрутку заметно плавнее, а технология LTPO помогает экономить заряд, снижая частоту в статичных сценах. Яркость важна, если вы часто пользуетесь телефоном на улице."
+              },
+              {
+                "text": "Процессор и объём памяти определяют запас производительности на годы вперёд. Для повседневных задач достаточно 8 ГБ оперативной памяти, но если вы снимаете видео в 4K или играете, стоит смотреть на 12–16 ГБ и накопитель от 256 ГБ без слота расширения."
+              },
+              {
+                "text": "Камеры — самая маркетинговая часть. Смотрите не на число мегапикселей, а на размер сенсора, наличие оптической стабилизации и качество ночных снимков. Хороший основной модуль важнее, чем четыре вспомогательных, которыми вы почти не будете пользоваться."
+              },
+              {
+                "text": "И последнее: автономность и зарядка. Батарея от 5000 мА·ч — разумный минимум, а быстрая зарядка на 65–120 Вт позволяет забыть о розетке на день. Проверьте поддержку беспроводной зарядки, если она для вас принципиальна."
+              },
+              {
+                "text": "Подводя итог: составьте список из трёх обязательных требований и двух желательных, сравните 3–4 модели в этом диапазоне и только потом принимайте решение. Так вы получите телефон, который будет радовать, а не разочаровывать через месяц."
               }
             ]
           }
@@ -5877,6 +9422,7 @@
         "детальная статья"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "page_order": {
@@ -5889,7 +9435,8 @@
         "order-items",
         "order-status",
         "basket-item",
-        "basket-summary__card"
+        "basket-summary__card",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
@@ -5955,6 +9502,13 @@
               "label": "Адрес доставки",
               "kind": "text",
               "default": "Москва, ул. Примерная, 1"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -6017,6 +9571,7 @@
         "детальный заказ"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "page_profile": {
@@ -6032,7 +9587,8 @@
         "orders-list",
         "order-row",
         "order-status",
-        "profile-pager"
+        "profile-pager",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
@@ -6062,6 +9618,13 @@
               "label": "Адрес",
               "kind": "text",
               "default": "Москва, ул. Примерная, 1"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         }
@@ -6090,7 +9653,8 @@
         "form-card",
         "form-grid",
         "form-group",
-        "form-label"
+        "form-label",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
@@ -6102,6 +9666,13 @@
               "label": "Заголовок",
               "kind": "text",
               "default": "Регистрация"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ]
         }
@@ -6122,19 +9693,14 @@
       "status": "local:t1",
       "check": "preview",
       "contract_classes": [
-        "history"
+        "history",
+        "page-head"
       ],
       "default_variant": "vertical",
       "variants": {
         "vertical": {
           "title": "Вертикальная",
           "params": [
-            {
-              "name": "varname",
-              "label": "Название переменной",
-              "kind": "text",
-              "default": "history_list"
-            },
             {
               "name": "header",
               "label": "Заголовок",
@@ -6146,6 +9712,13 @@
               "label": "Текст под заголовком",
               "kind": "text",
               "default": ""
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -6188,12 +9761,6 @@
           "title": "Горизонтальная",
           "params": [
             {
-              "name": "varname",
-              "label": "Название переменной",
-              "kind": "text",
-              "default": "history_list"
-            },
-            {
               "name": "header",
               "label": "Заголовок",
               "kind": "text",
@@ -6204,6 +9771,13 @@
               "label": "Текст под заголовком",
               "kind": "text",
               "default": ""
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -6252,6 +9826,7 @@
         "годы"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "org_chart": {
@@ -6261,19 +9836,14 @@
       "status": "local:t1",
       "check": "preview",
       "contract_classes": [
-        "org"
+        "org",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
         "default": {
           "title": "Орг. структура",
           "params": [
-            {
-              "name": "varname",
-              "label": "Название переменной",
-              "kind": "text",
-              "default": "org_list"
-            },
             {
               "name": "header",
               "label": "Заголовок",
@@ -6285,6 +9855,13 @@
               "label": "Текст под заголовком",
               "kind": "text",
               "default": ""
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -6325,6 +9902,7 @@
         "org"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "reports": {
@@ -6335,7 +9913,8 @@
       "check": "preview",
       "contract_classes": [
         "reports",
-        "report"
+        "report",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
@@ -6359,40 +9938,47 @@
               "label": "Текст под заголовком",
               "kind": "text",
               "default": ""
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
             "singular": "документ",
             "fields": [
               {
-                "name": "name",
-                "label": "Название",
+                "name": "header",
+                "label": "Заголовок",
                 "kind": "text",
                 "default": "Документ"
+              },
+              {
+                "name": "attach",
+                "label": "Файл",
+                "kind": "text",
+                "default": "report.pdf"
               },
               {
                 "name": "meta",
                 "label": "Мета",
                 "kind": "text",
-                "default": "PDF · 1.2 МБ"
-              },
-              {
-                "name": "url",
-                "label": "URL",
-                "kind": "text",
-                "default": "/files/report.pdf"
+                "default": "PDF"
               }
             ],
             "default": [
               {
-                "name": "Отчёт за 2025",
-                "meta": "PDF · 1.2 МБ",
-                "url": "/files/report-2025.pdf"
+                "header": "Годовой отчёт за 2025 год",
+                "attach": "annual-report-2025.pdf",
+                "meta": "PDF"
               },
               {
-                "name": "Презентация",
-                "meta": "PDF · 3.4 МБ",
-                "url": "/files/presentation.pdf"
+                "header": "Презентация для инвесторов, 2026",
+                "attach": "investors-presentation-2026.pdf",
+                "meta": "PDF"
               }
             ]
           }
@@ -6407,6 +9993,7 @@
         "report"
       ],
       "data": true,
+      "items_are_data": true,
       "shared_params": {}
     },
     "promo_parallax": {
@@ -6653,7 +10240,8 @@
         "about__media",
         "about__badge",
         "about__features",
-        "about__feature"
+        "about__feature",
+        "page-head"
       ],
       "default_variant": "default",
       "variants": {
@@ -6713,6 +10301,13 @@
               "label": "Кнопка 2 — ссылка",
               "kind": "text",
               "default": "/contacts"
+            },
+            {
+              "name": "page_head",
+              "label": "Блок страницы",
+              "kind": "bool",
+              "default": false,
+              "hint": "Заголовок страницы (H1) и хлебные крошки выводит этот блок"
             }
           ],
           "items": {
@@ -6760,6 +10355,709 @@
         "филиалы",
         "реквизиты"
       ]
+    },
+    "page_video": {
+      "title": "Блок страницы «Видео»",
+      "group": "Медиа",
+      "partial": "block/page_video.html",
+      "status": "planned",
+      "data": true,
+      "check": "strict",
+      "contract_classes": [
+        "video-block",
+        "video-card",
+        "video-card__media",
+        "video-card__play",
+        "video-card__title",
+        "video-card__meta",
+        "video-cover",
+        "video-feature",
+        "video-feature__list",
+        "video-strip"
+      ],
+      "default_variant": "grid",
+      "variants": {
+        "carousel": {
+          "title": "Карусель",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы (H1 + крошки)",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "page_head_hidden",
+              "label": "Скрыть H1 визуально",
+              "kind": "bool",
+              "default": false
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            },
+            {
+              "name": "autoplay",
+              "label": "Автопрокрутка, мс",
+              "kind": "select",
+              "default": "0",
+              "options": [
+                {
+                  "value": "0",
+                  "label": "Выкл"
+                },
+                {
+                  "value": "3500",
+                  "label": "3500"
+                },
+                {
+                  "value": "5000",
+                  "label": "5000"
+                }
+              ]
+            }
+          ]
+        },
+        "grid": {
+          "title": "Сетка",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы (H1 + крошки)",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "page_head_hidden",
+              "label": "Скрыть H1 визуально",
+              "kind": "bool",
+              "default": false
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            },
+            {
+              "name": "cols",
+              "label": "Колонки",
+              "kind": "select",
+              "default": "3",
+              "options": [
+                {
+                  "value": "2",
+                  "label": "2"
+                },
+                {
+                  "value": "3",
+                  "label": "3"
+                },
+                {
+                  "value": "4",
+                  "label": "4"
+                }
+              ]
+            }
+          ]
+        },
+        "feature": {
+          "title": "Плеер + плейлист",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы (H1 + крошки)",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "page_head_hidden",
+              "label": "Скрыть H1 визуально",
+              "kind": "bool",
+              "default": false
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            }
+          ]
+        },
+        "cover": {
+          "title": "Видео-баннер",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы (H1 + крошки)",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "page_head_hidden",
+              "label": "Скрыть H1 визуально",
+              "kind": "bool",
+              "default": false
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            }
+          ]
+        },
+        "strip": {
+          "title": "Лента",
+          "params": [
+            {
+              "name": "page_head",
+              "label": "Блок страницы (H1 + крошки)",
+              "kind": "bool",
+              "default": true
+            },
+            {
+              "name": "page_head_hidden",
+              "label": "Скрыть H1 визуально",
+              "kind": "bool",
+              "default": false
+            },
+            {
+              "name": "varname",
+              "label": "Название переменной",
+              "kind": "text",
+              "default": "video_list"
+            },
+            {
+              "name": "source",
+              "label": "Источник данных",
+              "kind": "select",
+              "default": "template_var",
+              "hint": "А — из переменной шаблона (выборку задаёт движок или роут проекта). Б — настройка выборки прямо в блоке: условие, сортировка, limit. При режиме Б поле «Название переменной» не используется и скрывается в редакторе.",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная шаблона"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Настройка выборки в блоке"
+                }
+              ]
+            },
+            {
+              "name": "where",
+              "label": "Условие (Б)",
+              "kind": "select",
+              "default": "enabled=1",
+              "hint": "Готовые условия из разрешённых полей: sort, enabled, id, url, duration, header. Если значения нет в списке — выберите «Свой запрос…» и впишите вручную; поля вне списка движок отбросит, значения подставляются параметрами.",
+              "options": [
+                {
+                  "value": "enabled=1",
+                  "label": "включённые"
+                },
+                {
+                  "value": "enabled=0",
+                  "label": "выключенные"
+                },
+                {
+                  "value": "1=1",
+                  "label": "все, без условия"
+                }
+              ],
+              "allowCustom": true
+            },
+            {
+              "name": "order",
+              "label": "Сортировка (Б)",
+              "kind": "select",
+              "default": "sort asc",
+              "options": [
+                {
+                  "value": "sort asc",
+                  "label": "sort asc"
+                },
+                {
+                  "value": "sort desc",
+                  "label": "sort desc"
+                },
+                {
+                  "value": "id asc",
+                  "label": "id asc"
+                },
+                {
+                  "value": "id desc",
+                  "label": "id desc"
+                }
+              ],
+              "allowCustom": true,
+              "hint": "Разрешённые сортировки: sort asc, sort desc, id asc, id desc. Свою можно вписать через «Свой вариант…»."
+            },
+            {
+              "name": "header",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": "Видеообзоры"
+            },
+            {
+              "name": "sub",
+              "label": "Текст под заголовком",
+              "kind": "text",
+              "default": "Обзоры, распаковки и инструкции — на нашем канале RuTube."
+            }
+          ]
+        }
+      },
+      "items_shared": {
+        "singular": "видео",
+        "fields": [
+          {
+            "name": "id",
+            "label": "RuTube ID",
+            "kind": "text",
+            "default": "b6ddadb11dc876d6494dffcb44e00ddf"
+          },
+          {
+            "name": "url",
+            "label": "URL ролика",
+            "kind": "text",
+            "default": "https://rutube.ru/video/b6ddadb11dc876d6494dffcb44e00ddf/"
+          },
+          {
+            "name": "title",
+            "label": "Название",
+            "kind": "text",
+            "default": "Видео"
+          },
+          {
+            "name": "duration",
+            "label": "Длительность (опц.)",
+            "kind": "text",
+            "default": ""
+          }
+        ],
+        "default": [
+          {
+            "id": "b6ddadb11dc876d6494dffcb44e00ddf",
+            "url": "https://rutube.ru/video/b6ddadb11dc876d6494dffcb44e00ddf/",
+            "title": "Животный мир Океана — живописный фильм о дикой природе с успокаивающей музыкой",
+            "duration": ""
+          },
+          {
+            "id": "bdaef120e48ab895d4e170ebb3f6b1fb",
+            "url": "https://rutube.ru/video/bdaef120e48ab895d4e170ebb3f6b1fb/",
+            "title": "ОКЕАН изучен на 5%. Что скрывается на глубине? | Документальный фильм о дикой природе",
+            "duration": ""
+          },
+          {
+            "id": "6abdf71e1895b5e45304e91688538e0f",
+            "url": "https://rutube.ru/video/6abdf71e1895b5e45304e91688538e0f/",
+            "title": "Саванна 4K | Документальный фильм о дикой природе",
+            "duration": ""
+          },
+          {
+            "id": "ea025c18e8f67f165d47c69f26df17d5",
+            "url": "https://rutube.ru/video/ea025c18e8f67f165d47c69f26df17d5/",
+            "title": "Камчатка 4K | Документальный фильм о дикой природе",
+            "duration": ""
+          }
+        ]
+      },
+      "views": true
+    },
+    "custom": {
+      "title": "Кастомный блок",
+      "group": "Служебные",
+      "partial": "block/custom.html",
+      "status": "planned",
+      "default_variant": "default",
+      "contract_classes": [
+        "custom-block"
+      ],
+      "variants": {
+        "default": {
+          "title": "Default",
+          "params": [
+            {
+              "name": "html",
+              "label": "HTML (вставляется как есть)",
+              "kind": "textarea",
+              "default": "<div class=\"demo-card\">\n  <h3>Кастомный блок</h3>\n  <p>Произвольный HTML/CSS/JS проекта.</p>\n</div>"
+            },
+            {
+              "name": "css",
+              "label": "CSS-ссылки (по одной в строке)",
+              "kind": "textarea",
+              "default": ""
+            },
+            {
+              "name": "js",
+              "label": "JS-ссылки (по одной в строке)",
+              "kind": "textarea",
+              "default": ""
+            }
+          ]
+        }
+      }
+    },
+    "note": {
+      "title": "Примечание",
+      "group": "Контент",
+      "partial": "block/note.html",
+      "status": "planned",
+      "default_variant": "default",
+      "contract_classes": [
+        "note"
+      ],
+      "variants": {
+        "default": {
+          "title": "Default",
+          "params": [
+            {
+              "name": "variant",
+              "label": "Вид",
+              "kind": "select",
+              "default": "info",
+              "options": [
+                [
+                  "info",
+                  "Информация"
+                ],
+                [
+                  "warning",
+                  "Предупреждение"
+                ],
+                [
+                  "success",
+                  "Успех"
+                ]
+              ]
+            },
+            {
+              "name": "title",
+              "label": "Заголовок",
+              "kind": "text",
+              "default": ""
+            },
+            {
+              "name": "text",
+              "label": "Текст",
+              "kind": "textarea",
+              "default": ""
+            }
+          ]
+        }
+      }
     }
   }
 };

@@ -201,4 +201,7 @@ app.component('errors', Errors)
 
 app.use(vuetify)
 app.use(router)
-app.mount('#app')
+// Ждём разрешения начального маршрута, иначе при перезагрузке глубокой ссылки
+// (например /page-constructor/9706/page/16) сначала мигает '/' (MainPage),
+// а уже потом грузится нужный раздел.
+router.isReady().then(() => app.mount('#app'))

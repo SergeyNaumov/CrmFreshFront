@@ -6,14 +6,21 @@
         <span>{{ role === 'structure' ? 'общие для всех страниц шаблона' : 'block_list.json · v2' }}</span>
       </div>
       <span class="pc-appbar__spacer"></span>
-      <span class="pc-saved">{{ lastSavedAt ? ('изменено ' + lastSavedAt) : '' }}</span>
+      <span v-if="isDirty" class="pc-saved">изменено {{ lastSavedAt }}</span>
       <button class="pc-tool pc-tool--ghost" @click="openPagePreview">Предпросмотр страницы</button>
       <button class="pc-tool pc-tool--ghost" @click="loadExample">Пример</button>
       <button class="pc-tool pc-tool--ghost" @click="resetAll">Очистить</button>
-      <button class="pc-tool pc-tool--primary" @click="copyJson">Копировать JSON</button>
+      <button
+        v-if="saveState !== 'saved'"
+        class="pc-tool pc-tool--primary"
+        :disabled="saving"
+        @click="saveNow"
+      >{{ saveState === 'error' ? 'Сохранить ещё раз' : (saving ? 'Сохраняем…' : 'Сохранить') }}</button>
+      <span v-else-if="isDirty === false" class="pc-saved">сохранено</span>
     </header>
 
-    <div class="pc-shell" :class="{ 'is-editing-preview': asideMode === 'preview' }">
+    <div class="pc-shell" :class="{ 'is-editing-preview': asideMode === 'preview' }"
+         :style="{ '--pc-aside-w': aside_w + 'px' }">
       <main class="pc-canvas">
         <div class="pc-canvas__bar">
           <button class="pc-add-btn" @click="openAddModal">＋ Добавить блок</button>
@@ -113,8 +120,15 @@
                       <input v-if="pp.kind === 'text'" class="pcb-field" type="text" v-model="block.params[pp.name]">
                       <textarea v-else-if="pp.kind === 'textarea'" class="pcb-field" v-model="block.params[pp.name]"></textarea>
                       <input v-else-if="pp.kind === 'number'" class="pcb-field" type="number" :min="pp.min" :max="pp.max" :step="pp.step" v-model.number="block.params[pp.name]">
-                      <select v-else-if="pp.kind === 'select'" class="pcb-field" v-model="block.params[pp.name]">
-                        <option v-for="o in pp.options" :key="String(o.value)" :value="o.value">{{ o.label }}</option>
+                      <template v-else-if="isCustomField(pp, block)">
+                        <input class="pcb-field" type="text" v-model="block.params[pp.name]"
+                               :placeholder="'например: ' + (pp.options[0] ? pp.options[0].value : '')">
+                        <button class="pcb-ico" type="button" @click="setCustom(pp, block, false)"
+                                title="Вернуть готовые варианты">↺</button>
+                      </template>
+                      <select v-else-if="pp.kind === 'select'" class="pcb-field"
+                              :value="selectValue(pp, block)" @change="onSelect(pp, block, $event.target.value)">
+                        <option v-for="o in selectOptions(pp, block)" :key="String(o.value)" :value="o.value">{{ o.label }}</option>
                       </select>
                       <label v-else-if="pp.kind === 'bool'" class="pcb-switch"><input type="checkbox" v-model="block.params[pp.name]"><span>{{ block.params[pp.name] ? 'да' : 'нет' }}</span></label>
                       <input v-else class="pcb-field" type="text" v-model="block.params[pp.name]">
@@ -124,7 +138,11 @@
                   </div>
                 </template>
 
-                <div class="pcb-note" v-if="isDataBlock(block)">Данные блока берутся из переменной (поле «Название переменной»). Ниже приведены демонстрационные элементы для превью — в JSON они не выгружаются.</div>
+                <div class="pcb-note" v-if="isQueryMode(block)">
+                  Режим Б: блок сам формирует запрос — условие, сортировка и лимит выше.
+                  Поле «Название переменной» скрыто, движок берёт данные напрямую из таблицы.
+                </div>
+                <div class="pcb-note" v-else-if="isDataBlock(block)">Данные блока берутся из переменной (поле «Название переменной»). Ниже приведены демонстрационные элементы для превью — в JSON они не выгружаются.</div>
 
                 <div class="pcb-items" v-if="hasItems(block)">
                   <div class="pcb-form__section">Элементы ({{ block.items.length }})</div>
@@ -167,29 +185,30 @@
         </template>
       </main>
 
+      <div class="pc-resizer" @mousedown.prevent="start_aside_resize" title="Потяните, чтобы изменить ширину панели"></div>
+
       <aside class="pc-aside">
-        <template v-if="asideMode === 'preview'">
-          <div class="pc-aside__head">
-            <b>Предпросмотр</b>
-            <span class="pc-aside__stats">{{ previewTitle }}</span>
-            <span class="pc-appbar__spacer"></span>
-            <button class="pc-tool" @click="showJson">Показать JSON</button>
+        <div class="pc-aside__head">
+          <b>{{ asideMode === 'preview' ? 'Предпросмотр' : (role === 'structure' ? 'структура' : 'block_list.json') }}</b>
+          <span class="pc-aside__stats">{{ asideMode === 'preview' ? previewTitle : (displayCount + ' бл. · ' + totalItems + ' элем.') }}</span>
+          <span class="pc-appbar__spacer"></span>
+          <button class="pc-tool" @click="toggleJson">{{ jsonVisible ? 'Скрыть JSON' : 'Показать JSON' }}</button>
+          <button class="pc-tool" v-if="jsonVisible" @click="copyJson">Копировать</button>
+        </div>
+        <div class="pc-aside__body" :class="{ 'is-preview': asideMode === 'preview', 'is-json': asideMode === 'json' }">
+          <iframe
+            v-if="asideMode === 'preview' && editingBlock"
+            class="pc-frame"
+            data-pc-frame="aside"
+            :srcdoc="previewSrc"
+            @load="onFrameLoad"
+            title="Предпросмотр блока"
+          ></iframe>
+          <div v-else-if="asideMode === 'preview'" class="pc-aside__idle">
+            Выберите блок и нажмите «Редактировать», чтобы увидеть его превью.
           </div>
-          <div class="pc-aside__body is-preview">
-            <iframe class="pc-frame" :srcdoc="previewSrc" @load="onFrameLoad" title="Предпросмотр блока"></iframe>
-          </div>
-        </template>
-        <template v-else>
-          <div class="pc-aside__head">
-            <b>{{ role === 'structure' ? 'структура' : 'block_list.json' }}</b>
-            <span class="pc-aside__stats">{{ displayCount }} бл. · {{ totalItems }} элем.</span>
-            <span class="pc-appbar__spacer"></span>
-            <button class="pc-tool" @click="copyJson">Копировать</button>
-          </div>
-          <div class="pc-aside__body">
-            <pre class="pc-json">{{ jsonText }}</pre>
-          </div>
-        </template>
+          <pre v-else class="pc-json">{{ jsonText }}</pre>
+        </div>
       </aside>
     </div>
 
@@ -242,7 +261,7 @@
           <button class="pc-modal__close" @click="closeBlockPreview" aria-label="Закрыть">✕</button>
         </div>
         <div class="pc-modal__body">
-          <iframe class="pc-frame pc-frame--modal" :srcdoc="modalSrc" @load="onFrameLoad" title="Предпросмотр блока"></iframe>
+          <iframe class="pc-frame pc-frame--modal" data-pc-frame="modal" :srcdoc="modalSrc" @load="onFrameLoad" title="Предпросмотр блока"></iframe>
         </div>
       </div>
     </div>
@@ -254,7 +273,7 @@
           <button class="pc-modal__close" @click="closePagePreview" aria-label="Закрыть">✕</button>
         </div>
         <div class="pc-modal__body">
-          <iframe class="pc-frame pc-frame--modal" :srcdoc="pageSrc" @load="onFrameLoad" title="Предпросмотр страницы"></iframe>
+          <iframe class="pc-frame pc-frame--modal" data-pc-frame="page" :srcdoc="pageSrc" @load="onFrameLoad" title="Предпросмотр страницы"></iframe>
         </div>
       </div>
     </div>
@@ -294,6 +313,9 @@ import { PC, SCHEMA } from '../engine'
 import example_block_list from '../data/examples/example_block_list.json'
 import blocks_new_example from '../data/examples/blocks_new_example.json'
 
+// Метка опции «ручной ввод» в select с allowCustom.
+const CUSTOM = '__custom__'
+
 let uidCounter = 0
 function nextUid() { uidCounter += 1; return 'blk-' + Date.now().toString(36) + '-' + uidCounter }
 function clone(v) { return PC.clone(v) }
@@ -314,6 +336,13 @@ function mergeParamDefaults(type, variant, params) {
   ;(PC.variantParams(type, variant) || []).forEach(d => {
     if (out[d.name] === undefined) out[d.name] = clone(d.default)
   })
+  // Товары: условие выборки зависит от переменной (новинки/акции/популярные),
+  // иначе схема-дефолт «new=1» сломает спецпредложения и популярные.
+  if (type === 'goods' && out.varname && ('where' in out)) {
+    out.where = out.varname === 'sale_goods_list' ? 'enabled=1 and action=1'
+      : out.varname === 'popular_goods_list' ? 'enabled=1 and specpredl=1'
+      : 'enabled=1 and new=1'
+  }
   return out
 }
 function makeEditable(block) {
@@ -325,7 +354,10 @@ function makeEditable(block) {
     fill: block.fill || '',
     anim: block.anim || '',
     bleed: !!block.bleed,
-    params: (td && td.structural) ? mergeParamDefaults(block.type, block.variant || '', block.params) : clone(block.params || {}),
+    // Дефолты схемы доливаются всем блокам (а не только структурным),
+    // чтобы «источник/условие/сортировка», переходы/скорости и т.п. были
+    // заполнены при открытии. Существующие значения не перетираются.
+    params: mergeParamDefaults(block.type, block.variant || '', block.params),
     items: clone(block.items || [])
   }
 }
@@ -374,9 +406,11 @@ export default {
     role: { type: String, default: 'page' },
     header: { type: Object, default: null },
     footer: { type: Object, default: null },
-    configRev: { type: Number, default: 0 }
+    configRev: { type: Number, default: 0 },
+    // Номер блока, который нужно раскрыть снаружи (из URL).
+    expandIndex: { type: Number, default: -1 }
   },
-  emits: ['change', 'edit-structure'],
+  emits: ['change', 'edit-structure', 'save', 'saved', 'edit-block'],
   data() {
     return {
       blocks: [],
@@ -388,7 +422,22 @@ export default {
       emojiPresets: EMOJI_PRESETS,
       projectImages: [],
       blockUploading: false,
-      forceJson: false,
+      // JSON в правой панели по умолчанию скрыт (показывается по кнопке).
+      jsonVisible: false,
+      // Ширина правой панели (drag), запоминается в localStorage.
+      // Клампим и при загрузке: холсту всегда оставляем минимум ~360px,
+      // иначе после прошлых сессий панель может перекрыть его.
+      aside_w: (() => {
+        const minCanvas = 360
+        const max = Math.max(260, window.innerWidth - minCanvas - 12)
+        return Math.min(Math.max(Number(localStorage.getItem('pc_constructor_aside_w')) || 380, 260), max)
+      })(),
+      // Поля, переведённые в ручной ввод (UI-состояние, в JSON не попадает).
+      custom_fields: {},
+      saving: false,
+      saveState: '',
+      // Снимок документа, принятого бэкендом: с ним сверяется isDirty.
+      savedSnapshot: '',
       dragIndex: null,
       dragOverIndex: null,
       showAddModal: false,
@@ -438,8 +487,14 @@ export default {
       const self = this
       return this.blocks.filter(b => b._uid === self.editingUid)[0] || null
     },
+    // По умолчанию показываем превью блока (или заглушку, если блок не
+    // выбран). JSON включается только по кнопке «Показать JSON».
     asideMode() {
-      return (this.editingBlock && !this.forceJson) ? 'preview' : 'json'
+      return this.jsonVisible ? 'json' : 'preview'
+    },
+    // Есть ли несохранённые изменения (документ отличается от принятого бэком).
+    isDirty() {
+      return this.savedSnapshot !== '' && this.exportDocJson !== this.savedSnapshot
     },
     editingMarkup() {
       return this.editingBlock ? PC.renderBlock(this.editingBlock) : ''
@@ -457,6 +512,7 @@ export default {
     },
     displayCount() { return this.fullBlocks.length },
     exportDoc() { return PC.exportDocument({ blocks: this.fullBlocks }) },
+    exportDocJson() { return JSON.stringify(this.exportDoc) },
     jsonText() { return JSON.stringify(this.exportDoc, null, 2) },
     totalItems() {
       return this.blocks.reduce((n, b) => n + ((b.items && b.items.length) || 0), 0)
@@ -466,12 +522,37 @@ export default {
     blocks: { deep: true, handler() { this.autosave() } },
     addResults() { this.addHighlight = 0 },
     editingMarkup(markup) { this.schedulePreview(markup) },
-    configRev() { this.refreshPreviews() }
+    configRev() { this.refreshPreviews() },
+    expandIndex(i) { if (i >= 0) this.expandBlockByIndex(i) }
   },
   mounted() {
     this.load_doc(this.doc)
+    // Блок, указанный в URL (/page/<id>/block/<n>), раскрываем сразу:
+    // watcher на expandIndex срабатывает только при смене значения.
+    if (this.expandIndex >= 0) this.$nextTick(() => this.expandBlockByIndex(this.expandIndex))
   },
   methods: {
+    // Drag-ручка правой панели; ширина запоминается в localStorage.
+    start_aside_resize(e) {
+      const startX = e.clientX
+      const startW = this.aside_w
+      // Верхняя граница — доля окна (до 72%), но с гарантией минимума для
+      // холста (360px), иначе при сильном сужении левой колонки карточки
+      // блоков накладываются друг на друга.
+      const minCanvas = 360
+      const maxW = Math.max(260, Math.min(Math.round(window.innerWidth * 0.72), window.innerWidth - minCanvas - 12))
+      const onMove = (ev) => {
+        // панель справа: тянем влево — шире.
+        this.aside_w = Math.min(Math.max(startW - (ev.clientX - startX), 260), maxW)
+      }
+      const onUp = () => {
+        window.removeEventListener('mousemove', onMove)
+        window.removeEventListener('mouseup', onUp)
+        try { localStorage.setItem('pc_constructor_aside_w', String(this.aside_w)) } catch (_) {}
+      }
+      window.addEventListener('mousemove', onMove)
+      window.addEventListener('mouseup', onUp)
+    },
     typeTitle(type) { const t = typeDef(type); return t ? (t.title || type) : type },
     variantTitle(type, variantKey) {
       const t = typeDef(type)
@@ -483,8 +564,65 @@ export default {
     paramsOf(block) { return PC.variantParams(block.type, block.variant) },
     formParams(block) {
       const vp = this.viewParam(block)
-      return (this.paramsOf(block) || []).filter(p => !vp || p.name !== vp.name)
+      const list = (this.paramsOf(block) || []).filter(p => !vp || p.name !== vp.name)
+      // Режим Б («настройка выборки») — имя переменной шаблона не участвует,
+      // поэтому поле прячем; у режима А оставляем как есть.
+      if (this.isQueryMode(block)) return list.filter(p => p.name !== 'varname')
+      return list
     },
+    // Режим источника данных: Б = выборка в блоке (block_query).
+    // Ключ «ручного режима» — только состояние UI, в JSON не попадает.
+    customKey(pp, block) { return (block._uid || '') + '|' + pp.name; },
+    isCustomField(pp, block) {
+      if (pp.kind !== 'select' || !pp.allowCustom) return false
+      return !!this.custom_fields[this.customKey(pp, block)]
+    },
+    setCustom(pp, block, on) {
+      const key = this.customKey(pp, block)
+      if (on) {
+        this.custom_fields[key] = true
+        // Значение из JSON сохраняем — просто показываем его в поле ввода.
+      } else {
+        delete this.custom_fields[key]
+        block.params[pp.name] = (pp.options && pp.options[0]) ? pp.options[0].value : ''
+      }
+    },
+    // Значение для select: свои значения (которых нет в готовых) показываем
+    // первой опцией, чтобы выбор не слетел при открытии блока.
+    selectValue(pp, block) {
+      return this.isCustomField(pp, block) ? CUSTOM : (block.params[pp.name] !== undefined ? block.params[pp.name] : '')
+    },
+    selectOptions(pp, block) {
+      const out = (pp.options || []).slice()
+      if (!pp.allowCustom) return out
+      const cur = block.params[pp.name]
+      if (!this.isCustomField(pp, block) && cur !== undefined && cur !== null && cur !== '' &&
+          !out.some(o => String(o.value) === String(cur))) {
+        out.unshift({ value: cur, label: cur + ' (текущее)' })
+      }
+      out.push({ value: CUSTOM, label: 'Свой вариант…' })
+      return out
+    },
+    onSelect(pp, block, value) {
+      if (value === CUSTOM) { this.setCustom(pp, block, true); return }
+      this.setCustom(pp, block, false)
+      // <select> всегда отдаёт строку. Возвращаем исходный тип опции
+      // (true/false/null/число), иначе «Нет» сохранится как строка "false"
+      // и не переключит превью/движок.
+      const opt = (pp.options || []).find(function (o) {
+        const ov = (o.value === null || o.value === undefined) ? '' : String(o.value)
+        return ov === String(value)
+      })
+      block.params[pp.name] = opt ? opt.value : value
+    },
+    isQueryMode(block) {
+      const src = (block && block.params && block.params.source) || ''
+      return src === 'block_query'
+    },
+    sourceParam(block) {
+      return (this.paramsOf(block) || []).find(p => p.name === 'source') || null
+    },
+    isDataSourceBlock(block) { return !!this.sourceParam(block) },
     fieldsOf(block) { return PC.itemFields(block.type, block.variant) },
     isDataBlock(block) { const t = typeDef(block.type); return !!(t && t.data) },
     hasItems(block) { return !this.isDataBlock(block) && PC.itemFields(block.type, block.variant).length > 0 },
@@ -722,10 +860,42 @@ export default {
       this.blocks.splice(to, 0, b)
     },
     toggleForm(block) {
-      if (this.editingUid === block._uid) { this.editingUid = null; return }
+      if (this.editingUid === block._uid) { this.editingUid = null; this.emitEditBlock(); return }
       this.editingUid = block._uid
-      this.forceJson = false
       this.scrollToBlock(block._uid)
+      this.emitEditBlock()
+    },
+    // Родителю нужен номер раскрытого блока, чтобы отразить его в URL.
+    emitEditBlock() {
+      const idx = this.editingBlock ? this.blocks.indexOf(this.editingBlock) : -1
+      this.$emit('edit-block', idx)
+    },
+    expandBlockByIndex(i) {
+      const n = parseInt(i, 10)
+      if (isNaN(n) || n < 0 || n >= this.blocks.length) return
+      const block = this.blocks[n]
+      this.editingUid = block._uid
+      this.scrollToBlock(block._uid)
+    },
+    toggleJson() { this.jsonVisible = !this.jsonVisible },
+    /* Сохранить без закрытия редактора: отдаём документ наружу (PageConstructor
+       знает API), сами факт приёма подтверждаем через applySaveResult(). */
+    saveNow() {
+      if (this.saving) return
+      this.saving = true
+      this.saveState = 'saving'
+      this.$emit('save', this.exportDoc)
+    },
+    /* Вызывается родителем после ответа бэкенда. */
+    applySaveResult(ok, message) {
+      const self = this
+      this.saving = false
+      this.saveState = ok ? 'saved' : 'error'
+      if (ok) this.savedSnapshot = this.exportDocJson
+      this.flash(message || (ok ? 'Сохранено' : 'Ошибка сохранения'))
+      // «сохранено» держим 1.8 c, потом кнопка возвращается для следующей правки
+      clearTimeout(this._saveTimer)
+      this._saveTimer = setTimeout(() => { if (self.saveState === 'saved') self.saveState = '' }, 1800)
     },
     scrollToBlock(uid) {
       this.$nextTick(() => {
@@ -734,7 +904,6 @@ export default {
       })
     },
     isOpen(block) { return this.editingUid === block._uid },
-    showJson() { this.forceJson = true },
     addItem(block) { block.items.push(defaultsFromFields(this.fieldsOf(block))) },
     removeItem(block, i) { block.items.splice(i, 1) },
     schedulePreview(markup) {
@@ -776,6 +945,9 @@ export default {
           if (d && d.body) f.style.height = Math.max(220, d.body.scrollHeight + 8) + 'px'
         } catch (err) { /* cross-origin */ }
       }
+      // Сторож: если какая-то ссылка всё же уволила iframe (кириллица в
+      // href, скрипт-обход, Turbolinks-подобный код) — возвращаем документ.
+      this.guardFrame(f)
       resize()
       setTimeout(resize, 400)
       setTimeout(resize, 1200)
@@ -786,6 +958,40 @@ export default {
           f.__pcRO.observe(d2.body)
         }
       } catch (err) { /* ignore */ }
+    },
+    // Подстраховка к скрипту в preview.js: если документ iframe сменился
+    // (переход по ссылке), пересобираем srcdoc — превью восстанавливается.
+    guardFrame(f) {
+      if (!f) return
+      if (f.__pcGuard) return
+      f.__pcGuard = true
+      let lastDoc = null
+      const check = () => {
+        let doc = null
+        try { doc = f.contentDocument } catch (err) { doc = null }
+        if (!doc) return
+        if (lastDoc && doc !== lastDoc) this.restoreFrame(f)
+        lastDoc = doc
+      }
+      const timer = setInterval(() => {
+        if (!f.isConnected) { clearInterval(timer); return }
+        check()
+      }, 700)
+    },
+    restoreFrame(f) {
+      if (f.__pcRestore) return
+      f.__pcRestore = true
+      const which = (f.dataset.pcFrame || '')
+      if (which === 'page') {
+        const blocks = this.fullBlocks
+        this.pageSrc = PC.buildPreviewDoc(PC.renderAll(blocks), blocks.map(b => b.type))
+      } else if (which === 'modal') {
+        if (this.modalBlock) this.modalSrc = PC.buildPreviewDoc(PC.renderBlock(this.modalBlock), this.modalBlock.type)
+      } else if (this.editingBlock) {
+        this.previewSrc = PC.buildPreviewDoc(PC.renderBlock(this.editingBlock), this.editingBlock.type)
+      }
+      const done = () => { f.__pcRestore = false }
+      this.$nextTick(() => setTimeout(done, 300))
     },
     canDrag(block) { return !this.isStructural(block) },
     onDragStart(idx, e) {
@@ -827,12 +1033,30 @@ export default {
       this.blocks = doc.blocks.map(b => makeEditable(b))
       this.editingUid = null
       this.normalizeOrder()
+      this.syncCustomFields()
+      // Документ принят бэкендом — с этого момента isDirty ловит правки.
+      const self = this
+      this.$nextTick(() => { self.savedSnapshot = self.exportDocJson })
     },
     normalizeOrder() {
       const header = this.blocks.filter(b => b.type === 'header')[0]
       const footer = this.blocks.filter(b => b.type === 'footer')[0]
       const rest = this.blocks.filter(b => b.type !== 'header' && b.type !== 'footer')
       this.blocks = (header ? [header] : []).concat(rest).concat(footer ? [footer] : [])
+    },
+    // Значение параметра не совпало с готовыми опциями → показываем поле ввода.
+    syncCustomFields() {
+      const self = this
+      this.blocks.forEach(b => {
+        ;(this.paramsOf(b) || []).forEach(pp => {
+          if (pp.kind !== 'select' || !pp.allowCustom) return
+          const cur = b.params[pp.name]
+          if (cur === undefined || cur === null || cur === '') return
+          if (!(pp.options || []).some(o => String(o.value) === String(cur))) {
+            self.custom_fields[self.customKey(pp, b)] = true
+          }
+        })
+      })
     },
     load_doc(doc) {
       const all = (doc && Array.isArray(doc.blocks)) ? doc.blocks : []

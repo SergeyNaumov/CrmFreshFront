@@ -1,20 +1,18 @@
 /* ============================================================
-   templates/t1/js/preview/header-search.js
-   Компонент поиска с автокомплитом по товарам (строка поиска в шапке).
-
-   Область применения: preview. Лежит в preview/, а не в js/components/,
-   потому что дизайн шапки с поиском ещё не согласован — та же позиция,
-   что в main_v2.html («инлайн, чтобы не плодить новые файлы в прод-папке
-   до согласования дизайна»); прецедент клиентского модуля в preview —
-   js/preview/forms.js. При переносе в релиз: файл → js/components/
-   header-search.js, подключение → index.html (после js/app.js).
+   templates/t1/js/components/header-search.js
+   Компонент поиска с автокомплитом (строка поиска в шапке, на
+   /search и на 404). Самозапускается по [data-header-search],
+   подключение — index.html (после js/app.js), стили — css/header-search.css.
 
    КОНТРАКТ ЗАПРОСА
    ---------------
-   Релиз:  GET /ajax/search/<слово>
-           Ответ: { "list": [ { "id": 101, "header": "Смартфон X1 Pro",
-                                "photo": "images/good/good_1_1.webp",
-                                "url": "/catalog/.../smartfony-x1-pro/" } ] }
+   Релиз:  GET /ajax/search/<сущность>/<фраза>     (endpoint, по умолчанию
+           товары — /ajax/search/good/; см. agent-doc/prod_contract/
+           09_utility_services.md)
+           Ответ: { "list": [ { "id": 3, "header": "Ноутбук UltraBook 14",
+                                "photo": "/files/…/good_3_1.webp",
+                                "url": "/good/Noutbuk-UltraBook-14" } ],
+                     "more": false }
            (терпимо к голому массиву и к ключам items / LIST)
    Preview: инъекция <script src="js/preview/ajax_search.js?q=…&rid=…"> —
            файл публикует CustomEvent('t1:ajax-search',
@@ -22,31 +20,32 @@
 
    Какая ветка используется — задаёт пропс dataUrl:
      - задан dataUrl → preview-инъекция (файл с данными);
-     - не задан       → релизный fetch на /ajax/search/<слово>.
-   Форма рабочая и без обвязки: обычный GET на action.
+     - не задан       → релизный fetch на endpoint.
+
+   СТРАНИЦА РЕЗУЛЬТАТОВ
+   -------------------
+   Отправка формы и ссылка «Все результаты» ведут на searchBase/<фраза>
+   (по умолчанию /search/<фраза>) — ЧПУ-адрес страницы поиска.
+   Без JS форма отработает обычным GET на action (/search?q=… — такой
+   вариант бэкенд тоже принимает).
 
    ИСПОЛЬЗОВАНИЕ
    -------------
-   1) Отдельным приложением (страница с витриной шапок):
-        <div class="hdr__search"
-             data-header-search
-             data-url="js/preview/ajax_search.js"
-             data-action="search.html"
-             data-placeholder="Поиск по каталогу"></div>
-        <script src="js/preview/header-search.js"></script>
-      Приложение само найдёт все [data-header-search] на DOMContentLoaded.
+   1) Отдельным приложением (как в шапке):
+        <div class="header__search" data-header-search
+             data-placeholder="Поиск по каталогу"
+             data-value="ноутбук"></div>
 
    2) Частью другого приложения (шапка, где рядом корзина и избранное):
         Vue.createApp({
           components: { HeaderSearch: window.HeaderSearch },
           template: root.querySelector('template').innerHTML
         }).mount(root);
-      в разметке шапки: <header-search data-url="…" action="search.html"
-      placeholder="…"></header-search>
+      в разметке шапки: <header-search value="…" placeholder="…"></header-search>
 
-   Данные для проверки: js/preview/ajax_search.js.
+   Данные для проверки в preview: js/preview/ajax_search.js.
    ============================================================ */
-window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
+window.__T1_HEADER_SEARCH_VER = '2026-10-03-release';
 
 (function () {
   'use strict';
@@ -55,6 +54,8 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
   var DELAY = 300;     /* пауза после последнего нажатия клавиши, мс */
   var LIMIT = 8;       /* сколько подсказок показывать */
 
+  var ENDPOINT = '/ajax/search/good/';  /* сущность подсказок в шапке */
+  var SEARCH_BASE = '/search';          /* ЧПУ-страница результатов */
   var seq = 0;         /* сквозной счётчик экземпляров и запросов */
 
   /* Приводит запись сервера к { id, header, photo, url }.
@@ -81,8 +82,17 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
 
     props: {
       dataUrl:     { type: String, default: '' },
-      action:      { type: String, default: 'search.html' },
+      endpoint:    { type: String, default: ENDPOINT },
+      searchBase:  { type: String, default: SEARCH_BASE },
+      action:      { type: String, default: SEARCH_BASE },
       placeholder: { type: String, default: 'Поиск по каталогу' },
+      value:       { type: String, default: '' },
+      /* Фразы для эффекта печати в placeholder (параметр шапки search_hints).
+         Пустой массив — эффект выключен, остаётся обычный placeholder. */
+      hints:       { type: Array, default: function () { return []; } },
+      typeSpeed:   { type: Number, default: 85 },
+      deleteSpeed: { type: Number, default: 45 },
+      holdTime:    { type: Number, default: 1600 },
       limit:       { type: Number, default: LIMIT },
       minChars:    { type: Number, default: MIN_CHARS },
       delay:       { type: Number, default: DELAY }
@@ -92,11 +102,14 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
       seq += 1;
       return {
         uid: 'hs' + seq,
-        q: '',
+        q: (this.value || '').trim(),
         items: [],
         open: false,
         loading: false,
         active: -1,
+        /* Эффект печати: печатаемая фраза и таймер */
+        typed: '',
+        typing: false,
         _timer: null,
         _rid: '',
         _abort: null,
@@ -105,11 +118,18 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
     },
 
     computed: {
-      /* Ссылка «Все результаты» в подвале выпадашки */
+      /* Ссылка «Все результаты» в подвале выпадашки — ЧПУ-страница поиска */
       allHref: function () {
-        return this.action + '?q=' + encodeURIComponent(this.q.trim());
+        return this.searchPath(this.q.trim());
       },
       listId: function () { return 'hs-list-' + this.uid; },
+      /* Текст placeholder: печатаемая фраза, когда поле пустое и не в фокусе,
+         иначе исходный подсказчик. Печатаем через :placeholder, значение поля
+         при этом остаётся пустым — так что подсказка не мешает вводу. */
+      shownPlaceholder: function () {
+        if (this.typing) return this.typed;
+        return this.placeholder;
+      },
       /* Текст состояния — для скринридеров */
       status: function () {
         if (this.loading) return 'Ищем по запросу «' + this.q.trim() + '»';
@@ -126,10 +146,15 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
         if (vm.open && vm.$el && !vm.$el.contains(e.target)) vm.close();
       };
       document.addEventListener('click', this._onDocClick, true);
+
+      /* Эффект печати — только для пустого поля. На странице поиска в поле уже
+         подставлена готовая фраза (data-value), печатать нечего. */
+      if (!this.q) this.startTyping();
     },
 
     beforeUnmount: function () {
       if (this._timer) clearTimeout(this._timer);
+      if (this._typeTimer) clearTimeout(this._typeTimer);
       if (this._abort) this._abort.abort();
       if (this._onDocClick) {
         document.removeEventListener('click', this._onDocClick, true);
@@ -138,11 +163,26 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
     },
 
     methods: {
+      /* --- Куда ведёт поиск ----------------------------------------------------
+         /search/<фраза> (фраза в URL-кодировке). Пустая фраза — на /search. */
+      searchPath: function (q) {
+        var base = String(this.searchBase || SEARCH_BASE).replace(/\/+$/, '');
+        var query = String(q || '').trim();
+        return query ? base + '/' + encodeURIComponent(query) : base;
+      },
+
+      /* Отправка формы: путь, а не ?q= (без JS сработает обычный GET на action) */
+      submit: function () {
+        window.location.href = this.searchPath(this.q);
+      },
+
       /* --- Ввод ------------------------------------------------------------ */
       onInput: function () {
         var vm = this;
         vm.active = -1;
         vm.clearTimer();
+        /* Пользователь печатает сам — эффект печати в placeholder не нужен. */
+        vm.stopTyping();
 
         if (vm.q.trim().length < vm.minChars) {
           vm.reset();
@@ -158,7 +198,58 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
       },
 
       onFocus: function () {
+        /* Печать в placeholder останавливается, когда пользователь начал ввод. */
+        this.stopTyping();
         if (this.items.length) this.open = true;
+      },
+
+      /* --- Эффект печати в placeholder --------------------------------------
+         Фразы берутся из props.hints (параметр шапки search_hints).
+         Печать идёт посимвольно: набор → пауза → стирание → следующая фраза.
+         Любой ввод, фокус или очистка останавливают эффект. */
+      startTyping: function () {
+        var vm = this;
+        var hints = (vm.hints || []).filter(function (h) { return h && String(h).trim(); });
+        if (!hints.length) return;
+
+        var idx = 0;
+        var chars = 0;
+        var erasing = false;
+
+        vm.stopTyping();
+        vm.typing = true;
+        vm.typed = '';
+
+        function step() {
+          var word = String(hints[idx]);
+          if (!erasing) {
+            chars += 1;
+            vm.typed = word.slice(0, chars);
+            if (chars >= word.length) {
+              erasing = true;
+              vm._typeTimer = setTimeout(step, vm.holdTime);
+              return;
+            }
+          } else {
+            vm.typed = word.slice(0, Math.max(0, chars - 1));
+            chars -= 1;
+            if (chars <= 0) {
+              erasing = false;
+              idx = (idx + 1) % hints.length;
+              vm._typeTimer = setTimeout(step, 350);
+              return;
+            }
+          }
+          vm._typeTimer = setTimeout(step, erasing ? vm.deleteSpeed : vm.typeSpeed);
+        }
+
+        vm._typeTimer = setTimeout(step, 400);
+      },
+
+      stopTyping: function () {
+        if (this._typeTimer) { clearTimeout(this._typeTimer); this._typeTimer = null; }
+        this.typing = false;
+        this.typed = '';
       },
 
       clear: function () {
@@ -255,10 +346,12 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
         document.head.appendChild(s);
       },
 
-      /* Релиз: GET /ajax/search/<слово> */
+      /* Релиз: GET /ajax/search/<сущность>/<фраза> */
       requestRelease: function (q) {
         var vm = this;
-        var url = '/ajax/search/' + encodeURIComponent(q);
+        var base = String(vm.endpoint || ENDPOINT);
+        if (base.charAt(base.length - 1) !== '/') base += '/';
+        var url = base + encodeURIComponent(q);
 
         if (typeof window.fetch !== 'function') {
           /* Совсем старый браузер: молча оставляем форму без подсказок */
@@ -353,7 +446,7 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
 
     template: `
 <div class="hsearch">
-  <form class="hsearch__form" :action="action" method="get" role="search">
+  <form class="hsearch__form" :action="action" method="get" role="search" @submit.prevent="submit">
     <svg class="hsearch__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="2" aria-hidden="true">
       <circle cx="10.5" cy="10.5" r="6.5"></circle>
@@ -361,7 +454,7 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
     </svg>
 
     <input class="hsearch__input" type="search" name="q"
-           :placeholder="placeholder" autocomplete="off"
+           :placeholder="shownPlaceholder" autocomplete="off"
            :aria-label="'Поиск: ' + placeholder"
            :aria-controls="listId" aria-autocomplete="list"
            :aria-busy="loading ? 'true' : 'false'"
@@ -408,6 +501,26 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
   };
 
   /* ---------- Монтирование: все [data-header-search] на странице ---------- */
+
+  /* Фразы для печати: data-hints="ноутбук|игровой ноутбук|смартфон"
+     Разделители: | , реальный перевод строки (фразы из конструктора) и
+     литерал "\n" — на случай, если значение сохранилось как escape-последовательность
+     (иначе все фразы склеились бы в одну и печатались с символами \n). */
+  function parseHints(raw) {
+    if (!raw) return [];
+    var s = String(raw).trim();
+    if (!s) return [];
+    if (s.charAt(0) === '[') {
+      try {
+        var arr = JSON.parse(s);
+        if (Array.isArray(arr)) return arr.filter(function (h) { return h && String(h).trim(); });
+      } catch (e) { /* не JSON — читаем как список */
+      }
+    }
+    return s.split(/[|\r\n]+|\\+[nN]/).map(function (h) { return h.trim(); })
+            .filter(function (h) { return h; });
+  }
+
   function mountOne(el) {
     if (el.__t1HeaderSearch) return null;
     if (!window.Vue || !window.HeaderSearch) return null;
@@ -415,8 +528,13 @@ window.__T1_HEADER_SEARCH_VER = '2026-09-28-preview';
 
     return window.Vue.createApp(window.HeaderSearch, {
       dataUrl: el.getAttribute('data-url') || '',
-      action: el.getAttribute('data-action') || 'search.html',
+      endpoint: el.getAttribute('data-endpoint') || ENDPOINT,
+      searchBase: el.getAttribute('data-search-base') || SEARCH_BASE,
+      action: el.getAttribute('data-action') || SEARCH_BASE,
       placeholder: el.getAttribute('data-placeholder') || 'Поиск по каталогу',
+      value: el.getAttribute('data-value') || '',
+      /* Фразы для печати в placeholder: data-hints="фраза1|фраза2|…" */
+      hints: parseHints(el.getAttribute('data-hints')),
       limit: parseInt(el.getAttribute('data-limit'), 10) || LIMIT,
       minChars: parseInt(el.getAttribute('data-min-chars'), 10) || MIN_CHARS,
       delay: parseInt(el.getAttribute('data-delay'), 10) || DELAY

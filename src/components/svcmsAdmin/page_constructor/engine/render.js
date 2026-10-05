@@ -211,9 +211,32 @@
     return out;
   }
 
+  // Плоский список пунктов шапки с level (0/1/2) → дерево для renderMenu.
+  function menuFromFlat(items) {
+    var roots = [], stack = [];
+    (items || []).forEach(function (it) {
+      var url = it.url || '', header = it.header || it.title || '';
+      if (!header && !url) return;
+      var lvl = parseInt(it.level || 0, 10);
+      if (isNaN(lvl) || lvl < 0) lvl = 0;
+      if (lvl > 2) lvl = 2;
+      var node = { header: header, url: url, description: it.description || '', child: [] };
+      if (lvl === 0 || stack.length < lvl) {
+        roots.push(node);
+        stack = [node];
+      } else {
+        stack[lvl - 1].child.push(node);
+        stack = stack.slice(0, lvl).concat([node]);
+      }
+    });
+    return roots;
+  }
   function renderHeader(block) {
     block = withDefaults(block);
     var d = global.PC_HEADER_DATA || {};
+    var menuSrc = (p(block, 'source', 'template_var') !== 'template_var' && (block.items || []).length)
+      ? menuFromFlat(block.items)
+      : d.top_menu;
     var layout = p(block, 'layout', 'classic');
     var em = envelopeModifiers(block);
     var cls = 'header' + (layout && layout !== 'classic' ? ' header--' + layout : '') + (em ? ' ' + em : '');
@@ -239,12 +262,20 @@
 
     var logo = '<a class="logo" href="/">' + logoImg(d.logo, d.orgname) + '</a>';
     var nav = bool(block, 'nav')
-      ? '<nav class="header__nav" aria-label="Основная навигация">' + renderMenu(d.top_menu, 0, false) + '</nav>'
+      ? '<nav class="header__nav" aria-label="Основная навигация">' + renderMenu(menuSrc, 0, false) + '</nav>'
+      : '';
+    // Строка поиска с автокомплитом (.hsearch) — flex-элемент внутри
+    // .header__main, как в prod-шапке block/header.html: вид шапки
+    // (header--<layout>) решает, будет это отдельная строка или строка
+    // логотипа. На мобильном — всегда отдельная строка.
+    var search = bool(block, 'search')
+      ? '<div class="header__search"><div class="hsearch" data-header-search' +
+        ' data-endpoint="/ajax/search/good/" data-placeholder="Поиск по каталогу"></div></div>'
       : '';
     var main = '<div class="header__main container">' + logo + nav +
-      '<div class="header__actions">' + headerWidgets(block) + '</div></div>';
+      '<div class="header__actions">' + headerWidgets(block) + '</div>' + search + '</div>';
     var mobile = bool(block, 'nav')
-      ? '<nav class="header__mobile container is-hidden" id="mobileMenu" aria-label="Мобильное меню">' + renderMenu(d.top_menu, 0, true) + '</nav>'
+      ? '<nav class="header__mobile container is-hidden" id="mobileMenu" aria-label="Мобильное меню">' + renderMenu(menuSrc, 0, true) + '</nav>'
       : '';
     return '<header class="' + cls + '" id="siteHeader">' + top + main + mobile + '</header>';
   }
@@ -335,6 +366,9 @@
     var v = block.variant || 'prose';
     var it = items(block);
     var header = esc(p(block, 'title', p(block, 'header', 'Заголовок')));
+    /* H1 рисует page_head (renderBlock) — в превью свой h2 не дублируем,
+       как в проде (text_block.html: {% if title and not p.page_head %}). */
+    var ph = defBool(block, 'page_head', false);
     switch (v) {
       case 'split':
         return el('div', { class: 'tb-split' + (p(block, 'rev', false) === true ? ' tb-split--rev' : '') },
@@ -404,7 +438,7 @@
       default:
         return el('div', { class: 'tb-prose' },
           el('div', { class: 'tb-eyebrow' }, esc(p(block, 'eyebrow'))) +
-          el('h2', null, header) +
+          (ph ? '' : el('h2', null, header)) +
           (bool(block, 'leadOn') || p(block, 'lead') ? el('p', { class: 'tb-lead' }, esc(p(block, 'lead'))) : '') +
           el('p', null, esc(p(block, 'p1'))) +
           (p(block, 'btnText') ? link('#', 'btn', esc(p(block, 'btnText'))) : ''));
@@ -423,9 +457,22 @@
         photo: mediaUrl(it.photo || '')
       };
     });
+    var boolAttr = function (name) {
+      var v = p(block, name);
+      return (v === false || v === 'false') ? 'false' : 'true';
+    };
     return el('hero-slider', {
       'data-list': JSON.stringify(slides),
-      autoplay: p(block, 'autoplay', '5000')
+      autoplay: p(block, 'autoplay', '5000'),
+      duration: p(block, 'duration', 0),
+      animation: p(block, 'animation', 'rise'),
+      transition: p(block, 'transition', 'slide'),
+      arrows: boolAttr('arrows'),
+      dots: boolAttr('dots'),
+      loop: boolAttr('loop'),
+      start: p(block, 'start', 0),
+      height: p(block, 'height', 0),
+      speed: p(block, 'speed', 0)
     });
   }
   function renderCatalog(block) {
@@ -579,35 +626,37 @@
       '<template id="good_list_tpl">' + listing + '</template></div>';
   }
   // -------- Блок страницы «Поиск» (page_search) --------
-  function searchResultSection(title, rows, empty) {
-    var body = rows.length
-      ? '<ul class="search-results">' + rows.map(function (r) {
-          return '<li class="search-result"><a href="' + esc(r.url || '#') + '">' + esc(r.header) + '</a><p>' + esc(r.anons) + '</p></li>';
-        }).join('') + '</ul>'
-      : '<p class="search-empty">' + esc(empty || 'Ничего не найдено.') + '</p>';
-    return '<div class="search-section"><h2 class="search-section__title">' + esc(title) + '</h2>' + body + '</div>';
+  // Разметка повторяет prod-блок block/page_search.html: строка поиска
+  // .hsearch (js/components/header-search.js) + блоки по сущностям
+  // .search-block. Здесь она статичная: фразы запроса в конструкторе нет,
+  // поэтому у каждого блока — заглушка и ссылка «Все результаты».
+  var SEARCH_ENTITIES = [
+    { key: 'good', name: 'Товары' },
+    { key: 'news', name: 'Новости' },
+    { key: 'articles', name: 'Статьи' }
+  ];
+  function searchBlockHtml(entity) {
+    return '<section class="search-section search-block" data-entity="' + esc(entity.key) + '">' +
+      '<div class="search-section__head">' +
+        '<h2 class="search-section__title">' + esc(entity.name) + '</h2>' +
+        '<a class="search-more" href="/search/' + esc(entity.key) + '/">Все результаты</a>' +
+      '</div>' +
+      '<div class="search-hits search-hits--compact">' +
+        '<p class="search-empty">Ничего не найдено</p>' +
+      '</div>' +
+    '</section>';
   }
   function renderPageSearch(block) {
-    var query = p(block, 'query', 'товар');
-    var perpage = p(block, 'perpage', 12);
-    var form = '<form class="search-bar" action="/search/" method="get" role="search">' +
-      '<label class="visually-hidden" for="search-q">Поиск по сайту</label>' +
-      '<input class="form-control" id="search-q" type="search" name="q" value="' + esc(query) + '" placeholder="Что искать?">' +
-      '<button class="btn btn-primary" type="submit">Найти</button></form>';
-    var listing = '<div class="good-list">' +
-      '<p v-if="loading" class="goods-status">Загружаем товары…</p>' +
-      '<p v-else-if="error" class="goods-status goods-status--error">Не удалось загрузить товары.</p>' +
-      glCardTemplate('<p class="m-0">По запросу товары не найдены.</p>') + '</div>';
-    var goods = '<div class="search-section"><h2 class="search-section__title">Товары</h2>' +
-      '<div id="good_list" data-data-key="good_list" data-perpage="' + esc(perpage) + '">' +
-      '<template id="good_list_tpl">' + listing + '</template></div></div>';
-    var news = defBool(block, 'showNews', true)
-      ? searchResultSection('Новости', [{ header: 'Свежие поступления', anons: 'Обзор новинок сезона.' }]) : '';
-    var articles = defBool(block, 'showArticles', true)
-      ? searchResultSection('Статьи', [{ header: 'Как выбрать товар', anons: 'Полезные советы покупателю.' }]) : '';
-    var services = defBool(block, 'showServices', true)
-      ? searchResultSection('Услуги', [{ header: 'Доставка и установка', anons: 'Быстро и аккуратно.' }]) : '';
-    return form + goods + news + articles + services;
+    var query = p(block, 'query', '');
+    var bar = '<div class="search-page__bar"><div class="hsearch" data-header-search' +
+      ' data-endpoint="/ajax/search/good/"' +
+      (query ? ' data-value="' + esc(query) + '"' : '') +
+      ' data-placeholder="Поиск по каталогу"></div></div>';
+
+    var body = defBool(block, 'showNews', true) && defBool(block, 'showArticles', true)
+      ? SEARCH_ENTITIES.map(searchBlockHtml).join('')
+      : searchBlockHtml(SEARCH_ENTITIES[0]);
+    return bar + body;
   }
   // -------- Блок страницы «404» (page_404) --------
   function renderPage404(block) {
@@ -738,25 +787,31 @@
       '</nav></div>';
   }
   // -------- Блок страницы «Статья» (page_article_detail) --------
+  // Данные на проде приходят из ds_article (content: header/photo/body).
+  // В превью полей-заглушек нет: показываем фиксированный демо-пример,
+  // повторяя то, что реально выводит прод (шапка, обложка, абзацы).
   function renderPageArticleDetail(block) {
-    var title = p(block, 'title', 'Как выбрать смартфон в 2026 году');
-    var anons = p(block, 'anons', 'Краткое вступление к статье.');
-    var author = p(block, 'author', '');
-    var tag = p(block, 'tag', 'Гид');
-    var photo = p(block, 'photo', 'images/preview/articles/article-1.webp');
+    var title = 'Как выбрать смартфон в 2026 году';
+    var photo = 'images/preview/articles/article-1.webp';
     var body = items(block).map(function (x) { return x.text || x.anons || ''; }).filter(Boolean);
-    if (!body.length) body = ['Основной текст статьи.', 'Второй абзац с примерами.'];
-    var meta = author
-      ? '<p class="article-in__meta" id="articleInMeta"><span class="article-in__author" itemprop="author" itemscope itemtype="https://schema.org/Person"><svg class="icon icon-author" aria-hidden="true"><use href="#i-dev-user"></use></svg><span itemprop="name" id="articleInAuthor">' + esc(author) + '</span></span></p>'
-      : '<p class="article-in__meta" id="articleInMeta" hidden></p>';
-    return '<div id="articleIn" class="article-in-wrap">' +
-      '<article class="article-in" itemscope itemtype="https://schema.org/Article">' +
+    if (!body.length) body = [
+      'Выбор смартфона в 2026 году начинается не с бренда, а с задач. Определите, что для вас важнее: долгая автономность, качество камеры, производительность в играх или компактный корпус. От этого зависит не только модель, но и бюджет, который придётся заложить.',
+      'Обратите внимание на экран: диагональ, разрешение и частоту обновления. Панели с частотой 120 Гц делают прокрутку заметно плавнее, а технология LTPO помогает экономить заряд, снижая частоту в статичных сценах. Яркость важна, если вы часто пользуетесь телефоном на улице.',
+      'Процессор и объём памяти определяют запас производительности на годы вперёд. Для повседневных задач достаточно 8 ГБ оперативной памяти, но если вы снимаете видео в 4K или играете, стоит смотреть на 12–16 ГБ и накопитель от 256 ГБ без слота расширения.',
+      'Камеры — самая маркетинговая часть. Смотрите не на число мегапикселей, а на размер сенсора, наличие оптической стабилизации и качество ночных снимков. Хороший основной модуль важнее, чем четыре вспомогательных, которыми вы почти не будете пользоваться.',
+      'И последнее: автономность и зарядка. Батарея от 5000 мА·ч — разумный минимум, а быстрая зарядка на 65–120 Вт позволяет забыть о розетке на день. Проверьте поддержку беспроводной зарядки, если она для вас принципиальна.',
+      'Подводя итог: составьте список из трёх обязательных требований и двух желательных, сравните 3–4 модели в этом диапазоне и только потом принимайте решение. Так вы получите телефон, который будет радовать, а не разочаровывать через месяц.'
+    ];
+    var av = (block.variant === 'magazine' || block.variant === 'split') ? block.variant : 'classic';
+    return '<div class="section-head section-head--no-flex"><div>' +
+        '<p class="article-eyebrow">Статьи</p>' +
+        '<p class="section-sub">Практические материалы: обзоры техники, гайды по выбору, настройке и уходу за гаджетами.</p>' +
+      '</div></div>' +
+      '<div id="articleIn" class="article-in-wrap">' +
+      '<article class="article-in article-in--' + av + '" itemscope itemtype="https://schema.org/Article">' +
         '<h1 class="article-in__title" id="articleInTitle" itemprop="headline">' + esc(title) + '</h1>' +
-        meta +
-        '<figure class="article-in__media"><img id="articleInMedia" src="' + esc(photo) + '" alt="' + esc(title) + '" itemprop="image">' +
-        '<span class="article-in__tag">' + esc(tag) + '</span></figure>' +
+        '<figure class="article-in__media"><img id="articleInMedia" src="' + esc(photo) + '" alt="' + esc(title) + '" itemprop="image"></figure>' +
         '<div class="article-in__body" id="articleInBody" itemprop="articleBody">' +
-          '<p class="article-in__anons" id="articleInAnons">' + esc(anons) + '</p>' +
           body.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') +
         '</div>' +
       '</article>' +
@@ -912,7 +967,8 @@
       el('div', { class: 'about__media' },
         img(p(block, 'image', 'block-images/about.png'), title) + badge) +
       el('div', null,
-        el('h2', { class: 'section-title' }, esc(title)) +
+        // page_head уже печатает H1 — не дублируем заголовок.
+        (defBool(block, 'page_head', false) ? '' : el('h2', { class: 'section-title' }, esc(title))) +
         el('p', { class: 'about__text' }, esc(p(block, 'text'))) +
         (feats ? el('div', { class: 'about__features' }, feats) : '') +
         el('div', { class: 'hero__actions' },
@@ -1057,7 +1113,8 @@
     tpl.push("<img :src=\"pp\" :alt=\"product.header + ', фото '+(i+1)\" loading=\"lazy\" width=\"800\" height=\"800\"></button></div></div>");
     tpl.push("<div class=\"good-in__info\">");
     tpl.push("<div class=\"gi-badges\" v-if=\"badges && badges.length\"><span v-for=\"b in badges\" :key=\"b\" class=\"gi-badge\" :class=\"'gi-badge--'+b\">{{ badgeLabel(b) }}</span></div>");
-    tpl.push("<h2 class=\"gi-name\">{{ product.header }}</h2>");
+    // Название уже есть в H1 блока-страницы (.product-detail-head) — в превью
+    // второй .gi-name в колонке не выводим (не дублируем заголовок).
     tpl.push("<div class=\"gi-price\"><span class=\"gi-price__new\">{{ priceFmt(product.price) }}</span>");
     tpl.push("<span v-if=\"oldPrice\" class=\"gi-price__old\">{{ priceFmt(oldPrice) }}</span><span v-if=\"savePercent\" class=\"gi-save\">-{{ savePercent }}%</span></div>");
     tpl.push("<p class=\"gi-anons\">{{ product.anons }}</p>");
@@ -1067,6 +1124,9 @@
     tpl.push("<div class=\"gi-qty\" v-else><button class=\"gi-qty__btn\" type=\"button\" @click=\"qtyDec\" :disabled=\"qty<=1\" aria-label=\"Уменьшить\">−</button>");
     tpl.push("<input class=\"gi-qty__input\" type=\"number\" min=\"1\" max=\"99\" :value=\"qty\" @input=\"onQty\" aria-label=\"Количество\">");
     tpl.push("<button class=\"gi-qty__btn\" type=\"button\" @click=\"qtyInc\" aria-label=\"Увеличить\">+</button></div>");
+    if (defBool(block, 'one_click', false)) {
+      tpl.push("<button v-if=\"oneClick\" class=\"btn btn-outline gi-buy__btn gi-buy__oneclick\" type=\"button\" @click=\"openOneClick\" :aria-label=\"'Заказать в 1 клик: ' + product.header\">Заказать в 1 клик</button>");
+    }
     tpl.push("<button v-if=\"!inBasket\" class=\"btn btn-primary gi-buy__btn\" type=\"button\" @click=\"addToCart\">В корзину</button>");
     tpl.push("<template v-else><button class=\"btn btn-primary gi-buy__btn\" type=\"button\" @click=\"incInCart\">В корзине ({{ cartCount }})</button>");
     tpl.push("<button class=\"btn gi-buy__remove\" type=\"button\" @click=\"removeFromCart\" aria-label=\"Убрать из корзины\">Убрать</button></template>");
@@ -1097,14 +1157,35 @@
         return '<dt>' + esc(sp[0]) + '</dt><dd>' + esc(sp[1]) + '</dd>';
       }).join('') + '</dl></div>';
 
+    var oneClick = defBool(block, 'one_click', false);
+
     var attrs = 'data-id="1" data-title="' + esc(title) + '" data-anons="' + esc(anons) + '" data-price="' + esc(price) + '"' +
       (oldPrice ? ' data-old-price="' + esc(oldPrice) + '"' : '') +
+      (oneClick ? ' data-one-click="1"' : '') +
       " data-badges='" + attrJson(badges) + "'" +
       " data-photos='" + attrJson(photos) + "'" +
       " data-desc='" + attrJson(desc) + "'" +
       " data-specifications='" + attrJson(specs) + "'";
+    /* Модалка «Заказать в 1 клик» в превью — статичная заглушка (реальная
+       форма F-06 подключается на проде партиалом block/product_detail.html). */
+    var oneClickModal = oneClick
+      ? '<div id="modal_buy_one_click" class="jmodal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal_buy_one_click_title">' +
+        '<div class="jmodal__dialog">' +
+          '<button type="button" class="jmodal__close" data-jmodal-close aria-label="Закрыть">&times;</button>' +
+          '<h3 class="jmodal__title" id="modal_buy_one_click_title">Заказать в 1 клик</h3>' +
+          '<p class="mb-2">' + esc(title) + '</p>' +
+          '<div class="form-grid">' +
+            '<div class="form-group"><label class="form-label">Имя</label><input class="form-control" type="text" placeholder="Ваше имя"></div>' +
+            '<div class="form-group"><label class="form-label">Телефон</label><input class="form-control" type="tel" placeholder="+7 (900) 000-00-00"></div>' +
+            '<div class="form-group"><label class="form-label">Способ доставки</label><select class="form-control"><option>Курьером</option><option>Самовывоз из магазина</option></select></div>' +
+            '<div class="form-group"><label class="form-label">Адрес доставки</label><input class="form-control" type="text" placeholder="Город, улица, дом"></div>' +
+          '</div>' +
+          '<div class="form-foot"><button class="btn btn-primary" type="button">Отправить</button></div>' +
+        '</div></div>'
+      : '';
+
     return '<div id="good_in" ' + attrs + ' class="good-in ' + esc(v) + '">' +
-      '<template id="good_in_tpl">' + tpl.join('') + '</template>' + seo + '</div>';
+      '<template id="good_in_tpl">' + tpl.join('') + '</template>' + seo + '</div>' + oneClickModal;
   }
   function renderServiceDetail(block) {
     var noIcons = bool(block, 'noIcons');
@@ -1349,19 +1430,50 @@
           '<span class="cert-card__title">' + esc(c.title) + '</span></a>';
       }).join('') + '</div>';
   }
+  // Пропорции плитки мозаики — реальные размеры фото (как в prod: width/height).
+  function galRatio(g) {
+    return (g && g.width && g.height) ? (g.width + '/' + g.height) : '';
+  }
+  function galItem(g, fancy, featured) {
+    var cls = 'gal-item' + (featured ? ' gal-item--featured' : '');
+    var style = (!featured && galRatio(g)) ? ' style="--ar:' + esc(galRatio(g)) + '"' : '';
+    return '<a class="' + cls + '"' + style + ' href="' + esc(g.photo) + '"' +
+      (fancy ? ' data-fancybox="gallery"' : '') + ' data-tag="' + esc(g.tag || '') + '"' +
+      ' aria-label="' + esc(g.caption || '') + '">' + img(g.photo, g.caption, 'gal-item__img') +
+      '<span class="gal-item__cap"><span class="gal-item__cap-title">' + esc(g.caption || '') + '</span>' +
+      (g.tag_label ? '<span class="gal-item__cap-tag">' + esc(g.tag_label) + '</span>' : '') + '</span>' +
+      '<span class="gal-item__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>' +
+      '</a>';
+  }
   function renderGallery(block) {
-    var v = block.variant || 'grid';
+    var v = block.variant || 'mosaic';
+    var list = items(block);
+    // Чипы фильтра: явный filterTags, иначе собираем из данных (тег + подпись +
+    // счётчик) — как в prod block/photo_gallery.html.
     var tags = String(p(block, 'filterTags', '')).split(',').map(function (t) { return t.trim(); }).filter(Boolean);
-    var chips = (defBool(block, 'filter', true) && tags.length)
-      ? '<div class="gal-filter" data-gal-filter>' + tags.map(function (t) {
-          return '<button class="gal-chip" type="button" data-filter="' + esc(t) + '">' + esc(t) + '</button>';
+    var labels = {};
+    list.forEach(function (g) { if (g.tag && !labels[g.tag]) labels[g.tag] = g.tag_label || g.tag; });
+    var pairs = tags.length
+      ? tags.map(function (t) { return { tag: t, label: labels[t] || t }; })
+      : Object.keys(labels).map(function (t) { return { tag: t, label: labels[t] }; });
+    var countOf = function (tag) { return list.filter(function (g) { return (g.tag || '') === tag; }).length; };
+    var chips = (defBool(block, 'filter', true) && pairs.length)
+      ? '<div class="gal-filter" data-gal-filter><button class="gal-chip is-active" type="button" data-filter="all">Все <span class="gal-chip__count">' + list.length + '</span></button>' +
+        pairs.map(function (c) {
+          return '<button class="gal-chip" type="button" data-filter="' + esc(c.tag) + '">' + esc(c.label) +
+            ' <span class="gal-chip__count">' + countOf(c.tag) + '</span></button>';
         }).join('') + '</div>'
       : '';
     var fancy = defBool(block, 'fancybox', true);
-    var grid = '<div class="gal-grid gal-grid--' + esc(v) + '">' + items(block).map(function (g) {
-      return '<a class="gal-item" href="' + esc(g.photo) + '"' + (fancy ? ' data-fancybox="gallery"' : '') +
-        ' data-tag="' + esc(g.tag || '') + '">' + img(g.photo, g.caption, 'gal-item__img') +
-        '<span class="gal-item__cap">' + esc(g.caption) + '</span></a>';
+    if (v === 'mosaic') {
+      // Первый кадр — крупный (во всю ширину), остальные — мозаикой колонками.
+      var first = list[0];
+      var body = (first ? galItem(first, fancy, true) : '') +
+        '<div class="gal-cols">' + list.slice(1).map(function (g) { return galItem(g, fancy, false); }).join('') + '</div>';
+      return chips + body;
+    }
+    var grid = '<div class="gal-grid gal-grid--' + esc(v) + '">' + list.map(function (g) {
+      return galItem(g, fancy, false);
     }).join('') + '</div>';
     return chips + grid;
   }
@@ -1377,6 +1489,10 @@
     var arrow = '<svg class="icon icon-arrow-right" aria-hidden="true"><use href="#i-arrow-right"></use></svg>';
     var v = block.variant || 'grid';
     var it = items(block);
+    // Лимит из параметров блока: на проде движок режет выборку; в превью
+    // режем демо-элементы так же, иначе «Лимит» визуально не работает.
+    var lim = parseInt(p(block, 'limit', 0), 10) || 0;
+    if (lim > 0) it = it.slice(0, lim);
     var card = function (n) {
       var url = n.url || '#';
       return '<article class="news-card" data-id="' + esc(n.url || '') + '">' +
@@ -1412,6 +1528,8 @@
   }
   function renderArticleList(block) {
     var it = items(block);
+    var lim = parseInt(p(block, 'limit', 0), 10) || 0;
+    if (lim > 0) it = it.slice(0, lim);
     var arrow = '<svg class="icon icon-arrow-right" aria-hidden="true"><use href="#i-arrow-right"></use></svg>';
     if (block.variant === 'tiles') {
       return '<div class="article-more"><div class="article-more__grid">' + it.map(function (a) {
@@ -1461,6 +1579,12 @@
       el('div', null, el('div', { class: 'branch-info-item-title' }, title) +
         el('div', { class: 'branch-info-item-value' }, val)));
   }
+  function yandexMapUrl(lat, lon, zoom, marker) {
+    if (lat === '' || lon === '' || lat == null || lon == null) return '';
+    var u = 'https://yandex.ru/map-widget/v1/?ll=' + lon + ',' + lat + '&z=' + (zoom || 16);
+    if (marker !== false) u += '&pt=' + lon + ',' + lat + ',pm2rdm';
+    return u;
+  }
   function renderBranches(block) {
     var it = items(block);
     var tabs = defBool(block, 'tabs', true) && it.length
@@ -1471,6 +1595,18 @@
           }, esc(b.name || b.city));
         }).join(''))
       : '';
+    function branchMap(b) {
+      var bz = Number(b.zoom || p(block, 'zoom', 16)) || 16;
+      var bmap = yandexMapUrl(b.lat, b.lon, bz, true) || b.map;
+      if (!bmap && !b.address) return '';
+      return el('div', { class: 'branch-map' },
+        (bmap ? '<iframe src="' + esc(bmap) + '" title="Карта: филиал ' + esc(b.name || '') + '" loading="lazy" allowfullscreen></iframe>' : '') +
+        el('div', { class: 'branch-map__badge' },
+          el('span', { class: 'branch-map__title' }, esc(b.name || b.city || '')) +
+          (b.address ? el('span', { class: 'branch-map__addr' }, esc(b.address)) : '') +
+          (b.address ? el('a', { class: 'branch-map__route', href: 'https://yandex.ru/maps/?text=' + encodeURIComponent(b.address) + '&z=' + bz, target: '_blank', rel: 'noopener' },
+            '<svg class="icon icon-pin" aria-hidden="true"><use href="#i-pin"></use></svg>Построить маршрут') : '')));
+    }
     var panels = el('div', { class: 'branches-panels' }, it.map(function (b, n) {
       return el('div', { class: 'tab-panel' + (n === 0 ? ' is-active' : ''), role: 'tabpanel', 'data-panel': b.key || ('b' + n) },
         el('div', { class: 'branch-card' },
@@ -1479,7 +1615,7 @@
             branchInfo('i-phone', 'Телефон', b.phone, b.phone_raw ? 'tel:' + b.phone_raw : null) +
             (b.email ? branchInfo('i-mail', 'E-mail', b.email, 'mailto:' + b.email) : '') +
             branchInfo('i-clock', 'Режим работы', b.work_time)) +
-          (b.map ? el('div', { class: 'branch-map' }, '<iframe src="' + esc(b.map) + '" title="Карта: филиал" loading="lazy" allowfullscreen></iframe>') : '')));
+          branchMap(b)));
     }).join(''));
     return el('div', { class: 'branches' }, tabs + panels);
   }
@@ -1491,15 +1627,24 @@
     }).join('') + (p(block, 'note') ? el('p', { class: 'routes-note' }, esc(p(block, 'note'))) : ''));
   }
   function renderMap(block) {
-    var url = p(block, 'url', 'https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755800&z=12&pt=37.617700%2C55.755800%2Cpm2rdm');
+    var center = String(p(block, 'center', '') || '').split(',');
+    var has = center.length === 2 && center[0].trim() && center[1].trim();
+    var z = Number(p(block, 'zoom', 15)) || 15;
+    var marker = defBool(block, 'marker', true);
+    var showRoute = defBool(block, 'showRoute', true);
+    var url = has ? yandexMapUrl(center[0].trim(), center[1].trim(), z, marker)
+                  : p(block, 'url', 'https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755800&z=12&pt=37.617700%2C55.755800%2Cpm2rdm');
+    var route = has ? 'https://yandex.ru/maps/?rtext=' + center[0].trim() + ',' + center[1].trim() + '&rtm=atm&z=' + z : url;
     var h = Number(p(block, 'height', 400)) || 400;
     var iframe = '<iframe src="' + esc(url) + '" title="Карта" loading="lazy" allowfullscreen style="height:' + h + 'px"></iframe>';
     if (block.variant === 'full') {
       return '<div class="fullmap"><div class="fullmap__frame">' + iframe + '</div></div>';
     }
+    var link = (showRoute && has)
+      ? '<a class="map-route__link" href="' + esc(route) + '" target="_blank" rel="noopener">Построить маршрут</a>'
+      : '<a class="map-route__link" href="' + esc(url) + '" target="_blank" rel="noopener">Открыть карту</a>';
     return '<div class="contacts-map">' + iframe +
-      '<div class="map-route"><span>Мы на карте</span>' +
-      '<a class="map-route__link" href="' + esc(url) + '" target="_blank" rel="noopener">Открыть карту</a></div></div>';
+      '<div class="map-route"><span>Мы на карте</span>' + link + '</div></div>';
   }
 
   // -------- формы --------
@@ -1570,9 +1715,11 @@
   }
   function renderReports(block) {
     return el('div', { class: 'reports' }, items(block).map(function (r) {
-      return link(r.url, 'report', el('span', { class: 'report__ico' }, 'PDF') +
-        el('span', { class: 'report__name' }, esc(r.name)) +
-        el('span', { class: 'report__meta' }, esc(r.meta)));
+      var src = r.attach_and_path || r.attach || r.url || '#';
+      var ext = String(r.attach || r.attach_and_path || r.url || '').split('.').pop().toUpperCase();
+      return link(src, 'report', el('span', { class: 'report__ico' }, ext || 'FILE') +
+        el('span', { class: 'report__name' }, esc(r.header || r.name || '')) +
+        el('span', { class: 'report__meta' }, esc(r.meta || '')));
     }).join(''));
   }
   function renderPromo(block) {
@@ -1705,6 +1852,9 @@
     marquee: { raw: false, fn: renderMarquee },
     photo_gallery: { raw: false, fn: renderGallery },
     video: { raw: false, fn: renderVideo },
+    page_video: { raw: false, fn: renderVideo },
+    custom: { raw: true, fn: renderCustom },
+    note: { raw: false, fn: renderNote },
     brands_grid: { raw: false, fn: renderBrands },
     news_list: { raw: false, fn: renderNews },
     article_list: { raw: false, fn: renderArticleList },
@@ -1723,16 +1873,85 @@
     contact_form: { raw: false, fn: renderContactForm }
   };
 
+  // Кастомный блок: сырой HTML + ссылки на CSS/JS (абсолютные или из
+  // файлов проекта). Raw-блок — своей секции/заголовка не добавляет.
+  function renderCustom(block) {
+    var html = p(block, 'html', '');
+    var _c = global.PAGE_CONSTRUCTOR_CONFIG || {};
+    var base = _c.filesBase || '';
+    var abs = function (u) { return /^https?:|^\//.test(u) ? u : base + u; };
+    var lines = function (name) {
+      return String(p(block, name, '') || '').split(/\r?\n/)
+        .map(function (s) { return s.trim(); }).filter(Boolean);
+    };
+    var out = '';
+    lines('css').forEach(function (u) {
+      out += '<link rel="stylesheet" href="' + esc(abs(u)) + '">';
+    });
+    out += '<div class="custom-block" data-custom-block>' + html + '</div>';
+    lines('js').forEach(function (u) {
+      out += '<script src="' + esc(abs(u)) + '"><\/script>';
+    });
+    return out;
+  }
+
+  // Примечание/акцент (note): variant info|warning|success, title, text.
+  function renderNote(block) {
+    var v = p(block, 'variant', 'info');
+    var t = p(block, 'title', '');
+    var tx = p(block, 'text', '');
+    return '<div class="note note--' + esc(v) + '">' +
+      (t ? '<div class="note__title">' + esc(t) + '</div>' : '') +
+      (tx ? '<div class="note__text">' + tx + '</div>' : '') +
+      '</div>';
+  }
+
   function renderBlock(block) {
     if (!block || !block.type) return '<div class="container">Пустой блок</div>';
     var def = RENDER[block.type];
     if (!def) return el('div', { class: 'container' }, 'Неизвестный тип: ' + esc(block.type));
     var inner = def.fn(block);
-    if (def.raw) return inner;
+    /* Галочка «Блок страницы»: блок сам печатает H1 + хлебные крошки.
+       На проде это делает движок (ph_<тип> + block/page_head_inner.html);
+       здесь собираем то же самое в превью. */
+    var ph = defBool(block, 'page_head', false);
+    var phHidden = defBool(block, 'page_head_hidden', false);
+    var phTitle = p(block, 'title', '') || p(block, 'header', '');
+    /* Заголовок блока-страницы в превью может быть пустым — на проде его
+       подставляет движок из domain_page.header. Чтобы не оставлять крошки
+       без заголовка, в превью подставляем видимую заглушку. */
+    if (ph && !phTitle && !phHidden) phTitle = 'Заголовок страницы';
+    var pageHead = '';
+    if (ph) {
+      if (phHidden) {
+        pageHead = '<h1 class="visually-hidden">' + esc(phTitle) + '</h1>';
+      } else {
+        var phT = phTitle;
+        pageHead = '<div class="page-head">' +
+          (phT ? '<h1 class="page-head__title">' + esc(phT) + '</h1>' : '') +
+          '<nav class="breadcrumbs-wrap" aria-label="Навигация"><ol class="breadcrumbs">' +
+            '<li class="breadcrumbs__item"><a href="/"><span>Главная</span></a></li>' +
+            '<li class="breadcrumbs__item breadcrumbs__item--active"><span>' + esc(phT) + '</span></li>' +
+          '</ol></nav>' +
+          (p(block, 'sub', '') ? '<p class="page-head__sub">' + esc(p(block, 'sub')) + '</p>' : '') +
+          '</div>';
+      }
+    }
+    /* Raw-блоки (header/footer/slider/catalog/contact_form) идут мимо
+       .section-обёртки. Заголовок блока-страницы подключают только те, кому
+       он нужен: header (главная — скрытый H1) и catalog. Иначе блок без
+       title выведет пустые крошки — как это было у slider на главной. */
+    if (def.raw) {
+      var rawWithHead = block.type === 'header' || block.type === 'catalog';
+      return rawWithHead ? pageHead + inner : inner;
+    }
     var classes = envelopeClasses(block).join(' ');
     var head = '';
     var hasHeaderParam = variantParams(block.type, block.variant).some(function (d) { return d.name === 'header'; });
-    if (hasHeaderParam) {
+    // Шапку рисуют компонентные блоки (catalog/goods) — index/renderBlock её
+    // не дублируют. page_head уже печатает H1+sub — section-head тоже не нужен.
+    var componentHead = (block.type === 'catalog' || block.type === 'goods');
+    if (!ph && hasHeaderParam && !componentHead) {
       var hv = p(block, 'header');
       var sv = p(block, 'sub');
       if (hv || sv) {
@@ -1743,8 +1962,12 @@
       }
     }
     var env = envelopeClasses(block).filter(function (c) { return c !== 'block'; });
-    var cls = ['section'].concat(env).join(' ');
-    return el('section', { class: cls, 'data-block-type': block.type }, el('div', { class: 'container' }, head + inner));
+    var clsArr = ['section'].concat(env);
+    // Паритет с продом: каталог с заливкой (section--alt), page_head — section--page.
+    if (block.type === 'catalog') clsArr.push('section--alt');
+    if (ph) clsArr.push('section--page');
+    var cls = clsArr.join(' ');
+    return el('section', { class: cls, 'data-block-type': block.type }, el('div', { class: 'container' }, pageHead + head + inner));
   }
 
   function renderAll(blocks) {

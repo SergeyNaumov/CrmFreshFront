@@ -47,8 +47,10 @@ window.SiteCarousel = {
       if (!w) return;
       var maxScroll = track.scrollWidth - track.clientWidth;
       var target = track.scrollLeft + dir * w;
-      if (target >= maxScroll) target = 0; // зацикливание
-      target = Math.min(target, maxScroll);
+      /* Зацикливание в обе стороны: упёрлись в конец — начинаем сначала,
+         упёрлись в начало — переходим на последний шаг. */
+      if (target >= maxScroll - 1) target = 0;
+      else if (target <= 0) target = maxScroll;
       track.scrollTo({ left: target, behavior: 'smooth' });
     }
 

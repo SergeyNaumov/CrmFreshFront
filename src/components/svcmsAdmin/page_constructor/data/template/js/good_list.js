@@ -125,6 +125,36 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
     return String(u || '').replace(/\/+$/, '');
   }
 
+  /* Пункт хлебных крошек того же вида, что и в block/breadcrumbs.html:
+     промежуточное звено — ссылка с названием, текущее — span без ссылки. */
+  function crumbItem(path, title, isCurrent) {
+    var li = document.createElement('li');
+    li.className = 'breadcrumbs__item' + (isCurrent ? ' breadcrumbs__item--active' : '');
+    li.setAttribute('itemprop', 'itemListElement');
+    li.setAttribute('itemscope', '');
+    li.setAttribute('itemtype', 'https://schema.org/ListItem');
+    var span = document.createElement('span');
+    span.setAttribute('itemprop', 'name');
+    span.textContent = title || '';
+    if (isCurrent) {
+      li.appendChild(span);
+    } else {
+      var a = document.createElement('a');
+      a.setAttribute('itemprop', 'item');
+      a.setAttribute('href', path);
+      a.appendChild(span);
+      li.appendChild(a);
+    }
+    return li;
+  }
+
+  // Название звена из его пути: /catalog/elektronika/smartfony -> Смартфоны
+  function crumbTitle(path) {
+    var parts = String(path || '').replace(/^\/+|\/+$/g, '').split('/');
+    var last = parts[parts.length - 1] || '';
+    return last ? last.charAt(0).toUpperCase() + last.slice(1) : '';
+  }
+
   // Стандартный порядок меток подкатегорий для чипов.
   var CATEGORY_ORDER = {
     new: 0,
@@ -510,7 +540,7 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           } catch (e) { /* file:// и т.п. — URL не меняем */ }
         },
 
-        // Обновить <title>, og/twitter, H1 и активную крошку.
+        // Обновить <title>, og/twitter, H1 и хлебные крошки под новую рубрику.
         updateMeta: function (node) {
           var title = (node && node.header) || '';
           if (!title) return;
@@ -522,12 +552,60 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           if (tw) tw.setAttribute('content', full);
           var h1 = document.getElementById('catTitle');
           if (h1) h1.textContent = title;
-          var crumbs = document.querySelectorAll('.breadcrumbs__item');
-          if (crumbs.length) {
-            var last = crumbs[crumbs.length - 1];
-            var span = last.querySelector('span[itemprop="name"]') || last.querySelector('span');
-            if (span) span.textContent = title;
+          this.updateCrumbs(node, title);
+        },
+
+        /* Крошки при переходе в другую подкатегорию (SPA, без перезагрузки).
+           Раньше менялся только текст последнего звена, из-за чего при
+           переходе «Флагманы → Смартфоны» получалось «Смартфоны / Смартфоны».
+           Теперь хвост перестраивается по новому пути: звенья глубже общей
+           части удаляются, недостающие добавляются, позиции пересчитываются. */
+        updateCrumbs: function (node, title) {
+          var nav = document.querySelector('.breadcrumbs-wrap');
+          if (!nav || !node || !node.url) return;
+          var list = nav.querySelector('.breadcrumbs');
+          if (!list) return;
+          var path = normPath(node.url);
+          if (!path) return;
+
+          var items = Array.prototype.slice.call(list.querySelectorAll('.breadcrumbs__item'));
+          // Общая часть: звенья, чей путь является префиксом нового пути.
+          var keep = 1;                       // «Главная» остаётся всегда
+          for (var i = 1; i < items.length; i++) {
+            var a = items[i].querySelector('a');
+            if (!a) break;
+            var cp = normPath(a.getAttribute('href'));
+            if (cp && (path === cp || path.indexOf(cp + '/') === 0)) keep++;
+            else break;
           }
+          for (var j = items.length - 1; j >= keep; j--) {
+            if (items[j].parentNode) items[j].parentNode.removeChild(items[j]);
+          }
+
+          // Какие пути уже есть.
+          var have = [];
+          Array.prototype.forEach.call(list.querySelectorAll('.breadcrumbs__item a'), function (el) {
+            have.push(normPath(el.getAttribute('href')));
+          });
+
+          // Дописываем недостающие звенья нового пути.
+          var parts = path.replace(/^\/+|\/+$/g, '').split('/');
+          var acc = '';
+          for (var k = 0; k < parts.length; k++) {
+            acc += '/' + parts[k];
+            if (have.indexOf(acc) !== -1) continue;
+            var last = (k === parts.length - 1);
+            list.appendChild(crumbItem(acc, last ? title : crumbTitle(acc), last));
+          }
+
+          // Пересчитываем Schema.org position и заголовок текущего звена.
+          var all = Array.prototype.slice.call(list.querySelectorAll('.breadcrumbs__item'));
+          all.forEach(function (li, n) {
+            var meta = li.querySelector('meta[itemprop="position"]');
+            if (meta) meta.setAttribute('content', String(n + 1));
+          });
+          var active = list.querySelector('.breadcrumbs__item--active span[itemprop="name"]');
+          if (active && title) active.textContent = title;
         },
 
         // Подкатегория по текущему пути (для popstate back/forward).

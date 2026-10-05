@@ -11,7 +11,7 @@
       <v-btn color="primary" size="small" :loading="saving" @click="save">Сохранить</v-btn>
     </div>
 
-    <div class="tt_body">
+    <div class="tt_body" :style="{ '--tt-left-w': left_w + 'px' }">
       <div class="tt_controls">
         <template v-if="mode == 'preset' && axis != 'font'">
           <v-select
@@ -103,6 +103,8 @@
         </div>
       </div>
 
+      <div class="tt_resizer" @mousedown.prevent="start_resize" title="Потяните, чтобы изменить ширину"></div>
+
       <div class="tt_preview">
         <theme-preview :template-base="template_base" :styles="preview_styles" />
       </div>
@@ -135,7 +137,8 @@ export default {
       shared_scope: false,
       preview_styles: [],
       saving: false,
-      saved_flag: false
+      saved_flag: false,
+      left_w: Number(localStorage.getItem('pc_constructor_left_w')) || 340
     }
   },
   computed: {
@@ -176,6 +179,22 @@ export default {
     css() { if (this.mode === 'custom' || this.axis === 'font') this.refresh_preview() }
   },
   methods: {
+    // Drag-ручка левой колонки; ширина запоминается в localStorage.
+    start_resize(e) {
+      const startX = e.clientX
+      const startW = this.left_w
+      const maxW = Math.max(360, Math.round(window.innerWidth * 0.7))
+      const onMove = (ev) => {
+        this.left_w = Math.min(Math.max(startW + (ev.clientX - startX), 240), maxW)
+      }
+      const onUp = () => {
+        window.removeEventListener('mousemove', onMove)
+        window.removeEventListener('mouseup', onUp)
+        try { localStorage.setItem('pc_constructor_left_w', String(this.left_w)) } catch (_) {}
+      }
+      window.addEventListener('mousemove', onMove)
+      window.addEventListener('mouseup', onUp)
+    },
     load_schemes() {
       this.$http.get(this.api + '/theme-schemes/' + this.axis + '?domain_id=' + this.domain_id).then(r => {
         const d = r.data || {}
@@ -200,12 +219,17 @@ export default {
     // Опция ['#', 'Заголовок'] превращается в группу — длинные списки
     // (например, украшения заголовка) читаются по разделам.
     select_items(f) {
+      // Vuetify 3: заголовок группы — { props:{ header:true }, title }.
+      // Прежний вид { header } рендерился как «[object Object]».
       return (f.options || []).map(o => o[0] === '#'
-        ? { header: o[1] }
+        ? { props: { header: true, disabled: true }, title: o[1] }
         : { value: o[0], title: o[1] })
     },
     async refresh_preview() {
-      const order = ['color', 'style', 'layout', 'font']
+      // Порядок = порядок каскада движка/engine/preview.js: layout ДО style,
+      // иначе компоновка (напр. полоска technical) перебивает украшение
+      // заголовка из style-оси. НЕ менять на color→style→layout.
+      const order = ['color', 'layout', 'style', 'font']
       const out = {}
       for (const ax of order) {
         if (ax === this.axis) {
@@ -288,8 +312,13 @@ export default {
   .tt_head {display: flex; align-items: center; gap: 10px; margin-bottom: 12px;}
   .tt_state {color: rgba(var(--v-theme-on-surface), .6);}
   .tt_ok {color: rgb(var(--v-theme-success)); font-weight: bold;}
-  .tt_body {display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 20px; flex: 1 1 auto; min-height: 0;}
-  .tt_controls {display: flex; flex-direction: column; gap: 10px; overflow: auto;}
+  .tt_body {display: grid; grid-template-columns: var(--tt-left-w, 340px) 10px minmax(0, 1fr); column-gap: 8px; flex: 1 1 auto; min-height: 0;}
+  .tt_resizer {cursor: col-resize; align-self: stretch; border-radius: 6px; touch-action: none; user-select: none; background: linear-gradient(90deg, transparent 4px, rgba(var(--v-theme-on-surface), .18) 4px, rgba(var(--v-theme-on-surface), .18) 6px, transparent 6px);}
+  .tt_resizer:hover {background: rgba(var(--v-theme-primary), .4);}
+  .tt_controls {display: flex; flex-direction: column; gap: 10px; overflow: auto; min-width: 0;}
+  /* Vuetify .v-input по умолчанию flex:1 1 auto и растягивается на всю
+     колонку — возвращаем стандартную высоту, иначе select «раздувается». */
+  .tt_controls :deep(.v-input) {flex: 0 0 auto;}
   .tt_field {display: flex; flex-direction: column; gap: 4px; font-size: 13px;}
   .tt_field > label {font-weight: 600; color: rgba(var(--v-theme-on-surface), .8);}
   .tt_field input[type="range"] {width: 100%;}
@@ -297,9 +326,10 @@ export default {
   .tt_color input[type="color"] {flex: 0 0 46px; width: 46px; height: 34px; padding: 2px; border: 1px solid rgba(var(--v-theme-on-surface), .24); border-radius: var(--app-radius-field); cursor: pointer; background: transparent;}
   .tt_hex {flex: 1 1 auto; min-width: 0; padding: 7px 9px; font-family: var(--app-font-mono, monospace); font-size: 13px; color: inherit; background: transparent; border: 1px solid rgba(var(--v-theme-on-surface), .24); border-radius: var(--app-radius-field);}
   .tt_short {font-size: var(--app-font-desc); color: rgba(var(--v-theme-on-surface), .6); margin: 0;}
-  .tt_out {margin-top: 6px;}
+  /* «Результат» забирает свободное место, освободившееся от select. */
+  .tt_out {margin-top: 6px; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0;}
   .tt_out_head {font-size: var(--app-font-desc); color: rgba(var(--v-theme-on-surface), .6); margin-bottom: 4px;}
-  .tt_css {width: 100%; min-height: 160px; padding: 10px; font-family: var(--app-font-mono, monospace); font-size: 12px; line-height: 1.5; white-space: pre; overflow: auto; color: rgba(var(--v-theme-on-surface), .85); background: var(--app-tint); border: 1px solid rgba(var(--v-theme-on-surface), .18); border-radius: var(--app-radius-field);}
+  .tt_css {width: 100%; flex: 1 1 auto; min-height: 160px; padding: 10px; font-family: var(--app-font-mono, monospace); font-size: 12px; line-height: 1.5; white-space: pre; overflow: auto; color: rgba(var(--v-theme-on-surface), .85); background: var(--app-tint); border: 1px solid rgba(var(--v-theme-on-surface), .18); border-radius: var(--app-radius-field);}
   .tt_preview {min-height: 0; height: 100%;}
-  @media (max-width: 991px) { .tt_body {grid-template-columns: 1fr;} }
+  @media (max-width: 991px) { .tt_body {grid-template-columns: 1fr;} .tt_resizer {display: none;} }
 </style>

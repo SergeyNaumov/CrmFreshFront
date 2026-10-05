@@ -47,20 +47,20 @@
   margin: 0 0 22px;
 }
 
-/* Обложка новости: float слева, текст обтекает её и после высоты фото
-   продолжается на всю ширину (устойчиво к сколь угодно длинному тексту).
-   aspect-ratio совпадает с нативным кадром (7:4), чтобы не кропать фото. */
+/* Обложка новости: обычный блок над текстом (БЕЗ float). Обтекание
+   текстом запрещено: длинный абзац рвался на строки вокруг картинки.
+   Обложка во всю ширину колонки, текст — ниже. */
 .news-in__media {
   position: relative;
-  float: left;
-  width: 54%;
-  margin: 4px 34px 22px 0;
+  float: none;
+  width: 100%;
+  margin: 0 0 24px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--light);
   box-shadow: var(--shadow-sm);
-  aspect-ratio: 7 / 4;
+  aspect-ratio: 16 / 9;
 }
 
 .news-in__media img {

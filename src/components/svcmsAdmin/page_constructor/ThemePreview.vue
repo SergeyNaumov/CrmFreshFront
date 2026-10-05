@@ -26,6 +26,8 @@ export default {
         + '<link rel="stylesheet" href="' + css('css/fonts.css') + '">'
         + '<link rel="stylesheet" href="' + css('css/tokens/_tokens-base.css') + '">'
         + '<link rel="stylesheet" href="' + css('css/style.css') + '">'
+        + '<link rel="stylesheet" href="' + css('css/goods_block.css') + '">'
+        + '<link rel="stylesheet" href="' + css('css/advantages-icons.css') + '">'
         + '<link rel="stylesheet" href="' + css('css/forms.css') + '">'
         + '<style>html,body{margin:0}body{padding:18px;background:var(--body-bg);color:var(--body-color)}</style>'
         + '<style>' + SHOWCASE_CSS + '</style>'

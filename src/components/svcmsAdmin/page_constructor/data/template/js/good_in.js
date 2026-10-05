@@ -98,6 +98,7 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
             url: window.location.href.split('?')[0]
           },
           photos: jsonAttr(root, 'data-photos', []),
+          thumbs: jsonAttr(root, 'data-thumbs', []),
           badges: jsonAttr(root, 'data-badges', []),
           cur: 0,
           tab: 'desc',
@@ -105,6 +106,9 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
           loading: dynamic,
           error: false,
           autoplayMs: parseInt(root.getAttribute('data-autoplay') || '0', 10) || 0,
+          /* «Заказать в 1 клик» (F-06) — кнопка появляется, если блок
+             включён в конструкторе (data-one-click="1"). */
+          oneClick: root.getAttribute('data-one-click') === '1',
           _timer: null,
           _received: false
         };
@@ -166,6 +170,22 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
       },
 
       methods: {
+        /* ---------- «Заказать в 1 клик» (F-06) ----------
+           Подставляет товар в форму модалки и открывает её. Форма
+           зарегистрирована в js/forms.js (BuildedForms) — значения
+           задаём через set_value, чтобы в hidden-поля ушли id и название
+           именно той карточки, из которой нажали кнопку. */
+        openOneClick: function () {
+          var vm = this;
+          var formApp = window.BuildedForms && window.BuildedForms.form_buy_one_click_wrap;
+          if (formApp && typeof formApp.set_value === 'function') {
+            formApp.set_value('good_id', vm.product.id);
+            formApp.set_value('good_name', vm.product.header);
+            if (typeof formApp.clear_errors === 'function') formApp.clear_errors();
+          }
+          if (window.jmodalOpen) window.jmodalOpen('modal_buy_one_click');
+        },
+
         // ---------- Загрузка данных ----------
         load: function () {
           var vm = this;
@@ -225,6 +245,7 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
               photo: src.photo,
               url: src.url,
               photos: [src.photo],
+              thumbs: [src.photo],
               badges: []
             };
           }
@@ -240,6 +261,7 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
           vm.product.photo = rec.photo || '';
           vm.product.url = rec.url || vm.product.url;
           vm.photos = (rec.photos && rec.photos.length ? rec.photos : [rec.photo || '']).slice();
+          vm.thumbs = (rec.thumbs && rec.thumbs.length ? rec.thumbs : vm.photos).slice();
           vm.badges = (rec.badges || []).slice();
           vm.cur = 0;
 

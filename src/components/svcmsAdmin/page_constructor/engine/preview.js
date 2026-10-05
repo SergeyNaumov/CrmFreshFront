@@ -44,6 +44,34 @@
       .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
+  /**
+   * Скрипт превью: запрет навигации по ссылкам внутри iframe.
+   * Инъецируется в buildPreviewDoc (capture-фаза + preventDefault), поэтому
+   * перехватывает клики и по обычным <a>, и по Vue-ссылкам, и по <area>.
+   * Также гасим отправку форм (в превью она бессмысленна) и переход по
+   * карте клавиатуры (Enter на сфокусированной ссылке).
+   */
+  var NO_NAV_SCRIPT = [
+    '<script>(function(){',
+    'function kill(e){',
+    'var el=e.target;',
+    'while(el&&el.nodeType===1){',
+    'var tag=el.tagName;',
+    'if(tag==="A"||tag==="AREA"||tag==="FORM"){e.preventDefault();e.stopPropagation();return;}',
+    'el=el.parentNode;',
+    '}',
+    '}',
+    'document.addEventListener("click",kill,true);',
+    'document.addEventListener("auxclick",kill,true);',
+    'document.addEventListener("submit",function(e){e.preventDefault();e.stopPropagation();},true);',
+    'document.addEventListener("keydown",function(e){',
+    'if(e.key!=="Enter")return;',
+    'var a=document.activeElement;',
+    'if(a&&(a.tagName==="A"||a.tagName==="AREA"||a.tagName==="BUTTON")){e.preventDefault();}',
+    '},true);',
+    '})();<\/script>'
+  ].join('');
+
   // База для тестов/Node, где нет document.location.
   function docBase(opts) {
     if (opts && opts.baseUrl) return opts.baseUrl;
@@ -54,8 +82,17 @@
   function tplBase(opts) {
     return new URL(cfg().templateBase, docBase(opts)).href;
   }
+  // mtime-метка ассета из карты, собранной constructor:pack (asset-rev.json).
+  function assetRev(path) {
+    var map = global.PC_ASSET_REV || {};
+    var key = String(path || '').replace(/^\.?\//, '');
+    return map[key] || '';
+  }
   function tplAsset(path, opts) {
-    return new URL(path, tplBase(opts)).href;
+    var url = new URL(path, tplBase(opts)).href;
+    var rev = assetRev(path);
+    if (rev) url += (url.indexOf('?') === -1 ? '?' : '&') + 'nc=' + rev;
+    return url;
   }
   function dataAsset(key, opts) {
     var base = cfg().dataBase;
@@ -99,9 +136,11 @@
       out.push('<link rel="stylesheet" href="' + esc(tplAsset(f, opts)) + '">');
     });
     if (c.font && FONTS[c.font]) out.push('<style>' + fontCss(c.font) + '</style>');
+    // Порядок = порядок каскада движка: color → layout → style → font.
+    // style после layout, чтобы декор стилевой оси перекрывал компоновку.
     if (c.color && m.cssColor) out.push('<link rel="stylesheet" href="' + esc(tplAsset(m.cssColor.replace('{color}', c.color), opts)) + '">');
-    if (c.style && m.cssStyle) out.push('<link rel="stylesheet" href="' + esc(tplAsset(m.cssStyle.replace('{style}', c.style), opts)) + '">');
     if (c.layout && m.cssLayout) out.push('<link rel="stylesheet" href="' + esc(tplAsset(m.cssLayout.replace('{layout}', c.layout), opts)) + '">');
+    if (c.style && m.cssStyle) out.push('<link rel="stylesheet" href="' + esc(tplAsset(m.cssStyle.replace('{style}', c.style), opts)) + '">');
     if (c.customCss) out.push('<style>' + c.customCss + '</style>');
     var chrome = types.indexOf('header') !== -1 || types.indexOf('footer') !== -1;
     out.push('<style>html,body{margin:0}body{padding:' + (chrome ? '0' : '18px') + ';background:' + (c.color === 'dark' ? '#14161d' : '#fff') + '}</style>');
@@ -111,6 +150,11 @@
     out.push('</head><body class="page-constructor-preview">');
     if (global.PC_SPRITE) out.push(global.PC_SPRITE);
     out.push('<script>window.__pcErrors=[];window.addEventListener("error",function(e){window.__pcErrors.push(String(e.message||e.error));});<\/script>');
+    // Превью не должно уводить iframe с образца шаблона: клик по любой ссылке
+    // внутри превью (меню, крошки, «Избранное», телефон, соцсети, пагинация)
+    // гасим на уровне capture-фазы — иначе iframe уедет на about:blank
+    // или на 404 и правка блока станет невозможна.
+    out.push(NO_NAV_SCRIPT);
     out.push(resolveDataKeys(markup, opts));
     if (c.engine) {
       (m.commonJs || []).concat(extraJs).forEach(function (f) {
@@ -126,6 +170,7 @@
     resolveDataKeys: resolveDataKeys,
     tplBase: tplBase,
     tplAsset: tplAsset,
+    assetRev: assetRev,
     dataAsset: dataAsset
   };
   for (var k in api) { if (Object.prototype.hasOwnProperty.call(api, k)) PC[k] = api[k]; }

@@ -130,11 +130,10 @@ window.CatalogBlock = {
   },
 
   template: `
-<section class="catalog section section--alt" aria-label="Каталог товаров">
-  <div class="container">
-    <div class="section-head">
+<div class="catalog" aria-label="Каталог товаров">
+    <div class="section-head" v-if="title || (subParas && subParas.length) || linkText">
       <div>
-        <h2 class="section-title">{{ title }}</h2>
+        <h2 class="section-title" v-if="title">{{ title }}</h2>
         <p v-for="(para, i) in subParas" :key="'sub-' + i" class="section-sub">{{ para }}</p>
       </div>
       <a v-if="linkText" class="section-head__link" :href="linkHref">{{ linkText }}
@@ -167,6 +166,5 @@ window.CatalogBlock = {
         </div>
       </a>
     </div>
-  </div>
-</section>`
+</div>`
 };

@@ -51,21 +51,22 @@
   };
 
   /**
-   * Виды шапки (модификаторы к .header). Конструкторский CSS — инлайнится
-   * только в превью шапки. Многоуровневое меню работает во всех видах.
+   * Виды шапки (модификаторы к .header). Раскладки живут в prod-стилях
+   * шаблона (css/style.css, класс header--<layout>), поэтому здесь только
+   * превью-специфичные правки. Многоуровневое меню работает во всех видах.
    */
   global.PC_HEADER_CSS = [
-    /* Превью-панель узкая → срабатывают адаптивные правила и меню прячется.
-       Для превью шапки форсируем десктопное меню; вид «minimal» его скрывает. */
+    /* Превью-панель узкая → срабатывают адаптивные правила (≤991px) и меню
+       с поиском прячутся. Для превью шапки форсируем десктоп: строка логотипа
+       с поиском и меню на всю ширину. Вид «minimal» меню всё же скрывает. */
     '.header__nav { display: flex !important; }',
-    '.header--minimal .topbar { display: none; }',
+    '.header__search { display: block !important; }',
+    '.header--search-row .header__main, .header--two .header__main { flex-wrap: wrap !important; }',
     '.header--minimal .header__nav { display: none !important; }',
-    '.header--two .header__main { flex-wrap: wrap; }',
-    '.header--two .header__nav { order: 3; flex: 1 0 100%; margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--border); }',
-    '.header--center .header__main { flex-wrap: wrap; justify-content: center; row-gap: 10px; }',
-    '.header--center .logo { flex: 1 0 100%; display: flex; justify-content: center; }',
-    '.header--center .header__nav { margin: 0 auto; }',
-    '.header--center .header__actions { margin: 0 auto; }',
+    /* Мобильное правило «поиск отдельной строкой» не должно применяться к
+       превью — узкая панель показывает десктопную раскладку. */
+    '.header__search { order: 2 !important; flex: 1 1 auto !important; max-width: 620px !important; padding-bottom: 0 !important; }',
+    '.header--classic .header__search { order: 4 !important; flex: 1 0 100% !important; max-width: 720px !important; padding-bottom: 14px !important; }',
     /* Анимация для структурных блоков: у них нет .block, поэтому анимируем сам элемент. */
     '.header.block--anim-zoom, .footer.block--anim-zoom { animation: tbRevealZoom .6s ease both; }',
     '.header.block--anim-clip, .footer.block--anim-clip { animation: tbRevealClip .6s ease both; }',

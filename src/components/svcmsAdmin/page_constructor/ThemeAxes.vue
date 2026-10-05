@@ -40,6 +40,14 @@
         </div>
       </div>
     </div>
+    <div v-if="pending" class="pc_theme__foot">
+      <span class="pc_theme__dirty">
+        <v-icon size="16">mdi-alert-circle-outline</v-icon>
+        Есть несохранённые изменения темы
+      </span>
+      <v-btn color="primary" size="small" :loading="saving === 'all'"
+             @click="$emit('save-theme')">Сохранить тему</v-btn>
+    </div>
   </div>
 </template>
 <script>
@@ -55,9 +63,10 @@ export default {
     theme: { type: Object, default: () => ({}) },
     schemeLists: { type: Object, default: () => ({ color: [], style: [], layout: [], font: [] }) },
     saving: { type: String, default: '' },
+    pending: { type: Boolean, default: false },
     title: { type: String, default: 'Тема шаблона' }
   },
-  emits: ['set-axis', 'edit-axis'],
+  emits: ['set-axis', 'edit-axis', 'save-theme'],
   computed: {
     axes() { return AXES }
   },
@@ -86,6 +95,8 @@ export default {
   .pc_axis__select {flex: 1 1 auto; min-width: 0;}
   .pc_axis__edit {color: rgb(var(--v-theme-primary));}
   .pc_axis__edit:hover {background: rgba(var(--v-theme-primary), .12);}
+  .pc_theme__foot {display: flex; align-items: center; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed rgba(var(--v-theme-on-surface), .2);}
+  .pc_theme__dirty {display: inline-flex; align-items: center; gap: 6px; margin-right: auto; font-size: var(--app-font-value); color: rgb(var(--v-theme-warning));}
   @media (max-width: 1100px) { .pc_theme__grid {grid-template-columns: repeat(2, minmax(0, 1fr));} }
   @media (max-width: 640px) { .pc_theme__grid {grid-template-columns: 1fr;} }
 </style>

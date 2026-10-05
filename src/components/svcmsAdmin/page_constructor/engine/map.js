@@ -19,7 +19,8 @@
     'js/components/goods-block.js',
     'js/goods_blocks.js',
     'js/components/hero-slider.js',
-    'js/components/catalog-block.js'
+    'js/components/catalog-block.js',
+    'js/components/header-search.js'
   ];
 
   global.PC_PREVIEW_MAP = {
@@ -27,7 +28,8 @@
       'css/fonts.css',
       'css/tokens/_tokens-base.css',
       'css/style.css',
-      'css/forms.css'
+      'css/forms.css',
+      'css/header-search.css'
     ],
     cssColor: 'css/themes/colors/{color}.css',
     cssStyle: 'css/themes/style/{style}.css',
@@ -45,12 +47,12 @@
       clients:        { css: [], kind: 'carousel' },
       services:       { css: [], kind: 'static' },
       faq:            { css: [], kind: 'static' },
-      header:         { css: ['css/header-search.css'], kind: 'static', extraJs: ['js/preview/header-search.js'] },
+      header:         { css: [], kind: 'static' },
       footer:         { css: [], kind: 'static' },
       product_card:   { css: ['css/goods_block.css'], kind: 'static' },
       product_list:   { css: ['css/good_list.css', 'css/goods_block.css'], kind: 'good-list', dataKey: 'good_list', extraJs: ['js/perpage.js', 'js/good_list.js'] },
       rubric_list:    { css: ['css/catalog.css'], kind: 'static' },
-      product_detail: { css: ['css/good_in.css', 'css/fancybox.css'], kind: 'good-in', extraJs: ['js/good_in.js', 'js/fancybox.umd.js'] },
+      product_detail: { css: ['css/good_in.css', 'css/fancybox.css', 'css/forms.css'], kind: 'good-in', extraJs: ['js/good_in.js', 'js/fancybox.umd.js', 'js/jmodal.js'] },
       service_card:   { css: ['css/service_list.css'], kind: 'static' },
       service_list:   { css: ['css/service_list.css'], kind: 'static' },
       service_detail: { css: ['css/service_in.css'], kind: 'static' },
@@ -67,6 +69,9 @@
       reports:        { css: [], kind: 'static' },
       photo_gallery:  { css: ['css/fancybox.css'], kind: 'static', extraJs: ['js/fancybox.umd.js'] },
       video:          { css: [], kind: 'static', extraJs: ['js/components/video-block.js'] },
+      page_video:     { css: [], kind: 'static', extraJs: ['js/components/video-block.js'] },
+      custom:         { css: [], kind: 'static' },
+      note:           { css: [], kind: 'static' },
       brands_grid:    { css: ['css/brands.css'], kind: 'static' },
       news_list:      { css: ['css/news_in.css'], kind: 'news-list', dataKey: 'news', extraJs: ['js/components/news-list.js'] },
       article_list:   { css: ['css/articles.css', 'css/article_in.css'], kind: 'static' },
@@ -84,7 +89,7 @@
       contact_form:   { css: ['css/forms.css'], kind: 'static', extraJs: ['js/form_builder.js', 'js/preview/forms.js', 'js/forms.js', 'js/jmodal.js'] },
       routes:         { css: [], kind: 'static' },
       page_favorites: { css: ['css/good_list.css', 'css/goods_block.css'], kind: 'good-list', dataKey: 'good_list', extraJs: ['js/perpage.js', 'js/good_list.js'] },
-      page_search:    { css: ['css/good_list.css', 'css/goods_block.css', 'css/search.css'], kind: 'good-list', dataKey: 'good_list', extraJs: ['js/perpage.js', 'js/good_list.js'] },
+      page_search:    { css: ['css/search.css'], kind: 'static', extraJs: ['js/search-page.js'] },
       page_404:       { css: ['css/404.css'], kind: 'static' },
       page_compare:   { css: ['css/good_list.css'], kind: 'static', extraJs: ['js/compare.js'] },
       page_basket:    { css: ['css/forms.css'], kind: 'static', extraJs: ['js/basket.js'] },

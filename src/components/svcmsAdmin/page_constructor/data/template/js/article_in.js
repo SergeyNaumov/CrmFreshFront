@@ -42,14 +42,11 @@ window.__T1_ARTICLE_IN_VER = '2026-10-02';
 
     var titleEl   = document.getElementById('articleInTitle');
     var imgEl     = document.getElementById('articleInMedia');
-    var anonsEl   = document.getElementById('articleInAnons');
     var bodyEl    = document.getElementById('articleInBody');
     var statusEl  = document.getElementById('articleInStatus');
     var crumbEl   = document.getElementById('articleCrumb');
     var prevBtn   = document.getElementById('articlePrev');
     var nextBtn   = document.getElementById('articleNext');
-    var metaEl    = document.getElementById('articleInMeta');
-    var authorEl  = document.getElementById('articleInAuthor');
 
     var currentId = null;
     var prevId = null, nextId = null;
@@ -65,13 +62,6 @@ window.__T1_ARTICLE_IN_VER = '2026-10-02';
       if (imgEl) {
         imgEl.src = data.photo || '';
         imgEl.alt = (data.title || data.header || '') + ' — DigitalStrateg';
-      }
-      if (anonsEl) anonsEl.textContent = data.anons || '';
-
-      if (authorEl) authorEl.textContent = data.author || '';
-      if (metaEl) {
-        if (data.author) metaEl.removeAttribute('hidden');
-        else metaEl.setAttribute('hidden', '');
       }
 
       if (bodyEl) {

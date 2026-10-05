@@ -37,7 +37,11 @@
    */
   function normalizeBlock(block) {
     var td = (global.PC && global.PC.typeDef) ? global.PC.typeDef(block.type) : null;
-    var isData = !!(td && td.data);
+    // items_are_data — в схеме помечены блоки, у которых items нужны только
+    // для превью (демо-строки). Их в JSON не выгружаем. ВАЖНО: слайдер, about
+    // и footer тоже имеют items, но там items — настоящий контент, который
+    // редактируют руками, поэтому у них флага нет и items сохраняются.
+    var itemsAreDemo = !!(td && td.items_are_data);
     var out = {
       type: block.type,
       variant: block.variant || undefined,
@@ -51,8 +55,7 @@
     if (!out.fill) delete out.fill;
     if (!out.anim) delete out.anim;
     if (!out.bleed) delete out.bleed;
-    // У data-блоков данные берутся из переменной (params.varname) — демо-items не экспортируем.
-    if (isData || !out.items.length) delete out.items;
+    if (itemsAreDemo || !out.items.length) delete out.items;
     return out;
   }
 

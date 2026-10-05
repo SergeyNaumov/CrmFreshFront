@@ -346,14 +346,30 @@ window.showToast = showToast;
    ============================================================ */
 document.addEventListener('DOMContentLoaded', function () {
 
-  /* ---------- Хедер: тень при скролле + мобильное меню ---------- */
+  /* ---------- Хедер: тень при скролле + мобильное меню ----------
+     Топбар (.topbar) скрывается классом is-scrolled, а это меняет высоту
+     хедера. С одиночным порогом (scrollY > 10) при скролле вверх класс
+     начинает «дребезжать»: высота хедера меняется → страница смещается →
+     scrollY перескакивает порог → топбар то появляется, то исчезает.
+     Поэтому гистерезис: включаем на 40px, снимаем только ниже 10px,
+     плюс игнорируем микродвижения (<2px) вблизи порога. */
   var header = document.getElementById('siteHeader');
+  var SCROLL_HIDE = 40;   // дальше — топбар прячем
+  var SCROLL_SHOW = 10;   // ближе — показываем обратно
+  var lastY = window.scrollY || 0;
+  var scrolled = (lastY > SCROLL_HIDE);
   function onScrollHeader() {
-    if (header) {
-      header.classList.toggle('is-scrolled', window.scrollY > 10);
-    }
+    if (!header) return;
+    var y = window.scrollY || 0;
+    if (Math.abs(y - lastY) < 2) return;   // дребезг/микродвижения
+    lastY = y;
+    if (!scrolled && y > SCROLL_HIDE) scrolled = true;
+    else if (scrolled && y < SCROLL_SHOW) scrolled = false;
+    else return;                            // в «мёртвой зоне» не трогаем класс
+    header.classList.toggle('is-scrolled', scrolled);
   }
   window.addEventListener('scroll', onScrollHeader, { passive: true });
+  header && header.classList.toggle('is-scrolled', scrolled);
   onScrollHeader();
 
   var burger = document.getElementById('burgerBtn');
@@ -377,11 +393,31 @@ document.addEventListener('DOMContentLoaded', function () {
       var url = el.getAttribute('data-url') || '';
       var list = el.getAttribute('data-list') || '';
       if (!url && !list) return;
+      // options: стрелки/точки/цикл — булевы атрибуты ("false"/"0" = выкл).
+      var boolAttr = function (name, def) {
+        var v = el.getAttribute(name);
+        if (v === null || v === '') return def;
+        return !(v === 'false' || v === '0');
+      };
+      var speed = parseFloat(el.getAttribute('speed'));
+      // Высота блока (params.height): задаём на ХОСТЕ, т.к. .hero растянут 100%.
+      var hgt = parseInt(el.getAttribute('height'), 10);
+      if (!isNaN(hgt) && hgt > 0) el.style.height = hgt + 'px';
       Vue.createApp(window.HeroSlider, {
         dataId: el.id || '',
         dataUrl: url,
         dataList: list,
-        autoplay: parseInt(el.getAttribute('autoplay'), 10) || 0
+        // duration — алиас интервала автопрокрутки (если autoplay не задан)
+        autoplay: parseInt(el.getAttribute('autoplay'), 10)
+                  || parseInt(el.getAttribute('duration'), 10) || 0,
+        arrows: boolAttr('arrows', true),
+        dots: boolAttr('dots', true),
+        loop: boolAttr('loop', true),
+        start: parseInt(el.getAttribute('start'), 10) || 0,
+        height: parseInt(el.getAttribute('height'), 10) || 0,
+        animation: el.getAttribute('animation') || 'rise',
+        transition: el.getAttribute('transition') || 'slide',
+        slideSpeed: (isNaN(speed) || speed <= 0) ? 700 : Math.round(speed * 1000)
       }).mount(el);
     });
   }
@@ -398,15 +434,19 @@ document.addEventListener('DOMContentLoaded', function () {
       var url = el.getAttribute('data-url');
       if (!url) return;
       var num = function (name) { return parseInt(el.getAttribute(name), 10) || undefined; };
+      // ВАЖНО: пустой атрибут (title="") — это «заголовок не нужен», а НЕ
+      // «не задан». Иначе || undefined включает default 'Каталог товаров'
+      // и дублирует H1 блока-страницы (page_head).
+      var str = function (name) { var v = el.getAttribute(name); return v === null ? undefined : v; };
       Vue.createApp(window.CatalogBlock, {
         dataId: el.id || '',
         dataUrl: url,
-        title: el.getAttribute('title') || undefined,
-        sub: el.getAttribute('sub') || undefined,
-        linkText: el.getAttribute('link-text') || undefined,
-        linkHref: el.getAttribute('link-href') || undefined,
-        effect: el.getAttribute('effect') || undefined,
-        enter: el.getAttribute('enter') || undefined,
+        title: str('title'),
+        sub: str('sub'),
+        linkText: str('link-text'),
+        linkHref: str('link-href'),
+        effect: str('effect'),
+        enter: str('enter'),
         cols: num('cols')
       }).mount(el);
     });
@@ -632,6 +672,34 @@ document.addEventListener('DOMContentLoaded', function () {
      (goods-block.recv → init_basket). */
   window.init_basket(false);
 
+  /* ---------- Маска телефона для статичных форм ----------
+     Vue-формы (form_builder.js) применяют свою маску; у статичных форм
+     вида #serviceOrderForm[data-validate] её не было — «8» не превращалось
+     в «+7». Логика совпадает с form_builder.replace_phone. */
+  function maskPhone(v) {
+    v = String(v == null ? '' : v).replace(/[^\d]/g, '');
+    v = v.replace(/^(\d{11}).+$/g, '$1');
+    v = v.replace(/^[78]/g, '+7');
+    v = v.replace(/^(\d)/g, '+7$1');
+    v = v.replace(/^\+7(\d{3})(\d)/, '+7 ($1) $2');
+    v = v.replace(/^(\+7 \(\d{3}\))(\d{3})/, '$1 $2');
+    v = v.replace(/(\d{3})(\d{2})/, '$1-$2');
+    v = v.replace(/(\d{2})(\d{2})/, '$1-$2');
+    return v;
+  }
+  function initPhoneMasks() {
+    document.querySelectorAll('form[data-validate] input[type="tel"], form[data-validate] input[name="phone"]').forEach(function (inp) {
+      if (inp.dataset.maskBound) return;
+      inp.dataset.maskBound = '1';
+      var apply = function () {
+        var m = maskPhone(inp.value);
+        if (inp.value !== m) inp.value = m;
+      };
+      inp.addEventListener('input', apply);
+      inp.addEventListener('blur', apply);
+    });
+  }
+
   /* ---------- Валидация форм ---------- */
   function initForms() {
     document.querySelectorAll('form[data-validate]').forEach(function (form) {
@@ -669,6 +737,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
   initForms();
+  initPhoneMasks();
 
   /* ---------- Cookie-плашка ---------- */
   var cookieEl = document.getElementById('cookieNotice');

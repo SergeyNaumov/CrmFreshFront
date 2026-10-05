@@ -111,7 +111,9 @@ function build_style(v) {
     bsm = bmd = bsh = chi = pill = float = cart = cartH = '0 0 0 0 transparent'
     inset = '0 0 0 0 transparent'
   } else if (type === 'hard') {
-    sm = 'none'
+    // --shadow-sm ставят базовые карточки: без смещённой тени «Жёсткие»
+    // выглядели как «Нет» (карточкам --shadow-md не достаётся).
+    sm = '3px 3px 0 rgba(var(--dark-rgb), ' + si + ')'
     md = '6px 6px 0 rgba(var(--dark-rgb), ' + si + ')'
     lg = '8px 8px 0 rgba(var(--dark-rgb), ' + si + ')'
     bsm = '6px 6px 0 rgba(var(--dark-rgb), ' + si + ')'
@@ -140,7 +142,7 @@ function build_style(v) {
   const hovT = hover === 'lift' ? 'translateY(-2px)' : (hover === 'press' ? 'translate(2px, 2px)' : 'none')
   const hovS = type === 'none' ? 'none' : 'var(--shadow-sm)'
   const cardT = hover === 'lift' ? 'translateY(-6px)' : (hover === 'press' ? 'translate(-4px, -4px)' : 'none')
-  return ':root {\n'
+  let css = ':root {\n'
     + '  --radius: ' + r + 'px;\n  --radius-xs: ' + Math.max(0, r - 4) + 'px;\n'
     + '  --radius-btn: ' + r + 'px;\n  --radius-lg: ' + rl + 'px;\n  --radius-pill: 50px;\n'
     + '  --border-width: ' + bw + 'px;\n  --border-width-accent: ' + Math.max(2, bw) + 'px;\n'
@@ -156,7 +158,14 @@ function build_style(v) {
     + '  --btn-pad-x: ' + padx + 'px;\n  --btn-pad-y: 10px;\n'
     + '  --btn-hover-transform: ' + hovT + ';\n  --btn-hover-shadow: ' + hovS + ';\n'
     + '  --focus-ring: 0 0 0 4px color-mix(in srgb, var(--primary) 16%, transparent);\n'
+    // Уголок карточек (из t2): размер и толщина акцентного уголка.
+    + '  --corner-tick: ' + Number(v.corner || 0) + 'px;\n'
+    + '  --corner-tick-width: ' + Number(v['corner-w'] || 2) + 'px;\n'
     + '}\n'
+  // Украшение заголовка живёт в стилевой оси (style идёт после layout
+  // в каскаде и перекрывает оформление пресета компоновки).
+  css += DECOR_CSS[v.decor] || ''
+  return css
 }
 
 function build_layout(v) {
@@ -175,17 +184,15 @@ function build_layout(v) {
     + '  --font-weight-heading: ' + v.hw + ';\n'
     + '  --grid-size: ' + v['grid-size'] + 'px;\n'
     + '}\n'
-  /* Украшение заголовка секции (поле decor). Правила переопределяют
-     базовый .section-title::after из style.css, поэтому каждый вариант
-     явно снимает/переопределяет градиентную линию. */
-  css += DECOR_CSS[v.decor] || ''
   return css
 }
 
-/* Варианты украшения заголовка секции. Ось layout не задаёт цвета:
+/* Варианты украшения заголовка секции. Ось style не задаёт цвета:
    используются только токены (var(--primary) и т.п.), без литералов.
-   Порядок и названия совпадают с полем decor в AXES.layout.fields. */
-const DECOR_CSS = {
+   Порядок и названия совпадают с полем decor в AXES.style.fields.
+   Style применяется после layout, поэтому декор перекрывает оформление
+   пресета компоновки (например «полоску слева» technical). */
+export const DECOR_CSS = {
   none:
     '\n.section-title::before {\n  content: none;\n}\n'
     + '.section-title::after {\n  content: none;\n}\n',
@@ -268,8 +275,55 @@ const DECOR_CSS = {
     '\n.section-title {\n  padding: 8px 20px;\n  border-radius: var(--radius-pill, 999px);\n'
     + '  background: var(--primary);\n  color: var(--on-primary);\n}\n'
     + '.section-title::before {\n  content: none;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n',
+  /* --- Добавлено 2026-10: линия под заголовком и акцентные варианты --- */
+  'line-long':
+    '\n.section-title::after {\n  content: "";\n  display: block;\n  width: 80px;\n'
+    + '  height: 3px;\n  margin-top: 12px;\n  background: var(--primary);\n}\n'
+    + '.section-title::before {\n  content: none;\n}\n',
+  'line-center':
+    '\n.section-title::after {\n  content: "";\n  display: block;\n  width: 64px;\n'
+    + '  height: 3px;\n  margin: 12px auto 0;\n  background: var(--primary);\n}\n'
+    + '.section-title::before {\n  content: none;\n}\n',
+  'line-dashed':
+    '\n.section-title::after {\n  content: "";\n  display: block;\n  width: 72px;\n'
+    + '  height: 0;\n  margin-top: 12px;\n  border-top: 3px dashed var(--primary);\n}\n'
+    + '.section-title::before {\n  content: none;\n}\n',
+  'line-dot':
+    '\n.section-title::after {\n  content: "";\n  display: block;\n  width: 72px;\n'
+    + '  height: 3px;\n  margin-top: 12px;\n'
+    + '  background: linear-gradient(90deg, var(--primary) 0 56px, transparent 56px 64px, var(--primary) 64px 72px);\n}\n'
+    + '.section-title::before {\n  content: none;\n}\n',
+  'underline-thick':
+    '\n.section-title {\n  text-decoration: underline;\n  text-decoration-thickness: 4px;\n'
+    + '  text-underline-offset: 8px;\n  text-decoration-color: var(--primary);\n}\n'
+    + '.section-title::before {\n  content: none;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n',
+  'accent-box':
+    '\n.section-title {\n  display: inline-block;\n  padding: 8px 16px;\n'
+    + '  border: 2px solid var(--primary);\n  border-radius: var(--radius, 8px);\n}\n'
+    + '.section-title::before {\n  content: none;\n}\n'
+    + '.section-title::after {\n  content: none;\n}\n',
+  quote:
+    '\n.section-title {\n  padding-left: 26px;\n}\n'
     + '.section-title::after {\n  content: none;\n}\n'
+    + '.section-title::before {\n  content: "\\00ab";\n  position: absolute;\n  left: 0;\n'
+    + '  top: -0.14em;\n  color: var(--primary);\n  font-size: 1.5em;\n  line-height: 1;\n}\n'
 }
+
+/* Общий сброс чужого декора перед правилами варианта: компоновка (напр.
+   technical) рисует полоску слева и padding-left — их снимаем, чтобы декор
+   из style-оси показывал ровно себя. base/'' = «Не задано» → компоновку не
+   трогаем. Варианты со своим левым маркером задают padding-left ПОСЛЕ (внутри
+   своей строки). */
+const DECOR_RESET = '\n.section-title {\n  padding-left: 0;\n  padding-right: 0;\n}\n'
+  + '.section-title::before {\n  content: none;\n}\n'
+  + '.section-title::after {\n  content: none;\n}\n'
+DECOR_CSS.base = ''
+Object.keys(DECOR_CSS).forEach(function (k) {
+  if (!DECOR_CSS[k]) return
+  DECOR_CSS[k] = DECOR_RESET + DECOR_CSS[k]
+})
 
 function build_font(v) {
   const body = v.body
@@ -286,13 +340,13 @@ function build_font(v) {
 }
 
 export const LAYOUT_PRESETS = {
-  standard: { container: 1240, gutter: 20, 'section-gap': 88, 'header-height': 80, 'grid-gap': 24, 'head-gap': 24, 'head-space': 44, h1: 2.5, h2: 2, h3: 1.35, base: 16, hw: 700, 'grid-size': 32, decor: 'base' },
-  industrial: { container: 1320, gutter: 24, 'section-gap': 72, 'header-height': 72, 'grid-gap': 24, 'head-gap': 32, 'head-space': 28, h1: 2.8, h2: 2.15, h3: 1.45, base: 16, hw: 800, 'grid-size': 32, decor: 'line' },
-  elegant: { container: 1280, gutter: 22, 'section-gap': 96, 'header-height': 84, 'grid-gap': 28, 'head-gap': 20, 'head-space': 48, h1: 2.6, h2: 2.05, h3: 1.35, base: 16, hw: 600, 'grid-size': 32, decor: 'base' },
-  editorial: { container: 1080, gutter: 24, 'section-gap': 104, 'header-height': 88, 'grid-gap': 32, 'head-gap': 18, 'head-space': 52, h1: 3, h2: 2.3, h3: 1.5, base: 17, hw: 700, 'grid-size': 32, decor: 'full' },
-  wide: { container: 1440, gutter: 28, 'section-gap': 80, 'header-height': 84, 'grid-gap': 28, 'head-gap': 28, 'head-space': 44, h1: 2.7, h2: 2.1, h3: 1.4, base: 16, hw: 700, 'grid-size': 32, decor: 'base' },
-  compact: { container: 1200, gutter: 16, 'section-gap': 56, 'header-height': 68, 'grid-gap': 16, 'head-gap': 16, 'head-space': 28, h1: 2.15, h2: 1.75, h3: 1.25, base: 15, hw: 700, 'grid-size': 24, decor: 'base' },
-  technical: { container: 1300, gutter: 24, 'section-gap': 80, 'header-height': 76, 'grid-gap': 24, 'head-gap': 28, 'head-space': 36, h1: 2.6, h2: 2.05, h3: 1.4, base: 16, hw: 700, 'grid-size': 32, decor: 'left' }
+  standard: { container: 1240, gutter: 20, 'section-gap': 88, 'header-height': 80, 'grid-gap': 24, 'head-gap': 24, 'head-space': 44, h1: 2.5, h2: 2, h3: 1.35, base: 16, hw: 700, 'grid-size': 32 },
+  industrial: { container: 1320, gutter: 24, 'section-gap': 72, 'header-height': 72, 'grid-gap': 24, 'head-gap': 32, 'head-space': 28, h1: 2.8, h2: 2.15, h3: 1.45, base: 16, hw: 800, 'grid-size': 32 },
+  elegant: { container: 1280, gutter: 22, 'section-gap': 96, 'header-height': 84, 'grid-gap': 28, 'head-gap': 20, 'head-space': 48, h1: 2.6, h2: 2.05, h3: 1.35, base: 16, hw: 600, 'grid-size': 32 },
+  editorial: { container: 1080, gutter: 24, 'section-gap': 104, 'header-height': 88, 'grid-gap': 32, 'head-gap': 18, 'head-space': 52, h1: 3, h2: 2.3, h3: 1.5, base: 17, hw: 700, 'grid-size': 32 },
+  wide: { container: 1440, gutter: 28, 'section-gap': 80, 'header-height': 84, 'grid-gap': 28, 'head-gap': 28, 'head-space': 44, h1: 2.7, h2: 2.1, h3: 1.4, base: 16, hw: 700, 'grid-size': 32 },
+  compact: { container: 1200, gutter: 16, 'section-gap': 56, 'header-height': 68, 'grid-gap': 16, 'head-gap': 16, 'head-space': 28, h1: 2.15, h2: 1.75, h3: 1.25, base: 15, hw: 700, 'grid-size': 24 },
+  technical: { container: 1300, gutter: 24, 'section-gap': 80, 'header-height': 76, 'grid-gap': 24, 'head-gap': 28, 'head-space': 36, h1: 2.6, h2: 2.05, h3: 1.4, base: 16, hw: 700, 'grid-size': 32 }
 }
 
 export const AXES = {
@@ -328,7 +382,40 @@ export const AXES = {
       { id: 'shadow-i', label: 'Интенсивность тени', type: 'range', def: 12, min: 4, max: 40, step: 1, unit: '%' },
       { id: 'padx', label: 'Отступы кнопки X', type: 'range', def: 22, min: 10, max: 40, step: 1, unit: 'px' },
       { id: 'hover', label: 'Hover кнопки', type: 'select', def: 'lift', options: [['lift', 'Подъём'], ['none', 'Без'], ['press', 'Вдавливание']] },
-      { id: 'cardpad', label: 'Отступ карточки', type: 'range', def: 16, min: 8, max: 32, step: 1, unit: 'px' }
+      { id: 'cardpad', label: 'Отступ карточки', type: 'range', def: 16, min: 8, max: 32, step: 1, unit: 'px' },
+      { id: 'corner', label: 'Уголок карточек', type: 'select', def: 0, options: [
+        [0, 'Нет'], [6, 'Малый (6px)'], [10, 'Средний (10px)'], [14, 'Крупный (14px)']
+      ] },
+      { id: 'corner-w', label: 'Толщина уголка', type: 'range', def: 2, min: 1, max: 4, step: 1, unit: 'px' },
+      { id: 'decor', label: 'Украшение заголовка секции', type: 'select', def: '', options: [
+        ['', 'Не задано (из компоновки)'],
+        ['none', 'Без украшения'],
+        ['#', 'Линии под заголовком'],
+        ['line', 'Короткая черта снизу'],
+        ['line-long', 'Длинная черта 80px'],
+        ['line-center', 'Черта по центру'],
+        ['line-dashed', 'Пунктирная черта'],
+        ['line-dot', 'Линия с точкой'],
+        ['double', 'Двойная черта снизу'],
+        ['full', 'Линия во всю ширину'],
+        ['top', 'Полоска сверху'],
+        ['rule-both', 'Линии сверху и снизу'],
+        ['#', 'Текст и акценты'],
+        ['under', 'Подчёркивание текста'],
+        ['underline-thick', 'Жирное подчёркивание'],
+        ['left', 'Полоска слева'],
+        ['slash', 'Косая черта'],
+        ['dot', 'Точка-маркер'],
+        ['quote', 'Кавычка перед заголовком'],
+        ['#', 'Рамки и уголки'],
+        ['accent-box', 'Рамка вокруг заголовка'],
+        ['corner', 'Угловые метки (диагональ)'],
+        ['corner-tl', 'Уголок сверху слева'],
+        ['corner-br', 'Уголок снизу справа'],
+        ['bracket', 'Уголки-скобки по краям'],
+        ['#', 'Заливка'],
+        ['pill', 'Заголовок на плашке']
+      ] }
     ]
   },
   layout: {
@@ -350,30 +437,7 @@ export const AXES = {
       { id: 'h3', label: 'H3', type: 'number', def: 1.35, min: 1.1, max: 2, step: 0.05, unit: 'rem' },
       { id: 'base', label: 'Базовый размер', type: 'number', def: 16, min: 14, max: 20, unit: 'px' },
       { id: 'hw', label: 'Вес заголовков', type: 'number', def: 700, min: 400, max: 900, step: 100 },
-      { id: 'grid-size', label: 'Шаг декоративной сетки', type: 'number', def: 32, min: 0, max: 80, step: 8, unit: 'px' },
-      { id: 'decor', label: 'Украшение заголовка секции', type: 'select', def: 'base', options: [
-        ['#', 'Без оформления'],
-        ['none', 'Без украшения'],
-        ['#', 'Линии и полосы'],
-        ['base', 'Градиентная линия (по умолчанию)'],
-        ['line', 'Короткая черта снизу'],
-        ['double', 'Двойная черта снизу'],
-        ['full', 'Линия во всю ширину'],
-        ['top', 'Полоска сверху'],
-        ['rule-both', 'Линии сверху и снизу'],
-        ['under', 'Подчёркивание текста'],
-        ['#', 'Акцентные маркеры'],
-        ['left', 'Полоска слева'],
-        ['slash', 'Косая черта'],
-        ['dot', 'Точка-маркер'],
-        ['#', 'Уголки'],
-        ['corner', 'Угловые метки (диагональ)'],
-        ['corner-tl', 'Уголок сверху слева'],
-        ['corner-br', 'Уголок снизу справа'],
-        ['bracket', 'Уголки-скобки по краям'],
-        ['#', 'Заливка'],
-        ['pill', 'Заголовок на плашке']
-      ] }
+      { id: 'grid-size', label: 'Шаг декоративной сетки', type: 'number', def: 32, min: 0, max: 80, step: 8, unit: 'px' }
     ]
   },
   font: {
@@ -422,7 +486,8 @@ export const SHOWCASE_CSS = `
 .ed-tokens li { padding: 3px 8px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--body-color); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-pill); }
 .ed-header { background: var(--surface-2); border-bottom: 1px solid var(--border); }
 .ed-header__main { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 16px; padding-bottom: 16px; min-height: var(--header-height, 80px); }
-.ed-logo { font-size: var(--font-size-h4, 18px); font-weight: 800; color: var(--heading-color); }
+.ed-logo { display: block; height: 38px; width: auto; }
+.ed-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--grid-gap, 24px); max-width: 560px; }
 .ed-header__nav { display: flex; gap: 18px; }
 .ed-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap, 24px); }
 .ed-tile { padding: 14px; font-size: var(--font-size-sm, 13px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
@@ -442,7 +507,7 @@ export const SHOWCASE_HTML = `
 
   <div class="ed-header">
     <div class="ed-header__main container">
-      <span class="ed-logo">Логотип</span>
+      <img class="ed-logo" src="images/logo.svg" alt="Логотип">
       <nav class="ed-header__nav"><a href="#">Услуги</a><a href="#">Товары</a><a href="#">О компании</a><a href="#">Контакты</a></nav>
     </div>
   </div>
@@ -454,10 +519,27 @@ export const SHOWCASE_HTML = `
         <a class="section-head__link" href="#">Все услуги</a>
       </div>
       <p class="section-sub">Подзаголовок секции — проверка отступа <b>--head-space</b> и промежутка <b>--head-gap</b> между заголовком и ссылкой.</p>
-      <div class="ed-grid3">
-        <div class="ed-tile">Плитка 1 — зазор <b>--grid-gap</b></div>
-        <div class="ed-tile">Плитка 2 — зазор <b>--grid-gap</b></div>
-        <div class="ed-tile">Плитка 3 — зазор <b>--grid-gap</b></div>
+      <div class="adv-grid">
+        <div class="adv-card">
+          <span class="adv-card__icon adv-card__icon--delivery"><img src="images/preview/advantages_1.svg" alt="" aria-hidden="true"></span>
+          <h3 class="adv-card__title">Быстрая доставка</h3>
+          <p class="adv-card__text">Зазор плиток задаёт <b>--grid-gap</b>, отступ секции — <b>--head-space</b>.</p>
+        </div>
+        <div class="adv-card">
+          <span class="adv-card__icon adv-card__icon--shield"><img src="images/preview/advantages_2.svg" alt="" aria-hidden="true"></span>
+          <h3 class="adv-card__title">Официальная гарантия</h3>
+          <p class="adv-card__text">Иконки берутся из <b>advantages-icons.css</b> и картинок preview.</p>
+        </div>
+        <div class="adv-card">
+          <span class="adv-card__icon adv-card__icon--payment"><img src="images/preview/advantages_3.svg" alt="" aria-hidden="true"></span>
+          <h3 class="adv-card__title">Удобная оплата</h3>
+          <p class="adv-card__text">Карточка повторяет разметку блока «Наши преимущества».</p>
+        </div>
+        <div class="adv-card">
+          <span class="adv-card__icon adv-card__icon--support"><img src="images/preview/advantages_4.svg" alt="" aria-hidden="true"></span>
+          <h3 class="adv-card__title">Поддержка 24/7</h3>
+          <p class="adv-card__text">Размеры и цвета — на токенах текущей схемы.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -504,15 +586,23 @@ export const SHOWCASE_HTML = `
   </div>
   <div class="ed-card">
     <h3 class="ed-card__title">Карточка товара</h3>
-    <article class="product-card">
-      <div class="product-card__media"><img src="images/good/good_1_1.webp" alt="Товар" loading="lazy"></div>
-      <div class="product-card__body">
-        <h3 class="product-card__title"><a href="#">Смартфон X1 Pro</a></h3>
-        <p class="product-card__anons">6.7" AMOLED, 128 ГБ, камера 50 Мп, NFC</p>
-        <div class="product-card__price-row"><span class="product-card__price">29 990 ₽</span><span class="product-card__price-old">34 990 ₽</span></div>
-        <button class="btn btn-primary btn-sm product-card__buy" type="button">В корзину</button>
-      </div>
-    </article>
+    <div class="ed-products">
+      <article class="product-card">
+        <div class="product-card__media">
+          <a class="product-card__media-link" href="#"><img class="product-card__img" src="images/good/good_1_1.webp" alt="Смартфон X1 Pro" loading="lazy"></a>
+          <div class="product-card__badges">
+            <span class="product-card__badge product-card__badge--new">Новинка</span>
+            <span class="product-card__badge product-card__badge--sale">Акция</span>
+          </div>
+        </div>
+        <div class="product-card__body">
+          <h3 class="product-card__title"><a href="#">Смартфон X1 Pro</a></h3>
+          <p class="product-card__anons">6.7" AMOLED, 128 ГБ, камера 50 Мп, NFC</p>
+          <div class="product-card__price-row"><span class="product-card__price">29 990 ₽</span><span class="product-card__price-old">34 990 ₽</span></div>
+          <button class="btn btn-primary btn-sm product-card__buy" type="button">В корзину</button>
+        </div>
+      </article>
+    </div>
   </div>
   <div class="ed-card">
     <h3 class="ed-card__title">Форма и выноска</h3>

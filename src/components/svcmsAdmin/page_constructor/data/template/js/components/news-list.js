@@ -59,12 +59,14 @@
 
     var dataUrl   = list.getAttribute('data-url')      || '';
     var dataId    = list.getAttribute('data-id')       || 'news';
-    var limit     = parseInt(list.getAttribute('data-limit'), 10) || 6;
+    var limit     = parseInt(list.getAttribute('data-limit'), 10) || 6;   // размер порции
+    var total     = parseInt(list.getAttribute('data-total'), 10) || 0;   // ЖЁСТКИЙ максимум блока (0 = без ограничения)
     var isPreview = /\.js$/i.test(dataUrl);
 
     var loading = false;
     var done    = false;
 
+    function countCards() { return list.querySelectorAll('.news-card').length; }
     function lastCard() {
       var cards = list.querySelectorAll('.news-card');
       return cards.length ? cards[cards.length - 1] : null;
@@ -73,6 +75,7 @@
     /* ---------- Сентинел: наблюдаем за появлением в вьюпорте ---------- */
     function check() {
       if (loading || done) return;
+      if (total > 0 && countCards() >= total) { finish(); return; }
       var r = sentinel.getBoundingClientRect();
       if (r.top < window.innerHeight + 300) loadPage();
     }
@@ -93,12 +96,20 @@
       var last = lastCard();
       var lastId = last ? parseInt(last.getAttribute('data-id'), 10) || 0 : 0;
 
+      // Жёсткий максимум: не запрашиваем больше, чем осталось до total.
+      var batch = limit;
+      if (total > 0) {
+        var remaining = total - countCards();
+        if (remaining <= 0) { finish(); return; }
+        batch = Math.min(limit, remaining);
+      }
+
       loading = true;
       sentinel.setAttribute('aria-busy', 'true');
       sentinel.classList.add('is-armed');
 
       var url = dataUrl + (dataUrl.indexOf('?') === -1 ? '?' : '&') +
-                'id=' + encodeURIComponent(lastId) + '&limit=' + limit;
+                'id=' + encodeURIComponent(lastId) + '&limit=' + batch;
 
       if (isPreview) {
         loadPreview(url);
@@ -146,6 +157,7 @@
       });
       list.appendChild(frag);
 
+      if (total > 0 && countCards() >= total) { finish(); return; }
       if (items.length < limit) finish();
     }
 

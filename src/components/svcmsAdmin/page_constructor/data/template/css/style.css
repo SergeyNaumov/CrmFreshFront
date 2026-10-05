@@ -304,7 +304,66 @@ button {
   gap: 24px;
   padding: 16px 0;
   min-height: var(--header-height, 80px);
+  /* Перенос разрешён: строка поиска и меню в нестандартных видах шапки
+     занимают отдельную строку (flex-basis: 100%). */
+  flex-wrap: wrap;
 }
+
+/* ---------- Виды шапки (параметр блока «Вид шапки») ----------
+   Разметка одна (см. block/header.html): .logo, .header__nav,
+   .header__actions и .header__search лежат внутри .header__main, а вид
+   задаёт только CSS-класс header--<layout> на <header> (engine передаёт
+   params.layout в переменную header_layout).
+   classic — поиск отдельной строкой под меню ( historicая раскладка);
+   search-row/two — логотип, поиск и виджеты в одной строке, меню ниже;
+   minimal — без топбара и меню;
+   center — логотип по центру, под ним меню и виджеты по центру. */
+.header__search {
+  flex: 1 0 100%;
+  max-width: 720px;
+  padding-bottom: 14px;
+  /* Иначе flex-элемент не сжимается уже содержимого поля ввода и на
+     узких экранах строка поиска распирает шапку за пределы окна. */
+  min-width: 0;
+}
+
+.header--search-row .header__search,
+.header--two .header__search {
+  order: 2;
+  flex: 1 1 auto;
+  max-width: 620px;
+  margin: 0 auto;
+  padding-bottom: 0;
+}
+.header--search-row .logo,
+.header--two .logo { order: 1; }
+.header--search-row .header__actions,
+.header--two .header__actions { order: 3; }
+.header--search-row .header__nav,
+.header--two .header__nav {
+  order: 4;
+  flex: 1 0 100%;
+  gap: 22px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: var(--border-width) solid var(--border);
+}
+/* Строка с поиском и виджетами должна перекрывать подменю меню (--z-105),
+   иначе выпадашка подсказок и дропдаун корзины уедут под строку меню. */
+.header--search-row .header__main,
+.header--two .header__main { position: relative; z-index: var(--z-110); }
+
+.header--minimal .topbar { display: none; }
+.header--minimal .header__nav { display: none; }
+
+.header--center .header__main { flex-wrap: wrap; justify-content: center; row-gap: 10px; }
+.header--center .logo { flex: 1 0 100%; justify-content: center; }
+.header--center .header__nav,
+.header--center .header__actions { margin: 0 auto; }
+
+/* Меню не переносится на вторую строку */
+.header__nav { flex-wrap: nowrap; }
+.header__nav .nav-link { white-space: nowrap; }
 
 /* Логотип */
 .logo {
@@ -340,6 +399,7 @@ button {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
 }
 
 .header__nav .nav-link {
@@ -908,11 +968,12 @@ hero-slider {
   transform: translateY(24px);
 }
 
-/* Приехавший слайд: контент плавно проявляется (стаггер) */
+/* Приехавший слайд: контент плавно проявляется (стаггер).
+   Имя анимации — из варианта блока (params.animation), см. .hero--anim-*. */
 .hero__slide.is-active .hero__title,
 .hero__slide.is-active .hero__subtitle,
 .hero__slide.is-active .hero__btn {
-  animation: heroIn var(--hero-fade-in, 0.65s) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: var(--hero-in-anim, heroIn) var(--hero-fade-in, 0.65s) cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .hero__slide.is-active .hero__subtitle { animation-delay: calc(var(--hero-fade-in, 0.65s) * 0.15); }
@@ -934,6 +995,69 @@ hero-slider {
   from { opacity: 1; transform: translateY(0); }
   to   { opacity: 0; transform: translateY(-18px); }
 }
+
+/* ---------- Варианты появления контента (block params.animation) ----------
+   Каждый вариант задаёт --hero-in-anim — имя keyframes для .is-active.
+   Значения совпадают с опциями поля «Анимация входа» в схеме блока. */
+.hero--anim-rise  { --hero-in-anim: heroIn; }
+.hero--anim-fade  { --hero-in-anim: heroInFade; }
+.hero--anim-zoom  { --hero-in-anim: heroInZoom; }
+.hero--anim-left  { --hero-in-anim: heroInLeft; }
+.hero--anim-right { --hero-in-anim: heroInRight; }
+.hero--anim-flip  { --hero-in-anim: heroInFlip; }
+.hero--anim-clip  { --hero-in-anim: heroInClip; }
+.hero--anim-blur  { --hero-in-anim: heroInBlur; }
+
+@keyframes heroInFade  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes heroInZoom  { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes heroInLeft  { from { opacity: 0; transform: translateX(-34px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes heroInRight { from { opacity: 0; transform: translateX(34px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes heroInFlip  { from { opacity: 0; transform: perspective(700px) rotateY(80deg); } to { opacity: 1; transform: perspective(700px) rotateY(0); } }
+@keyframes heroInClip  { from { opacity: 0; clip-path: inset(0 0 100% 0); } to { opacity: 1; clip-path: inset(0); } }
+@keyframes heroInBlur  { from { opacity: 0; filter: blur(12px); } to { opacity: 1; filter: blur(0); } }
+
+/* ---------- Переходы между слайдами (block params.transition) ----------
+   slide (по умолчанию) — существующая translateX-лента, доп. правил нет.
+   Остальные накладывают слайды абсолютно и не двигают ленту. */
+.hero--tr-fade .hero__slides,
+.hero--tr-zoom .hero__slides,
+.hero--tr-fly .hero__slides,
+.hero--tr-flip .hero__slides,
+.hero--tr-clip .hero__slides {
+  transform: none !important;
+  position: relative;
+}
+.hero--tr-fade .hero__slide,
+.hero--tr-zoom .hero__slide,
+.hero--tr-fly .hero__slide,
+.hero--tr-flip .hero__slide,
+.hero--tr-clip .hero__slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+}
+.hero--tr-fade .hero__slide { transition: opacity var(--hero-slide-speed, 0.7s) ease; }
+.hero--tr-fade .hero__slide.is-active { opacity: 1; z-index: 2; }
+.hero--tr-fade .hero__slide.is-out { opacity: 1; z-index: 1; }
+
+.hero--tr-zoom .hero__slide { transition: opacity var(--hero-slide-speed, 0.7s) ease, transform var(--hero-slide-speed, 0.7s) ease; transform: scale(0.9); }
+.hero--tr-zoom .hero__slide.is-active { opacity: 1; transform: scale(1); z-index: 2; }
+.hero--tr-zoom .hero__slide.is-out { opacity: 1; transform: scale(1.06); z-index: 1; }
+
+.hero--tr-fly .hero__slide { transition: opacity var(--hero-slide-speed, 0.7s) ease, transform var(--hero-slide-speed, 0.7s) ease; transform: translateY(8%); }
+.hero--tr-fly .hero__slide.is-active { opacity: 1; transform: translateY(0); z-index: 2; }
+.hero--tr-fly .hero__slide.is-out { opacity: 1; transform: translateY(-8%); z-index: 1; }
+
+.hero--tr-flip .hero__slide { transition: opacity var(--hero-slide-speed, 0.7s) ease, transform var(--hero-slide-speed, 0.7s) ease; transform: perspective(1200px) rotateY(90deg); }
+.hero--tr-flip .hero__slide.is-active { opacity: 1; transform: perspective(1200px) rotateY(0); z-index: 2; }
+
+.hero--tr-clip .hero__slide { transition: opacity var(--hero-slide-speed, 0.7s) ease, clip-path var(--hero-slide-speed, 0.7s) ease; clip-path: inset(0 0 100% 0); }
+.hero--tr-clip .hero__slide.is-active { opacity: 1; clip-path: inset(0); z-index: 2; }
+.hero--tr-clip .hero__slide.is-out { opacity: 1; clip-path: inset(100% 0 0 0); z-index: 1; }
+
+/* Высота hero из параметра блока задаётся на ХОСТЕ <hero-slider>
+   в js/app.js (initHeroSlider): el.style.height. См. slider.params.height. */
 
 /* Ряд кнопок (используется в hero и в секции «О магазине») */
 .hero__actions {
@@ -1024,6 +1148,33 @@ hero-slider {
   transform: translateY(-6px);
   box-shadow: var(--shadow-md);
   border-color: transparent;
+}
+
+/* --- Уголок карточек (перенесён из templates/_archive/t2).
+   Акцентный топ-правый уголок, управляется токенами стилевой оси:
+   --corner-tick (размер, 0 = выключен) и --corner-tick-width (толщина). --- */
+.product-card,
+.news-card,
+.service-card,
+.adv-card,
+.brand-card {
+  position: relative;
+}
+
+.product-card::after,
+.news-card::after,
+.service-card::after,
+.adv-card::after,
+.brand-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--corner-tick, 0);
+  height: var(--corner-tick, 0);
+  border-top: var(--corner-tick-width, 2px) solid var(--primary);
+  border-right: var(--corner-tick-width, 2px) solid var(--primary);
+  pointer-events: none;
 }
 
 .adv-card__icon {
@@ -1808,11 +1959,58 @@ catalog-block { display: block; }
 .breadcrumbs__item a:hover { color: var(--primary-dark); }
 .breadcrumbs__item--active { color: var(--heading-color); font-weight: 600; }
 
-/* ---------- Сентинел и индикатор дозагрузки новостей ---------- */
+/* Заголовок блока-страницы (галочка «Блок страницы»): H1 + крошки.
+   Рендерится первым внутри секции блока. Верхний отступ переносим сюда
+   (секция получает .section--page и обнуляет свой), иначе над заголовком
+   оставалась полоса фона body — серый отступ между шапкой и страницей. */
+/* Специфичность выше .section (объявлен ниже в файле), иначе его
+   padding: 88px 0 снова перебивает обнуление. */
+.section.section--page {
+  padding-top: 0;
+}
+
+/* catalog-block внутри .section--page сам несёт .section — гасим двойной
+   вертикальный отступ (заголовок даёт page_head, низ — внешняя секция). */
+.section--page .catalog.section {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.section.section--page > .container > .page-head {
+  padding-top: var(--section-gap, 88px);
+}
+
+.page-head {
+  margin: 0 0 28px;
+}
+
+.page-head__title {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.15;
+  color: var(--heading-color);
+}
+
+.page-head__sub {
+  max-width: 720px;
+  margin: 14px 0 0;
+  color: var(--muted);
+}
+
+/* ---------- Сентинел и индикатор дозагрузки новостей ----------
+   В покое НЕ резервирует место (иначе после блока «Новости» отступ больше,
+   чем после остальных — регресс отступов между блоками). Место под спиннер
+   появляется только во время дозагрузки (.is-armed). */
 .news-sentinel {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 0;
+  margin-top: 0;
+}
+.news-sentinel.is-armed {
   min-height: 64px;
   margin-top: 34px;
 }
@@ -2527,6 +2725,8 @@ catalog-block { display: block; }
 /* ---------- Photo gallery: варианты сетки ---------- */
 .gal-grid--cols { grid-template-columns: repeat(var(--gal-cols, 4), minmax(0, 1fr)); }
 .gal-grid--bento { grid-auto-rows: 150px; grid-auto-flow: dense; }
+.gal-grid--bento .gal-item { aspect-ratio: auto; height: 100%; }
+.gal-grid--strip .gal-item { aspect-ratio: 3 / 2; }
 .gal-grid--bento .gal-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
 .gal-grid--bento .gal-item:nth-child(4n) { grid-row: span 2; }
 .gal-grid--strip { display: flex; overflow-x: auto; gap: 16px; }
@@ -2543,6 +2743,9 @@ catalog-block { display: block; }
   align-items: center;
   justify-content: center;
   padding: 20px;
+  /* Если модалка осталась внутри блока с transform (scroll-анимация),
+     оверлей всё равно должен занимать весь экран и не мешать колесу. */
+  overflow-y: auto;
   background: rgba(12, 17, 27, 0.55);
   backdrop-filter: blur(2px);
 }
@@ -2551,8 +2754,12 @@ catalog-block { display: block; }
   position: relative;
   width: 100%;
   max-width: 560px;
-  max-height: 92vh;
+  /* Форма целиком в экране: диалог не выше вьюпорта, длинная форма
+     прокручивается внутри (overscroll — чтобы колесо не уводило страницу). */
+  max-height: calc(100vh - 40px);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 32px;
   background: var(--surface);
   border: var(--border-width) solid var(--border);
@@ -2671,10 +2878,13 @@ catalog-block { display: block; }
 /* ---------- Форма обратной связи ---------- */
 .contact {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 56px;
+  /* 1fr/1.2fr, gap 28 — как .branch-card: левый край карты шоурума
+     совпадает с картой филиала. НЕ менять gap/колонки. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 28px;
   align-items: start;
 }
+.contact--single { grid-template-columns: minmax(0, 1fr); }
 
 .contact__title { font-size: 1.9rem; }
 
@@ -2703,7 +2913,7 @@ catalog-block { display: block; }
 .contact__item-icon .icon { width: 20px; height: 20px; }
 
 .contact__item-title { font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 2px; }
-.contact__item-value { font-weight: 700; color: var(--heading-color); }
+.contact__item-value { font-weight: 500; color: var(--heading-color); }
 .contact__item-value a { color: inherit; }
 
 .form-card {
@@ -2907,6 +3117,27 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 .socials img { width: 18px; height: 18px; }
 .socials .icon { width: 18px; height: 18px; }
 
+/* Соцсети на светлом фоне (блок «Свяжитесь с нами»): базовый .socials
+   рассчитан на тёмный подвал, поэтому задаём контрастную заливку
+   и фирменный цвет иконок — без hover они тоже читаемы. */
+.socials--light a {
+  background: var(--light);
+  color: var(--heading-color);
+  border: 1px solid rgba(var(--dark-rgb), 0.12);
+}
+.socials--light a:hover {
+  background: var(--gradient);
+  color: var(--white);
+  border-color: transparent;
+}
+.socials--light .icon-vk { color: #0077ff; }
+.socials--light .icon-ok { color: #ee8208; }
+.socials--light .icon-dzen { color: #000; }
+.socials--light .icon-rutube { color: #ff0000; }
+.socials--light .icon-max { color: #ffb800; }
+/* На цветном (hover) круге иконка всегда светлая — фирменный цвет гасим. */
+.socials--light a:hover .icon { color: var(--white); }
+
 /* Подвал нижняя строка */
 .footer__bottom {
   display: flex;
@@ -3084,6 +3315,18 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
   .header__mobile { display: block; }
   .header__mobile.is-hidden { display: none; }
 
+  /* Мобильный вид шапки (любой вид): логотип и кнопки в одной строке,
+     строка поиска — под ними, во всю ширину. */
+  .header__main > .logo { order: 1; }
+  .header__main > .header__actions { order: 2; }
+  .header__main > .header__search {
+    order: 3;
+    flex: 1 0 100%;
+    max-width: none;
+    margin: 0;
+    padding-bottom: 4px;
+  }
+
   /* Мобильный топбар — два ряда (телефон / «Бесплатная доставка…»):
      вертикальный воздух, чтобы строки не прилипали к краям. */
   .topbar__inner { padding-top: 8px; padding-bottom: 8px; }
@@ -3197,7 +3440,10 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
   --tb-chip-color: var(--primary);
   --tb-chip-border: var(--callout-border);
   position: relative;
-  padding: clamp(40px, 6vw, 68px) clamp(20px, 4vw, 44px);
+  /* Вертикаль/горизонталь — ЕДИНАЯ сетка: padding задаёт .section
+     (var(--section-gap) 0), горизонталь — .container (var(--gutter)).
+     .block не добавляет своих отступов, иначе контент «плывёт» относительно
+     raw-блоков. Заливка/радиус остаются. НЕ возвращать сюда padding. */
   border-radius: var(--radius-lg);
   background: var(--fill-1);
   color: var(--on-fill-1);
@@ -3205,7 +3451,9 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 
 .block--bleed { border-radius: 0; padding-left: 0; padding-right: 0; }
 
-.block + .block { margin-top: 22px; }
+/* Зазор между блоками даёт .section (var(--section-gap) сверху и снизу),
+   поэтому доп. margin не нужен — иначе зазор «плывёт» (68+22+68 != 80+80). */
+.block + .block { margin-top: 0; }
 
 /* Слот 1: карточка / поверхность */
 .block--fill-1 {
@@ -3608,7 +3856,7 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
   align-items: start;
 }
 
-.tb-article__side { position: sticky; top: calc(var(--header-height) + 20px); }
+.tb-article__side { position: sticky; top: calc(var(--header-sticky-offset, var(--header-height)) + 20px); }
 
 .tb-toc {
   padding: 20px;
@@ -3640,7 +3888,7 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 .tb-toc__link:hover { color: var(--tb-brand, var(--primary)); background: var(--tb-chip-bg, var(--callout-bg)); }
 
 /* Подсветка целевого заголовка статьи (:target, без JS) */
-.tb-anchor { scroll-margin-top: calc(var(--header-height) + 20px); }
+.tb-anchor { scroll-margin-top: calc(var(--header-sticky-offset, var(--header-height)) + 20px); }
 .tb-anchor:target { color: var(--tb-brand, var(--primary)); }
 
 /* ---------- 11. Лента логотипов (.tb-logos) ---------- */
@@ -4308,8 +4556,10 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 
 .routes {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px;
+  /* Единая колончатая сетка страницы (как .contact/.branch-card): правая
+     карточка и столбцы карт/реквизитов — на одной вертикали. gap 28. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 28px;
   margin: 30px 0;
 }
 
@@ -4353,13 +4603,17 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 
 .branch-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  /* Единая колончатая раскладка с .contacts-layout (1fr / 1.2fr, gap 28):
+     левый край карты филиала совпадает с картой шоурума. Без внутреннего
+     горизонтального паддинга и «карточной» рамки — иначе карты «пляшут».
+     НЕ возвращать padding по горизонтали/chrome. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
   gap: 28px;
-  padding: 28px;
-  background: var(--surface-2);
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .branch-card h3 {
@@ -4399,9 +4653,47 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 .branch-info-item-value a { color: var(--primary); }
 .branch-info-item-value a:hover { color: var(--primary-dark); }
 
-.branch-map { overflow: hidden; border-radius: var(--radius); background: var(--light); }
+.branch-map {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--light);
+  min-height: 360px;
+}
 
-.branch-map iframe { display: block; width: 100%; height: 320px; border: 0; }
+.branch-map iframe { display: block; width: 100%; height: 100%; min-height: 360px; border: 0; }
+
+/* Метка филиала поверх карты: название, адрес и ссылка на маршрут.
+   Заменяет пустое место, пока карта грузится, и работает офлайн. */
+.branch-map__badge {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  z-index: 2;
+  max-width: min(300px, calc(100% - 28px));
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: rgba(var(--surface-rgb, 255, 255, 255), .94);
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.branch-map__title { font-weight: 700; font-size: var(--font-size-base, 15px); color: var(--on-surface); }
+.branch-map__addr { font-size: var(--font-size-sm, 13px); color: var(--on-surface-variant); line-height: 1.4; }
+.branch-map__route {
+  margin-top: 4px;
+  font-size: var(--font-size-sm, 13px);
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.branch-map__route:hover { color: var(--primary-dark); text-decoration: underline; }
+.branch-map__route .icon { width: 16px; height: 16px; }
 
 /* ---------- Контакты: реквизиты и полная карта ---------- */
 .requisites { margin-top: 20px; }
@@ -4417,7 +4709,10 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
   color: var(--heading-color);
 }
 
-.requisites-table { border-collapse: collapse; width: 100%; }
+.requisites-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+/* Столбец значений — на одной вертикали с картами (x≈671): первая колонка
+   1fr, вторая 1.2fr при gap 28 (1252*0.46≈576 → значение у 669). */
+.requisites-table td:first-child { width: 46%; }
 
 .requisites-table th,
 .requisites-table td {
@@ -4769,8 +5064,9 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 
   .routes,
   .branch-card { grid-template-columns: 1fr; }
+  .branch-map, .branch-map iframe { min-height: 280px; }
 
-  .branch-map iframe { height: 260px; }
+  .branch-map iframe { height: 280px; }
 
   .fullmap__frame iframe { height: 320px; }
 
@@ -4801,6 +5097,8 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 
 /* Сравнение (page/compare.html) */
 .compare { padding: 40px 0; }
+/* В блоке-странице отступ сверху уже даёт .page-head — не удваиваем. */
+.section.section--page .compare { padding-top: 0; }
 .compare__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
 .compare__scroll { overflow-x: auto; border: var(--border-width) solid var(--border); border-radius: var(--radius-lg); }
 .compare__table { width: 100%; border-collapse: collapse; min-width: 720px; }
@@ -4994,8 +5292,93 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 .gal-chip { padding: 8px 16px; border: var(--border-width) solid var(--border); border-radius: var(--radius-pill); background: var(--surface); cursor: pointer; }
 .gal-chip.is-active { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
 .gal-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--card-pad); }
-.gal-item { position: relative; display: block; border-radius: var(--card-radius); overflow: hidden; aspect-ratio: 4 / 3; }
+.gal-item {
+  position: relative; display: block; border-radius: var(--card-radius); overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--fill-3, var(--light));
+}
+/* Фильтр по тегам (js/gallery.js) ставит item.hidden=true. Без этого правила
+   авторский display:block перебивает UA [hidden]{display:none} — клик по
+   чипу ничего не скрывал. НЕ УБИРАТЬ. */
+.gal-item[hidden] { display: none; }
 .gal-item__img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
 .gal-item:hover .gal-item__img { transform: scale(1.05); }
-.gal-item__cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 16px 14px; color: var(--white); background: linear-gradient(0deg, rgba(var(--ink-rgb), 0.72) 0%, transparent 100%); }
-@media (max-width: 720px) { .gal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.gal-item__cap {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 10px;
+  padding: 28px 14px 12px; color: var(--white);
+  background: linear-gradient(0deg, rgba(var(--ink-rgb), 0.78) 0%, transparent 100%);
+  opacity: 0; transform: translateY(8px); transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.gal-item:hover .gal-item__cap,
+.gal-item:focus-visible .gal-item__cap { opacity: 1; transform: none; }
+.gal-item__cap-title { font-size: 0.86rem; font-weight: 600; line-height: 1.35; }
+.gal-item__cap-tag {
+  flex: 0 0 auto; font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+.gal-item__zoom {
+  position: absolute; top: 12px; right: 12px; width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center; color: #fff;
+  background: rgba(0, 0, 0, 0.42); border-radius: 50%;
+  opacity: 0; transform: scale(0.8); transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.gal-item__zoom svg { width: 18px; height: 18px; }
+.gal-item:hover .gal-item__zoom { opacity: 1; transform: none; }
+
+/* Мозаика (вариант по умолчанию): крупный первый кадр + колонки.
+   Пропорции плиток — реальные размеры фото (--ar из width/height в ds_galery),
+   поэтому мозаика разноразмерная, а не ровная сетка. Остальные варианты
+   (grid/cols/bento/strip) сохраняют фиксированные пропорции. */
+.gal-item--featured { aspect-ratio: 16 / 9; margin-bottom: var(--card-pad); }
+.gal-cols { columns: 4; column-gap: var(--card-pad); }
+.gal-cols .gal-item { aspect-ratio: var(--ar, 4 / 3); break-inside: avoid; margin-bottom: var(--card-pad); }
+
+@media (max-width: 1200px) { .gal-cols { columns: 3; } }
+@media (max-width: 991px) { .gal-cols { columns: 2; } }
+@media (max-width: 720px) {
+  .gal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gal-item__cap { opacity: 1; transform: none; }
+}
+@media (max-width: 575px) {
+  .gal-cols { columns: 1; }
+  .gal-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   Кастомный блок (block/custom.html): сырой HTML проекта +
+   внешние CSS/JS из files/project_<id>/. Базовая обёртка и
+   демо-карточка для примера.
+   ============================================================ */
+.custom-block { width: 100%; }
+.custom-block .demo-card {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+
+/* ============================================================
+   Кастомный блок конструктора note — акцентное примечание
+   («Важно!», инфо/предупреждение). variant: info|warning|success.
+   ============================================================ */
+.note {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  background: var(--fill-1);
+  color: var(--body-color);
+}
+.note__title { font-weight: 700; color: var(--heading-color); }
+.note--warning {
+  border-left-color: var(--warning, #d97706);
+  background: color-mix(in srgb, var(--warning, #d97706) 10%, var(--surface));
+}
+.note--success {
+  border-left-color: var(--success, #16a34a);
+  background: color-mix(in srgb, var(--success, #16a34a) 10%, var(--surface));
+}
