@@ -86,7 +86,7 @@ See [components.md](components.md) and backend docs `11`/`17`.
 
 | Method | Path | Body | Payload |
 |---|---|---|---|
-| POST | `/init` | `{domain_id}` | `{domain:{id,domain,template_id,header,folder}, templateBase, config:{templateBase,color,style,layout,font,engine}, theme, structure:{header,footer}, base_set_id, base_sets:[{id,name,sort,is_default,pages}], pages:[{id,url,header}]}` |
+| POST | `/init` | `{domain_id}` | `{domain:{id,domain,template_id,header,folder}, templateBase, config:{templateBase,filesBase,color,style,layout,font,engine}, theme, structure:{header,footer}, base_set_id, base_sets:[{id,name,sort,is_default,pages}], pages:[{id,url,header}]}. `filesBase` — относительный `/files/project_<id>/` |
 | GET | `/page/<id>` | — | `{page:{id,domain_id,url,header,blocks}}` (`blocks` — parsed) |
 | POST | `/page/save` | `{id?, domain_id, url, header, blocks}` | upsert, `{id}` (url обязателен, уникален в рамках домена); header/footer в `blocks` заменяются канонической структурой домена |
 | POST | `/page/<id>/delete` | — | — |

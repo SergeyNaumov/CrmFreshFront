@@ -278,3 +278,13 @@ MySQL 8 удалил `ENCRYPT()`, из-за чего SQL-проверка `passw
 `ThemeTool.vue` (режим «Готовая схема»): кнопка-корзина рядом с выбором схемы, активна только для `is_custom=1`; confirm → удаление → перезагрузка списка.
 
 Проверено: system `color/digitalstrateg` — «системную нельзя»; используемая `style/armit` — «используется в 1 домене(ах)»; созданная общая/доменная схемы удаляются; в headless Chrome у системной корзина disabled, у админской активна, confirm и удаление из UI работают. Тестовые схемы удалены (в БД только `style/armit`).
+
+### Превью конструктора: относительный filesBase
+
+`config_svcms_admin.py` и дефолт `_engine_files_url()` (`page_constructor/__init__.py`) переведены с `http://localhost:3009/files` на относительный `/files`. Теперь `filesBase = '/files/project_<id>/'`, а картинки блоков в превью/редакторе (`render.js:mediaUrl`, `BlockEditor.thumb`) резолвятся от домена админки. В блоках и раньше хранился относительный `block-images/…` — менялся только префикс.
+
+Проверено: `/init` → `config.filesBase='/files/project_5837/'`; `/block-images` → `filesBase` и `url` относительные; headless Chrome: в превью `src` картинок `/files/project_5837/block-images/slider/slider-*.webp`, `localhost:3009` отсутствует. Отдачу `/files` на dev/прод настраивает инфраструктура.
+
+### Заглушение eval-шума в сборке
+
+Rollup на каждый прямой `eval(...)` (серверный JS, см. `agent-doc/security.md`) печатал `Use of eval …` (`code: EVAL`) и парный `SOURCEMAP_ERROR` («Can't resolve original location of error» — sourcemap Vue-SFC не покрывает точку eval). В `vite.config.js` добавлен `build.rollupOptions.onwarn`, который пропускает `EVAL` и `SOURCEMAP_ERROR`, остальные предупреждения идут как раньше. eval-сайты и backend-контракт не тронуты; таблица в `security.md` приведена к факту.

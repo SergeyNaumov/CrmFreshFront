@@ -9,18 +9,20 @@ The backend must not be changed, so `eval` is kept and tracked as a risk. Global
 
 | File:line | Source |
 |---|---|
-| `src/components/js/edit_form.js:127` | `eval(obj.jscode)` — `jscode` from an ajax response |
-| `src/components/js/edit_form.js:166` | `eval('dep='+front.fields_dependence)` — field dependency |
-| `src/components/EditForm.vue:285` | `eval(data.javascript)` — from the `/edit-form/...` response |
-| `src/components/EditForm.vue:399` | `eval(block.on_show)` — from block data |
+| `src/components/js/edit_form.js:80,279` | `eval(obj.jscode)` — `jscode` from an ajax response |
+| `src/components/js/edit_form.js:89` | `eval('('+f.frontend.fields_dependence+')')` — field dependency |
+| `src/components/EditForm/form_controller.js:128` | `eval(data.javascript)` — from the `/edit-form/...` response |
+| `src/components/EditForm/form_controller.js:215` | `eval(block.on_show)` — from block data |
+| `src/components/EditForm/FormBody.vue:81` | `eval(block.on_show)` |
 | `src/components/StatTool/StatTool.vue:133` | `eval(d.javascript)` |
-| `src/components/AdminTable.vue:343` | `eval(D.javascript)` |
-| `src/components/AdminTable.vue:524` | `eval(d.javascript)` |
+| `src/components/AdminTable.vue:354,537` | `eval(D.javascript)` |
 | `src/components/AdminTree.vue:115` | `eval(D.javascript)` |
-| `src/components/fields/select.vue:286` | `eval(rule+'.test(this.value)')` — regex rule |
-| `src/components/fields/field_functions.js:57` | `eval('self.value.replace('+rule+",'"+rep+"')")` |
-| `src/components/fields/field_functions.js:70` | ``eval(`${rule}.test(self.value)`)`` |
-| `src/components/fields/component.vue:107` | ``eval(`obj=${r.data}`)`` |
+| `src/components/fields/component.vue:107` | ``eval(`obj=${r.data}`)`` — JS-литерал из ответа |
+| `src/components/svcmsAdmin/page_constructor/data/template/js/good_list.js:62,64` | `eval(gkey)` — шаблонный JS (бандл конструктора) |
+
+`select.vue` и `field_functions.js` переведены на `new RegExp(rule)` (без `eval`) — см. пояснение ниже.
+
+Шум Rollup по `EVAL` и парный `SOURCEMAP_ERROR` («Can't resolve original location») глушится в `vite.config.js` (`build.rollupOptions.onwarn`) — eval при этом не убирается.
 
 Consequence for migration: the Vue runtime compiler (`vue/dist/vue.esm-bundler.js`) and the globals (`Vue`, `bus`, `BackendBase`, `BaseUrl`, `window.EditForm`) must stay available.
 

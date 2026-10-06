@@ -75,7 +75,7 @@ PC.buildPreviewDoc(markup, t)  документ iframe (preview.js:122)
 - `window.__pcErrors` — ошибки CSS/JS превью; смотреть в консоли iframe.
 - Три iframe: aside (выбранный блок, debounce 300 мс), модалка блока, модалка страницы. Атрибут `data-pc-frame` = `aside|modal|page`; `guardFrame` (700 мс) + `restoreFrame` пересобирают `srcdoc`, если документ сменился.
 - Демо-данные: `data/demo/*.js` → `public/page_constructor/js/data/` (`dataKey` в `map.js`), либо `sampleItems` из схемы.
-- `window.PAGE_CONSTRUCTOR_CONFIG` (`templateBase`, `dataBase`, `filesBase`, `api`, `domain_id`, оси, `customCss`) ставит хост; `window.PC_ASSET_REV` — из `page_constructor/js/data/asset-rev.json`.
+- `window.PAGE_CONSTRUCTOR_CONFIG` (`templateBase`, `dataBase`, `filesBase`, `api`, `domain_id`, оси, `customCss`) ставит хост; `window.PC_ASSET_REV` — из `page_constructor/js/data/asset-rev.json`. `filesBase` — **относительный** префикс `/files/project_<id>/` (картинки блоков `block-images/…`); отдаётся доменом админки, абсолютного `engine_files_url` больше нет.
 - Правки `data/template/{css,js}` видны только после `npm run constructor:pack` (иначе `?nc=` ссылается на старый mtime).
 
 ## Редактор и хост

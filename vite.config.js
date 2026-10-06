@@ -65,6 +65,12 @@ export default defineConfig(({ mode }) => ({
       include: [/node_modules/, /chart\.js/],
     },
     rollupOptions: {
+      // eval оставлен осознанно (серверный JS; см. agent-doc/security.md).
+      // Глушим шум Rollup: EVAL и парный сбой его sourcemap (Vue SFC).
+      onwarn(warning, warn) {
+        if (warning.code === 'EVAL' || warning.code === 'SOURCEMAP_ERROR') return
+        warn(warning)
+      },
       output: {
         entryFileNames: 'js/[name].js',
         chunkFileNames: 'js/[name].js',
