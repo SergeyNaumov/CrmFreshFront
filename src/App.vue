@@ -48,12 +48,14 @@
           </span>
         </v-footer>
   </v-app>
+    <Lightbox />
   </v-defaults-provider>
 </template>
 
 <script>
 let self=null
 const menu_params_parse=list=>{
+  if(!Array.isArray(list)) return list
   for(let m of list){
       if(m.params && typeof(m.params)=='string'){
         try {
@@ -64,8 +66,12 @@ const menu_params_parse=list=>{
           self.errors.push(err_str)
         }
       }
-      if(m.child.length){
+      // child опционален: пункт меню может быть листовым (conf_projects/*/left_menu.py)
+      if(m.child && m.child.length){
         m.child=menu_params_parse(m.child)
+      }
+      else if(!m.child){
+        m.child=[]
       }
   }
   return list
@@ -73,11 +79,13 @@ const menu_params_parse=list=>{
 
 import MainPage from './MainPage';
 import LeftMenu from './LeftMenu';
+import Lightbox from './components/Lightbox.vue';
 
 export default {
         components:{
           'mainpage':MainPage,
           'left_menu':LeftMenu,
+          'Lightbox':Lightbox,
         },
         data: () => ({
           logo_url:import.meta.env.BASE_URL+'logo.png',
@@ -129,7 +137,7 @@ export default {
                     if(D.left_menu_controller)
                       this.load_menu(D.left_menu_controller)
                     if(D.left_menu)
-                      this.left_menu=D.left_menu
+                      this.left_menu=menu_params_parse(D.left_menu)
                     this.manager=D.manager;
 
                     if(D.startpage){

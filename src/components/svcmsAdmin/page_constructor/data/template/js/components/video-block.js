@@ -88,12 +88,12 @@
   function cardHtml(v) {
     return '<article class="video-card">' +
       '<div class="video-card__media" data-video-media>' + pimg(v, 'video-card__poster') +
-      '<button class="video-card__playbtn" type="button" data-video-play data-video-id="' + esc(v.id) + '" aria-label="Смотреть видео: ' + esc(v.title) + '">' +
+      '<button class="video-card__playbtn" type="button" data-video-play data-video-id="' + esc(v.id) + '" aria-label="Смотреть видео: ' + esc(v.header) + '">' +
       '<span class="video-card__play" aria-hidden="true">' + PLAY + '</span>' +
       (v.duration ? '<span class="video-card__duration">' + esc(v.duration) + '</span>' : '') +
       '</button></div>' +
       '<div class="video-card__body">' +
-      '<a class="video-card__title" href="' + esc(v.url || '#') + '" target="_blank" rel="noopener noreferrer">' + esc(v.title) + '</a>' +
+      '<a class="video-card__title" href="' + esc(v.url || '#') + '" target="_blank" rel="noopener noreferrer">' + esc(v.header) + '</a>' +
       '<div class="video-card__meta">RuTube' + (v.duration ? ' · ' + esc(v.duration) : '') + '</div>' +
       '</div></article>';
   }
@@ -109,12 +109,12 @@
     if (variant === 'feature') {
       var first = list[0] || {};
       var player = '<div class="video-feature__player"><div class="video-feature__media" data-video-media>' + pimg(first, '') +
-        '<button class="video-card__playbtn" type="button" data-video-play data-video-id="' + esc(first.id) + '" aria-label="Смотреть видео: ' + esc(first.title) + '">' +
+        '<button class="video-card__playbtn" type="button" data-video-play data-video-id="' + esc(first.id) + '" aria-label="Смотреть видео: ' + esc(first.header) + '">' +
         '<span class="video-card__play" aria-hidden="true">' + PLAY + '</span></button></div></div>';
       var plist = '<div class="video-feature__list" role="list">' + list.map(function (v, i) {
         return '<button class="video-feature__item' + (i === 0 ? ' is-active' : '') + '" type="button" role="listitem" data-video-id="' + esc(v.id) + '" data-video-thumb="' + esc(thumbUrl(v.id)) + '">' +
           '<span class="video-feature__thumb">' + pimg(v, '') + '</span>' +
-          '<span><span class="video-feature__item-title">' + esc(v.title) + '</span>' +
+          '<span><span class="video-feature__item-title">' + esc(v.header) + '</span>' +
           '<span class="video-feature__item-meta">RuTube' + (v.duration ? ' · ' + esc(v.duration) : '') + '</span></span></button>';
       }).join('') + '</div>';
       root.innerHTML = '<div class="video-feature">' + player + plist + '</div>';
@@ -123,19 +123,19 @@
     if (variant === 'cover') {
       var c = list[0] || {};
       root.innerHTML = '<div class="video-cover"><div class="video-cover__media" data-video-media>' + pimg(c, 'video-cover__poster') +
-        '<button class="video-card__playbtn" type="button" data-video-play data-video-id="' + esc(c.id) + '" aria-label="Смотреть видео: ' + esc(c.title) + '">' +
+        '<button class="video-card__playbtn" type="button" data-video-play data-video-id="' + esc(c.id) + '" aria-label="Смотреть видео: ' + esc(c.header) + '">' +
         '<span class="video-card__play" aria-hidden="true">' + PLAY + '</span></button></div>' +
-        '<div class="video-cover__body"><a class="video-cover__title" href="' + esc(c.url || '#') + '" target="_blank" rel="noopener noreferrer">' + esc(c.title) + '</a>' +
+        '<div class="video-cover__body"><a class="video-cover__title" href="' + esc(c.url || '#') + '" target="_blank" rel="noopener noreferrer">' + esc(c.header) + '</a>' +
         '<div class="video-card__meta">RuTube' + (c.duration ? ' · ' + esc(c.duration) : '') + '</div></div></div>';
       return;
     }
     if (variant === 'strip') {
       root.innerHTML = '<div class="video-strip">' + list.map(function (v) {
-        return '<button class="video-strip__item" type="button" data-video-play data-video-id="' + esc(v.id) + '" aria-label="Смотреть видео: ' + esc(v.title) + '">' +
+        return '<button class="video-strip__item" type="button" data-video-play data-video-id="' + esc(v.id) + '" aria-label="Смотреть видео: ' + esc(v.header) + '">' +
           '<span class="video-strip__media" data-video-media>' + pimg(v, '') +
           '<span class="video-card__play" aria-hidden="true">' + PLAY + '</span>' +
           (v.duration ? '<span class="video-card__duration">' + esc(v.duration) + '</span>' : '') + '</span>' +
-          '<span class="video-strip__title">' + esc(v.title) + '</span></button>';
+          '<span class="video-strip__title">' + esc(v.header) + '</span></button>';
       }).join('') + '</div>';
       return;
     }

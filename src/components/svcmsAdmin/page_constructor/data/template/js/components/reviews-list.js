@@ -25,19 +25,19 @@
   }
 
   function renderCard(r) {
-    var initial = (r.author || '?').slice(0, 1);
+    var initial = (r.name || '?').slice(0, 1);
     var avatar = r.avatar
       ? '<span class="review-card__avatar-photo"><img src="' + esc(r.avatar) + '" alt="" aria-hidden="true" loading="lazy"></span>'
       : '<span class="review-card__avatar" aria-hidden="true">' + esc(initial) + '</span>';
     return '<article class="review-card" data-id="' + esc(r.id) + '">' +
       '<div class="review-card__head">' + avatar +
         '<div class="review-card__meta">' +
-          '<div class="review-card__name">' + esc(r.author) + '</div>' +
+          '<div class="review-card__name">' + esc(r.name) + '</div>' +
           '<div class="review-card__date">' + esc(r.date) + '</div>' +
         '</div>' +
       '</div>' +
-      '<div class="review-card__stars" role="img" aria-label="Оценка ' + esc(r.rating) + ' из 5">' + stars(Number(r.rating) || 0) + '</div>' +
-      '<p class="review-card__text">' + esc(r.text) + '</p>' +
+      '<div class="review-card__stars" role="img" aria-label="Оценка ' + esc(r.rate) + ' из 5">' + stars(Number(r.rate) || 0) + '</div>' +
+      '<p class="review-card__text">' + esc(r.body) + '</p>' +
     '</article>';
   }
 

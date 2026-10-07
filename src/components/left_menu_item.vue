@@ -1,14 +1,14 @@
 <template>
   <div class="item" :class="{active:isActive, 'has-active':hasActiveChild}">
 
-      <template v-if="item.child.length"> <!-- Родительский пункт меню -->
+      <template v-if="item.child && item.child.length"> <!-- Родительский пункт меню -->
         <a href="#" @click.prevent="show=!show">
         <v-icon class="arrow">fa-{{show?'chevron-down':'chevron-right'}}</v-icon>
         <div class="icon_slot">
           <v-icon color="primary" size="x-small">{{item.icon}}</v-icon>
         </div>
         
-        <span>{{item.header}}</span></a>
+        <span>{{item.header || item.description}}</span></a>
         
 
         <div v-if="show" class="childs">
@@ -27,7 +27,7 @@
             <div class="icon_slot" v-if="item.icon"> 
               <v-icon color="primary" size="x-small">{{item.icon}}</v-icon>
             </div>
-            <span :style="item.style">{{item.header}}</span>
+            <span :style="item.style">{{item.header || item.description}}</span>
           </a>
       </template>
   </div>

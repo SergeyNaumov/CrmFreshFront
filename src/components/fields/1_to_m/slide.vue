@@ -21,7 +21,7 @@
                     item-key="id"
                     tag="div"
                     @end="move_end"
-                    :draggable="field.sort?'.v-card':false"
+                    :disabled="!field.sort"
                 >
                 <template #item="{ element: v, index: vi }">
                     <v-card class="one_to_m one_to_m_list" :style="list_item_style"> <!--:style="{'background-color': $color.secondary}"-->
@@ -95,7 +95,7 @@
                 tag="tbody"
                 :item-key="ch_id"
                 @end="move_end"
-                :draggable="field.sort?'tr':false"
+                :disabled="!field.sort"
             >
             <template #item="{ element: v }">
             <tr :key="ch_id(v)">
@@ -370,7 +370,7 @@ export default {
                 desc='просмотреть';
                 
                 if(cf.preview && cf.preview.length)
-                    return `<br><a href="${link}?view=1" target="_blank"><img src="${link}"></a><br>`
+                    return `<br><a href="#" onclick="window.bus&&window.bus.$emit('lightbox:open',{src:'${link}'});return false"><img src="${link}" style="max-width:120px;cursor:zoom-in"></a><br>`
                 
                 else
                     return `<a href="${link}" target="_blank">${desc}</a> `
@@ -379,7 +379,7 @@ export default {
         },
         make_view(f){
             // возвращает true, если файл можно просмотреть в браузере
-            return /\.(jpg|png|gif|jpeg|webp)$/i.test(f)
+            return /\.(jpg|png|gif|jpeg|webp|svg)$/i.test(f)
             
         },
         start_dialog_errors(errors){

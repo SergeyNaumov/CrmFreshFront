@@ -226,6 +226,7 @@ export default {
         this.config_key++
         this.ORDER = 0
         this.on_filters = []
+        this.explain_query = ''
         this.init_color_selects && this.init_color_selects()
         this.Init()
       }
@@ -492,6 +493,7 @@ export default {
             headers:[{h:''}],
             output:[{data:[{value:[]}]}],
           };
+          this.explain_query='';
 
           this.plugin_out='';
           this.last_search_params=params;
@@ -511,6 +513,10 @@ export default {
           this.SearchDataSet={page:page,query:q};
           let method,url;
 
+          // фиксируем конфиг запроса: ответ устаревшего конфига не должен
+          // применяться (иначе SQL/результаты прошлого раздела протекают)
+          const req_config=this.params.config;
+
           this.$http({
             url:BackendBase+'/get-result',
             method:'post',
@@ -523,6 +529,7 @@ export default {
             }
           })
           .then(r=>{
+              if(req_config!==this.params.config) return;
               let d=r.data
               
               this.explain_query=d.explain_query;
@@ -541,6 +548,7 @@ export default {
               //setTimeout( function(){let link=document.createElement("a"); link.href='#search_results'; link.click();}, 100)
           })
           .catch(e => {
+              if(req_config!==this.params.config) return;
               //alert(e);
               this.errors_find=['ошибка: '+e];
               this.finding=false;

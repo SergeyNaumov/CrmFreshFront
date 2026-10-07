@@ -42,10 +42,10 @@
     return '<article class="news-card" data-id="' + item.id + '" itemscope itemtype="https://schema.org/BlogPosting">' +
       '<a class="news-card__media" href="' + esc(href) + '">' +
         '<span class="news-card__date"><time datetime="' + esc(item.date || '') + '">' + esc(d) + '</time></span>' +
-        '<img src="' + esc(item.photo) + '" alt="' + esc(item.title) + '" loading="lazy" decoding="async">' +
+        '<img src="' + esc(item.photo) + '" alt="' + esc(item.header) + '" loading="lazy" decoding="async">' +
       '</a>' +
       '<div class="news-card__body">' +
-        '<h3 class="news-card__title" itemprop="headline"><a href="' + esc(href) + '">' + esc(item.title) + '</a></h3>' +
+        '<h3 class="news-card__title" itemprop="headline"><a href="' + esc(href) + '">' + esc(item.header) + '</a></h3>' +
         '<p class="news-card__anons" itemprop="description">' + esc(item.anons) + '</p>' +
         '<a class="news-card__link" href="' + esc(href) + '">Подробнее ' + arrow + '</a>' +
       '</div>' +

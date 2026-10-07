@@ -65,40 +65,27 @@
           </div>
           <div v-if="begin_value && !imgSrc" class="show_loaded">
 
-
-            <div v-if="!show_loaded">
-              <v-icon size="x-small" color="primary" v-if="is_img" @click.prevent="show_loaded=true" class="show">fa-eye</v-icon>
+            <div>
+              <v-icon size="x-small" color="primary" v-if="is_img && !show_loaded" @click.prevent="show_loaded=true" class="show">fa-eye</v-icon>
+              <v-icon size="x-small" color="primary" v-if="is_img && show_loaded" @click.prevent="show_loaded=false" class="not_show">fa-eye-slash</v-icon>
               <!-- удалять разрешаем только тогда, когда фото не обязательно -->
               <a :href="download_link" :download="orig_filename">скачать</a> | 
               <a href="" v-if="!field.required" @click.prevent="remove()">удалить</a>
             </div>
 
-            <template v-if="show_loaded" >
-              <v-icon size="x-small" color="primary" @click.prevent="show_loaded=false" class="not_show">fa-eye-slash</v-icon>
-              <a href="" v-if="field.crops && field.resize && field.resize.length" @click.prevent="start_crop_already_loaded">обрезать фото заново</a>
-            </template>
+            <!-- одна миниатюра, только по клику на «глаз» -->
+            <div v-if="show_loaded && is_img" class="img_show preview_one">
+              <a href="#" @click.prevent="open_lightbox()"><img :src="preview_src" @error="preview_error=true" style="max-width: 100%"></a>
+            </div>
+
             <template v-if="show_loaded">
-              <v-row    v-if="field.resize && field.resize.lenght">
-                <v-col class="pl-3" lg="2" md="4" cols="12" v-for="(r,idx) in field.resize" :key="'resize'+field.name+'_'+idx" >
-                  <v-card class="img_show">
-                    <a :href="r.loaded" target="_blank"><img :src="r.loaded" style="max-height: 100%; margin: 20px"></a>
-                  </v-card>
-                </v-col>
-              </v-row>
-              
-              <div v-else-if="is_img" class="img_show">
-               
-                <img :src="img_path" style="max-width: 100%">
-                
-                
-                
+              <div class="crop_again" v-if="field.crops && field.resize && field.resize.length">
+                <a href="" @click.prevent="start_crop_already_loaded">обрезать фото заново</a>
               </div>
-              <a :href="download_link" :download="orig_filename" v-else>скачать</a>
-              
             </template>
           </div>
           
-          <template v-if="crops.length && imgSrc">
+          <template v-if="field.crops && crops.length && imgSrc">
               <div class="accepted" v-if="all_accept"><b>Все фото подтверждены</b></div>
               <div class="not_accepted" v-else>
                 <b>Не все изображения подтверждены</b> 
@@ -132,6 +119,8 @@
 </template>
 <script>
 import { Cropper } from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css'
+import 'vue-advanced-cropper/dist/theme.classic.css'
 import { bus } from '../../main'
 // https://norserium.github.io/vue-advanced-cropper/
 // https://norserium.github.io/vue-advanced-cropper/introduction/getting-started.html
@@ -149,16 +138,32 @@ export default {
       img_path(){ 
         // если ранее загруженное фото является изображением
         //  -- возвращаем путь к этому изображению
-        if(/\.(jpg|png|svg|gif)/i.test(this.begin_value)){
+        if(/\.(jpe?g|png|svg|gif|webp)/i.test(this.begin_value)){
             return this.download_link
-            //return BaseUrl+this.field.filedir.replace(/^\.\//,'')+'/'+this.begin_value;
-            //return full_name;
 
         }
         return '';
       },
+      // Миниатюра для карточки: размер field.preview из resize, иначе первый
+      // resize, иначе исходный файл. Бэкенд кладёт пути в resize[].loaded.
+      // Превью для карточки: если задан field.preview — берём миниатюру ровно
+      // этого размера (бэкенд отдаёт loaded лишь для существующих файлов).
+      // Если подходящей нет (или миниатюр нет) — показываем оригинал.
+      preview_src(){
+        if(this.preview_error) return this.img_path
+        const rs=this.field.resize
+        if(Array.isArray(rs) && rs.length){
+          if(this.field.preview){
+            const by_size=rs.find(r=>r.size===this.field.preview && r.loaded)
+            return by_size ? by_size.loaded : this.img_path
+          }
+          const r=rs.find(r=>r.loaded)
+          if(r) return r.loaded
+        }
+        return this.img_path
+      },
       is_img(){
-        return /^.+\.(jpe?g|png|wepb|gif|svg)$/i.test(this.begin_value)
+        return /^.+\.(jpe?g|png|webp|gif|svg)$/i.test(this.begin_value)
       },
       orig_filename(){
         if(this.begin_value){
@@ -192,6 +197,7 @@ export default {
         return {
             begin_value: '',
             show_loaded: false, // показать ранее загруженное фото
+            preview_error: false, // миниатюра не загрузилась — показываем оригинал
             imgSrc:'',
             orig_name:'', // оригинальное имя файла
             cropImage:null,
@@ -222,7 +228,8 @@ export default {
     methods:{
       init(){ // читаем field.resize и на его основе собираем crops (правила ресайзов)
         let field=this.field;
-        this.begin_value=field.begin_value;
+        this.begin_value=field.begin_value || field.value || '';
+        this.preview_error=false;
         this.crops=[];
         if(field.resize){
           for(let r of field.resize){
@@ -233,6 +240,10 @@ export default {
         console.log('crops:',this.crops)
         //this.crops=arr;
         
+      },
+      open_lightbox(){
+        if(!this.is_img) return
+        bus.$emit('lightbox:open', { src: this.download_link, alt: this.orig_filename })
       },
       field_error_check(){
         let t=this
@@ -446,6 +457,8 @@ export default {
   .process_accepted {color: orange ;}
   /*.show_loaded {margin: 10px 0 20px 55px;}*/
   .card_cropper div {padding: 10px;}
+  /* Cropper без явной высоты схлопывается в 0 и превью не видно */
+  .card_cropper :deep(.vue-advanced-cropper) {height: 280px;}
   .show, .not_show {margin-right: 20px;}
   .show:hover, .not_show:hover {
     color: rgb(var(--v-theme-primary))
@@ -458,6 +471,10 @@ export default {
     background-position: center center;
     padding: 10px;
   }
+  .preview_one {display: inline-block; max-width: 340px;}
+  /* svg без width/height иначе может схлопнуться в 0 */
+  .preview_one img {max-width: 100%; max-height: 220px; min-height: 60px; object-fit: contain; background: #fff;}
+  .crop_again {margin-top: 8px;}
   .new_file_url {
     border: 1px solid gray;
     padding: 5px;

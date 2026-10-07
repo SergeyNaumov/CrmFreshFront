@@ -60,7 +60,7 @@
                 <div class="gallery_item" :id="'li-'+l.id">
                     <div class="gallery_card">
                         <div class="gallery_photo_wrap">
-                            <img v-if="l.photo" :src="photo_url(l)" class="gallery_photo" :alt="l.header">
+                            <img v-if="l.photo" :src="photo_url(l)" class="gallery_photo" :alt="l.header" @click.stop="open_lightbox(photo_url(l), l.header)">
                             <div v-else class="gallery_photo gallery_no_photo">нет фото</div>
                         </div>
                         <div class="gallery_title">
@@ -109,6 +109,7 @@
                                 </v-icon>
                                 <v-icon size="x-small" color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
+                            <img v-if="photo_url(l)" :src="photo_url(l)" class="tree_photo" alt="" @click.stop="open_lightbox(photo_url(l), l.header)" />
                             <div class="branch-header" >
                                 <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
                                 <template v-if="l.childs && form.tree_use && l.childs.length>0">&nbsp;({{l.childs.length}})</template>
@@ -152,6 +153,7 @@
                                 <v-icon size="x-small" color="primary" v-if="!shows[l.id] && form.tree_use" @click="show_this(l)">fa fa-plus</v-icon>
                                 <v-icon size="x-small" color="primary" v-if="shows[l.id]" @click="shows[l.id]=false">fa fa-minus</v-icon>
                             </div>
+                            <img v-if="photo_url(l)" :src="photo_url(l)" class="tree_photo" alt="" @click.stop="open_lightbox(photo_url(l), l.header)" />
                             <div class="branch-header">
                                 <a href="" @click.prevent="go_to_edit(l.id)">{{ l.header }}</a>
                                 <template v-if="l.childs && l.childs.length>0 && form.tree_use">({{l.childs.length}})</template>
@@ -192,6 +194,7 @@
 </template>
 <script>
 import FormInBranch from "./FormInBranch.vue";
+import { bus } from '../../main';
 export default {
   components: {'FormInBranch': FormInBranch},
   props: {
@@ -224,6 +227,9 @@ export default {
       }
   },
   methods:{
+        open_lightbox(url, alt){
+            if(url) bus.$emit('lightbox:open', { src: url, alt: alt || '' })
+        },
         init(){
             this.values={}
             this.child_count=0
@@ -525,6 +531,16 @@ div.plus-icon{
     align-items: center;
 }
 div.plus-icon button {margin: 0;}
+img.tree_photo {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f5f5f5;
+    margin-right: 2px;
+    cursor: pointer;
+}
 div.branch-header{
     flex: 1 1 auto;
     min-width: 0;
@@ -628,6 +644,7 @@ ul[aria-grabbed="true"] .li_header .li_header{
     height: 100%;
     object-fit: contain;
     display: block;
+    cursor: pointer;
 }
 .gallery_no_photo {
     color: #9e9e9e;

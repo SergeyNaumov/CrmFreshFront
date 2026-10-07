@@ -104,7 +104,12 @@
                                   </template>
                                   <template v-else-if="td.type=='file'">
                                     <template v-if="td.value">
-                                      <a :href="td.value" target="_blank">посмотреть</a> | 
+                                      <div v-if="is_image_value(td.value)" class="result_file">
+                                        <a href="#" @click.prevent="open_lightbox(td.value)"><img :src="file_thumb(td)" class="result_thumb" alt=""></a>
+                                      </div>
+                                      <template v-else>
+                                        <a :href="td.value" target="_blank">посмотреть</a> | 
+                                      </template>
                                       <a :href="td.value" :download="td.value">скачать</a>
                                     </template>
                                     
@@ -231,6 +236,7 @@ import ResultsMultiAction from './ResultsMultiAction.vue';
 import res_file_uploader from './result_objects/file_uploader';
 import res_form from './result_objects/form';
 import FindResultsMethods from './result_objects/FindResultsMethods.js';
+import { bus } from '../../main';
 export default {
   components:{
     'field-memo':FieldMemo,
@@ -288,7 +294,19 @@ export default {
       return 7
     }
   },
-  methods: FindResultsMethods
+  methods: {
+    ...FindResultsMethods,
+    open_lightbox(src, alt){
+      if(src) bus.$emit('lightbox:open', { src: src, alt: alt || '' })
+    },
+    is_image_value(v){
+      return /\.(jpe?g|png|gif|webp|svg)(\?.*)?$/i.test(String(v || ''))
+    },
+    file_thumb(td){
+      // лёгкая миниатюра, если бэкенд отдал preview, иначе оригинал
+      return td.preview || td.value
+    }
+  }
 };
 </script>
 <style scope lang="scss">
@@ -382,6 +400,16 @@ export default {
 */
 .results td .saved {color: rgb(var(--v-theme-success)); font-weight: bold;}
 .results td .err {color: rgb(var(--v-theme-error)); font-weight: bold;}
+.result_thumb {
+  display: block;
+  max-width: 80px;
+  max-height: 60px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid rgb(var(--v-theme-primary));
+  border-radius: var(--app-radius-field, 4px);
+  margin-bottom: 4px;
+}
 .results td.multi_action {padding-left: 10px;}
 .sort_button a {text-decoration: none; white-space: nowrap;}
 .controls a {text-decoration: none;}
