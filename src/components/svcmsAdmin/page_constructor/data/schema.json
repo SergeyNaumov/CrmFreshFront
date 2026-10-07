@@ -2880,6 +2880,29 @@
               "label": "Копирайт",
               "kind": "text",
               "default": "© 2026 Компания"
+            },
+            {
+              "name": "source",
+              "label": "Источник меню",
+              "kind": "select",
+              "default": "template_var",
+              "options": [
+                {
+                  "value": "template_var",
+                  "label": "А · Переменная (bottom_menu)"
+                },
+                {
+                  "value": "block_query",
+                  "label": "Б · Пункты ниже"
+                }
+              ],
+              "hint": "А — меню из таблицы ds_bottom_menu (переменная bottom_menu). Б — колонки из пунктов этого блока (поле «Группа»)."
+            },
+            {
+              "name": "varname",
+              "label": "Переменная меню",
+              "kind": "text",
+              "default": "bottom_menu"
             }
           ],
           "items": {

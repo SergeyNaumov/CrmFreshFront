@@ -5,7 +5,20 @@ import { dirname, resolve, extname, join, relative } from 'node:path'
 const here = dirname(fileURLToPath(import.meta.url))
 const base = resolve(here, '../src/components/svcmsAdmin/page_constructor/data')
 
+// Зеркало шаблона (css/js/images). Код шаблона теперь живёт в движке
+// (/var/www/svcms-async/sites/templates/2026/ds-constructor), а превью-оболочка
+// svcms-templates/templates/t1 ссылается на него симлинками. Копируем с
+// dereference, чтобы в зеркало попали реальные файлы движка + данные/preview.
+const tplHome = process.env.SVCMS_TEMPLATE_HOME ||
+  resolve(process.env.HOME || '~', 'projects/svcms-templates/templates/t1')
 const tplSrc = resolve(base, 'template')
+rmSync(tplSrc, { recursive: true, force: true })
+mkdirSync(tplSrc, { recursive: true })
+for (const sub of ['css', 'js', 'images']) {
+  cpSync(join(tplHome, sub), join(tplSrc, sub), { recursive: true, dereference: true })
+}
+console.log('template mirror <-', tplHome)
+
 const tplDst = resolve(here, '../public/page_constructor/template')
 rmSync(tplDst, { recursive: true, force: true })
 mkdirSync(tplDst, { recursive: true })

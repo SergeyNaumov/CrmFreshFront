@@ -321,23 +321,30 @@
         '</ul>' + socials + '</div>'
       : '';
 
-    // Колонки ссылок из конструктора (block.items: {group, header, url})
-    var groupsMap = {}, groupsOrder = [];
-    items(block).forEach(function (it) {
-      var g = it.group || 'Меню';
-      if (!groupsMap[g]) { groupsMap[g] = []; groupsOrder.push(g); }
-      groupsMap[g].push(it);
-    });
-    var linksCols = groupsOrder.map(function (g) {
-      return el('div', { class: 'footer__col' },
-        el('h4', { class: 'footer__title' }, esc(g)) +
-        el('ul', { class: 'footer__links' },
-          groupsMap[g].map(function (it) {
-            return el('li', null, link(it.url || '#', null, esc(it.header || '')));
-          }).join('')));
-    }).join('');
+    // Источник меню (как у header): А — переменная (bottom_menu),
+    // Б — колонки из пунктов блока (поле group).
+    var menuSrc = p(block, 'source', 'template_var');
+    var menu;
+    if (menuSrc !== 'template_var' && items(block).length) {
+      var groupsMap = {}, groupsOrder = [];
+      items(block).forEach(function (it) {
+        var g = it.group || 'Меню';
+        if (!groupsMap[g]) { groupsMap[g] = []; groupsOrder.push(g); }
+        groupsMap[g].push(it);
+      });
+      menu = groupsOrder.map(function (g) {
+        return el('div', { class: 'footer__col' },
+          el('h4', { class: 'footer__title' }, esc(g)) +
+          el('ul', { class: 'footer__links' },
+            groupsMap[g].map(function (it) {
+              return el('li', null, link(it.url || '#', null, esc(it.header || '')));
+            }).join('')));
+      }).join('');
+    } else {
+      menu = footerMenu(d.bottom_menu);
+    }
 
-    var grid = '<div class="footer__grid">' + brand + linksCols + footerMenu(d.bottom_menu) + contacts + '</div>';
+    var grid = '<div class="footer__grid">' + brand + menu + contacts + '</div>';
 
     var catalog = bool(block, 'catalog')
       ? '<div class="footer__catalog"><h4 class="footer__title">Каталог</h4><ul class="footer__catalog-list">' +
