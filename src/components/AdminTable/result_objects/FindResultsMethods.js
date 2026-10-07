@@ -57,11 +57,17 @@ export default {
       window.open(url);
     },
     delete_dialog(id){
-      this.dialog=true;
-      this.dialog_type='delete_dialog';
       this.delete_id=id;
+      this.dialog_type='delete_dialog';
+      this.dialog=true;
       this.dialog_body='Вы действительно хотите удалить элемент?';
-
+      // Спрашиваем число детей: если есть — предупреждаем в попапе.
+      this.$http.get(BackendBase+'/children-count/'+this.results.config+'/'+id)
+        .then(r=>{
+          const n=(r.data && r.data.children_count) || 0;
+          if(n>0) this.dialog_body='Данная запись содержит '+n+' дочерних. Вы действительно хотите удалить?';
+        })
+        .catch(()=>{});
     },
     delete_element(){
       this.$http.get(

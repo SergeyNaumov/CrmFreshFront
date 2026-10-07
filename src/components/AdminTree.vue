@@ -144,7 +144,20 @@ export default {
         
       },
       del(parent_id, l){
-          //var tree=this;
+          // Спрашиваем число дочерних: если есть — подтверждаем удаление.
+          this.$http.get(BackendBase+'/children-count/'+this.form.config+'/'+l.id).then(r=>{
+            const n=(r.data && r.data.children_count) || 0;
+            const msg = n>0
+              ? 'Данная запись содержит '+n+' дочерних. Вы действительно хотите удалить?'
+              : 'Вы действительно хотите удалить элемент?';
+            if(!confirm(msg)) return;
+            this.do_del(parent_id,l);
+          }).catch(()=>{
+            if(!confirm('Вы действительно хотите удалить элемент?')) return;
+            this.do_del(parent_id,l);
+          });
+      },
+      do_del(parent_id, l){
           this.$http({
               method:'post',
               url:BackendBase+'/admin-tree/'+this.form.config,

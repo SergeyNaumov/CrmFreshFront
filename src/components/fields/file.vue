@@ -128,7 +128,13 @@ export default {
     created(){
       bus.$on('file:'+this.field.name, begin_value=>{
         this.begin_value=begin_value,
-        document.getElementById(this.field.name+'_attach').value='',
+        // Обновляем и поле формы: иначе download_link/preview_src после
+        // сохранения берут старый field.begin_value и «глаз» пуст до F5.
+        this.field.begin_value=begin_value,
+        this.field.value='',
+        this.preview_error=false;
+        { const el=document.getElementById(this.field.name+'_attach'); if(el) el.value=''; }
+        this.refresh_loaded();
         this.imgSrc='';
       });
     },
@@ -175,7 +181,7 @@ export default {
       download_link(){
         let filedir=BaseUrl+this.field.filedir.replace(/^\./,'')
         let saved_filename=''
-        if(this.field.begin_value){
+        if(this.begin_value){
           saved_filename=this.field.keep_orig_filename?this.begin_value.split(';').shift():this.begin_value
         }
         let download_link=filedir+'/'+saved_filename
@@ -244,6 +250,23 @@ export default {
       open_lightbox(){
         if(!this.is_img) return
         bus.$emit('lightbox:open', { src: this.download_link, alt: this.orig_filename })
+      },
+      refresh_loaded(){ // пересобрать пути миниатюр под новый файл (после upload)
+        const rs=this.field.resize
+        if(!Array.isArray(rs) || !rs.length) return
+        const bv=this.begin_value
+        if(!bv) return
+        const fn=this.field.keep_orig_filename ? bv.split(';')[0] : bv
+        const m=fn.match(/^(.*)\.([^.]+)$/)
+        if(!m) return
+        const wo=m[1]; const ext=m[2]
+        const out_ext=this.field.to_webp ? 'webp' : ext
+        const dir=(this.field.filedir||'').replace(/^\./,'')
+        for(const r of rs){
+          if(!r.file) continue
+          const f=r.file.replace('<%filename_without_ext%>',wo).replace('<%ext%>',out_ext)
+          r.loaded=dir+'/'+f
+        }
       },
       field_error_check(){
         let t=this
