@@ -51,7 +51,8 @@ export default{
                 response=>{
                   let D=response.data;
                   if(D.success){
-                      location.href=config.UrlPrefix+'/login'
+                      // реальный URL: базовый префикс сборки (/manager/), т.к. без него это уже сайт
+                      location.href=(window.BaseUrl||'/')+'login'
                   }
                 }
             )
@@ -69,6 +70,9 @@ export default{
 
             let link = this.get_link(item);
             if(!link) return;
+            // get_link отдаёт полный URL с базой сборки (/manager/), а vue-router
+            // сам добавляет base -> перед push срезаем базу, иначе двойной префикс.
+            link = this.to_router_path(link);
 
             this.setMenuItemParams(item.params || {});
             this.setMenuItem(item);
@@ -78,9 +82,18 @@ export default{
             else
               this.$router.push(link);
         },
+        to_router_path(link){
+            const b1 = window.BaseUrl || '/';       // '/manager/' на проде, '/' локально
+            const b0 = b1.replace(/\/$/,'');        // '/manager' или ''
+            if (b1 !== '/' && link.indexOf(b1) === 0)
+                return '/' + link.slice(b1.length);
+            if (b0 && link.indexOf(b0) === 0)
+                return link.slice(b0.length) || '/';
+            return link;
+        },
         get_link(item){
             let params={};
-            let UrlPrefix=config.UrlPrefix
+            let UrlPrefix=(window.BaseUrl||'/').replace(/\/$/,'') // '' локально, '/manager' на проде
             
             if(item.params)
                 params=item.params;

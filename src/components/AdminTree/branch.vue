@@ -366,11 +366,11 @@ export default {
             );  
         },
         get_edit_link(key){
-            let url='', UrlPrefix=config.UrlPrefix
+            let url=''
             if(this.form.card_format && this.form.card_format == 'old')
                 url='/edit_form.pl?config='+config+'&action=edit&id='+key;            
             else
-                url=UrlPrefix.replace(/\/$/,'')+'/edit_form/'+this.form.config+'/'+key
+                url=(BaseUrl||'/').replace(/\/$/,'')+'/edit_form/'+this.form.config+'/'+key
             return url
         },
         photo_url(l){

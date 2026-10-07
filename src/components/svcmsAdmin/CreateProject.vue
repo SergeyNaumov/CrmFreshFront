@@ -91,7 +91,8 @@ export default {
   },
   computed: {
     url_prefix() {
-      return (typeof config !== 'undefined' && config.UrlPrefix) || ''
+      // реальные URL-ссылки: базовый префикс сборки (/manager/), без него это уже сайт
+      return (window.BaseUrl || '/').replace(/\/$/, '')
     },
     backend_base() {
       return (typeof config !== 'undefined' && config.BackendBase) || ''

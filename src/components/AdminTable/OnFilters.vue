@@ -144,6 +144,7 @@ export default {
             case 'memo':
             case 'in_ext_url':
             case 'multiconnect':
+            case 'multiselect':
                 res='filter-'+f.type; break
             default: res='';
             

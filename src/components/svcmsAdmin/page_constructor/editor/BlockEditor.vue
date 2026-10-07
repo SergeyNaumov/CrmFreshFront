@@ -464,8 +464,17 @@ export default {
     },
     addResults() {
       const wantStructural = this.role === 'structure'
+      // Фильтр по опциям проекта (приходит в /init -> PAGE_CONSTRUCTOR_CONFIG).
+      // restricted — блоки с привязками к опциям; allowed — те из них, чьи
+      // опции включены у проекта. Блоки вне restricted доступны всегда.
+      const cfg = (typeof window !== 'undefined' && window.PAGE_CONSTRUCTOR_CONFIG) || {}
+      const restricted = cfg.block_types_restricted || []
+      const allowed = cfg.block_types_allowed || []
+      const allowType = (t) => !restricted.length
+        || restricted.indexOf(t) === -1
+        || allowed.indexOf(t) !== -1
       const res = (PC.search(SCHEMA, this.addQuery) || [])
-        .map(g => ({ group: g.group, types: (g.types || []).filter(t => !!t.structural === wantStructural) }))
+        .map(g => ({ group: g.group, types: (g.types || []).filter(t => !!t.structural === wantStructural && allowType(t.type)) }))
         .filter(g => g.types.length)
       const ru = (a, b) => String(a).localeCompare(String(b), 'ru')
       res.forEach(g => { (g.types || []).sort((a, b) => ru(a.typeTitle, b.typeTitle)) })

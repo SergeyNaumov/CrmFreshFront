@@ -79,7 +79,44 @@
                 </draggable>
             </div>
         </template>
-        
+
+        <!-- view type: order — «Состав заказа» (товары + итог) -->
+        <template v-else-if="field.view_type=='order'">
+            <div class="order-goods">
+                <div class="og-row og-row--head">
+                    <span class="og-col og-name">Товар</span>
+                    <span class="og-col og-artikul">Артикул</span>
+                    <span class="og-col og-price">Цена</span>
+                    <span class="og-col og-cnt">Кол-во</span>
+                    <span class="og-col og-sum">Сумма</span>
+                    <span class="og-col og-tools"></span>
+                </div>
+                <div class="og-row" v-for="v in values" :key="ch_id(v)">
+                    <span class="og-col og-name">
+                        <a :href="good_link(v)" target="_blank">{{ v.name || ('Товар #' + v.good_id) }}</a>
+                    </span>
+                    <span class="og-col og-artikul">{{ v.artikul || '—' }}</span>
+                    <span class="og-col og-price">
+                        <change_in_slide v-if="has_child('price')" :refresh="cur_refresh" :form="form" :field="field" :name="'price'" :cur_id="ch_id(v)" :values="v"></change_in_slide>
+                        <template v-else>{{ money(v.price) }}</template>
+                    </span>
+                    <span class="og-col og-cnt">
+                        <change_in_slide v-if="has_child('cnt')" :refresh="cur_refresh" :form="form" :field="field" :name="'cnt'" :cur_id="ch_id(v)" :values="v"></change_in_slide>
+                        <template v-else>{{ v.cnt }}</template>
+                    </span>
+                    <span class="og-col og-sum">{{ money(num(v.price) * num(v.cnt)) }}</span>
+                    <span class="og-col og-tools">
+                        <v-icon size="small" color="primary" v-if="!field.read_only" @click="open_edit_dialog(v)">edit</v-icon>
+                        <v-icon size="small" color="primary" v-if="make_delete" @click="del(v)">delete</v-icon>
+                    </span>
+                </div>
+                <div class="og-total">
+                    <span class="og-total__label">Итого:</span>
+                    <span class="og-total__sum">{{ money(order_total) }}</span>
+                </div>
+            </div>
+        </template>
+
         <!-- view type: default -->
 
         <template v-else>
@@ -161,13 +198,15 @@ export default {
             del_errors_out:false, // выводить ошибку при операциях с 1_to_m (удаление)
             list:[], 
             cur_fields:[],
-            cur_refresh:0
+            cur_refresh:0,
+            order_sync_timer:null // debounce пересчёта суммы заказа
         }
     },
     watch:{
         values(){
             this.cur_refresh++;
             this.list=this.values;
+            this.sync_order_total();
             //Math.random();
         },
         field(){
@@ -194,6 +233,13 @@ export default {
         },
         make_delete(){  
             return !this.form.read_only && this.field.make_delete && (!this.field.read_only || this.field.make_delete)
+        },
+        // Итог по составу заказа (для view_type: order)
+        order_total(){
+            let s=0
+            for(const v of (this.values || []))
+                s += this.num(v.price) * this.num(v.cnt)
+            return s
         },
         // Ширина карточки в списке: cols=1 — на всю ширину, cols>1 — по колонкам.
         list_item_style(){
@@ -382,6 +428,20 @@ export default {
             return /\.(jpg|png|gif|jpeg|webp|svg)$/i.test(f)
             
         },
+        // --- view_type: order ---
+        num(x){ return parseInt(x) || 0 },
+        money(x){ return this.num(x).toLocaleString('ru-RU') + ' ₽' },
+        good_link(v){ return BaseUrl + 'edit_form/ds_good/' + v.good_id },
+        has_child(name){ return (this.cur_fields || []).some(f => f.name === name) },
+        // Пересчёт total_sum на бэке после правок состава (debounce).
+        sync_order_total(){
+            if(this.field.view_type!='order' || !this.form || !this.form.id) return
+            clearTimeout(this.order_sync_timer)
+            this.order_sync_timer = setTimeout(()=>{
+                this.$http.post(BackendBase + '/recalc_total/' + this.form.config + '/' + this.form.id, {})
+                    .catch(()=>{})
+            }, 400)
+        },
         start_dialog_errors(errors){
             if(errors.length){
                 this.del_errors = errors;
@@ -427,6 +487,56 @@ export default {
         border-radius: var(--app-radius-field);
         background-color: var(--app-tint);
     }
-    
+
+    /* view_type: order — «Состав заказа» */
+    .order-goods {
+        margin-top: 6px;
+        border: 1px solid rgba(var(--v-theme-on-surface), 0.14);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .og-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+    }
+    .og-row:nth-child(even) { background: rgba(var(--v-theme-on-surface), 0.03); }
+    .og-row--head {
+        font-weight: 700;
+        background: rgba(var(--v-theme-primary), 0.08) !important;
+        border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.14);
+    }
+    .og-col { display: block; min-width: 0; }
+    .og-name { flex: 1 1 34%; }
+    .og-name a { color: rgb(var(--v-theme-primary)); text-decoration: none; }
+    .og-name a:hover { text-decoration: underline; }
+    .og-artikul { flex: 0 0 14%; color: rgba(var(--v-theme-on-surface), 0.7); }
+    .og-price, .og-cnt, .og-sum { flex: 0 0 12%; text-align: right; }
+    .og-sum { font-weight: 600; }
+    .og-tools {
+        flex: 0 0 auto;
+        display: flex;
+        gap: 6px;
+        opacity: 0.35;
+        transition: opacity 0.15s ease;
+    }
+    .og-row:hover .og-tools { opacity: 1; }
+    .og-total {
+        display: flex;
+        justify-content: flex-end;
+        align-items: baseline;
+        gap: 10px;
+        padding: 12px 16px;
+        background: rgba(var(--v-theme-primary), 0.06);
+    }
+    .og-total__label { color: rgba(var(--v-theme-on-surface), 0.7); }
+    .og-total__sum { font-size: 1.25em; font-weight: 700; }
+    @media (max-width: 700px) {
+        .og-artikul, .og-price { display: none; }
+        .og-name { flex: 1 1 auto; }
+    }
+
     
 </style>

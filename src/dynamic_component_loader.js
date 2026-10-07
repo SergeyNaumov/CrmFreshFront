@@ -56,4 +56,5 @@ export const dynamic_component_loader = (app) => {
 	app.component('filter-time', defineAsyncComponent(() => import('./components/AdminTable/filters/time.vue')));
 	app.component('filter-date', defineAsyncComponent(() => import('./components/AdminTable/filters/date.vue')));
 	app.component('filter-select', defineAsyncComponent(() => import('./components/AdminTable/filters/select.vue')));
+	app.component('filter-multiselect', defineAsyncComponent(() => import('./components/AdminTable/filters/multiselect.vue')));
 }
