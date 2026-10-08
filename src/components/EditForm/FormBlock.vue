@@ -148,6 +148,7 @@ import FieldPassword from '../fields/password';
                 case 'daymon':
                 case 'font-awesome':
                 case 'wysiwyg':
+                case 'page_blocks':
                 case 'password':
                 case 'code':
                 case 'codelist':

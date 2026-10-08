@@ -7,19 +7,21 @@
       </div>
       <span class="pc-appbar__spacer"></span>
       <span v-if="isDirty" class="pc-saved">изменено {{ lastSavedAt }}</span>
-      <button class="pc-tool pc-tool--ghost" @click="openPagePreview">Предпросмотр страницы</button>
-      <button class="pc-tool pc-tool--ghost" @click="loadExample">Пример</button>
-      <button class="pc-tool pc-tool--ghost" @click="resetAll">Очистить</button>
-      <button
-        v-if="saveState !== 'saved'"
-        class="pc-tool pc-tool--primary"
-        :disabled="saving"
-        @click="saveNow"
-      >{{ saveState === 'error' ? 'Сохранить ещё раз' : (saving ? 'Сохраняем…' : 'Сохранить') }}</button>
-      <span v-else-if="isDirty === false" class="pc-saved">сохранено</span>
+      <template v-if="!compact">
+        <button class="pc-tool pc-tool--ghost" @click="openPagePreview">Предпросмотр страницы</button>
+        <button class="pc-tool pc-tool--ghost" @click="loadExample">Пример</button>
+        <button class="pc-tool pc-tool--ghost" @click="resetAll">Очистить</button>
+        <button
+          v-if="saveState !== 'saved'"
+          class="pc-tool pc-tool--primary"
+          :disabled="saving"
+          @click="saveNow"
+        >{{ saveState === 'error' ? 'Сохранить ещё раз' : (saving ? 'Сохраняем…' : 'Сохранить') }}</button>
+        <span v-else-if="isDirty === false" class="pc-saved">сохранено</span>
+      </template>
     </header>
 
-    <div class="pc-shell" :class="{ 'is-editing-preview': asideMode === 'preview' }"
+    <div class="pc-shell" :class="{ 'is-editing-preview': asideMode === 'preview', 'is-compact': compact }"
          :style="{ '--pc-aside-w': aside_w + 'px' }">
       <main class="pc-canvas">
         <div class="pc-canvas__bar">
@@ -27,7 +29,7 @@
           <span class="pc-canvas__hint">{{ displayCount }} блок(ов)</span>
         </div>
 
-        <template v-if="role === 'page'">
+        <template v-if="role === 'page' && !compact">
           <div class="pcb-struct" :class="{ 'is-missing': !pageHeader }">
             <span class="pcb-struct__ico">▤</span>
             <span class="pcb-struct__label">Шапка — общая для всех страниц шаблона</span>
@@ -64,7 +66,7 @@
             <span class="pc-badge" v-if="viewLabel(block)">{{ viewLabel(block) }}</span>
             <span class="pcb-head__summary" v-if="!isOpen(block)">{{ block.params.header || block.params.title || '' }}</span>
             <span class="pcb-head__spacer"></span>
-            <button class="pcb-ico" @click="openBlockPreview(block)" aria-label="Предпросмотр блока" title="Предпросмотр блока">👁</button>
+            <button v-if="!compact" class="pcb-ico" @click="openBlockPreview(block)" aria-label="Предпросмотр блока" title="Предпросмотр блока">👁</button>
             <template v-if="!isStructural(block)">
               <button class="pcb-ico" @click="moveBlock(idx, -1)" aria-label="Поднять блок">↑</button>
               <button class="pcb-ico" @click="moveBlock(idx, 1)" aria-label="Опустить блок">↓</button>
@@ -132,8 +134,8 @@
                       </select>
                       <label v-else-if="pp.kind === 'bool'" class="pcb-switch"><input type="checkbox" v-model="block.params[pp.name]"><span>{{ block.params[pp.name] ? 'да' : 'нет' }}</span></label>
                       <input v-else class="pcb-field" type="text" v-model="block.params[pp.name]">
-                      <button v-if="isImageField(pp)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'param', pp)" title="Выбрать изображение">🖼</button>
-                      <button v-else-if="isEmojiField(pp)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'param', pp)" title="Выбрать эмодзи">😀</button>
+                      <button v-if="!compact && isImageField(pp)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'param', pp)" title="Выбрать изображение">🖼</button>
+                      <button v-else-if="!compact && isEmojiField(pp)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'param', pp)" title="Выбрать эмодзи">😀</button>
                     </div>
                   </div>
                 </template>
@@ -162,8 +164,8 @@
                         </select>
                         <label v-else-if="f.kind === 'bool'" class="pcb-switch"><input type="checkbox" v-model="it[f.name]"></label>
                         <input v-else class="pcb-field" type="text" v-model="it[f.name]">
-                        <button v-if="isImageField(f)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'item', f, ii)" title="Выбрать изображение">🖼</button>
-                        <button v-else-if="isEmojiField(f)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'item', f, ii)" title="Выбрать эмодзи">😀</button>
+                        <button v-if="!compact && isImageField(f)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'item', f, ii)" title="Выбрать изображение">🖼</button>
+                        <button v-else-if="!compact && isEmojiField(f)" class="pcb-ico pcb-pick" type="button" @click="openPicker(block, 'item', f, ii)" title="Выбрать эмодзи">😀</button>
                       </div>
                     </div>
                   </div>
@@ -174,7 +176,7 @@
           </div>
         </article>
 
-        <template v-if="role === 'page'">
+        <template v-if="role === 'page' && !compact">
           <div class="pcb-struct pcb-struct--footer" :class="{ 'is-missing': !pageFooter }">
             <span class="pcb-struct__ico">▥</span>
             <span class="pcb-struct__label">Подвал — общий для всех страниц шаблона</span>
@@ -185,31 +187,33 @@
         </template>
       </main>
 
-      <div class="pc-resizer" @mousedown.prevent="start_aside_resize" title="Потяните, чтобы изменить ширину панели"></div>
+      <template v-if="!compact">
+        <div class="pc-resizer" @mousedown.prevent="start_aside_resize" title="Потяните, чтобы изменить ширину панели"></div>
 
-      <aside class="pc-aside">
-        <div class="pc-aside__head">
-          <b>{{ asideMode === 'preview' ? 'Предпросмотр' : (role === 'structure' ? 'структура' : 'block_list.json') }}</b>
-          <span class="pc-aside__stats">{{ asideMode === 'preview' ? previewTitle : (displayCount + ' бл. · ' + totalItems + ' элем.') }}</span>
-          <span class="pc-appbar__spacer"></span>
-          <button class="pc-tool" @click="toggleJson">{{ jsonVisible ? 'Скрыть JSON' : 'Показать JSON' }}</button>
-          <button class="pc-tool" v-if="jsonVisible" @click="copyJson">Копировать</button>
-        </div>
-        <div class="pc-aside__body" :class="{ 'is-preview': asideMode === 'preview', 'is-json': asideMode === 'json' }">
-          <iframe
-            v-if="asideMode === 'preview' && editingBlock"
-            class="pc-frame"
-            data-pc-frame="aside"
-            :srcdoc="previewSrc"
-            @load="onFrameLoad"
-            title="Предпросмотр блока"
-          ></iframe>
-          <div v-else-if="asideMode === 'preview'" class="pc-aside__idle">
-            Выберите блок и нажмите «Редактировать», чтобы увидеть его превью.
+        <aside class="pc-aside">
+          <div class="pc-aside__head">
+            <b>{{ asideMode === 'preview' ? 'Предпросмотр' : (role === 'structure' ? 'структура' : 'block_list.json') }}</b>
+            <span class="pc-aside__stats">{{ asideMode === 'preview' ? previewTitle : (displayCount + ' бл. · ' + totalItems + ' элем.') }}</span>
+            <span class="pc-appbar__spacer"></span>
+            <button class="pc-tool" @click="toggleJson">{{ jsonVisible ? 'Скрыть JSON' : 'Показать JSON' }}</button>
+            <button class="pc-tool" v-if="jsonVisible" @click="copyJson">Копировать</button>
           </div>
-          <pre v-else class="pc-json">{{ jsonText }}</pre>
-        </div>
-      </aside>
+          <div class="pc-aside__body" :class="{ 'is-preview': asideMode === 'preview', 'is-json': asideMode === 'json' }">
+            <iframe
+              v-if="asideMode === 'preview' && editingBlock"
+              class="pc-frame"
+              data-pc-frame="aside"
+              :srcdoc="previewSrc"
+              @load="onFrameLoad"
+              title="Предпросмотр блока"
+            ></iframe>
+            <div v-else-if="asideMode === 'preview'" class="pc-aside__idle">
+              Выберите блок и нажмите «Редактировать», чтобы увидеть его превью.
+            </div>
+            <pre v-else class="pc-json">{{ jsonText }}</pre>
+          </div>
+        </aside>
+      </template>
     </div>
 
     <div class="pc-modal" v-if="showAddModal" @click.self="closeAddModal">
@@ -278,7 +282,7 @@
       </div>
     </div>
 
-    <div class="pc-picker" v-if="picker" @click.self="closePicker">
+    <div class="pc-picker" v-if="picker && !compact" @click.self="closePicker">
       <div class="pc-picker__dialog" role="dialog" :aria-label="pickerLabel()">
         <div class="pc-picker__head">
           <b>{{ pickerLabel() }}</b>
@@ -408,7 +412,12 @@ export default {
     footer: { type: Object, default: null },
     configRev: { type: Number, default: 0 },
     // Номер блока, который нужно раскрыть снаружи (из URL).
-    expandIndex: { type: Number, default: -1 }
+    expandIndex: { type: Number, default: -1 },
+    // Разрешённые типы блоков (пусто — все). Для ds_text: ['text'].
+    allowedTypes: { type: Array, default: () => [] },
+    // Компактный режим (встраивание в форму): без превью/JSON/структуры
+    // шапки-подвала и без пикеров изображений.
+    compact: { type: Boolean, default: false }
   },
   emits: ['change', 'edit-structure', 'save', 'saved', 'edit-block'],
   data() {
@@ -473,8 +482,10 @@ export default {
       const allowType = (t) => !restricted.length
         || restricted.indexOf(t) === -1
         || allowed.indexOf(t) !== -1
+      const inAllowed = (t) => !this.allowedTypes.length
+        || this.allowedTypes.indexOf(t) !== -1
       const res = (PC.search(SCHEMA, this.addQuery) || [])
-        .map(g => ({ group: g.group, types: (g.types || []).filter(t => !!t.structural === wantStructural && allowType(t.type)) }))
+        .map(g => ({ group: g.group, types: (g.types || []).filter(t => !!t.structural === wantStructural && allowType(t.type) && inAllowed(t.type)) }))
         .filter(g => g.types.length)
       const ru = (a, b) => String(a).localeCompare(String(b), 'ru')
       res.forEach(g => { (g.types || []).sort((a, b) => ru(a.typeTitle, b.typeTitle)) })
@@ -916,6 +927,7 @@ export default {
     addItem(block) { block.items.push(defaultsFromFields(this.fieldsOf(block))) },
     removeItem(block, i) { block.items.splice(i, 1) },
     schedulePreview(markup) {
+      if (this.compact) return
       const self = this
       clearTimeout(this._previewTimer)
       this._previewTimer = setTimeout(() => {

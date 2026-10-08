@@ -37,6 +37,7 @@ export const dynamic_component_loader = (app) => {
 	app.component('field-table', defineAsyncComponent(() => import('./components/fields/table.vue')));
 	app.component('field-time_table', defineAsyncComponent(() => import('./components/fields/time_table.vue')));
 	app.component('field-wysiwyg', defineAsyncComponent(() => import('./components/fields/wysiwyg.vue')));
+	app.component('field-page_blocks', defineAsyncComponent(() => import('./components/fields/page_blocks.vue')));
 	app.component('field-component', defineAsyncComponent(() => import('./components/fields/component.vue')));
 
 	// Поля-приложения админ-панели svcms (группа svcmsAdmin)

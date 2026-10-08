@@ -38,6 +38,8 @@
   display: grid; grid-template-columns: minmax(0, 1fr) 10px var(--pc-aside-w, 380px);
   align-items: start; min-height: calc(100vh - 56px);
 }
+/* Компактный режим (встраивание в форму ds_text): без панели превью/JSON. */
+.pc-shell.is-compact { grid-template-columns: minmax(0, 1fr); }
 .pc-canvas, .pc-aside { min-width: 0; }
 /* Ручка ширины колонок: sticky под аппбаром (как .pc-aside), заметная зона
    захвата и «грип». Иначе при скролле точка захвата уходит и кажется, что
