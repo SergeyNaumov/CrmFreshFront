@@ -1,5 +1,24 @@
 <template>
    <v-app>
+    <v-dialog v-model="del_dialog" max-width="480">
+      <v-card>
+        <v-card-title class="text-h6">Удаление элемента</v-card-title>
+        <v-card-text>
+          <template v-if="del_children>0">
+            Данная запись содержит {{ del_children }} дочерних. Вы действительно хотите удалить?
+          </template>
+          <template v-else>
+            Вы действительно хотите удалить элемент?
+          </template>
+          <div v-if="del_target && del_target.header" class="mt-3 font-weight-medium">{{ del_target.header }}</div>
+        </v-card-text>
+        <v-card-actions>
+          <div class="flex-grow-1"></div>
+          <v-btn color="red" variant="text" @click="del_dialog=false">Отменить</v-btn>
+          <v-btn color="primary-darken-1" variant="text" @click="confirm_del">Удалить</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-container fluid >
       
       <h1 class="title">{{form.title}}</h1>
@@ -52,7 +71,10 @@ export default {
             fatal_errors:[],
             errors:[],
             watch_parent:'',
-            new_runner:0
+            new_runner:0,
+            del_dialog:false,
+            del_target:null,
+            del_children:0
 
       }
       
@@ -144,18 +166,21 @@ export default {
         
       },
       del(parent_id, l){
-          // Спрашиваем число дочерних: если есть — подтверждаем удаление.
+          // Спрашиваем число дочерних и открываем модалку подтверждения.
           this.$http.get(BackendBase+'/children-count/'+this.form.config+'/'+l.id).then(r=>{
-            const n=(r.data && r.data.children_count) || 0;
-            const msg = n>0
-              ? 'Данная запись содержит '+n+' дочерних. Вы действительно хотите удалить?'
-              : 'Вы действительно хотите удалить элемент?';
-            if(!confirm(msg)) return;
-            this.do_del(parent_id,l);
+            this.del_children=(r.data && r.data.children_count) || 0;
+            this.del_target={parent_id:parent_id, l:l, header:(l && l.header) || ''};
+            this.del_dialog=true;
           }).catch(()=>{
-            if(!confirm('Вы действительно хотите удалить элемент?')) return;
-            this.do_del(parent_id,l);
+            this.del_children=0;
+            this.del_target={parent_id:parent_id, l:l, header:(l && l.header) || ''};
+            this.del_dialog=true;
           });
+      },
+      confirm_del(){
+          const t=this.del_target;
+          this.del_dialog=false;
+          if(t) this.do_del(t.parent_id, t.l);
       },
       do_del(parent_id, l){
           this.$http({
@@ -248,54 +273,51 @@ export default {
         return list
       },
       move_end(e){
-          //console.log('lst:',e, e.srcElement.children)
-          let arr;
-          let from=e.from.getAttribute('id'),
-              to=e.to.getAttribute('id'),
-              item=e.item.getAttribute('id');
-          
-          
-              arr=from.match(/p-([0-9]+)/); from=arr[1]; 
-              arr=to.match(/p-([0-9]+)/); to=arr[1]; 
-              arr=item.match(/li-([0-9]+)/); item=arr[1]; 
+          // извлекаем id из id-атрибутов списков ("p-<id>") и элемента ("li-<id>")
+          let from=(e.from && e.from.id ? e.from.id : '').replace('p-',''),
+              to=(e.to && e.to.id ? e.to.id : '').replace('p-',''),
+              item=(e.item && e.item.id ? e.item.id : '').replace('li-','');
 
-
-          
+          const sort_of=(el)=>{ let o={},i=1; for(let c of ((el&&el.children)||[])){ let id=(c.id||'').replace('li-',''); if(id) o[id]=i++; } return o; };
 
           if(from==to){ // перемещение в пределах одной ветки
-              let obj_sort={},idx=1;
-
-              for(let c of e.srcElement.children){
-                let id=c.id.replace('li-','')
-                obj_sort[id]=idx++
-                
-              }
-              //console.log(obj_sort)
-              this.request_sort(from,obj_sort);
-              //this.request_sort(from,this.obj_sort_by_parent(from));
-          
+              this.request_sort(from, sort_of(e.to));
+              this.renew++
+              return;
           }
-          else // если ветки разные -- сначала переносим объект, потом сортируем ветки
-              this.$http.post( 
+          // из одной ветки в другую: сначала на сервере, потом сортируем обе ветки
+          this.$http.post(
                 BackendBase+'/admin-tree/'+this.form.config,
-                {
-                  action:'move',id:item,to:to
+                { action:'move', id:item, to:to }
+          ).then(response=>{
+                let R=response.data;
+                this.errors=R.errors||[];
+                if(R.success){
+                    this.reparent(from,to,item);
+                    this.request_sort(from, sort_of(e.from));
+                    this.request_sort(to, sort_of(e.to));
+                    this.renew++
+                } else {
+                    this.init(); // сервер отклонил (например, цикл) — перечитываем дерево
                 }
-              ).then(
-                response=>{
-                  let R=response.data;
-                  this.errors=R.errors;
-                  if(R.success){
-                    this.request_sort(from,this.obj_sort_by_parent(from));
-                    this.request_sort(to,this.obj_sort_by_parent(to));
-                  }
-
-                }
-              ).catch(
-                e=>{
-                  this.errors=['Ошибка при перемещении объекта: '+e]
-                }
-              )
+          }).catch(err=>{
+                this.errors=['Ошибка при перемещении объекта: '+err];
+                this.init();
+          });
+      },
+      reparent(from,to,item){
+          // обновляем in-memory структуру после успешного переноса
+          let fromList=(from==='0'||from==='')?this.list:(this.map[from]?this.map[from].childs:null);
+          if(fromList){
+              let filtered=fromList.filter(c=>String(c.id)!==String(item));
+              if(from==='0'||from==='') this.list=filtered;
+              else if(this.map[from]) this.map[from].childs=filtered;
+          }
+          let obj=this.map[item];
+          if(!obj) return;
+          this.parents[item]=to;
+          if(to==='0'||to===''){ this.list.push(obj); }
+          else if(this.map[to]){ if(!this.map[to].childs) this.map[to].childs=[]; this.map[to].childs.push(obj); }
       },
       request_sort(parent_id,obj_sort){
           this.$http.post(

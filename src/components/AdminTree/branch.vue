@@ -51,7 +51,7 @@
                 :style="gallery_style"
                 :list="list"
                 item-key="id"
-                :group="'g'+parent.id"
+                :group="{ name: 'ds-tree', pull: true, put: true }"
                 ghost-class="gallery_ghost"
                 :disabled="!form.sort"
                 @end="move_end"
@@ -92,7 +92,7 @@
                 :renew="renew"
                 :list="list"
                 item-key="id"
-                :group="'g'+parent.id"
+                :group="{ name: 'ds-tree', pull: true, put: true }"
                 @start="move_start" @end="move_end"                
             >   
                 <template #item="{ element: l }">
