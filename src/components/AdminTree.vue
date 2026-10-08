@@ -298,7 +298,8 @@ export default {
                 let R=response.data;
                 this.errors=R.errors||[];
                 if(R.success){
-                    this.reparent(from,to,item);
+                    // VueDraggable (:list) сам перенёс элемент между массивами —
+                    // вручную НЕ добавляем (иначе дубль). Только сортировка.
                     this.request_sort(from, sort_of(e.from));
                     this.request_sort(to, sort_of(e.to));
                     this.renew++
