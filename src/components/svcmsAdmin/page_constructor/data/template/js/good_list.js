@@ -60,13 +60,23 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
       // глобальная лексическая константа из <script> на странице
       var g;
       try { g = eval('typeof ' + gkey + ' !== "undefined"'); } catch (e) { g = false; }
+      var explicit = false;
       if (g) {
         var v = eval(gkey);
         cfg[key] = Number(v);
+        explicit = true;
       } else if (root && root.getAttribute('data-' + key.replace(/_/g, '-'))) {
         cfg[key] = Number(root.getAttribute('data-' + key.replace(/_/g, '-')));
+        explicit = true;
       }
-      if (!(cfg[key] > 0)) cfg[key] = key === 'perpage' ? 12 : 1;
+      // Значение по умолчанию — только если ничего не задано. Явный 0
+      // (catalog_id=0 → «весь каталог», /goodlist) сохраняем как есть;
+      // принудительный 1 ломал выборку всех товаров и «Избранное».
+      if (!explicit) {
+        cfg[key] = key === 'perpage' ? 12 : 1;
+      } else if (key === 'perpage' && !(cfg[key] > 0)) {
+        cfg[key] = 12;
+      }
     }
     return cfg;
   }
@@ -215,6 +225,7 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           loading: true,
           error: false,
           _received: false,
+          _fetchId: null,   // id раздела для /ajax; 0 = весь каталог (избранное)
           // --- фильтры/сортировка (данные живут всегда, контролы — в шаблоне) ---
           q: getQueryFromURL('q'), // поиск по названию (на странице поиска — из ?q)
           priceMin: '',   // цена «от»
@@ -341,6 +352,12 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           if (vm.favoritesOnly) {
             var dj = readDataJson('good_list_data');
             if (dj) { vm.recv(dj); return; }
+            // Фолбэк: грузим ВЕСЬ каталог (catalog_id=0) и фильтруем по
+            // store.state.favorites. Иначе catalog_id по умолчанию = 1,
+            // выборка пустая и «Избранное» всегда пусто.
+            vm._fetchId = 0;
+            vm.fetchAll(0, []);
+            return;
           }
           if (dataUrl) {
             // PREVIEW: скрипт-инъекция + событие t1:good_list
@@ -372,7 +389,9 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           // корректно работают страницы-рубрики (/catalog/{id}), где выборка
           // отфильтрована и нумерация id не совпадает с perpage.
           var last = lastId || 0;
-          var cid = vm._fetchId || vm.catalogId;
+          // _fetchId=0 — валидное значение («весь каталог»), поэтому не через ||.
+          var cid = (vm._fetchId !== null && vm._fetchId !== undefined)
+            ? vm._fetchId : vm.catalogId;
           fetch('/ajax?catalog_id=' + cid + '&last_id=' + last + '&limit=' + vm.perpage)
             .then(function (r) { return r.json(); })
             .then(function (arr) {
