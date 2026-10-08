@@ -59,7 +59,7 @@
                 @end="move_end"
             >
                 <template #item="{ element: l }">
-                <div class="gallery_item" :id="'li-'+l.id" :class="{'drop-into': drag && drag.over_list==='p-'+l.id}">
+                <div class="gallery_item" :id="'li-'+l.id" :class="{'drop-into': drag && (drag.over_list==='p-'+l.id || (drag.over_nest && drag.over_item==='li-'+l.id))}">
                     <div class="gallery_card">
                         <div class="gallery_photo_wrap">
                             <img v-if="l.photo" :src="photo_url(l)" class="gallery_photo" :alt="l.header" @click.stop="open_lightbox(photo_url(l), l.header)">
@@ -99,7 +99,7 @@
                 @start="move_start" @end="move_end"                
             >   
                 <template #item="{ element: l }">
-                <li :id="'li-'+l.id" :class="{'drop-into': drag && drag.over_list==='p-'+l.id}" >
+                <li :id="'li-'+l.id" :class="{'drop-into': drag && (drag.over_list==='p-'+l.id || (drag.over_nest && drag.over_item==='li-'+l.id))}" >
                 <div >
                     <div class="li_header" :style='{"background":cur_color}'  >
                             <div class="plus-icon " v-if="form.tree_use && (!form.max_level || (level < form.max_level))" >
@@ -227,7 +227,8 @@ export default {
             0:false          
           },
           mode_new_element:'text',
-          show_edit_form:0  // показываем форму редактирования для записи с l.id=show_edit_form
+          show_edit_form:0,  // показываем форму редактирования для записи с l.id=show_edit_form
+          _expanding:{}      // защита от повторных запросов авто-раскрытия при drag
           
       }
   },
@@ -428,11 +429,32 @@ export default {
         move_start(){
             if(this.drag){ this.drag.over_list=''; this.drag.over_item=''; }
         },
-        on_drag_move(evt){
-            // Подсветка цели переноса: evt.to — список, куда упадёт элемент.
+        on_drag_move(evt, originalEvent){
+            const rel=evt && evt.related;
+            const dragged=evt && evt.dragged;
+            // Позиция курсора по строке: середина = «вложить», край = сортировка.
+            let nest=false;
+            if(rel && rel!==dragged && rel.id && rel.id.indexOf('li-')===0 && originalEvent){
+                const rect=rel.getBoundingClientRect();
+                const y=(originalEvent.touches && originalEvent.touches[0])
+                        ? originalEvent.touches[0].clientY : originalEvent.clientY;
+                if(y!=null && rect.height){
+                    const t=(y-rect.top)/rect.height;
+                    nest=(t>0.25 && t<0.75);
+                }
+            }
             if(this.drag){
                 this.drag.over_list=(evt && evt.to && evt.to.id) || '';
-                this.drag.over_item=(evt && evt.related && evt.related.id) || '';
+                this.drag.over_item=(rel && rel.id) || '';
+                this.drag.over_nest=nest;
+            }
+            // Авто-раскрытие ветки под курсором: иначе вложить в свёрнутую/листовую
+            // ветку нельзя (её список не отрисован, sortablejs кладёт в родителя).
+            if(nest && rel && rel.id && rel.id.indexOf('li-')===0 &&
+               this.form && this.form.tree_use && !this.shows[rel.id.replace('li-','')]){
+                const rid=rel.id.replace('li-','');
+                const l=(this.list||[]).find(x=>String(x.id)===String(rid));
+                if(l && !this._expanding[rid]){ this._expanding[rid]=true; this.show_this(l); }
             }
             return true;
         },

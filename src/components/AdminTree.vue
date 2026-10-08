@@ -82,7 +82,7 @@ export default {
             snackbar:false,
             snackbar_text:'',
             // Состояние drag&drop для подсветки цели переноса (см. branch.vue).
-            drag:{over_list:'',over_item:''}
+            drag:{over_list:'',over_item:'',over_nest:false}
 
       }
       
@@ -281,12 +281,20 @@ export default {
         return list
       },
       move_end(e){
-          // снять подсветку цели переноса
-          this.drag.over_list=''; this.drag.over_item='';
+          // запомним состояние до сброса
+          const over_nest=this.drag.over_nest, over_item=this.drag.over_item, over_list=this.drag.over_list;
+          this.drag.over_list=''; this.drag.over_item=''; this.drag.over_nest=false;
           // извлекаем id из id-атрибутов списков ("p-<id>") и элемента ("li-<id>")
           let from=(e.from && e.from.id ? e.from.id : '').replace('p-',''),
               to=(e.to && e.to.id ? e.to.id : '').replace('p-',''),
               item=(e.item && e.item.id ? e.item.id : '').replace('li-','');
+
+          // Бросок на строку ветки (середина строки) — вкладываем в эту ветку,
+          // а не в список родителя. Край строки = обычная сортировка.
+          if(over_nest && over_item && over_list===e.to.id){
+              const nid=String(over_item).replace('li-','');
+              if(nid && nid!==String(item)) to=nid;
+          }
 
           const sort_of=(el)=>{ let o={},i=1; for(let c of ((el&&el.children)||[])){ let id=(c.id||'').replace('li-',''); if(id) o[id]=i++; } return o; };
 
