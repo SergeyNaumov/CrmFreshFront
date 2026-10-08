@@ -5,7 +5,7 @@
     <p>(сохранение происходит сразу после изменения значений)</p>
 
     <v-tabs v-model="cur_tab" bg-color="primary" v-if="tabs.length">
-          <v-tab v-for="t in tabs" :key="`tab${t.name}`":value="t.name" >{{t.description}}</v-tab>
+          <v-tab v-for="(t, i) in tabs" :key="`tab${t.name}`" :value="i">{{ t.description }}</v-tab>
     </v-tabs>
 
     <div>
