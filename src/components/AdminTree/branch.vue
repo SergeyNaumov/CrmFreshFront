@@ -86,7 +86,6 @@
             <draggable
                 :id="'p-'+parent.id"
                 tag="ul"
-                v-if="list.length"
                 class="list-group"
                 ghost-class="ghost"
                 :renew="renew"

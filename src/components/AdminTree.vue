@@ -19,6 +19,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-snackbar v-model="snackbar" color="error" timeout="5000" location="top">
+      {{ snackbar_text }}
+    </v-snackbar>
     <v-container fluid >
       
       <h1 class="title">{{form.title}}</h1>
@@ -74,7 +77,9 @@ export default {
             new_runner:0,
             del_dialog:false,
             del_target:null,
-            del_children:0
+            del_children:0,
+            snackbar:false,
+            snackbar_text:''
 
       }
       
@@ -215,7 +220,7 @@ export default {
                   this.renew++
               }
               else
-                  alert(D.errors[0]);
+                  this.notify(D.errors && D.errors[0]);
           });
       },
       add_to_map(parent_id,l){
@@ -298,12 +303,17 @@ export default {
                     this.request_sort(to, sort_of(e.to));
                     this.renew++
                 } else {
+                    this.notify((R.errors && R.errors[0]) || 'Не удалось переместить элемент');
                     this.init(); // сервер отклонил (например, цикл) — перечитываем дерево
                 }
           }).catch(err=>{
-                this.errors=['Ошибка при перемещении объекта: '+err];
+                this.notify('Ошибка при перемещении объекта: '+err);
                 this.init();
           });
+      },
+      notify(text){
+          this.snackbar_text=text || 'Ошибка';
+          this.snackbar=true;
       },
       reparent(from,to,item){
           // обновляем in-memory структуру после успешного переноса
