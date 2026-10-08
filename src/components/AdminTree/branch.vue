@@ -48,16 +48,18 @@
                 :id="'p-'+parent.id"
                 tag="div"
                 class="gallery"
+                :class="{'drop-target': drag && drag.over_list==='p-'+parent.id}"
                 :style="gallery_style"
                 :list="list"
                 item-key="id"
                 :group="{ name: 'ds-tree', pull: true, put: true }"
                 ghost-class="gallery_ghost"
                 :disabled="!form.sort"
+                :move="on_drag_move"
                 @end="move_end"
             >
                 <template #item="{ element: l }">
-                <div class="gallery_item" :id="'li-'+l.id">
+                <div class="gallery_item" :id="'li-'+l.id" :class="{'drop-into': drag && drag.over_list==='p-'+l.id}">
                     <div class="gallery_card">
                         <div class="gallery_photo_wrap">
                             <img v-if="l.photo" :src="photo_url(l)" class="gallery_photo" :alt="l.header" @click.stop="open_lightbox(photo_url(l), l.header)">
@@ -87,15 +89,17 @@
                 :id="'p-'+parent.id"
                 tag="ul"
                 class="list-group"
+                :class="{'drop-target': drag && drag.over_list==='p-'+parent.id}"
                 ghost-class="ghost"
                 :renew="renew"
                 :list="list"
                 item-key="id"
                 :group="{ name: 'ds-tree', pull: true, put: true }"
+                :move="on_drag_move"
                 @start="move_start" @end="move_end"                
             >   
                 <template #item="{ element: l }">
-                <li :id="'li-'+l.id" >
+                <li :id="'li-'+l.id" :class="{'drop-into': drag && drag.over_list==='p-'+l.id}" >
                 <div >
                     <div class="li_header" :style='{"background":cur_color}'  >
                             <div class="plus-icon " v-if="form.tree_use && (!form.max_level || (level < form.max_level))" >
@@ -133,6 +137,7 @@
                             :renew="renew" :add_to_map="add_to_map"
                             :parent="l"
                             :add="add" :del="del" :move_end="move_end" :get_list="get_list"
+                            :drag="drag"
                         />
                     </template>
 
@@ -179,6 +184,7 @@
                             :list="l.childs" :add_to_map="add_to_map"
                             :parent="l"
                             :add="add" :del="del" :move_end="move_end" :get_list="get_list"
+                            :drag="drag"
                         />
                     </template>
                 </li>
@@ -207,7 +213,7 @@ export default {
     move_end:{required:true},
     add_to_map:{required:true},
     new_runner:{type:Number,required:false},
-    
+    drag:{type:Object,required:false},
   },
   data(){
       return {
@@ -420,7 +426,15 @@ export default {
             //this.$refs['new_header'].focus()
         },
         move_start(){
-
+            if(this.drag){ this.drag.over_list=''; this.drag.over_item=''; }
+        },
+        on_drag_move(evt){
+            // Подсветка цели переноса: evt.to — список, куда упадёт элемент.
+            if(this.drag){
+                this.drag.over_list=(evt && evt.to && evt.to.id) || '';
+                this.drag.over_item=(evt && evt.related && evt.related.id) || '';
+            }
+            return true;
         },
         close_edit_form(){
             this.show_edit_form=0
@@ -685,5 +699,24 @@ ul[aria-grabbed="true"] .li_header .li_header{
 }
 .gallery_ghost {
     opacity: .4;
+}
+
+/* Подсветка цели переноса (drag&drop) */
+.list-group.drop-target,
+.gallery.drop-target {
+    outline: 2px dashed rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+    background: rgba(var(--v-theme-primary), 0.06);
+    border-radius: 10px;
+}
+li.drop-into > .li_header {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 1px;
+    box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.25);
+}
+.gallery_item.drop-into .gallery_card {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 1px;
+    box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.25);
 }
 </style>

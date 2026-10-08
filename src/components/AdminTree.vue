@@ -44,6 +44,7 @@
                 :add_to_map="add_to_map"
                 :new_runner="new_runner"
                 :get_list="get_list"
+                :drag="drag"
               />
           </div>
         </template>
@@ -79,7 +80,9 @@ export default {
             del_target:null,
             del_children:0,
             snackbar:false,
-            snackbar_text:''
+            snackbar_text:'',
+            // Состояние drag&drop для подсветки цели переноса (см. branch.vue).
+            drag:{over_list:'',over_item:''}
 
       }
       
@@ -278,6 +281,8 @@ export default {
         return list
       },
       move_end(e){
+          // снять подсветку цели переноса
+          this.drag.over_list=''; this.drag.over_item='';
           // извлекаем id из id-атрибутов списков ("p-<id>") и элемента ("li-<id>")
           let from=(e.from && e.from.id ? e.from.id : '').replace('p-',''),
               to=(e.to && e.to.id ? e.to.id : '').replace('p-',''),
