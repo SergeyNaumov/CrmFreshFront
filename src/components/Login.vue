@@ -1,6 +1,6 @@
 <template>
   <v-app>
-        <v-container>
+        <v-container class="login-page">
             <v-card max-width="344" class="mx-auto auth">
                 <v-card-title  class="text-h5">
                   Авторизуйтесь
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { bus } from '../main'
 
 export default {
         data: () => ({
@@ -73,13 +74,15 @@ export default {
                 let D=response.data;
                 if(D.success){
                   let prev_login=localStorage.getItem('link_prev_login')
+                  let target = '/'
                   if(prev_login && prev_login.indexOf(location.origin)===0){
-                    this.$router.replace(prev_login.slice(location.origin.length) || '/')
+                    target = prev_login.slice(location.origin.length) || '/'
                   } else if(prev_login && prev_login[0]==='/'){
-                    this.$router.replace(prev_login)
-                  } else {
-                    this.$router.replace('/')
+                    target = prev_login
                   }
+                  this.$router.push(target).finally(()=>{
+                    bus.$emit('auth:login')
+                  })
                 }
 
                 
@@ -101,9 +104,9 @@ export default {
         }
 }
 </script>
-<style scope>
+<style scoped>
   .auth .err{ color: red; background-color: white;}
-  body {margin-top: 10%;}
+  .login-page {margin-top: 10%;}
 </style>
 
 

@@ -193,7 +193,7 @@ function apply_basket_full_info(data) {
       price: price,
       old_price: old_price,
       cnt: cnt,
-      url: g.url || '/product/' + g.id,
+      url: g.url || '/good/' + g.id,
       view_type: g.view_type
     });
     in_basket[g.id] = cnt;

@@ -117,7 +117,7 @@ export default {
 
 }
 </script>
-<style scope lang="scss">
+<style scoped lang="scss">
   
   .main {
     height: 100%;

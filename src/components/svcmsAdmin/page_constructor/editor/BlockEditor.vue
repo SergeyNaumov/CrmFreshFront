@@ -8,10 +8,10 @@
       <span class="pc-appbar__spacer"></span>
       <span v-if="isDirty" class="pc-saved">изменено {{ lastSavedAt }}</span>
       <template v-if="!compact">
-        <button class="pc-tool pc-tool--ghost" @click="openPagePreview">Предпросмотр страницы</button>
-        <button class="pc-tool pc-tool--ghost" @click="loadExample">Пример</button>
-        <button class="pc-tool pc-tool--ghost" @click="resetAll">Очистить</button>
-        <button
+        <button type="button" class="pc-tool pc-tool--ghost" @click="openPagePreview">Предпросмотр страницы</button>
+        <button type="button" class="pc-tool pc-tool--ghost" @click="loadExample">Пример</button>
+        <button type="button" class="pc-tool pc-tool--ghost" @click="resetAll">Очистить</button>
+        <button type="button"
           v-if="saveState !== 'saved'"
           class="pc-tool pc-tool--primary"
           :disabled="saving"
@@ -25,7 +25,7 @@
          :style="{ '--pc-aside-w': aside_w + 'px' }">
       <main class="pc-canvas">
         <div class="pc-canvas__bar">
-          <button class="pc-add-btn" @click="openAddModal">＋ Добавить блок</button>
+          <button type="button" class="pc-add-btn" @click="openAddModal">＋ Добавить блок</button>
           <span class="pc-canvas__hint">{{ displayCount }} блок(ов)</span>
         </div>
 
@@ -35,7 +35,7 @@
             <span class="pcb-struct__label">Шапка — общая для всех страниц шаблона</span>
             <span class="pcb-struct__state">{{ pageHeader ? 'задана' : 'не задана' }}</span>
             <span class="pcb-struct__spacer"></span>
-            <button class="pcb-struct__btn" @click="$emit('edit-structure', 'header')">Изменить</button>
+            <button type="button" class="pcb-struct__btn" @click="$emit('edit-structure', 'header')">Изменить</button>
           </div>
         </template>
 
@@ -66,14 +66,14 @@
             <span class="pc-badge" v-if="viewLabel(block)">{{ viewLabel(block) }}</span>
             <span class="pcb-head__summary" v-if="!isOpen(block)">{{ block.params.header || block.params.title || '' }}</span>
             <span class="pcb-head__spacer"></span>
-            <button v-if="!compact" class="pcb-ico" @click="openBlockPreview(block)" aria-label="Предпросмотр блока" title="Предпросмотр блока">👁</button>
+            <button type="button" v-if="!compact" class="pcb-ico" @click="openBlockPreview(block)" aria-label="Предпросмотр блока" title="Предпросмотр блока">👁</button>
             <template v-if="!isStructural(block)">
-              <button class="pcb-ico" @click="moveBlock(idx, -1)" aria-label="Поднять блок">↑</button>
-              <button class="pcb-ico" @click="moveBlock(idx, 1)" aria-label="Опустить блок">↓</button>
-              <button class="pcb-ico" @click="duplicateBlock(idx)" aria-label="Дублировать блок">⧉</button>
+              <button type="button" class="pcb-ico" @click="moveBlock(idx, -1)" aria-label="Поднять блок">↑</button>
+              <button type="button" class="pcb-ico" @click="moveBlock(idx, 1)" aria-label="Опустить блок">↓</button>
+              <button type="button" class="pcb-ico" @click="duplicateBlock(idx)" aria-label="Дублировать блок">⧉</button>
             </template>
-            <button class="pcb-ico pcb-ico--toggle" @click="toggleForm(block)" :aria-expanded="isOpen(block)" :aria-label="isOpen(block) ? 'Свернуть блок' : 'Развернуть и редактировать'">{{ isOpen(block) ? '▾ Редактирование' : '▸ Редактировать' }}</button>
-            <button class="pcb-ico" @click="removeBlock(idx)" aria-label="Удалить блок">✕</button>
+            <button type="button" class="pcb-ico pcb-ico--toggle" @click="toggleForm(block)" :aria-expanded="isOpen(block)" :aria-label="isOpen(block) ? 'Свернуть блок' : 'Развернуть и редактировать'">{{ isOpen(block) ? '▾ Редактирование' : '▸ Редактировать' }}</button>
+            <button type="button" class="pcb-ico" @click="removeBlock(idx)" aria-label="Удалить блок">✕</button>
           </header>
 
           <div class="pcb-form" v-if="isOpen(block)">
@@ -151,7 +151,7 @@
                   <div class="pcb-item" v-for="(it, ii) in block.items" :key="ii">
                     <div class="pcb-item__head">
                       <b>№{{ ii + 1 }}</b>
-                      <button class="pcb-ico" @click="removeItem(block, ii)" aria-label="Удалить элемент">✕</button>
+                      <button type="button" class="pcb-ico" @click="removeItem(block, ii)" aria-label="Удалить элемент">✕</button>
                     </div>
                     <div class="pcb-row" v-for="f in fieldsOf(block)" :key="f.name">
                       <label>{{ f.label }}</label>
@@ -169,7 +169,7 @@
                       </div>
                     </div>
                   </div>
-                  <button class="pcb-add-item" @click="addItem(block)">+ Добавить элемент</button>
+                  <button type="button" class="pcb-add-item" @click="addItem(block)">+ Добавить элемент</button>
                 </div>
               </div>
             </div>
@@ -182,7 +182,7 @@
             <span class="pcb-struct__label">Подвал — общий для всех страниц шаблона</span>
             <span class="pcb-struct__state">{{ pageFooter ? 'задан' : 'не задан' }}</span>
             <span class="pcb-struct__spacer"></span>
-            <button class="pcb-struct__btn" @click="$emit('edit-structure', 'footer')">Изменить</button>
+            <button type="button" class="pcb-struct__btn" @click="$emit('edit-structure', 'footer')">Изменить</button>
           </div>
         </template>
       </main>
@@ -195,8 +195,8 @@
             <b>{{ asideMode === 'preview' ? 'Предпросмотр' : (role === 'structure' ? 'структура' : 'block_list.json') }}</b>
             <span class="pc-aside__stats">{{ asideMode === 'preview' ? previewTitle : (displayCount + ' бл. · ' + totalItems + ' элем.') }}</span>
             <span class="pc-appbar__spacer"></span>
-            <button class="pc-tool" @click="toggleJson">{{ jsonVisible ? 'Скрыть JSON' : 'Показать JSON' }}</button>
-            <button class="pc-tool" v-if="jsonVisible" @click="copyJson">Копировать</button>
+            <button type="button" class="pc-tool" @click="toggleJson">{{ jsonVisible ? 'Скрыть JSON' : 'Показать JSON' }}</button>
+            <button type="button" class="pc-tool" v-if="jsonVisible" @click="copyJson">Копировать</button>
           </div>
           <div class="pc-aside__body" :class="{ 'is-preview': asideMode === 'preview', 'is-json': asideMode === 'json' }">
             <iframe
@@ -220,7 +220,7 @@
       <div class="pc-modal__dialog pc-addmodal" role="dialog" aria-modal="true" aria-label="Добавить блок">
         <div class="pc-modal__head">
           <b>Добавить блок</b>
-          <button class="pc-modal__close" @click="closeAddModal" aria-label="Закрыть">✕</button>
+          <button type="button" class="pc-modal__close" @click="closeAddModal" aria-label="Закрыть">✕</button>
         </div>
         <div class="pc-addmodal__search">
           <input
@@ -241,7 +241,7 @@
                 <span class="pc-addmodal__struct" v-if="t.structural">структурный</span>
               </div>
               <div class="pc-addmodal__variants">
-                <button
+                <button type="button"
                   class="pc-addmodal__variant"
                   :class="{ 'is-active': isHighlighted(t.type, v.variantKey) }"
                   v-for="v in t.variants"
@@ -262,7 +262,7 @@
       <div class="pc-modal__dialog pc-previewmodal" role="dialog" aria-modal="true" aria-label="Предпросмотр блока">
         <div class="pc-modal__head">
           <b>Предпросмотр: {{ modalBlock ? typeTitle(modalBlock.type) : '' }}</b>
-          <button class="pc-modal__close" @click="closeBlockPreview" aria-label="Закрыть">✕</button>
+          <button type="button" class="pc-modal__close" @click="closeBlockPreview" aria-label="Закрыть">✕</button>
         </div>
         <div class="pc-modal__body">
           <iframe class="pc-frame pc-frame--modal" data-pc-frame="modal" :srcdoc="modalSrc" @load="onFrameLoad" title="Предпросмотр блока"></iframe>
@@ -274,7 +274,7 @@
       <div class="pc-modal__dialog pc-previewmodal pc-previewmodal--page" role="dialog" aria-modal="true" aria-label="Предпросмотр страницы">
         <div class="pc-modal__head">
           <b>Предпросмотр страницы</b>
-          <button class="pc-modal__close" @click="closePagePreview" aria-label="Закрыть">✕</button>
+          <button type="button" class="pc-modal__close" @click="closePagePreview" aria-label="Закрыть">✕</button>
         </div>
         <div class="pc-modal__body">
           <iframe class="pc-frame pc-frame--modal" data-pc-frame="page" :srcdoc="pageSrc" @load="onFrameLoad" title="Предпросмотр страницы"></iframe>
@@ -286,7 +286,7 @@
       <div class="pc-picker__dialog" role="dialog" :aria-label="pickerLabel()">
         <div class="pc-picker__head">
           <b>{{ pickerLabel() }}</b>
-          <button class="pc-modal__close" @click="closePicker" aria-label="Закрыть">✕</button>
+          <button type="button" class="pc-modal__close" @click="closePicker" aria-label="Закрыть">✕</button>
         </div>
         <div class="pc-picker__body" :class="pickerIsEmoji() ? 'pc-picker__body--emoji' : 'pc-picker__body--image'">
           <template v-if="pickerIsEmoji()">

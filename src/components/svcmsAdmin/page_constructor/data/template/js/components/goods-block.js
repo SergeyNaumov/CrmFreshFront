@@ -94,7 +94,7 @@ window.GoodsCard = {
   template: `
 <article v-if="mode === 'row'" class="product-row">
   <div class="product-row__media" v-photo-gallery="g">
-    <a class="product-row__media-link" :href="g.url || '/product/' + g.id">
+    <a class="product-row__media-link" :href="g.url || '/good/' + g.id">
       <img class="product-row__img" :src="curPhoto(g)" :alt="g.header"
            width="120" height="120" loading="lazy">
     </a>
@@ -112,7 +112,7 @@ window.GoodsCard = {
   </div>
   <div class="product-row__body">
     <h4 class="product-row__title">
-      <a :href="g.url || '/product/' + g.id">{{ g.header }}</a>
+      <a :href="g.url || '/good/' + g.id">{{ g.header }}</a>
     </h4>
     <p class="product-row__anons">{{ g.anons }}</p>
     <div class="product-row__price-row">
@@ -151,7 +151,7 @@ window.GoodsCard = {
 
 <article v-else class="product-card">
   <div class="product-card__media" v-photo-gallery="g">
-    <a class="product-card__media-link" :href="g.url || '/product/' + g.id">
+    <a class="product-card__media-link" :href="g.url || '/good/' + g.id">
       <img class="product-card__img" :src="curPhoto(g)" :alt="g.header"
            width="400" height="400" loading="lazy">
     </a>
@@ -190,7 +190,7 @@ window.GoodsCard = {
   </div>
   <div class="product-card__body">
     <h3 class="product-card__title">
-      <a :href="g.url || '/product/' + g.id">{{ g.header }}</a>
+      <a :href="g.url || '/good/' + g.id">{{ g.header }}</a>
     </h3>
     <p class="product-card__anons">{{ g.anons }}</p>
     <div class="product-card__price-row">

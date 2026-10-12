@@ -80,6 +80,7 @@ const menu_params_parse=list=>{
 import MainPage from './MainPage';
 import LeftMenu from './LeftMenu';
 import Lightbox from './components/Lightbox.vue';
+import { bus } from './main';
 
 export default {
         components:{
@@ -119,7 +120,23 @@ export default {
             return false
           }
 
+          bus.$on('auth:login', this.onAuthLogin)
+
           if(!this.isBlank){
+            this.loadStartpage()
+          }
+        },
+        beforeUnmount(){
+          bus.$off('auth:login', this.onAuthLogin)
+        },
+        methods: {
+          onAuthLogin(){
+            this.loadStartpage()
+          },
+          loadStartpage(){
+            if(this.isBlank)
+              return;
+            self=this;
             this.$http.get(BackendBase+'/startpage').then(
               r=>{
                 let D=r.data;
@@ -158,9 +175,7 @@ export default {
               this.dialog_body='произошла ошибка '+e+'. пожалуйста повторите попытку позже';
               this.dialog=true;
             });
-          }
-        },
-        methods: {
+          },
           load_menu(url){
             this.$http.get(BackendBase+url).then(
               r=>{

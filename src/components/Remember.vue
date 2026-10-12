@@ -1,6 +1,6 @@
 <template>
   <v-app>
-        <v-container>
+        <v-container class="remember-page">
             <v-card max-width="344" class="mx-auto auth">
                 
                 <v-card-title  class="text-h5">
@@ -187,9 +187,9 @@ export default {
         }
 }
 </script>
-<style scope>
+<style scoped>
   .auth .err{ color: red; background-color: white;}
-  body {margin-top: 10%;}
+  .remember-page {margin-top: 10%;}
 </style>
 
 
