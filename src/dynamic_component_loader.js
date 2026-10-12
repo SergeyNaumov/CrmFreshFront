@@ -21,6 +21,9 @@ export const dynamic_component_loader = (app) => {
 	// инструмент статистики
 	app.component('stat-tool', defineAsyncComponent(() => import('./components/StatTool/StatTool.vue')));
 
+	// Стартовая страница клиентской админки svcmsmanager (main_page_components)
+	app.component('svcms-manager-start', defineAsyncComponent(() => import('./components/svcmsManager/StartPage.vue')));
+
 	app.component('field-select', defineAsyncComponent(() => import('./components/fields/select.vue')));
 	app.component('field-1_to_m', defineAsyncComponent(() => import('./components/fields/1_to_m.vue')));
 	app.component('field-accordion', defineAsyncComponent(() => import('./components/fields/accordion.vue')));
