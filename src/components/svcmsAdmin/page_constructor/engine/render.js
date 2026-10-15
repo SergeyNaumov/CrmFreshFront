@@ -519,8 +519,8 @@
   // (search/priceFilter/sort/chips) + сетка товаров + пагинация. Разметка и
   // классы совпадают с block/product_list.html; движок монтирует #good_list
   // по <template id="good_list_tpl"> (js/good_list.js, js/perpage.js).
-  function glSidebar() {
-    return '<aside class="catalog-sidebar" aria-label="Разделы каталога">' +
+  function glSidebar(block) {
+    var s = '<aside class="catalog-sidebar" aria-label="Разделы каталога">' +
       '<h2 class="catalog-sidebar__title">Разделы каталога</h2>' +
       '<nav class="catalog-sidebar__nav" aria-label="Разделы каталога">' +
       '<ul class="catalog-sidebar__list">' +
@@ -534,7 +534,28 @@
       '<li class="catalog-sidebar__subitem" v-for="c in r.child" :key="c.id">' +
       "<button type=\"button\" class=\"catalog-sidebar__sublink\" :class=\"{ 'is-active': rubricActive(c.id) }\" @click=\"setRubric(c.id)\">" +
       '{{ c.header }} <span class="catalog-sidebar__count">{{ rubricCount(c.id) }}</span></button>' +
-      '</li></ul></li></ul></nav></aside>';
+      '</li></ul></li></ul></nav>';
+    // «Фильтры по параметрам»: type=1 — диапазон min–max, type=2 — фасет (чекбоксы).
+    if (defBool(block, 'paramFilters', false)) {
+      s += '<div class="catalog-sidebar__nav" aria-label="Параметры" v-if="catalogParams.length">' +
+        '<template v-for="prm in catalogParams" :key="prm.id">' +
+        '<div class="gl-control gl-price" v-if="prm.type === 1">' +
+        '<span class="gl-control__label">{{ prm.header }}</span>' +
+        '<div class="gl-price__row">' +
+        '<input class="form-control" type="number" inputmode="numeric" :placeholder="prm.min" :min="prm.min" :max="prm.max" v-model.number="paramMin[prm.id]" aria-label="от">' +
+        '<span class="gl-price__sep">—</span>' +
+        '<input class="form-control" type="number" inputmode="numeric" :placeholder="prm.max" :min="prm.min" :max="prm.max" v-model.number="paramMax[prm.id]" aria-label="до">' +
+        '</div></div>' +
+        '<div class="gl-control gl-chips" v-else>' +
+        '<span class="gl-control__label">{{ prm.header }}</span>' +
+        '<div class="gl-chips__row">' +
+        '<label class="gl-chips__chip" v-for="v in visibleVals(prm)" :key="v" :class="{ \'is-active\': paramVals[prm.id] && paramVals[prm.id][v] }">' +
+        '<input type="checkbox" :value="v" v-model="paramVals[prm.id][v]" hidden>{{ v }}</label>' +
+        '<button class="gl-chips__chip gl-chips__chip--more" type="button" v-if="prm.values.length > 12 && !paramExpanded[prm.id]" @click="paramExpanded[prm.id] = true">Показать все</button>' +
+        '</div></div>' +
+        '</template></div>';
+    }
+    return s + '</aside>';
   }
   function glToolbar(block) {
     var t = '';
@@ -616,7 +637,7 @@
       '<p v-else-if="error" class="goods-status goods-status--error">Не удалось загрузить товары.</p>' +
       glCardTemplate() + '</div>';
     var layout = '<div class="' + layoutCls + '">' +
-      (side !== 'none' ? glSidebar() : '') +
+      (side !== 'none' ? glSidebar(block) : '') +
       '<div class="catalog-main">' + listing + '</div></div>';
     return '<div id="good_list" data-data-key="good_list" data-catalog-id="1" data-perpage="' + esc(perpage) + '">' +
       '<template id="good_list_tpl">' + layout + '</template></div>';
@@ -1634,18 +1655,29 @@
     }).join('') + (p(block, 'note') ? el('p', { class: 'routes-note' }, esc(p(block, 'note'))) : ''));
   }
   function renderMap(block) {
+    var isFull = !!block.bleed || block.variant === 'full';
     var center = String(p(block, 'center', '') || '').split(',');
     var has = center.length === 2 && center[0].trim() && center[1].trim();
+    var url = String(p(block, 'url', '') || '');
+    // Фолбэк: координаты из готовой ссылки url (ll=lon,lat) — чтобы zoom/marker/
+    // маршрут работали, когда center не задан.
+    if (!has && url.indexOf('ll=') !== -1) {
+      var ll = url.split('ll=')[1].split('&')[0].replace(/%2C/g, ',').split(',');
+      if (ll.length === 2 && ll[0].trim() && ll[1].trim()) { center = [ll[1].trim(), ll[0].trim()]; has = true; }
+    }
     var z = Number(p(block, 'zoom', 15)) || 15;
     var marker = defBool(block, 'marker', true);
     var showRoute = defBool(block, 'showRoute', true);
-    var url = has ? yandexMapUrl(center[0].trim(), center[1].trim(), z, marker)
-                  : p(block, 'url', 'https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755800&z=12&pt=37.617700%2C55.755800%2Cpm2rdm');
+    var h = Number(p(block, 'height', isFull ? 500 : 400)) || (isFull ? 500 : 400);
+    if (has) {
+      url = yandexMapUrl(center[0].trim(), center[1].trim(), z, marker);
+    } else if (!url) {
+      url = 'https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755800&z=12&pt=37.617700%2C55.755800%2Cpm2rdm';
+    }
     var route = has ? 'https://yandex.ru/maps/?rtext=' + center[0].trim() + ',' + center[1].trim() + '&rtm=atm&z=' + z : url;
-    var h = Number(p(block, 'height', 400)) || 400;
-    var iframe = '<iframe src="' + esc(url) + '" title="Карта" loading="lazy" allowfullscreen style="height:' + h + 'px"></iframe>';
-    if (block.variant === 'full') {
-      return '<div class="fullmap"><div class="fullmap__frame">' + iframe + '</div></div>';
+    var iframe = '<iframe src="' + esc(url) + '" title="Карта" loading="eager" allowfullscreen style="height:' + h + 'px"></iframe>';
+    if (isFull) {
+      return '<div class="fullmap fullmap--bleed"><div class="fullmap__frame">' + iframe + '</div></div>';
     }
     var link = (showRoute && has)
       ? '<a class="map-route__link" href="' + esc(route) + '" target="_blank" rel="noopener">Построить маршрут</a>'
@@ -1875,7 +1907,7 @@
     history_timeline: { raw: false, fn: renderHistory },
     org_chart: { raw: false, fn: renderOrg },
     reports: { raw: false, fn: renderReports },
-    promo_parallax: { raw: false, fn: renderPromo },
+    promo_parallax: { raw: true, fn: renderPromo },
     form: { raw: false, fn: renderForm },
     contact_form: { raw: false, fn: renderContactForm }
   };
@@ -1973,8 +2005,12 @@
     // Паритет с продом: каталог с заливкой (section--alt), page_head — section--page.
     if (block.type === 'catalog') clsArr.push('section--alt');
     if (ph) clsArr.push('section--page');
+    // «Во всю ширину» = фон секции edge-to-edge (section--bleed), контент
+    // остаётся в .container с отступами --gutter (как на проде).
+    if (block.bleed || defBool(block, 'bleed', false)) clsArr.push('section--bleed');
     var cls = clsArr.join(' ');
-    return el('section', { class: cls, 'data-block-type': block.type }, el('div', { class: 'container' }, pageHead + head + inner));
+    var sectionAttrs = { class: cls, 'data-block-type': block.type };
+    return el('section', sectionAttrs, el('div', { class: 'container' }, pageHead + head + inner));
   }
 
   function renderAll(blocks) {

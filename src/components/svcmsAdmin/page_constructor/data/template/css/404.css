@@ -5,7 +5,7 @@
 .nf {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
-  gap: 48px;
+  gap: var(--space-7);
   align-items: center;
 }
 
@@ -27,16 +27,16 @@
   color: var(--primary);
 }
 
-.nf__title { margin: 8px 0 14px; font-size: var(--font-size-h2); color: var(--heading-color); }
+.nf__title { margin: var(--space-2) 0 var(--space-3); font-size: var(--font-size-h2); color: var(--heading-color); }
 
-.nf__text { margin: 0 0 22px; max-width: 520px; color: var(--muted); line-height: 1.65; }
+.nf__text { margin: 0 0 var(--space-5); max-width: 520px; color: var(--muted); line-height: 1.65; }
 
 /* Поиск на 404: .hsearch (css/header-search.css) внутри .nf__search */
-.nf__search { margin-bottom: 18px; max-width: 520px; }
+.nf__search { margin-bottom: var(--space-4); max-width: 520px; }
 
-.nf__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.nf__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 @media (max-width: 991px) {
-  .nf { grid-template-columns: 1fr; gap: 24px; }
+  .nf { grid-template-columns: 1fr; gap: var(--space-5); }
   .nf__media { order: -1; }
 }

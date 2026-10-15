@@ -3336,6 +3336,12 @@
               "default": true
             },
             {
+              "name": "paramFilters",
+              "label": "Фильтры по параметрам",
+              "kind": "bool",
+              "default": false
+            },
+            {
               "name": "source",
               "label": "Источник",
               "kind": "text",
@@ -3385,7 +3391,8 @@
       ],
       "data": true,
       "items_are_data": true,
-      "shared_params": {}
+      "shared_params": {},
+      "comment": "Блок «Каталог товаров» используется на двух страницах: «Список товаров» (/goodlist) и «Раздел каталога» (/catalog/{id}). Опции (в т.ч. «Во всю ширину») настраивайте на той странице, которую смотрите — это разные блоки."
     },
     "rubric_list": {
       "title": "Список рубрик",
@@ -8594,7 +8601,8 @@
       "check": "preview",
       "contract_classes": [
         "contacts-map",
-        "fullmap"
+        "fullmap",
+        "fullmap--bleed"
       ],
       "default_variant": "embed",
       "variants": {

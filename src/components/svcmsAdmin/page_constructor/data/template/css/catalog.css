@@ -9,21 +9,21 @@
    ============================================================ */
 
 /* ---- Заголовки модификаций: номер + название + описание ---- */
-.cmod { margin-top: 64px; }
-.cmod:first-of-type { margin-top: 8px; }
+.cmod { margin-top: var(--space-8); }
+.cmod:first-of-type { margin-top: var(--space-2); }
 
 .cmod__head {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
-  margin-bottom: 30px;
+  gap: var(--space-1);
+  margin-bottom: var(--space-6);
   max-width: 860px;
 }
 
 .cmod__num {
   display: inline-block;
-  padding: 5px 12px;
+  padding: var(--space-1) var(--space-3);
   border-radius: 100px;
   background: rgba(var(--primary-rgb), 0.12);
   color: var(--primary);
@@ -52,13 +52,13 @@
 .checker {
   display: flex;
   flex-direction: column;
-  gap: 56px;
+  gap: var(--space-7);
 }
 
 .checker__row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 40px 56px;
+  gap: var(--space-6) var(--space-7);
   align-items: center;
   color: inherit;
   text-decoration: none;
@@ -106,8 +106,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
-  padding: 16px 0;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
 }
 
 .checker__name {
@@ -127,8 +127,8 @@
 .checker__link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 4px;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
   color: var(--primary);
   font-weight: 600;
   text-decoration: none;
@@ -158,8 +158,8 @@
    ------------------------------------------------------------ */
 
 @media (max-width: 991px) {
-  .checker { gap: 40px; }
-  .checker__row { grid-template-columns: 1fr; gap: 20px; }
+  .checker { gap: var(--space-6); }
+  .checker__row { grid-template-columns: 1fr; gap: var(--space-4); }
   /* На одной колонке «шахматка» отключается: всегда фото сверху, текст снизу */
   .checker__row:nth-child(even) .checker__media { order: 0; }
   .checker__media { aspect-ratio: 16 / 9; }
@@ -167,9 +167,9 @@
 }
 
 @media (max-width: 575px) {
-  .cmod { margin-top: 48px; }
-  .checker { gap: 34px; }
-  .checker__row { gap: 14px; }
+  .cmod { margin-top: var(--space-7); }
+  .checker { gap: var(--space-6); }
+  .checker__row { gap: var(--space-3); }
 }
 
 /* ------------------------------------------------------------
@@ -196,14 +196,14 @@
    Вариант 4 — Карусель (Splide) в стилистике темы
    ------------------------------------------------------------ */
 
-.catalog-splide { padding: 0 0 8px; }
+.catalog-splide { padding: 0 0 var(--space-2); }
 .catalog-splide .splide__arrow {
   top: 50%;
   width: 42px;
   height: 42px;
   border: 1px solid var(--border);
   border-radius: 50%;
-  background: var(--white);
+  background: var(--surface);
   opacity: 1 !important;
   box-shadow: var(--shadow-sm);
   transition: background 0.25s ease, border-color 0.25s ease;
@@ -267,7 +267,7 @@
   bottom: 0;
   z-index: 1;
   margin: 0;
-  padding: 12px 18px;
+  padding: var(--space-3) var(--space-4);
   background: var(--catalog-plate);
   color: var(--catalog-plate-text);
   font-size: 1rem;
@@ -347,20 +347,20 @@
 
 .marquee {
   overflow: hidden;
-  padding: 6px 0;
+  padding: var(--space-1) 0;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
 .marquee__track {
   display: flex;
-  gap: 16px;
+  gap: var(--space-4);
   width: max-content;
   animation: marqueeScroll 46s linear infinite;
 }
 .marquee:hover .marquee__track { animation-play-state: paused; }
 .marquee__group {
   display: flex;
-  gap: 16px;
+  gap: var(--space-4);
   flex-shrink: 0;
 }
 
@@ -372,11 +372,11 @@
 .marquee__item {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 18px 8px 8px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
   border: 1px solid var(--border);
   border-radius: 100px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
   color: inherit;
   text-decoration: none;
@@ -403,13 +403,13 @@
 .cat-rubs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: var(--space-5);
 }
 
 .rub {
   display: flex;
   flex-direction: column;
-  background: var(--white);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -453,8 +453,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 14px 18px 0;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) 0;
 }
 .rub__name { margin: 0; font-size: 1.12rem; letter-spacing: -0.3px; }
 .rub__go {
@@ -474,7 +474,7 @@
 .rub:hover .rub__go { background: var(--primary); color: var(--white); }
 
 .rub__desc {
-  margin: 6px 18px 0;
+  margin: var(--space-1) var(--space-4) 0;
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.5;
@@ -483,14 +483,14 @@
 .rub__subs {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 18px 18px;
+  gap: var(--space-2);
+  margin: var(--space-3) var(--space-4) var(--space-4);
   padding: 0;
   list-style: none;
 }
 .rub__sub {
   display: inline-block;
-  padding: 5px 12px;
+  padding: var(--space-1) var(--space-3);
   border: 1px solid var(--border);
   border-radius: 100px;
   color: var(--muted);
@@ -510,7 +510,7 @@
    ------------------------------------------------------------ */
 
 @media (max-width: 991px) {
-  .catalog-splide { padding-bottom: 34px; }
+  .catalog-splide { padding-bottom: var(--space-6); }
   .cat-rubs { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -520,7 +520,7 @@
 }
 
 @media (max-width: 575px) {
-  .marquee__item { padding: 6px 14px 6px 6px; }
+  .marquee__item { padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1); }
   .marquee__item img { width: 34px; height: 34px; }
-  .rub__head { padding-top: 12px; }
+  .rub__head { padding-top: var(--space-3); }
 }

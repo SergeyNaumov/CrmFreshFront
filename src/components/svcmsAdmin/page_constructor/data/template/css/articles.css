@@ -11,21 +11,21 @@
 .articles-note {
   display: flex;
   align-items: center;
-  gap: 14px 22px;
+  gap: var(--space-3) var(--space-5);
   flex-wrap: wrap;
-  margin-bottom: 44px;
-  padding: 18px 22px;
+  margin-bottom: var(--space-7);
+  padding: var(--space-4) var(--space-5);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--white);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
 
 .articles-note__count {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
   border-radius: 100px;
   background: rgba(var(--primary-rgb), 0.12);
   color: var(--primary);
@@ -47,13 +47,13 @@
 .article-list {
   display: flex;
   flex-direction: column;
-  gap: 56px;
+  gap: var(--space-7);
 }
 
 .article-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 40px 56px;
+  gap: var(--space-6) var(--space-7);
   align-items: center;
   color: inherit;
   text-decoration: none;
@@ -101,8 +101,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
-  padding: 16px 0;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
 }
 
 .article-row__num {
@@ -120,14 +120,14 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px 16px;
+  gap: var(--space-1) var(--space-4);
   margin: 0;
 }
 
 .article-row__author {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--space-2);
   min-width: 0;
   font-size: var(--font-size-sm);
   color: var(--muted);
@@ -164,8 +164,8 @@
 .article-row__link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 4px;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
   color: var(--primary);
   font-weight: 600;
   text-decoration: none;
@@ -195,8 +195,8 @@
    ------------------------------------------------------------ */
 
 @media (max-width: 991px) {
-  .article-list { gap: 40px; }
-  .article-row { grid-template-columns: 1fr; gap: 20px; }
+  .article-list { gap: var(--space-6); }
+  .article-row { grid-template-columns: 1fr; gap: var(--space-4); }
   /* На одной колонке «шахматка» отключается: всегда фото сверху */
   .article-row:nth-child(even) .article-row__media { order: 0; }
   .article-row__media { aspect-ratio: 16 / 9; }
@@ -204,7 +204,7 @@
 }
 
 @media (max-width: 575px) {
-  .article-list { gap: 34px; }
-  .article-row { gap: 14px; }
-  .articles-note { margin-bottom: 30px; }
+  .article-list { gap: var(--space-6); }
+  .article-row { gap: var(--space-3); }
+  .articles-note { margin-bottom: var(--space-6); }
 }

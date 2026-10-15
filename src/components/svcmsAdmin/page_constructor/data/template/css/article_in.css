@@ -23,7 +23,7 @@
   display: block;
   width: 48px;
   height: 3px;
-  margin-top: 10px;
+  margin-top: var(--space-2);
   border-radius: var(--radius-xs);
   background: var(--gradient);
 }
@@ -44,7 +44,7 @@
   font-size: clamp(24px, 3.2vw, 34px);
   line-height: 1.25;
   color: var(--heading-color);
-  margin: 0 0 22px;
+  margin: 0 0 var(--space-5);
 }
 
 /* ---------- Автор статьи (необязательное поле) ----------
@@ -58,8 +58,8 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px 18px;
-  margin: 0 0 20px;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-4);
 }
 
 .article-in__meta[hidden] { display: none; }
@@ -67,7 +67,7 @@
 .article-in__author {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   font-size: var(--font-size-sm);
   color: var(--muted);
 }
@@ -86,7 +86,7 @@
   position: relative;
   float: none;
   width: 100%;
-  margin: 0 0 24px;
+  margin: 0 0 var(--space-5);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -107,7 +107,7 @@
   left: 16px;
   top: 16px;
   display: inline-block;
-  padding: 7px 14px;
+  padding: var(--space-2) var(--space-3);
   border-radius: 999px;
   background: rgba(var(--white-rgb), 0.92);
   color: var(--primary);
@@ -120,7 +120,7 @@
 
 /* Краткое описание статьи (аннонс) — жирная врезка под заголовком */
 .article-in__anons {
-  margin: 0 0 20px;
+  margin: 0 0 var(--space-4);
   font-size: 18px;
   line-height: 1.6;
   color: var(--heading-color);
@@ -135,7 +135,7 @@
 }
 
 .article-in__body p {
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
 }
 
 .article-in__body p:last-child {
@@ -144,7 +144,7 @@
 
 /* Статус загрузки (пока данные подгружаются) */
 .article-in__status {
-  padding: 24px 0;
+  padding: var(--space-5) 0;
   color: var(--muted);
 }
 
@@ -161,26 +161,26 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 34px;
-  padding-top: 24px;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
   border-top: 1px solid var(--border);
 }
 
 .article-in__nav-group {
   display: flex;
-  gap: 12px;
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
 .article-nav__btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-btn);
-  background: var(--white);
+  background: var(--surface);
   color: var(--heading-color);
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -219,9 +219,9 @@
 
 /* ---------- Блок «Другие статьи» (грид карточек-тилов) ---------- */
 .article-more {
-  margin-top: 60px;
-  padding-top: 40px;
-  padding-bottom: 8px;
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-2);
   border-top: 1px solid var(--border);
 }
 
@@ -229,19 +229,19 @@
   font-size: clamp(20px, 2.4vw, 26px);
   line-height: 1.3;
   color: var(--heading-color);
-  margin: 0 0 24px;
+  margin: 0 0 var(--space-5);
 }
 
 .article-more__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+  gap: var(--space-5);
 }
 
 .article-tile {
   display: flex;
   flex-direction: column;
-  background: var(--white);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -278,8 +278,8 @@
 .article-tile__body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 18px 20px 20px;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) var(--space-4);
   flex: 1;
 }
 
@@ -309,9 +309,9 @@
 .article-tile__link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   margin-top: auto;
-  padding-top: 6px;
+  padding-top: var(--space-1);
   color: var(--primary);
   font-weight: 600;
   font-size: var(--font-size-sm);
@@ -341,7 +341,7 @@
     float: none;
     width: 100%;
     max-width: none;
-    margin: 0 0 22px;
+    margin: 0 0 var(--space-5);
   }
 
   .article-more__grid {
@@ -380,7 +380,7 @@
    ============================================================ */
 /* magazine: широкая обложка сверху, узкая центрированная колонка текста. */
 .article-in--magazine .article-in__media { width: 100%; aspect-ratio: 21 / 9; }
-.article-in--magazine .article-in__title { max-width: 920px; margin: 0 auto 10px; text-align: center; }
+.article-in--magazine .article-in__title { max-width: 920px; margin: 0 auto var(--space-2); text-align: center; }
 .article-in--magazine .breadcrumbs-wrap { justify-content: center; }
 .article-in--magazine .article-in__meta { justify-content: center; }
 .article-in--magazine .article-in__body { max-width: 760px; margin: 0 auto; }
@@ -394,7 +394,7 @@
   width: 48%;
   max-width: 560px;
   aspect-ratio: 4 / 3;
-  margin: 0 36px 24px 0;
+  margin: 0 var(--space-6) var(--space-5) 0;
 }
 
 /* Адаптив для варианта split: на планшете/телефоне обложка встаёт сверху
@@ -405,6 +405,6 @@
     float: none;
     width: 100%;
     max-width: none;
-    margin: 0 0 22px;
+    margin: 0 0 var(--space-5);
   }
 }

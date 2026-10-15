@@ -10,17 +10,17 @@
 /* ---------------------------------------------------------
    Страница
    --------------------------------------------------------- */
-.search-page__bar { max-width: 640px; margin: 0 0 8px; }
+.search-page__bar { max-width: 640px; margin: 0 0 var(--space-2); }
 
 /* Общий поиск: блок по сущности */
-.search-section { margin-top: 44px; }
+.search-section { margin-top: var(--space-7); }
 
 .search-section__head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 .search-section__title {
@@ -57,11 +57,11 @@
 .search-hits {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: var(--space-3);
 }
 
 /* Общий поиск: карточки компактнее */
-.search-hits--compact { gap: 10px; }
+.search-hits--compact { gap: var(--space-2); }
 
 .search-hits__empty,
 .search-empty { color: var(--muted); }
@@ -70,9 +70,9 @@
 
 .search-hit {
   display: flex;
-  gap: 14px;
-  padding: 14px 16px;
-  background: var(--white);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
 }
@@ -111,7 +111,7 @@
 .search-hit__title a:hover { color: var(--primary); }
 
 .search-hit__anons {
-  margin: 6px 0 0;
+  margin: var(--space-1) 0 0;
   color: var(--muted);
   font-size: var(--font-size-sm);
   line-height: 1.5;
@@ -120,8 +120,8 @@
 .search-hit__meta {
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  margin: 8px 0 0;
+  gap: var(--space-3);
+  margin: var(--space-2) 0 0;
   font-size: var(--font-size-sm);
 }
 
@@ -129,7 +129,7 @@
 .search-hit__date { color: var(--muted); }
 
 /* Компактный вид: фото и текст плотнее */
-.search-hits--compact .search-hit { padding: 10px 12px; }
+.search-hits--compact .search-hit { padding: var(--space-2) var(--space-3); }
 .search-hits--compact .search-hit__media { width: 64px; height: 64px; }
 .search-hits--compact .search-hit__anons {
   display: -webkit-box;
@@ -142,7 +142,7 @@
    Догрузка по скроллу (.search-sentinel)
    --------------------------------------------------------- */
 .search-sentinel {
-  margin-top: 24px;
+  margin-top: var(--space-5);
   text-align: center;
   font-size: var(--font-size-sm);
   color: var(--muted);
@@ -156,5 +156,5 @@
    --------------------------------------------------------- */
 @media (max-width: 768px) {
   .search-hits { grid-template-columns: 1fr; }
-  .search-section__head { flex-wrap: wrap; gap: 4px 16px; }
+  .search-section__head { flex-wrap: wrap; gap: var(--space-1) var(--space-4); }
 }

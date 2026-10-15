@@ -8,12 +8,7 @@
    ============================================================ */
 :root {
   --container: 1300px;
-  --gutter: 24px;
-  --section-gap: 80px;
   --header-height: 76px;
-  --grid-gap: 24px;
-  --head-gap: 28px;
-  --head-space: 36px;
   --font-size-h1: 2.6rem;
   --font-size-h2: 2.05rem;
   --font-size-h3: 1.4rem;
@@ -30,7 +25,7 @@
 /* Заголовок секции — вертикальная черта слева вместо линии снизу.
    Регистр и трекинг сняты: подача «чертёжная» — обычный текст, а не капс. */
 .section-title {
-  padding-left: 22px;
+  padding-left: var(--space-5);
   font-size: var(--font-size-h2);
   letter-spacing: normal;
   text-transform: none;

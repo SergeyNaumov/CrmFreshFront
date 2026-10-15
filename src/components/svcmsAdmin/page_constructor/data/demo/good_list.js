@@ -46,6 +46,16 @@ window.dispatchEvent(new CustomEvent('t1:good_list', {
       {"id": 11,"header": "Сеть и связь"},
       {"id": 12,"header": "Питание и батареи"}
     ],
+    params: [
+      {"id": 1, "header": "Вес, кг", "type": 1, "min": 0.2, "max": 0.96,
+       "values": [0.2, 0.24, 0.29, 0.33, 0.38, 0.42, 0.46, 0.51, 0.55, 0.6, 0.65, 0.69, 0.73, 0.78, 0.82, 0.87, 0.92, 0.96]},
+      {"id": 2, "header": "Бренд", "type": 2,
+       "values": ["TechnoLine", "NovaTech", "SmartHome", "VoltPower", "PixelPro", "PulseFit", "AuraSound", "GameX"]},
+      {"id": 3, "header": "Цвет", "type": 2,
+       "values": ["белый", "чёрный", "синий", "графит", "серебристый"]},
+      {"id": 4, "header": "Страна", "type": 2,
+       "values": ["Россия", "Китай", "Южная Корея", "Вьетнам", "Тайвань"]}
+    ],
     list: [
       {"id": 1,"header": "Смартфон X1 Pro","photo": ["images/good/good_1_1.webp","images/good/good_1_2.webp","images/good/good_1_3.webp"],"price": 29990,"old_price": 34990,"anons": "6.7\" AMOLED, 128 ГБ, камера 50 Мп, NFC","url": "good_in.html?id=1","views": 19653,"published": "2026-09-21","category": ["new","action","specpredl"],"new": true,"spec": true,"hit": true,"rubricator_id": [1,101],"brand": "techno","specifications": [["Бренд","TechnoLine"],["Артикул","DS-0001"],["Гарантия","12 мес."],["Вес","0.20 кг"],["Цвет","белый"],["Страна","Россия"]]},
       {"id": 2,"header": "Смартфон Nova Pro","photo": ["images/good/good_2_1.webp","images/good/good_2_2.webp"],"price": 43990,"old_price": 49990,"anons": "6.5\" OLED, 256 ГБ, 108 Мп, беспроводная зарядка","url": "good_in.html?id=2","views": 19306,"published": "2026-09-17","category": ["new"],"new": true,"spec": false,"hit": false,"rubricator_id": [1,102],"brand": "techno","specifications": [["Бренд","TechnoLine"],["Артикул","DS-0002"],["Гарантия","12 мес."],["Вес","0.24 кг"],["Цвет","серебристый"],["Страна","Южная Корея"]]},

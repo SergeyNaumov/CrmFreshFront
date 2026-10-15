@@ -14,7 +14,7 @@
 .good-in {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: 40px 48px;
+  gap: var(--space-6) var(--space-7);
   align-items: start;
 }
 
@@ -93,7 +93,7 @@
   right: 12px;
   bottom: 12px;
   z-index: 2;
-  padding: 4px 12px;
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
   background: rgba(var(--dark-rgb), 0.6);
   color: var(--white);
@@ -106,8 +106,8 @@
 .gi-thumbs {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-  gap: 10px;
-  margin-top: 14px;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
 }
 
 .gi-thumb {
@@ -138,13 +138,13 @@
 .gi-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 /* ---------- Инфо: заголовок ---------- */
 .gi-name {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-2);
   font-size: clamp(1.45rem, 2.4vw, 2rem);
   font-weight: 800;
   line-height: 1.25;
@@ -153,7 +153,7 @@
 
 /* ---------- Инфо: аннонс ---------- */
 .gi-anons {
-  margin: 0 0 18px;
+  margin: 0 0 var(--space-4);
   font-size: 14px;
   color: var(--muted);
 }
@@ -164,9 +164,9 @@
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 6px 14px;
-  margin-bottom: 20px;
-  padding-bottom: 18px;
+  gap: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--border);
 }
 .gi-price__new {
@@ -185,7 +185,7 @@
   font-weight: 600;
   color: var(--success);
   background: rgba(var(--success-rgb), 0.12);
-  padding: 3px 10px;
+  padding: 3px var(--space-2);
   border-radius: var(--radius-pill);
 }
 
@@ -193,9 +193,9 @@
 .gi-buy {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-3);
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-4);
 }
 
 /* Степпер количества */
@@ -205,7 +205,7 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-btn);
   overflow: hidden;
-  background: var(--white);
+  background: var(--surface);
 }
 .gi-qty__btn {
   width: 42px;
@@ -230,7 +230,7 @@
   font-size: 1rem;
   font-weight: 700;
   color: var(--heading-color);
-  background: var(--white);
+  background: var(--surface);
   -moz-appearance: textfield;
 }
 .gi-qty__input::-webkit-outer-spin-button,
@@ -249,7 +249,7 @@
 .gi-buy__oneclick { font-weight: 600; }
 .gi-buy__remove {
   min-width: 0;
-  padding: 12px 18px;
+  padding: var(--space-3) var(--space-4);
   font-size: 0.875rem;
   color: var(--muted);
 }
@@ -264,21 +264,21 @@
 
 /* ---------- Описание / Характеристики (табы) ---------- */
 .good-in__tabs {
-  padding-top: 8px;
+  padding-top: var(--space-2);
   border-top: 1px solid var(--border);
 }
 
 .gi-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 28px;
-  margin-bottom: 20px;
+  gap: var(--space-1) var(--space-5);
+  margin-bottom: var(--space-4);
   border-bottom: 1px solid var(--border);
 }
 
 .gi-tab {
   position: relative;
-  padding: 8px 2px 12px;
+  padding: var(--space-2) 2px var(--space-3);
   border: none;
   background: transparent;
   color: var(--muted);
@@ -313,7 +313,7 @@
 .gi-tab-panel[hidden] { display: none; }
 
 .gi-desc__p {
-  margin: 0 0 14px;
+  margin: 0 0 var(--space-3);
   max-width: none;
   color: var(--body-color);
   line-height: 1.7;
@@ -331,7 +331,7 @@
 .good-in__specs dt,
 .good-in__specs dd {
   margin: 0;
-  padding: 11px 16px;
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border);
   border-right: 1px solid var(--border);
 }
@@ -352,15 +352,15 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 24px;
+  gap: var(--space-1);
+  margin-bottom: var(--space-5);
   font-size: 14px;
   color: var(--muted);
 }
 .gi-mini-nav__label {
   font-weight: 600;
   color: var(--heading-color);
-  margin-right: 4px;
+  margin-right: var(--space-1);
 }
 .gi-mini-nav__link {
   display: inline-flex;
@@ -368,7 +368,7 @@
   justify-content: center;
   min-width: 32px;
   height: 32px;
-  padding: 0 8px;
+  padding: 0 var(--space-2);
   border-radius: var(--radius-btn);
   background: var(--light);
   color: var(--heading-color);
@@ -383,7 +383,7 @@
 /* ---------- Статусы загрузки ---------- */
 .gi-status {
   grid-column: 1 / -1;
-  padding: 60px 20px;
+  padding: var(--space-8) var(--space-4);
   text-align: center;
   font-size: 15px;
   color: var(--muted);
@@ -415,11 +415,11 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 84px;
   grid-template-areas: "stage thumbs";
-  gap: 12px;
+  gap: var(--space-3);
   align-items: start;
 }
 .gv-split .gi-stage         { grid-area: stage; }
-.gv-split .gi-thumbs        { grid-area: thumbs; grid-template-columns: 1fr; gap: 10px; margin-top: 0; }
+.gv-split .gi-thumbs        { grid-area: thumbs; grid-template-columns: 1fr; gap: var(--space-2); margin-top: 0; }
 .gv-split .good-in__tabs { order: 3; }
 
 /* ============================================================
@@ -429,18 +429,18 @@
   display: grid;
   grid-template-columns: 84px minmax(0, 1fr);
   grid-template-areas: "thumbs stage";
-  gap: 12px;
+  gap: var(--space-3);
   align-items: start;
 }
 .gv-vertical .gi-stage  { grid-area: stage; }
-.gv-vertical .gi-thumbs { grid-area: thumbs; grid-template-columns: 1fr; gap: 10px; margin-top: 0; }
+.gv-vertical .gi-thumbs { grid-area: thumbs; grid-template-columns: 1fr; gap: var(--space-2); margin-top: 0; }
 .gv-vertical .gi-count  { display: none; }
 
 /* ============================================================
    ВАРИАНТ 4. gv-wide — «товарный hero» на всю ширину,
    горизонтальная лента миниатюр, инфо под ним в 2 колонки
    ============================================================ */
-.gv-wide { grid-template-columns: 1fr; gap: 26px; }
+.gv-wide { grid-template-columns: 1fr; gap: var(--space-5); }
 .gv-wide .good-in__gallery { grid-column: 1 / -1; }
 
 .gv-wide .gi-stage {
@@ -460,8 +460,8 @@
 }
 .gv-wide .gi-thumbs {
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 12px;
-  margin-top: 16px;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 .gv-wide .gi-nav--prev { left: 20px; }
 .gv-wide .gi-nav--next { right: 20px; }
@@ -471,7 +471,7 @@
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 0 40px;
+  gap: 0 var(--space-6);
 }
 .gv-wide .good-in__tabs { grid-column: 1 / -1; border-top: none; padding-top: 0; }
 
@@ -481,7 +481,7 @@
 @media (max-width: 991px) {
   .good-in,
   .gv-split,
-  .gv-wide { grid-template-columns: 1fr; gap: 28px; }
+  .gv-wide { grid-template-columns: 1fr; gap: var(--space-5); }
   .gv-split .good-in__info { order: 0; position: static; }
   .gv-wide .gi-stage { aspect-ratio: 4 / 3; }
   .gv-wide .good-in__info { grid-template-columns: 1fr; }
@@ -512,14 +512,14 @@
   .good-in__specs dd { border-right: none; }
   .good-in__specs dt {
     background: none;
-    padding: 10px 0 2px;
+    padding: var(--space-2) 0 2px;
     border-bottom: none;
     font-size: 12px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
-  .good-in__specs dd { padding: 0 0 10px; border-bottom-color: var(--border); }
+  .good-in__specs dd { padding: 0 0 var(--space-2); border-bottom-color: var(--border); }
 }
 /* ---------- Доп. действия на странице товара (избранное/сравнение) ---------- */
-.gi-buy__extra { display: flex; align-items: center; gap: 8px; }
+.gi-buy__extra { display: flex; align-items: center; gap: var(--space-2); }

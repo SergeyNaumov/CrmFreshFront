@@ -211,6 +211,15 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
     var cat = readCat(root) || {};
     var orgname = root.getAttribute('data-orgname') || '';
 
+    // Фильтры по числовым параметрам (опция «Фильтры по параметрам»):
+    // список {id, header, type, values, min, max} кладёт движок в #good_list_params.
+    var catalogParams = [];
+    var paramsEl = document.getElementById('good_list_params');
+    if (paramsEl) {
+      try { catalogParams = JSON.parse(paramsEl.textContent || '[]') || []; }
+      catch (e) { catalogParams = []; }
+    }
+
     var app = Vue.createApp({
       components: { Perpage: window.Perpage || {} },
       directives: { photoGallery: window.PhotoGallery.directive },
@@ -232,6 +241,11 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           priceMax: '',   // цена «до»
           sort: 'views',  // views | price_asc | price_desc | published
           category: 'all',// all | подкатегория из данных товара
+          catalogParams: catalogParams, // параметры фильтров (type1 диапазон / type2 фасет)
+          paramMin: {},   // type=1: param_id -> «от»
+          paramMax: {},   // type=1: param_id -> «до»
+          paramVals: {},  // type=2: param_id -> {value: true} (выбранные)
+          paramExpanded: {}, // type=2: param_id -> true («показать все»)
           rubric: normRubric(cat.selected), // 0/all | id подкатегории
           rubrics: rubrics, // дерево рубрик {id, header, child?}
           rubricCounts: {}, // счётчики товаров по рубрикам
@@ -284,6 +298,25 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
             var p = Number(g.price) || 0;
             if (pmin != null && p < pmin) return false;
             if (pmax != null && p > pmax) return false;
+            // Фильтры по параметрам: g.params_map = {param_id: число|строка}
+            for (var k = 0; k < vm.catalogParams.length; k++) {
+              var prm = vm.catalogParams[k];
+              var val = (g.params_map || {})[prm.id];
+              if (prm.type === 2) {
+                var sel = vm.paramVals[prm.id];
+                if (!sel) continue;
+                var chosen = Object.keys(sel).filter(function (x) { return sel[x]; });
+                if (!chosen.length) continue;
+                if (chosen.indexOf(String(val)) === -1) return false;
+              } else {
+                var lo = vm.paramMin[prm.id], hi = vm.paramMax[prm.id];
+                if ((lo === '' || lo == null) && (hi === '' || hi == null)) continue;
+                if (val == null) return false;
+                var n = Number(val);
+                if (lo !== '' && lo != null && n < Number(lo)) return false;
+                if (hi !== '' && hi != null && n > Number(hi)) return false;
+              }
+            }
             return true;
           });
         },
@@ -324,10 +357,14 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
         priceMax: 'resetPage',
         sort: 'resetPage',
         category: 'resetPage',
+        paramMin: { handler: 'resetPage', deep: true },
+        paramMax: { handler: 'resetPage', deep: true },
+        paramVals: { handler: 'resetPage', deep: true },
         page: 'syncURL'
       },
 
       created: function () {
+        this.ensureParamState();
         this.load();
       },
 
@@ -365,6 +402,26 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
               var d = e.detail;
               if (!d || Number(d.catalog_id) !== vm.catalogId) return;
               window.removeEventListener('t1:good_list', listener);
+              // PREVIEW: числовые параметры для фильтров («Фильтры по параметрам»)
+              // и синтетический params_map у демо-товаров, чтобы фильтр работал.
+              if (d.params && d.params.length) {
+                vm.catalogParams = d.params;
+                vm.ensureParamState();
+                (d.list || []).forEach(function (g, i) {
+                  if (g.params_map) return;
+                  var m = {};
+                  d.params.forEach(function (pr) {
+                    if (pr.type === 2) {
+                      var vals = pr.values || [];
+                      if (vals.length) m[pr.id] = vals[i % vals.length];
+                    } else {
+                      var lo = Number(pr.min) || 0, hi = Number(pr.max) || 0;
+                      m[pr.id] = lo + (hi - lo) * ((i % 5) / 4);
+                    }
+                  });
+                  g.params_map = m;
+                });
+              }
               vm.recv(d.list || [], d.rubrics);
             };
             window.addEventListener('t1:good_list', listener);
@@ -474,12 +531,34 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           this.page = Number(n);
         },
 
+        // type=2: гарантируем объект выбранных значений по каждому параметру
+        ensureParamState: function () {
+          for (var i = 0; i < (this.catalogParams || []).length; i++) {
+            var prm = this.catalogParams[i];
+            if (prm.type === 2 && !this.paramVals[prm.id]) {
+              this.paramVals[prm.id] = {};
+            }
+          }
+        },
+
+        // type=2: сколько значений показывать (≤12 — все, иначе 10 + «Показать все»)
+        visibleVals: function (prm) {
+          var vals = prm.values || [];
+          if (vals.length <= 12 || this.paramExpanded[prm.id]) return vals;
+          return vals.slice(0, 10);
+        },
+
         reset: function () {
           this.q = '';
           this.priceMin = '';
           this.priceMax = '';
           this.sort = 'views';
           this.category = 'all';
+          this.paramMin = {};
+          this.paramMax = {};
+          this.paramVals = {};
+          this.paramExpanded = {};
+          this.ensureParamState();
           this.page = 1;
           this.setRubric(0);
         },

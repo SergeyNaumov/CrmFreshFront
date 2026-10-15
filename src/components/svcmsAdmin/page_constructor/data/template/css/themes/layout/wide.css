@@ -6,12 +6,7 @@
    ============================================================ */
 :root {
   --container: 1440px;
-  --gutter: 28px;
-  --section-gap: 80px;
   --header-height: 84px;
   --font-size-h1: 2.7rem;
   --font-size-h2: 2.1rem;
-  --grid-gap: 28px;
-  --head-gap: 28px;
-  --head-space: 44px;
 }

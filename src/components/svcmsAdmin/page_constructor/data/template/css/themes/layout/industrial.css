@@ -7,17 +7,12 @@
    ============================================================ */
 :root {
   --container: 1320px;
-  --gutter: 24px;
-  --section-gap: 72px;
   --header-height: 72px;
   --grid-size: 32px;
   --font-size-h1: 2.8rem;
   --font-size-h2: 2.15rem;
   --font-size-h3: 1.45rem;
   --font-weight-heading: 800;
-  --grid-gap: 24px;
-  --head-gap: 32px;
-  --head-space: 28px;
 }
 
 /* Видимый topbar (в базовой компоновке скрыт) */
@@ -30,7 +25,7 @@
   display: block;
   width: 48px;
   height: 3px;
-  margin-top: 12px;
+  margin-top: var(--space-3);
   border-radius: 0;
   background: var(--primary);
 }

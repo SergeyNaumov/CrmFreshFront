@@ -150,3 +150,19 @@ RULES.md                     этот файл
 - Пресеты/кастомы хранят полный набор токенов; шрифт — CSS `:root{--font…}`.
 - `name` схемы — идентификатор (латиница/дефисы) в URL.
 - `PAGE_CONSTRUCTOR_CONFIG` (глобал) задаёт `templateBase`, оси темы и `customCss` для превью.
+
+## Сетка, отступы и «во всю ширину» (bleed)
+
+- Единая система отступов/ритма — в движке: `agent-doc/19_layout_grid.md`.
+  Токены: `--space-1..8`, `--container`, `--gutter`, `--sidebar-w`,
+  `--grid-gap`, `--section-y`, `--head-gap`, `--head-space`.
+- **Контент всегда в `.container`** (боковые отступы `--gutter`).
+- **«Во всю ширину» = фон edge-to-edge** (класс `section--bleed`), контент
+  остаётся в отступах. В превью — `renderBlock` вешает `section--bleed` и
+  сохраняет `.container`. Медиа-баннеры `slider`/`promo_parallax` — raw
+  (реальный edge-to-edge).
+- Вертикальный ритм — через `.section`/`--section-y`; блокам не добавлять
+  свои margin между собой.
+- Блок **«Каталог товаров»** (`product_list`) стоит на двух страницах:
+  `/goodlist` («Список товаров») и `/catalog/{id}` («Раздел каталога») — это
+  разные блоки, опции настраивай на нужной странице.

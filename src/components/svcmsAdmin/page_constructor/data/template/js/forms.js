@@ -167,7 +167,7 @@
     fields: [
       { name:'action', value:'form_send' },
     { name:'good_id', value:'42' },
-    { name:'good_name', value:'Смартфон X1 Pro' },
+    { name:'good_name', value:'Товар' },
     { name:'name', chk:'name', value:'' },
     { name:'phone', repl:'phone', chk:'phone', value:'' },
     { name:'delivery', value:delivery_list[0], chk:'required' },

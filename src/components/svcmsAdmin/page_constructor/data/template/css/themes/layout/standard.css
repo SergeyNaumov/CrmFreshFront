@@ -13,10 +13,5 @@
    ============================================================ */
 :root {
   --container: 1240px;
-  --gutter: 20px;
-  --section-gap: 88px;
   --header-height: 80px;
-  --grid-gap: 24px;
-  --head-gap: 24px;
-  --head-space: 44px;
 }
