@@ -66,6 +66,16 @@
                         />
 
                         </template>
+                        <!-- Карта выбора координат (Leaflet + OpenStreetMap) -->
+                        <template v-if="l.name=='map_lon'">
+                          <div class="addr-map">
+                            <div id="addr-map" class="addr-map__canvas"></div>
+                            <p class="addr-map__hint">
+                              Клик по карте или перетаскивание маркера — координаты
+                              подставятся в «Широта»/«Долгота» и сохранятся.
+                            </p>
+                          </div>
+                        </template>
                         <div v-if="l.saved" class="saved">
                             сохранено
                         </div>
@@ -132,8 +142,18 @@
 </template>
 
 <script>
-let t
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
+import iconUrl from 'leaflet/dist/images/marker-icon.png'
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { bus } from '../main'
+
+// Leaflet по умолчанию ищет иконки маркера по относительному пути — в сборке
+// Vite подставляем адреса, которые возвращает бандлер (иначе маркер не видно).
+L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl })
+
+let t
 export default {
         props:["params"],
         provide(){
@@ -145,6 +165,8 @@ export default {
         },
         data: () => ({
           cur_tab:0,
+          addr_map:null,     // экземпляр карты Leaflet (вкладка «Адрес и карта»)
+          addr_marker:null,  // маркер выбранной точки
           tabs:[],
           form:{},
           config:'',
@@ -172,9 +194,13 @@ export default {
         },
         beforeUnmount(){
           bus.$off('change_field',t._change_field);
+          this.destroy_map();
         },
         watch:{
-          
+          // Переключили вкладку — создаём карту на «Адрес и карта», иначе убираем.
+          cur_tab(){
+            this.$nextTick(()=>this.init_map())
+          }
         },
         methods: {
           _change_field(){
@@ -246,6 +272,8 @@ export default {
 
 
                   }
+                  // карта выбора координат (создаётся, если активна «Адрес и карта»)
+                  t.$nextTick(()=>t.init_map())
                 }
               }
             )
@@ -301,6 +329,66 @@ export default {
               500
             )
           },
+          // --- Карта выбора координат (Leaflet + OpenStreetMap, вкладка addr) ---
+          // Карта и поля «Широта»/«Долгота» синхронизированы: клик по карте или
+          // перетаскивание маркера записывает координаты в константы map_lat/map_lon.
+          init_map(){
+            let el=document.getElementById('addr-map')
+            if(!el){
+              // вкладка «Адрес и карта» не активна — карта не нужна
+              this.destroy_map()
+              return
+            }
+            if(this.addr_map){ // уже создана — пересчитываем размеры
+              this.addr_map.invalidateSize()
+              return
+            }
+            let lat=parseFloat(this.field_value('map_lat')),
+                lon=parseFloat(this.field_value('map_lon'))
+            if(!isFinite(lat) || !isFinite(lon)){
+              lat=55.751244; lon=37.618423 // Москва, если координаты не заданы
+            }
+            let map=L.map(el,{center:[lat,lon],zoom:14,scrollWheelZoom:true})
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+              maxZoom:19,
+              attribution:'© OpenStreetMap contributors'
+            }).addTo(map)
+            let marker=L.marker([lat,lon],{draggable:true}).addTo(map)
+            map.on('click',(e)=>{
+              marker.setLatLng(e.latlng)
+              this.set_point(e.latlng.lat,e.latlng.lng)
+            })
+            marker.on('dragend',()=>{
+              let p=marker.getLatLng()
+              this.set_point(p.lat,p.lng)
+            })
+            this.addr_map=map
+            this.addr_marker=marker
+            this.$nextTick(()=>map.invalidateSize())
+          },
+          destroy_map(){
+            if(this.addr_map){
+              this.addr_map.remove()
+              this.addr_map=null
+              this.addr_marker=null
+            }
+          },
+          field_value(name){ // текущее значение поля из списка констант
+            let f=t.list.find(f=>f.name==name)
+            return f ? f.value : ''
+          },
+          set_point(lat,lon){ // точка на карте -> поля «Широта»/«Долгота»
+            let lat_f=t.list.find(f=>f.name=='map_lat'),
+                lon_f=t.list.find(f=>f.name=='map_lon')
+            if(lat_f){
+              lat_f.value=lat.toFixed(6)
+              this.change(lat_f)
+            }
+            if(lon_f){
+              lon_f.value=lon.toFixed(6)
+              this.change(lon_f)
+            }
+          },
           show_field(field){
             // для табов: условие отображения поля
             return !field.hide && (!t.tabs.length || t.tabs[t.cur_tab].name == field.tab)
@@ -318,6 +406,12 @@ export default {
 <style scoped>
   .const {margin: 20px; width: 100%; max-width: 1280px;}
   .saved {color: green; padding-bottom: 15px;}
+  /* Карта выбора координат (вкладка «Адрес и карта») */
+  .addr-map {margin-top: 10px; max-width: 640px;}
+  .addr-map__canvas {height: 360px; width: 100%;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.24); border-radius: 4px;}
+  .addr-map__hint {margin: 6px 0 0; font-size: 10pt;
+    color: rgba(var(--v-theme-on-surface), 0.6);}
   table {
     width: 100%;
     border-left: 1px solid gray;

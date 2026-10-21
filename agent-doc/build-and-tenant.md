@@ -30,6 +30,23 @@ On branch `vue3` the build runs through **Vite**; Vue CLI (`build/config/*`) is 
 | `trade` | `npm run build_trade` |
 | `assyst-ant.manager`, `beyeezy.manager`, `crimea.manager`, `svcms.manager`, `translab.manager` | `npm run build_svcms` |
 
+### `./build/svcms.admin` vs `./build/svcms.manager` — админка и менеджер собираются по-разному
+
+`svcmsadmin`-панель и svcms-manager (CRM) — **разные тенанты**: у них разный `base`
+и разные адреса деплоя. Билдим тем скриптом, что соответствует правке:
+
+| Что правим | Команда | npm mode | base | Куда деплоится |
+|---|---|---|---|---|
+| svcmsadmin (`/vue/svcmsadmin-*`, например `CreateProject.vue`) | `./build/svcms.admin` | `npm run build` (default) | `/` | `rsync dist/` → `naumov@178.57.220.192:/var/www/svcms/admin/frontend` + env-специфичный `configure.js` (`build/config/svcmsadmin/configure.js`) |
+| svcms-manager (CRM, `mode svcms`) | `./build/svcms.manager` | `npm run build_svcms` | `/manager/` | `rsync dist/` → `naumov@178.57.220.192:/var/www/svcms-async/manager/frontend` + env-специфичный `configure.js` (`build/config/svcmsmanager/configure.js`) |
+
+Оба скрипта деплоят **rsync по ssh** (без смонтированной папки), не удаляют серверные файлы
+(без `--delete`) и исключают `files` (на сервере это симлинк). Параметры переопределяются
+env: `SSH_PORT`, `SSH_USER`, `SSH_HOST`, `REMOTE_DIR`.
+
+Правило: правка админки — `./build/svcms.admin`; правка менеджера — `./build/svcms.manager`.
+Не гонять `npm run build` / `npm run build_svcms` напрямую: в скриптах ещё и деплой.
+
 ```bash
 npm run build[_x]
 basedir="/mnt/.../target"

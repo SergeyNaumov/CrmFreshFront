@@ -47,6 +47,17 @@ Vuetify 3 ships `ress.css` (`vuetify/lib/styles/main.css:2382`): `* { padding: 0
 - Vuetify 3 defaults to `filled` 56px vs Vue 2 outlined ~40px → `variant:'outlined', density:'compact'` in `createVuetify({ defaults })` for `VTextField`/`VTextarea`/`VSelect`/`VAutocomplete`/`VCombobox`/`VFileInput`, `density:'compact'` for `VCheckbox`/`VSwitch`, `theme.rounded=false` (4px).
 - Current selectors `.v-field`, `.v-field__input`, `.v-field__prepend-inner`, `.v-field-label--floating` (10px, `rgb(var(--v-theme-primary))`). All Vuetify 2 selectors (`.v-input__slot`, `.v-select__slot`, `.v-card__title`, `.v-toolbar__title`, `.v-treeview-node__*`, …) are gone; `:deep()` for internals in scoped styles.
 
+## Диалоги (`v-dialog`)
+
+`v-dialog` телепортирует контент в `.v-overlay-container` — **вне** корня
+компонента. Поэтому scoped-селекторы с предком-корнем (`.create-project .links`,
+`.project-clone .clone-form`) внутри диалога **не матчатся**: ссылки слипаются,
+`display:grid` не применяется. Стили содержимого диалога выносим в отдельный
+**не-scoped** `<style>`-блок с уникальными классами (`cp-result__*`, `.ds-dlg__*`)
+или вешаем класс на сам `v-card` и пишем `.my-dlg .x` в не-scoped блоке; остальные
+стили компонента остаются `scoped`. Примеры: `svcmsAdmin/CreateProject.vue`
+(окна успеха/ошибки), `svcmsAdmin/DomainSync.vue`, `svcmsAdmin/ProjectClone.vue`.
+
 ## Date/time picker
 
 - Month/year grids `.v-date-picker-months/years__content` 3 columns; picker buttons need `margin:0` (global `button { margin: 1rem }` breaks the layout, adds horizontal scroll); day grid `repeat(7, minmax(0,1fr))`, day button 32px; 12px after the colored header; months `height:auto`, years fixed height + scroll.

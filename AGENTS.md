@@ -12,6 +12,10 @@ npm run build_trade  # mode trade,   base /CrmFresh/
 npm run build_svcms  # mode svcms,   base /manager/
 ```
 
+Деплой — **только скриптами** `build/`: `./build/svcms.admin` (админка, mode default)
+или `./build/svcms.manager` (svcms-manager, mode svcms) — в зависимости от того, что
+билдим. Подробности — [agent-doc/build-and-tenant.md](agent-doc/build-and-tenant.md).
+
 Tenant = `mode` in `vite.config.js`; runtime config = `public/configure.js`.
 
 ## Agent rules

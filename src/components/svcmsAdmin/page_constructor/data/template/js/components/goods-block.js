@@ -91,6 +91,20 @@ window.GoodsCard = {
     return { photoIdx: {} };
   },
 
+  computed: {
+    // Флаги функционала из <head> (window.SITE_FEATURES, см. block/head.html):
+    // выключенная опция (корзина/сравнение/избранное) убирает кнопку с карточки.
+    // Если флаг не задан (старый кэш) — считаем функционал включённым.
+    features: function () {
+      var f = window.SITE_FEATURES || {};
+      return {
+        basket: f.basket !== false,
+        compare: f.compare !== false,
+        favorites: f.favorites !== false
+      };
+    }
+  },
+
   template: `
 <article v-if="mode === 'row'" class="product-row">
   <div class="product-row__media" v-photo-gallery="g">
@@ -121,7 +135,7 @@ window.GoodsCard = {
     </div>
   </div>
   <div class="product-row__actions">
-    <button class="action-btn" :class="{ 'is-active': favState(g) }" type="button"
+    <button v-if="features.favorites" class="action-btn" :class="{ 'is-active': favState(g) }" type="button"
             :aria-label="favState(g) ? 'В избранном' : 'Добавить в избранное'"
             @click="fav(g)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
@@ -129,18 +143,18 @@ window.GoodsCard = {
         <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
       </svg>
     </button>
-            <button class="action-btn" :class="{ 'is-active': cmpState(g) }" type="button"
+            <button v-if="features.compare" class="action-btn" :class="{ 'is-active': cmpState(g) }" type="button"
                     :aria-label="cmpState(g) ? 'Убрать из сравнения' : 'Добавить к сравнению'" @click="cmp(g)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 5h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M9 5v14M15 5v14"/></svg>
             </button>
-    <button v-if="cartCount(g) === 0" class="btn btn-primary btn-sm product-row__buy"
+    <button v-if="features.basket && cartCount(g) === 0" class="btn btn-primary btn-sm product-row__buy"
             type="button" @click="add(g)">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
       </svg>
       <span>В корзину</span>
     </button>
-    <a v-else class="btn btn-primary btn-sm product-row__buy is-in-cart" href="/basket">
+    <a v-else-if="features.basket" class="btn btn-primary btn-sm product-row__buy is-in-cart" href="/basket">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
       </svg>
@@ -175,7 +189,7 @@ window.GoodsCard = {
     </div>
   </div>
   <div class="product-card__actions">
-    <button class="action-btn" :class="{ 'is-active': favState(g) }" type="button"
+    <button v-if="features.favorites" class="action-btn" :class="{ 'is-active': favState(g) }" type="button"
             :aria-label="favState(g) ? 'В избранном' : 'Добавить в избранное'"
             @click="fav(g)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
@@ -183,7 +197,7 @@ window.GoodsCard = {
         <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
       </svg>
     </button>
-            <button class="action-btn" :class="{ 'is-active': cmpState(g) }" type="button"
+            <button v-if="features.compare" class="action-btn" :class="{ 'is-active': cmpState(g) }" type="button"
                     :aria-label="cmpState(g) ? 'Убрать из сравнения' : 'Добавить к сравнению'" @click="cmp(g)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 5h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M9 5v14M15 5v14"/></svg>
             </button>
@@ -197,14 +211,14 @@ window.GoodsCard = {
       <span class="product-card__price">{{ priceFmt(g.price) }}</span>
       <span v-if="g.old_price" class="product-card__price-old">{{ priceFmt(g.old_price) }}</span>
     </div>
-    <button v-if="cartCount(g) === 0" class="btn btn-primary btn-sm product-card__buy"
+    <button v-if="features.basket && cartCount(g) === 0" class="btn btn-primary btn-sm product-card__buy"
             type="button" @click="add(g)">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
       </svg>
       <span>В корзину</span>
     </button>
-    <a v-else class="btn btn-primary btn-sm product-card__buy is-in-cart" href="/basket">
+    <a v-else-if="features.basket" class="btn btn-primary btn-sm product-card__buy is-in-cart" href="/basket">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
       </svg>

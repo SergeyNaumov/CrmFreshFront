@@ -5,7 +5,7 @@
     </v-btn>
 
     <v-dialog v-model="dialog" max-width="560" :persistent="running">
-      <v-card>
+      <v-card class="clone-dlg">
         <v-card-title>Клонирование проекта</v-card-title>
         <v-card-text>
           <div class="clone-form">
@@ -124,7 +124,13 @@ export default {
 
 <style scoped>
 .project-clone .clone-form { display: flex; flex-direction: column; gap: var(--app-space-field, 16px); }
-.project-clone .status { margin-top: 6px; }
-.project-clone .ok { margin-top: 6px; color: green; }
-.project-clone .err { margin-top: 6px; color: red; white-space: pre-wrap; }
+</style>
+
+<!-- Стили внутри v-dialog: БЕЗ scoped — контент диалога телепортируется
+     в .v-overlay-container, поэтому «.project-clone .x» в scoped не матчится. -->
+<style>
+.clone-dlg .clone-form { display: flex; flex-direction: column; gap: var(--app-space-field, 16px); }
+.clone-dlg .status { margin-top: 6px; }
+.clone-dlg .ok { margin-top: 6px; color: #2e7d32; }
+.clone-dlg .err { margin-top: 6px; color: #b00020; white-space: pre-wrap; }
 </style>

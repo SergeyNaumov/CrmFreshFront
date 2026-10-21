@@ -168,6 +168,8 @@ import FieldPassword from '../fields/password';
                     res='field-project_clone'; break;
                 case 'project_struct':
                     res='field-project_struct'; break;
+                case 'domain_sync':
+                    res='field-domain_sync'; break;
           };
 
           return res;

@@ -9,6 +9,10 @@ set -euo pipefail
 #
 # ENV: SSH_PORT=7725 SSH_USER=naumov SSH_HOST=178.57.220.192
 #      REMOTE_DIR=/var/www/svcms-async/manager/frontend   (== /var/www/svcms/manager/frontend, nginx)
+#
+# Favicon: каноническая иконка лежит в build/favicon/ (DigitalStrateg, как на
+# demo1.digitalstrateg.ru). В dist/ попадает public/favicon.ico, поэтому он
+# исключён из rsync -- загруженный на прод favicon билдом не перезатирается.
 
 SSH_PORT="${SSH_PORT:-7725}"
 SSH_USER="${SSH_USER:-naumov}"
@@ -36,8 +40,17 @@ RSYNC=(rsync -rltvz --no-perms --no-owner --no-group --human-readable
 
 # Заливаем ВЕСЬ dist/ (js/css/fonts/index.html/dist-ассеты/configure.js),
 # не удаляя серверные файлы. `files` не трогаем: на сервере это симлинк
-# на ../backend/files.
-echo "▶ rsync dist/ -> $DST (без --delete, исключая files)"
-"${RSYNC[@]}" --exclude='files' dist/ "$DST"
+# на ../backend/files. `/favicon*` (только корень) не трогаем: favicon на проде
+# живёт отдельно от билда (build/favicon), деплой его НЕ перезаписывает.
+# Вложенные favicon* (page_constructor/template/images/favicon.svg) обновляем.
+echo "▶ rsync dist/ -> $DST (без --delete, исключая files, /favicon*)"
+"${RSYNC[@]}" --exclude='files' --exclude='/favicon*' dist/ "$DST"
+
+# Favicon: кладём только если на сервере его ещё нет (--ignore-existing).
+# Загруженный вручную favicon на проде не перезатирается никогда.
+if [ -d "$SCRIPT_DIR/favicon" ]; then
+    echo "▶ favicon -> $DST (--ignore-existing: не перезаписывать существующий)"
+    "${RSYNC[@]}" --ignore-existing "$SCRIPT_DIR/favicon/" "$DST"
+fi
 
 echo "✅ Деплой svcms-manager: $REMOTE_DIR"

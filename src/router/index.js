@@ -49,6 +49,9 @@ const TableComponent = () => import('../components/Table.vue')
 const FileNavigator = () => import('../components/FileNavigator/FileNavigator.vue')
 const PageConstructor = () => import('../components/svcmsAdmin/PageConstructor.vue')
 const CreateProject = () => import('../components/svcmsAdmin/CreateProject.vue')
+const DomainSync = () => import('../components/svcmsAdmin/DomainSync.vue')
+const ProjectDataTransfer = () => import('../components/svcmsManager/ProjectDataTransfer.vue')
+const ProjectApi = () => import('../components/svcmsManager/ProjectApi.vue')
 const Login = () => import('../components/Login.vue')
 const Register = () => import('../components/Register.vue')
 const Remember = () => import('../components/Remember.vue')
@@ -73,6 +76,9 @@ const routes = [
   { path: '/vue/page-constructor/:domain_id/:view(page)/:page_id/block/:block_id', name: 'shell-page-constructor-block', component: PageConstructor, props: shellPageConstructorProps },
   { path: '/vue/page-constructor/:domain_id/theme/:axis(color|style|layout|font)', name: 'shell-page-constructor-theme', component: PageConstructor, props: shellPageConstructorProps },
   { path: '/vue/svcmsadmin-createproject', name: 'shell-create-project', component: CreateProject, props: shellProps },
+  { path: '/vue/svcmsadmin-domainsync', name: 'shell-domain-sync', component: DomainSync, props: shellProps },
+  { path: '/vue/ds-data', name: 'shell-ds-data', component: ProjectDataTransfer, props: shellProps },
+  { path: '/vue/ds-api', name: 'shell-ds-api', component: ProjectApi, props: shellProps },
 
   // ---------- Full-screen (без меню), URL /... ----------
   { path: '/edit_form/:config/:id?', name: 'edit-form', component: EditForm, props: blankProps, alias: ['/edit-form/:config/:id?'], meta: { blank: true } },
@@ -87,6 +93,9 @@ const routes = [
   { path: '/page-constructor/:domain_id/:view(page)/:page_id/block/:block_id', name: 'page-constructor-block', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
   { path: '/page-constructor/:domain_id/theme/:axis(color|style|layout|font)', name: 'page-constructor-theme', component: PageConstructor, props: pageConstructorProps, meta: { blank: true } },
   { path: '/svcmsadmin-createproject', name: 'headapp-create-project', component: CreateProject, props: blankProps, meta: { blank: true } },
+  { path: '/svcmsadmin-domainsync', name: 'headapp-domain-sync', component: DomainSync, props: blankProps, meta: { blank: true } },
+  { path: '/ds-data', name: 'headapp-ds-data', component: ProjectDataTransfer, props: blankProps, meta: { blank: true } },
+  { path: '/ds-api', name: 'headapp-ds-api', component: ProjectApi, props: blankProps, meta: { blank: true } },
   { path: '/const/:config', name: 'headapp-const', component: Const, props: blankProps, meta: { blank: true } },
   { path: '/stat-tool/:config', name: 'headapp-stat-tool', component: StatTool, props: blankProps, meta: { blank: true } },
   { path: '/memo-aggregate/:config', name: 'memo-aggregate', component: Fallback, props: blankProps, meta: { blank: true } },
@@ -101,6 +110,19 @@ const routes = [
   // ---------- Неизвестные URL: iframe (/src:...) или главная ----------
   { path: '/:pathMatch(.*)*', name: 'fallback', component: Fallback },
 ]
+
+// Срезает base сборки ('/manager/') с пути, отданного бэкендом/хранилищем:
+// vue-router сам добавляет base, поэтому push() ждёт путь без него.
+export function toRouterPath(link) {
+  link = link || ''
+  const b1 = window.BaseUrl || import.meta.env.BASE_URL || '/'
+  const b0 = b1.replace(/\/$/, '')
+  if (b1 !== '/' && link.indexOf(b1) === 0)
+    return '/' + link.slice(b1.length)
+  if (b0 && link.indexOf(b0) === 0)
+    return link.slice(b0.length) || '/'
+  return link
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

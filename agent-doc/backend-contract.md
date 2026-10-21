@@ -47,6 +47,8 @@ Files: `LeftMenu.vue`, `left_menu_item.vue`, `App.vue`, `router/index.js`. Routi
 
 `AdminTable.vue:333-341`: `checkbox`/`switch` without `values` becomes a `select` «Не использовать/Да/Нет».
 
+Tool links: `search_plugin` = `[{name, icon, title, link?}]` (export/import etc., rows come from the config's `plugins.py`). `search_plugin_panel` (bool, from the config key `search_plugin_panel`) tells the frontend to render them in the collapsible «Инструменты (N)» panel instead of the flat list ([components.md](components.md)). Missing/false → legacy flat list.
+
 ## AdminTree
 
 `GET`/`POST /admin-tree/<config>` → `{form, tree}`.
@@ -109,18 +111,69 @@ See [components.md](components.md) and backend docs `11`/`17`.
 
 Редактор блоков — автономный конструктор из `svcms-templates/page_constructor/`, копируется скриптом `sync_to_admin.sh` в `public/page_constructor/` и грузится в iframe. Обмен блоков через `localStorage` (`svcms.page_constructor.v1`), `templateBase` из `/init`: если http(s) — используется он, иначе локальная копия `public/page_constructor/template/` (её тоже кладёт `sync_to_admin.sh`, каталог gitignored). Базовый набор страниц — именованные наборы `base_pages_set` (`id,name,sort,is_default`) + строки `template_pages_base` (`set_id,url,header,sort,blocks`, `UNIQUE(set_id,url)`), сидируются из `base_pages.json`; текущий набор — `etalon-1` (`is_default=1`). Кнопка «Базовый набор» (диалог) выбирает набор и перезаписывает/дополняет страницы домена; управление: создать (пустой или из домена), переименовать, обновить из домена, удалить. Миграция — `routes/svcmsadmin/page_constructor/base_sets_migration.sql`. Шапка/подвал и тема в набор не входят. Тема — таблица `domain_constructor` (`domain_id PK`, имена осей на домен) + таблицы схем `domain_theme_{color,style,layout,font}` (составной PK `domain_id,header`; полный CSS схем, `is_custom`; `domain_id=0` — общий пресет, `>0` — индивидуальный домена); `/init` отдаёт тему в `theme`/`config`, кастомный CSS прокидывается в превью через `PAGE_CONSTRUCTOR_CONFIG.customCss` (поддержка в `preview-frame.js`). Сайт подключает `theme/<id>/styles.css` или `theme-schemes/<axis>/<name>/file.css`. Шапка и подвал домена — `domain_constructor.header_blocks/footer_blocks` (JSON блока v2), правятся один раз на домен (эндпоинты `/structure/*`); на страницах в редакторе они не редактируются, а показываются плашками и подмешиваются в превью/сохранение. Миграция: `routes/svcmsadmin/page_constructor/domain_migration.sql`.
 
-## CreateProject (быстрое создание проекта)
+## CreateProject (создание проекта)
 
-`CreateProject.vue` (пункт меню `svcmsadmin-createproject`, роут `/vue/svcmsadmin-createproject`) → `BackendBase+'/svcmsadmin/project/create'`. Аналог legacy `legacy/svcms-admin/fast_create.pl`; поле «место хранения» убрано, менеджер опционален. Создание синхронное, ответы `{success, errors}`.
+`CreateProject.vue` (пункт меню `svcmsadmin-createproject`, роут `/vue/svcmsadmin-createproject`) → `BackendBase+'/svcmsadmin/project/create'`. Создание выполняется **фоновой задачей** (`lib/background`, `action='project_create'`), клиент показывает прогресс через WS/поллинг. Ответ `start` — `{success, task_id}`; результат — в `crm_background.result`.
 
-| Method | Path | Body | Payload |
+Форма: режим «Новый проект» / «На базе существующего сайта».
+
+| Method | Path | Параметры/тело | Ответ |
 |---|---|---|---|
-| GET | `/templates` | — | `{templates:[{template_id,header,folder,type}], source_project_id}` — только шаблоны `type=6` (DS Конструктор) |
-| POST | `/start` | `{header, domain, template_id, create_manager?, login?, password?, demo?, source_project_id?}` | `{project_id, domain_id, template_id, template_folder, login, password, pages, demo, source_project_id, warnings}` |
+| GET | `/init` | — | `{source_project_id, source_domain, source_option_ids, ds_options[]}` |
+| GET | `/domains` | `term`, `constructor=0\|1` | `{list:[{v,d,template_id,project_id,type}]}` — autocomplete доменов |
+| GET | `/options` | `project_id` | `{option_ids:[...]}` — опции конструктора проекта |
+| GET | `/next-port` | — | `{port}` — `max(port в 1..65535)+1` |
+| GET | `/check-domain` | `domain` | `{exists, domain_id?, project_id?, project_header?}` — проверка занятости домена до создания |
+| POST | `/start` | `{mode:'new'\|'base', header, domain, source_domain_id?, server_type:3\|4, port?, create_manager?, login?, password?, ds_mode?, ds_option_ids?, copy_data?}` | `{success, task_id}` |
 
-Порядок: `project` → `admin_project` (текущий админ) → `domain` (`template_id`, `server_type=4`, `not_cache_nginx=1`) → `const` (имена из проекта-эталона, значения пустые) → опц. `manager` + `manager_project_access` (пустой пароль генерируется на бэкенде, 8 символов; хэшируется через `lib/password.py` — для `mysql_encrypt` в ENCRYPT/DES-совместимый crypt, для `mysql_sha2` — sha2-256) → конструктор (`domain_constructor` с осями темы из эталона и header/footer из `page_constructor/base_pages.json`; `domain_page` из `template_pages_base`) → при `demo=true` копируются `ds_*` проекта-эталона и каталоги `sites/files/project_<id>`, `sites/projects/project_<id>`, `conf_projects/project_<id>`.
+Логика задачи:
+- **`mode='new'`** — новый проект. `ds_mode=true` → на базе конструктора: если задан `source_domain_id` (конструкторный домен), из него берутся страницы/тема/константы/опции; иначе используется существующий `template.type=6`, базовый набор страниц, тема эталона, опции — пресет эталона или выбор пользователя. `ds_mode=false` → обычный проект: новая запись `template` (папка = домен, `type=1`), пустые каталоги, без `const`/`project_struct_public`.
+- **`mode='base'`** — клон. Для **конструкторного** источника (`template.type=6`) шаблон **переиспользуется** (тот же `template_id`, папка `2026/ds-constructor`): своя запись `template`, `template_const`/`url_run_code`/`url_rules` и копия папки шаблона не создаются. Для **обычного** источника — как раньше: своя запись `template` (папка = домен, тип источника) + копия папки из `paths.templates` + `template_const`/`url_run_code`/`url_rules`. Общее для обоих: `const` (со значениями), `project_struct_public`, страницы и тема из образца — **всегда**; при `copy_data=true` дополнительно данные сущностей (`COLS`), `content`, `ds_*` (с перепривязкой id, см. ниже), `struct_<pid>_*` (с переименованием) и файлы (`sites/files|projects`, `conf_projects`, `files`, папка шаблона).
+- **Данные DS при копировании** (`_copy_ds_tables`): таблицы копируются в порядке зависимостей, строится карта `old_id → new_id`, ссылки переписываются (`rubricator_id`, `brand`, `good_id`, `param_id`, `catalog_id`, `zakaz_id`), self-ссылки (`parent_id` у `ds_catalog`/`ds_service`/`ds_top_menu`/`ds_bottom_menu`) — вторым проходом. Так же копируются `in_ext_url` (**ЧПУ**: `in_url` = `/catalog/<id>` перепривязывается на новый id) и `promo` (SEO-тексты страниц); доменные схемы темы `domain_theme_*` переносятся вместе с темой (без них `/theme.css` собирается без своей оси — например `style=armit` живёт в `domain_theme_style` с `domain_id` домена).
+- Порт: только для `server_type=4` (Fastapi) — `max+1` или заданный; для PSGI — `NULL`.
+- Опции: `ds_option_ids=null` → как у источника/эталона, `[]` → ни одной, список → выбранные.
 
-Проект-эталон по умолчанию — `config_svcms_admin.py → fast_create.source_project_id` (`5837`); пути — `paths.engine_root`, `paths.conf_projects`. При ошибке выполняется компенсирующий откат (транзакций в `FreshDB` нет). Валидация: шаблон существует и `type=6`, домен и логин уникальны. Миграция: `routes/svcmsadmin/project_create.sql` (drop `template.ds_constructor`, enable пункта меню).
+Порядок: `project` → `admin_project` (текущий админ) → `template`/`domain` → `const`/`project_struct_public` → опц. `manager` + `manager_project_access` (пустой пароль генерируется на бэкенде, 8 символов; хэшируется через `lib/password.py`) → конструктор (`domain_constructor`, `domain_theme_*`, `domain_page`, `domain_rkn`, `ds_options_project`) → данные/файлы (режим base + `copy_data`: `COLS`, `content`, `ds_*`, `in_ext_url`, `promo`, `struct_*`).
+
+Проект-эталон по умолчанию — `config_svcms_admin.py → fast_create.source_project_id` (`5837`); пути — `paths.engine_root`, `paths.conf_projects`. При ошибке — компенсирующий откат (включая созданные каталоги и `struct_*`). Валидация: домен ≤200 символов и уникален, логин уникален, `server_type` ∈ {3,4}, порт 1..65535, в режиме base образец обязателен. Миграция: `routes/svcmsadmin/project_create.sql`.
+
+## DomainSync (перенос на другой домен)
+
+`DomainSync.vue` — два входа: поле-компонент **`domain_sync`** в карточке домена
+(кнопка «Перенос на другой домен», `form.id` = `domain_id`) и пункт меню
+`svcmsadmin-domainsync` (роут `/vue/svcmsadmin-domainsync`). API —
+`BackendBase+'/svcmsadmin/domain/sync'`, операция **фоновая**
+(`action='domain_sync'`, прогресс через WS/поллинг; результат — в
+`crm_background.result`).
+
+| Method | Path | Параметры | Ответ |
+|---|---|---|---|
+| GET | `/preview` | `src_domain_id`, `dst_domain_id?` | `{success, src, dst, src_counts, dst_counts, warnings}` — профиль (`is_constructor`), что переедет, предупреждения |
+| POST | `/start` | `{src_domain_id, mode:'copy'\|'move', dst_domain_id?, new_domain?, new_folder?, template_mode:'inherit'\|'clone', parts?, pages_mode:'replace'\|'merge', delete_old?, port?}` | `{success, task_id}` |
+
+Зачем: настройки конструктора (страницы/тема/схемы/РКН) привязаны к **`domain_id`**
+(домен = сайт), а рантайм DS-сайтов — к `project_id` (systemd `svcms.sites<id>`);
+домен запроса движок выбирает по `Host`. Перенос нужен при «переезде» проекта на
+новый домен, когда старый домен остаётся в таблице `domain`.
+
+- **Два режима данных** (в UI — радиокнопки): `copy` — источник продолжает
+  работать, у приёмника копия; `move` — строки переезжают (`UPDATE domain_id`),
+  источник теряет настройки.
+- **Профиль по `template.type`**: `6` — конструктор (`domain_page`,
+  `domain_constructor`, `domain_theme_*` только доменные, `domain_rkn`); иначе —
+  обычный проект (конструкторских таблиц нет, переносятся `domain_rkn`,
+  `project_hosting`, `domain_dns_records_*`, `for_robots_id`, а шаблон можно
+  скопировать отдельно: `template_mode='clone'` + `new_folder`).
+- **Приёмник**: существующий домен (`dst_domain_id`) или новый (`new_domain` —
+  создаётся копией полей источника, для `server_type=4` берётся свободный порт,
+  SSL сбрасывается, `need_clean_cache=1`).
+- **Ограничения**: `move` не работает, если у приёмника уже есть данные
+  конструктора; конструктор нельзя переносить в домен другого проекта;
+  `delete_old` — только при `move`. При ошибке — компенсация (перенесённое
+  возвращается, созданный домен/`template` удаляются).
+- После операции вручную: DNS, SSL, vhost nginx, кэш. Старый домен выводится из
+  обслуживания через `project_hosting.disabled=1` (движок отдаёт «Сайт
+  выключен!»); редиректа 301 в движке нет.
 
 ## Known gaps
 

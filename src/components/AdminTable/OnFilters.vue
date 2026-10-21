@@ -79,7 +79,10 @@ export default {
     this.filter_list=this.on_filters
     setTimeout(
         ()=>{
-            document.querySelector('#on_filters').addEventListener('keydown', e=>{
+            let el=document.querySelector('#on_filters');
+            if(!el)
+              return;
+            el.addEventListener('keydown', e=>{
               if (e.keyCode === 13) {
                 // можете делать все что угодно со значением текстового поля
                 console.log('press enter in on_filters');

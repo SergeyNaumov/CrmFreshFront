@@ -33,6 +33,7 @@
 </template>
 <script>
 import left_menu_item from './components/left_menu_item';
+import { toRouterPath } from './router';
 export default{
     components:{
       'left_menu_item':left_menu_item
@@ -72,7 +73,7 @@ export default{
             if(!link) return;
             // get_link отдаёт полный URL с базой сборки (/manager/), а vue-router
             // сам добавляет base -> перед push срезаем базу, иначе двойной префикс.
-            link = this.to_router_path(link);
+            link = toRouterPath(link);
 
             this.setMenuItemParams(item.params || {});
             this.setMenuItem(item);
@@ -81,15 +82,6 @@ export default{
               this.$router.replace(link);
             else
               this.$router.push(link);
-        },
-        to_router_path(link){
-            const b1 = window.BaseUrl || '/';       // '/manager/' на проде, '/' локально
-            const b0 = b1.replace(/\/$/,'');        // '/manager' или ''
-            if (b1 !== '/' && link.indexOf(b1) === 0)
-                return '/' + link.slice(b1.length);
-            if (b0 && link.indexOf(b0) === 0)
-                return link.slice(b0.length) || '/';
-            return link;
         },
         get_link(item){
             let params={};
@@ -127,6 +119,12 @@ export default{
                   return UrlPrefix+'/vue/filenavigator/'+params.config
                 if(item.value=='svcmsadmin-createproject')
                   return UrlPrefix+'/vue/svcmsadmin-createproject'
+                if(item.value=='svcmsadmin-domainsync')
+                  return UrlPrefix+'/vue/svcmsadmin-domainsync'
+                if(item.value=='ds-data')
+                  return UrlPrefix+'/vue/ds-data'
+                if(item.value=='ds-api')
+                  return UrlPrefix+'/vue/ds-api'
             }
             if(item.type=='src'){
               return UrlPrefix+'/src:'+item.value

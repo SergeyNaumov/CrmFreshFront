@@ -31,10 +31,11 @@ Shell (`/vue/...`):
 | `/vue/Schedule/:config` | Schedule |
 | `/vue/table/:config` | Table |
 | `/vue/filenavigator/:config/:base(.*)*` | FileNavigator |
-| `/vue/page-constructor/:template_id` | PageConstructor |
-| `/vue/svcmsadmin-createproject` | CreateProject (быстрое создание проекта) |
+| `/vue/page-constructor/:domain_id[/view/:page_id[/block/:block_id]]` | PageConstructor (данные привязаны к домену) |
+| `/vue/svcmsadmin-createproject` | CreateProject (создание проекта) |
+| `/vue/svcmsadmin-domainsync` | DomainSync (перенос настроек конструктора на другой домен) |
 
-Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/admin_table/:config`, `/admin_tree/:config`, `/table/:config`, `/const/:config`, `/transfere_cards/:config`, `/stat-tool/:config`, `/memo-aggregate/:config`, `/parser-excel/:config`, `/documentation/:config`, `/Schedule/:config`, `/VideoList/:config`, `/filenavigator/:config/:base(.*)*` (alias `/file-navigator`), `/page-constructor/:template_id`, `/svcmsadmin-createproject`, `/login`, `/register`, `/remember`.
+Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/admin_table/:config`, `/admin_tree/:config`, `/table/:config`, `/const/:config`, `/transfere_cards/:config`, `/stat-tool/:config`, `/memo-aggregate/:config`, `/parser-excel/:config`, `/documentation/:config`, `/Schedule/:config`, `/VideoList/:config`, `/filenavigator/:config/:base(.*)*` (alias `/file-navigator`), `/page-constructor/:domain_id`, `/svcmsadmin-createproject`, `/svcmsadmin-domainsync`, `/login`, `/register`, `/remember`.
 
 `filenavigator` base dir: `:base` segments (e.g. `/filenavigator/<config>/files/sub`) or `?dir=<path>` become the navigator root (chroot); `?charset=` sets the file encoding (default utf-8).
 
@@ -49,6 +50,10 @@ Full-screen (`meta.blank`, URLs without `/vue`): `/edit_form/:config/:id?`, `/ad
 - Active item: `left_menu_item.vue` compares `get_link(item)` with `$route.path`; a parent is highlighted/expanded by `hasActiveChild`.
 - A branch is expanded on the first render when the backend sends a true `open` (`is_open`: `true|1|'1'|'true'`, MySQL tinyint) — editor checkbox «Сразу показывать подпункты», `admin_menu_new.open`. Legacy key `show` (hand-written SV-CMS project menus) is honored too.
 - On `config` change in `AdminTable` the filter state resets (watch `params`, remount `OnFilters` via `:key`).
+
+## Login return
+
+`link_prev_login` (localStorage) is written by the axios interceptor / the shell `redirect` check ([architecture.md](architecture.md)). After a successful `POST /login`, `Login.vue` normalizes the stored URL, strips the tenant base with `toRouterPath` (exported from `router/index.js`, also used by `LeftMenu`) and `$router.push`es it, then emits `bus.$emit('auth:login')` so `App.loadStartpage()` refreshes the menu. `toRouterPath` is required because the stored value is a full URL with the base (`/manager/vue/...`) while `router.push` expects a base-less path — otherwise it matches only the catch-all and `FallbackRoute` sends the user to `/`. If the target is not a Vue route (resolve matches only `fallback`) or is `/login`, it falls back to a full `location.href` navigation.
 
 ## Other
 

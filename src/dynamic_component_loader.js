@@ -48,6 +48,7 @@ export const dynamic_component_loader = (app) => {
 	app.component('field-project_export', defineAsyncComponent(() => import('./components/svcmsAdmin/ProjectExport.vue')));
 	app.component('field-project_clone', defineAsyncComponent(() => import('./components/svcmsAdmin/ProjectClone.vue')));
 	app.component('field-project_struct', defineAsyncComponent(() => import('./components/svcmsAdmin/ProjectCreateStruct.vue')));
+	app.component('field-domain_sync', defineAsyncComponent(() => import('./components/svcmsAdmin/DomainSync.vue')));
 
 	// Фильтры:
 	app.component('filter-text', defineAsyncComponent(() => import('./components/AdminTable/filters/text.vue')));

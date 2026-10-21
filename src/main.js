@@ -128,6 +128,17 @@ app.config.globalProperties.$theme = theme
 app.config.globalProperties.$scheme = scheme
 app.config.globalProperties.$schemeDefaults = schemeDefaults
 window.scheme = scheme
+axios.interceptors.response.use((response) => {
+  const data = response && response.data
+  if (
+    data && typeof data === 'object' && !data.success &&
+    data.redirect && data.redirect !== location.pathname
+  ) {
+    localStorage.setItem('link_prev_login', location.href)
+    location.href = data.redirect
+  }
+  return response
+})
 app.config.globalProperties.$http = axios
 app.config.globalProperties.$toDate = function (v) {
   if (!v) return null

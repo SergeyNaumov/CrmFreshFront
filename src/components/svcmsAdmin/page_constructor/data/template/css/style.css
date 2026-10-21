@@ -381,6 +381,17 @@ button {
 .logo:hover img { transform: scale(1.04); }
 .logo:hover { color: var(--primary); }
 
+/* Слоган рядом с логотипом (только если задана константа «Слоган»). */
+.logo__slogan {
+  align-self: center;
+  max-width: 200px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: var(--text-muted, #6b7280);
+}
+
 .logo__mark {
   display: grid;
   place-items: center;
@@ -770,10 +781,13 @@ button {
 .burger.is-active span:nth-child(2) { opacity: 0; }
 .burger.is-active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Мобильное меню (подменю раскрыты — всегда видны, с отступом) */
+/* Мобильное меню (подменю раскрыты — всегда видны, с отступом).
+   Горизонтальный отступ задаём тем же --gutter, что и .container: иначе
+   shorthand `padding` ниже перебивает padding контейнера и меню липнет
+   к левому краю. */
 .header__mobile {
   display: none;
-  padding: var(--space-2) 0 var(--space-4);
+  padding: var(--space-2) var(--gutter, var(--space-4)) var(--space-4);
 }
 
 .header__mobile a { display: block; padding: var(--space-3) 0; border-bottom: var(--border-width) solid var(--border); color: var(--on-surface); font-weight: 600; }
@@ -3054,12 +3068,27 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 
 .footer__grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
+  /* Бренд | колонки меню | контакты. Число колонок меню динамическое
+     (верхнеуровневые пункты ds_bottom_menu), поэтому они живут в
+     подсетке .footer__menus, а не в общем гриде. */
+  grid-template-columns: 1.4fr 2fr 1.4fr;
   gap: var(--space-7);
   padding-bottom: var(--space-7);
 }
 
 .footer__col { min-width: 0; }
+
+/* Колонки нижнего меню: подсетка с авто-переносом. minmax(min(100%, 150px), 1fr)
+   держит колонки компактными, но не даёт им схлопнуться; на узких
+   контейнерах (layout темы) влезает минимум 2 колонки. Внутренний зазор
+   --space-6 — чуть уже outer --space-7: группировка колонок меню плотнее. */
+.footer__menus {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+  gap: var(--space-6);
+  align-content: start;
+}
 
 .footer__brand { display: flex; align-items: center; gap: var(--space-2); font-weight: 800; font-size: 20px; color: var(--white); }
 
@@ -3317,7 +3346,27 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
   /* Вертикальный ритм задаёт --section-y (clamp) — точечные override не нужны. */
   .header__nav { display: none; }
   .burger { display: flex; }
-  .header__mobile { display: block; }
+
+  /* Меню — скроллируемая панель ВНУТРИ липкой шапки. Иначе шапка выше
+     экрана и её низ (длинное меню) недостижим: страница скроллится, а
+     шапка «липнет» — до конца меню не добраться. Шапка не выше экрана,
+     меню прокручивается само (overscroll-behavior гасит прокрутку фона). */
+  .header {
+    max-height: 100vh;
+    max-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  .header > .topbar,
+  .header > .header__main { flex: 0 0 auto; }
+  .header__mobile {
+    display: block;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
   .header__mobile.is-hidden { display: none; }
 
   /* Мобильный вид шапки (любой вид): логотип и кнопки в одной строке,
@@ -3344,6 +3393,9 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
   .about { gap: var(--space-6); }
   .contact { grid-template-columns: 1fr; gap: var(--space-6); }
   .footer__grid { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  /* Контакты — во второй колонке второго ряда (под меню), как было
+     до правки при 4 детях грида. */
+  .footer__grid > .footer__col:last-child { grid-column: 2; }
 
   .hero__arrow { display: none; }
 }
@@ -3372,6 +3424,10 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
   .review-card { flex: 0 0 calc(50% - 11px); }
 
   .footer__grid { grid-template-columns: 1fr; gap: var(--space-5); }
+
+  /* На мобильных колонки меню складываем в одну — как было до правки. */
+  .footer__menus { grid-template-columns: 1fr; }
+  .footer__grid > .footer__col:last-child { grid-column: auto; }
 }
 
 @media (max-width: 575px) {
@@ -4745,7 +4801,9 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 .fullmap__frame iframe { display: block; width: 100%; height: 460px; border: 0; }
 
 /* ---------- Карта во всю ширину («Во всю ширину» / вариант full) ----------
-   Медиа-блок карты выходит edge-to-edge, без скруглений и тени. */
+   Единственное исключение из правила «bleed = фон, контент в .container»:
+   медиа-блок карты выходит edge-to-edge, без скруглений и тени. Заголовок
+   блока остаётся в .container (его рисует обёртка в index.html). */
 .fullmap--bleed {
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -5311,8 +5369,23 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
    Галерея (page_type: galery): gal-*
    ============================================================ */
 .gal-filter { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
-.gal-chip { padding: var(--space-2) var(--space-4); border: var(--border-width) solid var(--border); border-radius: var(--radius-pill); background: var(--surface); cursor: pointer; }
+.gal-chip {
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--border-color, var(--border));
+  border-radius: var(--radius-pill);
+  background: var(--light);
+  color: var(--on-surface);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+}
+.gal-chip__count { color: var(--muted); font-weight: 600; }
+.gal-chip:hover { border-color: var(--primary); color: var(--primary); }
+.gal-chip:hover .gal-chip__count { color: var(--primary); }
+.gal-chip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .gal-chip.is-active { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+.gal-chip.is-active .gal-chip__count { color: var(--on-primary); opacity: 0.75; }
 .gal-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--card-pad); }
 .gal-item {
   position: relative; display: block; border-radius: var(--card-radius); overflow: hidden;

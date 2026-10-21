@@ -90,6 +90,86 @@ export function preload(t){
 
 export function load(t){
 
+    if(!(t.parser.refs && t.parser.refs.length)){
+      do_load(t)
+      return
+    }
+
+    t.uploading=true;
+    t.$http.post(
+      BackendBase+`/parser-excel/${t.params.config}`,
+      {
+        action:'check_refs',
+        loaded_filename:t.loaded_filename,
+        data_line_number: t.data_line_number+t.cnt_rows_deleted_preview,
+        fields:t.parser.fields,
+        before_load_values: before_load_values(t.before_load_fields)
+      }
+    ).then(r=>{
+      let d=r.data;
+      t.uploading=false;
+      if(!d.success){
+        t.errors=d.errors
+        return
+      }
+      t.refs_check=d.refs||[]
+      if(refs_has_issues(t)){
+        t.refs_dialog=true
+        return
+      }
+      do_load(t)
+    }).catch(e=>{
+      t.uploading=false; t.errors=[e]
+    })
+}
+
+export function refs_has_issues(t){
+  for(let r of (t.refs_check||[])){
+    if((r.missing && r.missing.length) || (r.bad_ids && r.bad_ids.length))
+      return true
+  }
+  return false
+}
+
+export function refs_has_missing(t){
+  for(let r of (t.refs_check||[])){
+    if(r.missing && r.missing.length)
+      return true
+  }
+  return false
+}
+
+export function create_and_continue(t){
+  t.uploading=true;
+  let chain=Promise.resolve()
+  for(let r of (t.refs_check||[])){
+    if(!(r.missing && r.missing.length))
+      continue
+    chain=chain.then(()=>t.$http.post(
+      BackendBase+`/parser-excel/${t.params.config}`,
+      {action:'create_refs', ref:r.key, names:r.missing}
+    ).then(res=>{
+      if(!res.data.success)
+        throw (res.data.errors || ['не удалось создать справочник'])
+    }))
+  }
+  chain.then(()=>{
+    t.refs_dialog=false
+    do_load(t)
+  }).catch(e=>{
+    t.uploading=false
+    t.refs_dialog=false
+    t.errors=Array.isArray(e)?e:[e]
+  })
+}
+
+export function skip_refs(t){
+  t.refs_dialog=false
+  do_load(t)
+}
+
+export function do_load(t){
+
     t.uploading=true;
     t.$http.post(
       BackendBase+`/parser-excel/${t.params.config}`,
@@ -105,6 +185,7 @@ export function load(t){
 
       t.uploading=false;
       if(d.success){
+        t.message=d.message || '';
         t.success_parse=true;
       }
       t.errors=d.errors

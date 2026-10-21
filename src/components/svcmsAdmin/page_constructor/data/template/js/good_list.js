@@ -261,6 +261,16 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
       },
 
       computed: {
+        // Флаги функционала из <head> (window.SITE_FEATURES): выключенная опция
+        // убирает кнопку корзины/сравнения/избранного из карточки.
+        features: function () {
+          var f = window.SITE_FEATURES || {};
+          return {
+            basket: f.basket !== false,
+            compare: f.compare !== false,
+            favorites: f.favorites !== false
+          };
+        },
         // Список подкатегорий для чипов — собирается из данных товаров
         categories: function () {
           var seen = {};

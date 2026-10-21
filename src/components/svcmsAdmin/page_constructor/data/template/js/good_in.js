@@ -115,6 +115,16 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
       },
 
       computed: {
+        // Флаги функционала из <head> (window.SITE_FEATURES, block/head.html):
+        // выключенная опция (корзина/сравнение/избранное) убирает элемент.
+        features: function () {
+          var f = window.SITE_FEATURES || {};
+          return {
+            basket: f.basket !== false,
+            compare: f.compare !== false,
+            favorites: f.favorites !== false
+          };
+        },
         curPhoto: function () {
           return this.photos[this.cur] || '';
         },

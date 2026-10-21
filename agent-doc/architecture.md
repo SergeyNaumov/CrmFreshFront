@@ -17,6 +17,10 @@
 
 Lazy registration: `dynamic_component_loader(Vue/app)` ([components.md](components.md)); eager list: [fields.md](fields.md). Branch `main` equivalents: `Vue.prototype.*`, `Vue.component(...)`, `bus = new Vue()`, `new Vue({ vuetify, render: h => h(App) }).$mount('#app')`.
 
+### Unauthorized redirect (axios interceptor)
+
+`main.js` registers `axios.interceptors.response.use` on the shared `axios` instance (the same object as `$http`). On any response where `data.redirect && !data.success && data.redirect !== location.pathname` it stores `link_prev_login = location.href` and navigates to `data.redirect`. This covers every component at once: the backend middleware (`lib/session.py`) answers **any** request with `{success:0, redirect:'<BaseUrl>/login', errors:['Вы не авторизованы']}` when the session is missing. The `!data.success` guard keeps business redirects from `/edit-form` (`form.redirect`) untouched, and the `location.pathname` check prevents a loop on the login page. Successful login returns to `link_prev_login` via the router (see [router.md](router.md)).
+
 ## Event bus
 
 `bus.$on('event', cb)` / `bus.$emit('event', data)` / `bus.$off(...)`; `bus` is used in 25+ files.

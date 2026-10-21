@@ -10,10 +10,24 @@
               
               <p v-if="0"><a href="">Загрузка / сохранение фильтров</a></p>
               
-              <div v-if="search_plugin" class="search_plugin">
+              <v-card v-if="search_plugin_panel && search_plugin.length" class="plugins_panel">
+                <v-toolbar density="compact" class="plugins_panel_toolbar" @click="toggle_plugins">
+                  <v-app-bar-nav-icon color="primary"></v-app-bar-nav-icon>
+                  <v-list-subheader>Инструменты ({{search_plugin.length}})</v-list-subheader>
+                  <v-spacer/>
+                  <v-icon size="small">{{ plugins_open ? 'fa-chevron-up' : 'fa-chevron-down' }}</v-icon>
+                </v-toolbar>
+                <div v-show="plugins_open" class="plugins_panel_body">
+                  <div v-for="(sp,idx) in search_plugin" :key="'sp'+idx">
+                    <v-icon size="small" color="primary">{{sp.icon}}</v-icon>
+                    <a href="" @click.prevent="sp.link ? $router.push(sp.link) : go_search_plugin(sp.name)">{{sp.title}}</a>
+                  </div>
+                </div>
+              </v-card>
+              <div v-else-if="search_plugin.length" class="search_plugin">
                 <div v-for="(sp,idx) in search_plugin" :key="'sp'+idx">
-                  <v-icon color="primary">{{sp.icon}}</v-icon>
-                  <a href="" @click.prevent="go_search_plugin(sp.name)">{{sp.title}}</a>
+                  <v-icon size="small" color="primary">{{sp.icon}}</v-icon>
+                  <a href="" @click.prevent="sp.link ? $router.push(sp.link) : go_search_plugin(sp.name)">{{sp.title}}</a>
                 </div>
               </div>
               <template v-if="errors.length">
@@ -197,6 +211,8 @@ export default {
         }
       },
       search_plugin:[],
+      search_plugin_panel:false,
+      plugins_open:false,
       javascript:{
 
       },
@@ -317,8 +333,13 @@ export default {
               {cgi_params: get_cgi_params()}
           ).then(response=>{
               let D=response.data;
-              
-              
+
+              if(D.redirect && D.redirect!=location.pathname){
+                localStorage.setItem('link_prev_login',location.href);
+                location.href=D.redirect;
+                return ;
+              }
+
               t.results={};
               t.errors=D.errors;
 
@@ -327,6 +348,8 @@ export default {
                   t.log=D.log;
                   t.permissions=D.permissions;
                   t.search_plugin=D.search_plugin;
+                  t.search_plugin_panel=!!D.search_plugin_panel;
+                  t.plugins_open=localStorage.getItem('admintable_plugins_open:'+t.params.config)==='1';
                   t.search_multi_action=D.search_multi_action || []
 
                   t.show_find_button_top=D.show_find_button_top;
@@ -389,17 +412,6 @@ export default {
                     t.go_search(1);
 
                   }
-                  if(D.redirect && D.redirect!=location.pathname){
-                    localStorage.setItem('link_prev_login',location.href);
-                    location.href=D.redirect;
-                    return ;
-                  }
-                  /*
-                    localStorage.setItem('link_prev_login',location.href)
-
-                    location.href=D.redirect;
-                    return ;
-                  */
                     
               }
               else{
@@ -443,6 +455,10 @@ export default {
       }
       return q;
     },
+    toggle_plugins(){
+      this.plugins_open=!this.plugins_open;
+      localStorage.setItem('admintable_plugins_open:'+this.params.config,this.plugins_open?'1':'0');
+    },
     go_search_plugin(plugin_name,params){
       let q=this.get_query();
 
@@ -469,8 +485,12 @@ export default {
               else if(d.format=='xls'){
 
               }
-              else if(d.format='png'){
+              else if(d.format=='png'){
 
+              }
+              else if(d.format=='file'){
+                // плагин отдаёт файл на скачивание через origin бэкенда
+                window.location.href=BackendBase+d.url;
               }
             }
 
@@ -663,5 +683,11 @@ export default {
   .filters_list {margin-top: 10px;}
   .search_plugin div {margin-top: 15px;}
   .search_plugin div .v-icon {margin-right: 10px;}
+  .plugins_panel {margin-top: 15px;}
+  .plugins_panel_toolbar {cursor: pointer;}
+  .plugins_panel_body {padding: 8px 16px 16px;}
+  .plugins_panel_body div {margin-top: 12px;}
+  .plugins_panel_body div .v-icon {margin-right: 10px;}
+  .plugins_panel_body a {color: rgb(var(--v-theme-primary)); text-decoration: none;}
   .plugin_out { margin: 20px; }
 </style>

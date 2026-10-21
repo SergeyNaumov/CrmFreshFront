@@ -28,6 +28,7 @@
 
 <script>
 import { bus } from '../main'
+import { toRouterPath } from '../router'
 
 export default {
         data: () => ({
@@ -74,11 +75,17 @@ export default {
                 let D=response.data;
                 if(D.success){
                   let prev_login=localStorage.getItem('link_prev_login')
-                  let target = '/'
+                  let target = ''
                   if(prev_login && prev_login.indexOf(location.origin)===0){
-                    target = prev_login.slice(location.origin.length) || '/'
+                    target = prev_login.slice(location.origin.length)
                   } else if(prev_login && prev_login[0]==='/'){
                     target = prev_login
+                  }
+                  target = toRouterPath(target) || '/'
+                  const matched = this.$router.resolve(target).matched
+                  if(matched.some(r => r.name==='fallback' || r.name==='login')){
+                    location.href = prev_login || (window.BaseUrl || '/')
+                    return
                   }
                   this.$router.push(target).finally(()=>{
                     bus.$emit('auth:login')

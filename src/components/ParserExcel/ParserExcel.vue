@@ -8,13 +8,37 @@
                 <v-dialog v-model="success_parse" max-width="290">
                   <v-card>
                     <v-card-title class="text-h5">Загрузка </v-card-title>
-                    <v-card-text>Ваш файл {{orig_name}} был успешно загружен на сервер!</v-card-text>
+                    <v-card-text>Ваш файл {{orig_name}} был успешно загружен на сервер!<br><span v-if="message">{{message}}</span></v-card-text>
 
                     <v-card-actions>
                       <v-spacer></v-spacer>
                       <v-btn color="primary" @click="success_parse = false">
                         ОК
                       </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+
+                <v-dialog v-model="refs_dialog" max-width="560">
+                  <v-card>
+                    <v-card-title class="text-h6">Справочники</v-card-title>
+                    <v-card-text>
+                      <div v-for="r in refs_check" :key="'ref'+r.key" style="margin-bottom: 8px;">
+                        <div v-if="r.missing && r.missing.length">
+                          Не найдены {{r.label}}:
+                          <b>{{r.missing.join(', ')}}</b>
+                        </div>
+                        <div v-if="r.bad_ids && r.bad_ids.length" style="color: #b00;">
+                          Id {{r.label}} вне текущего проекта
+                          ({{r.bad_ids.map(b=>b.id).join(', ')}}) — будут пропущены
+                        </div>
+                      </div>
+                      <div class="comment">Значения можно создать, они будут добавлены в текущий проект.</div>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn v-if="refs_has_missing" color="primary" @click="create_and_continue">Создать и продолжить</v-btn>
+                      <v-btn @click="skip_refs">Продолжить без создания</v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
@@ -68,7 +92,12 @@
                           <td>
                             <select v-model="f.selected">
                               <option value="-1">выберите столбец</option>
-                              <option v-for="h in first_header" :value="h.v" :key="h.v" v-if="h.v">{{h.d}}</option>
+                              <!-- v-for и v-if на одном элементе: в Vue 3 v-if
+                                   имеет приоритет и вычисляется вне области
+                                   видимости v-for (был TypeError: h is undefined) -->
+                              <template v-for="h in first_header" :key="h.v">
+                                <option v-if="h.v" :value="h.v">{{h.d}}</option>
+                              </template>
                             </select>
                             <template v-if='!all_fields_selected'>
                               <div v-if="f.selected>=0" class="selected">выбрано</div>
@@ -124,7 +153,7 @@
 </template>
 
 <script>
-import {  init, select_before_field, preload, load } from './methods.js'
+import {  init, select_before_field, preload, load, create_and_continue, skip_refs } from './methods.js'
 
 export default {
         props:['params'],
@@ -144,6 +173,9 @@ export default {
           first_header:[],
           loaded_filename:'',
           success_parse:false,
+          message:'',
+          refs_check:[],
+          refs_dialog:false,
           errors:[]
         }),
         
@@ -217,8 +249,12 @@ export default {
 
           },
           cancel(){
-            this.src='', this.orig_name='', this.data_line_number=false, this.preload_data=[];
+            this.uploading=false;
+            this.refs_dialog=false;
+            this.refs_check=[];
             let tmp_file=this.loaded_filename
+            this.src='', this.orig_name='', this.data_line_number=false, this.preload_data=[];
+            this.loaded_filename='';
             this.remove_tmp(tmp_file);
             if(this.parser.fields)
               for(let f of this.parser.fields)
@@ -246,6 +282,12 @@ export default {
             load(this)
 
           },
+          create_and_continue(){
+            create_and_continue(this)
+          },
+          skip_refs(){
+            skip_refs(this)
+          },
           calc_first_header(){
             let arr=[];
             if(!this.preload_data || !this.preload_data.length)
@@ -259,15 +301,31 @@ export default {
           },
         },
         computed:{
+          refs_has_missing(){
+            for(let r of (this.refs_check||[])){
+              if(r.missing && r.missing.length)
+                return true
+            }
+            return false
+          },
           all_fields_selected(){
             if(!this.parser.fields)
               return false 
 
-            let flag=1;
             for(let f of this.parser.fields)
-              if(f.selected<0)
+              if(f.required!==0 && f.selected<0)
                 return false
-            
+
+            for(let group of (this.parser.require_any_of||[])){
+              let any=false
+              for(let name of group){
+                let f=this.parser.fields.find(x=>x.name==name)
+                if(f && !(f.selected<0)){ any=true; break }
+              }
+              if(!any)
+                return false
+            }
+
             return true
           }
         }
