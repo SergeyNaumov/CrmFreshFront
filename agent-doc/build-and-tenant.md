@@ -47,6 +47,23 @@ env: `SSH_PORT`, `SSH_USER`, `SSH_HOST`, `REMOTE_DIR`.
 Правило: правка админки — `./build/svcms.admin`; правка менеджера — `./build/svcms.manager`.
 Не гонять `npm run build` / `npm run build_svcms` напрямую: в скриптах ещё и деплой.
 
+### Favicon — деплой его не перезатирает
+
+`index.html` ссылается на `/favicon.ico` (у менеджера — `/manager/favicon.ico`), т.е. файл
+лежит в корне фронта на сервере. Сборка (`public/` → `dist/`) кладёт туда
+`public/favicon.ico`, и обычный rsync `dist/` его бы затирал — это и была проблема.
+
+Правило: корневой favicon на проде — **серверный файл**, билд его не трогает.
+
+- `build/favicon/favicon.ico` + `build/favicon/favicon.svg` — каноническая иконка
+  (DigitalStrateg, как на `demo1.digitalstrateg.ru`). В `dist/` не попадает.
+- `./build/svcms.admin` и `./build/svcms.manager`: rsync `dist/` идёт с
+  `--exclude='/favicon*'` (только корень; вложенные `page_constructor/template/images/favicon.svg`
+  обновляются как обычно) + отдельный rsync `build/favicon/` с `--ignore-existing` —
+  иконка доедет на новый стенд, но уже залитая на прод не перезапишется.
+- Сменить favicon на проде: залить файл в корень фронта руками
+  (`/var/www/svcms/admin/frontend`, `/var/www/svcms/manager/frontend`) — деплой его не тронет.
+
 ```bash
 npm run build[_x]
 basedir="/mnt/.../target"
