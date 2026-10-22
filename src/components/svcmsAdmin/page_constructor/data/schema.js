@@ -1134,7 +1134,6 @@
         "карусель",
         "banner"
       ],
-      "data": true,
       "shared_params": {}
     },
     "catalog": {
@@ -2580,8 +2579,6 @@
         "частые вопросы",
         "q&a"
       ],
-      "data": true,
-      "items_are_data": true,
       "shared_params": {}
     },
     "header": {
@@ -5175,9 +5172,7 @@
         "портфолио",
         "резиденции",
         "дома"
-      ],
-      "data": true,
-      "items_are_data": true
+      ]
     },
     "countdown": {
       "title": "Таймер",
@@ -5429,9 +5424,7 @@
         "тикер",
         "лента",
         "ticker"
-      ],
-      "data": true,
-      "items_are_data": true
+      ]
     },
     "certificates": {
       "title": "Сертификаты",
@@ -8341,8 +8334,6 @@
         "табы",
         "tab"
       ],
-      "data": true,
-      "items_are_data": true,
       "shared_params": {}
     },
     "tags": {
@@ -8418,8 +8409,6 @@
         "чипсы",
         "chips"
       ],
-      "data": true,
-      "items_are_data": true,
       "shared_params": {}
     },
     "branches": {
@@ -8968,8 +8957,6 @@
         "маршрут",
         "directions"
       ],
-      "data": true,
-      "items_are_data": true,
       "shared_params": {}
     },
     "page_favorites": {
@@ -9856,8 +9843,6 @@
         "этапы",
         "годы"
       ],
-      "data": true,
-      "items_are_data": true,
       "shared_params": {}
     },
     "org_chart": {
@@ -9932,8 +9917,6 @@
         "подразделения",
         "org"
       ],
-      "data": true,
-      "items_are_data": true,
       "shared_params": {}
     },
     "reports": {

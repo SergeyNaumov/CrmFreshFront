@@ -36,6 +36,7 @@ public/page_constructor/  ГЕНЕРИРУЕТСЯ `npm run constructor:pack` (�
 - Конверт (`schema.envelope.fields`): `type`, `variant`, `fill`, `anim`, `bleed`. `fill` → `block--fill-N`, `anim` → `block--anim-zoom|clip|no-anim`, `bleed` → `block--bleed` (`envelope.class_map`).
 - Контентный блок рендерится как `<section class="section …"> > .container` — паритет с прод-страницами `templates/t1/page/*.html`. `raw: true` (`slider`, `header`, `footer`, `page_contacts`, `custom`) идёт без обёртки.
 - `items` выбрасываются при экспорте, если тип помечен `items_are_data` или список пуст (`export.js:38` `normalizeBlock`).
+- Блоки, чей контент лежит в самих `items` (движок рендерит их из `block.items`): `faq`, `history_timeline`, `org_chart`, `routes`, `marquee`, `tabs`, `tags`, `catalog_projects`, `slider`. У них нет флагов `data` и `items_are_data` → в редакторе виден список «Элементы (N)» с полями элемента, а items выгружаются в JSON. У остальных типов контент берётся из переменной движка, их `items` — только демо-строки для превью.
 - Хранится в `domain_page.blocks`; шапка/подвал — отдельно на домен (`domain_constructor.header_blocks/footer_blocks`).
 - Локальный черновик редактора — `localStorage['svcms.page_constructor.v1']`; это не сохранение на сервере.
 
