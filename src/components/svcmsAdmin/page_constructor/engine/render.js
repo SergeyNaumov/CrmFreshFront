@@ -1232,11 +1232,11 @@
       '<article class="service-in" itemscope itemtype="https://schema.org/Service">' +
         '<div class="service-in__head">' +
           '<h1 class="service-in__title" id="serviceInTitle" itemprop="name">' + esc(title) + '</h1>' +
-          '<p class="service-in__anons" id="serviceInAnons" itemprop="description">' + esc(anons) + '</p>' +
         '</div>' +
         '<div class="service-hero">' +
           '<figure class="service-hero__media">' + img(photo, title, '') + icon + '</figure>' +
           '<div class="service-hero__body">' +
+            '<p class="service-in__anons" id="serviceInAnons" itemprop="description">' + esc(anons) + '</p>' +
             (showPrice ? '<div class="service-in__price" id="serviceInPriceWrap">Цена от <b id="serviceInPrice">' + esc(price) + '</b> ₽</div>' : '') +
             (showRegion ? '<p class="service-in__region"><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg> Работаем по всей России</p>' : '') +
             '<div class="service-in__actions">' +
