@@ -372,6 +372,18 @@ document.addEventListener('DOMContentLoaded', function () {
   header && header.classList.toggle('is-scrolled', scrolled);
   onScrollHeader();
 
+  /* Подменю в меню бургера: раскрытие/скрытие по клику. Состояние живёт
+     в классе .is-open на пункте и в aria-expanded на кнопке-каретке. */
+  function setMobileSubmenu(item, open) {
+    if (!item) return;
+    item.classList.toggle('is-open', open);
+    var btn = item.querySelector('.nav-submenu-toggle');
+    if (!btn) return;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var title = btn.getAttribute('data-title') || '';
+    btn.setAttribute('aria-label', (open ? 'Скрыть' : 'Показать') + ' подменю раздела «' + title + '»');
+  }
+
   var burger = document.getElementById('burgerBtn');
   var mobileMenu = document.getElementById('mobileMenu');
   if (burger && mobileMenu) {
@@ -379,6 +391,13 @@ document.addEventListener('DOMContentLoaded', function () {
       var open = burger.classList.toggle('is-active');
       mobileMenu.classList.toggle('is-hidden', !open);
       burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (!open) {
+        // Закрываем меню — подменю сворачиваем, чтобы в следующий раз
+        // меню открывалось компактным (только верхний уровень).
+        mobileMenu.querySelectorAll('.nav-item.is-open').forEach(function (item) {
+          setMobileSubmenu(item, false);
+        });
+      }
     });
   }
 
@@ -636,10 +655,13 @@ document.addEventListener('DOMContentLoaded', function () {
   initCompareInfo();
 
   /* ---------- Шапка: пункты меню с подменю ----------
-     Раскрытие уже работает на CSS (hover/focus-within). Здесь синхронизируем
-     aria-expanded и класс is-open для состояний, не зависящих от наведения. */
+     Обычное меню в строке шапки (.header__nav) раскрывается наведением
+     и фокусом (состояние синхронизируем в aria-expanded и .is-open).
+     Меню бургера (.header__mobile) — по клику: кнопка-каретка
+     (.nav-submenu-toggle) раскрывает и скрывает подменю, название
+     пункта остаётся ссылкой и ведёт на страницу раздела. */
   function initHeaderSubmenu() {
-    document.querySelectorAll('.header__nav .has-submenu, .header__mobile .has-submenu').forEach(function (item) {
+    document.querySelectorAll('.header__nav .has-submenu').forEach(function (item) {
       var toggle = item.querySelector('.nav-link') || item.querySelector('a[aria-haspopup]');
       if (!toggle || !toggle.hasAttribute('aria-haspopup')) return;
 
@@ -652,6 +674,15 @@ document.addEventListener('DOMContentLoaded', function () {
       item.addEventListener('focusin', function () { set(true); });
       item.addEventListener('focusout', function (e) {
         if (!item.contains(e.relatedTarget)) set(false);
+      });
+    });
+
+    document.querySelectorAll('.header__mobile .has-submenu').forEach(function (item) {
+      var btn = item.querySelector('.nav-submenu-toggle');
+      if (!btn) return;
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        setMobileSubmenu(item, !item.classList.contains('is-open'));
       });
     });
   }

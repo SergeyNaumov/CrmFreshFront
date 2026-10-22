@@ -302,7 +302,10 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
-  padding: var(--space-4) 0;
+  /* Горизонтальные отступы — как у .container: блок шапки сам несёт класс
+     container, но это правило перебивает его padding, поэтому gutter
+     задаём явно — иначе логотип и меню уезжают левее контента. */
+  padding: var(--space-4) var(--gutter, var(--space-4));
   min-height: var(--header-height, 80px);
   /* Перенос разрешён: строка поиска и меню в нестандартных видах шапки
      занимают отдельную строку (flex-basis: 100%). */
@@ -355,6 +358,144 @@ button {
 
 .header--minimal .topbar { display: none; }
 .header--minimal .header__nav { display: none; }
+
+/* ---------- Компактная шапка «мини» ----------
+   Одна строка: лого [+ слоган], телефон, корзина/сравнение/избранное,
+   «Оставить заявку», бургер. Топбар, меню и поиск скрыты; меню
+   открывается бургером. Высота ~64px вместо ~156px у search-row. */
+.header--mini { --header-height: 64px; }
+
+.header--mini .topbar,
+.header--mini .header__nav,
+.header--mini .header__search { display: none; }
+
+.header--mini .header__main {
+  min-height: var(--header-height, 64px);
+  padding: var(--space-2) var(--gutter, var(--space-4));
+  flex-wrap: nowrap;
+  gap: var(--space-4);
+}
+
+.header--mini .logo { flex: 0 0 auto; order: 1; }
+.header--mini .logo img { width: auto; height: 34px; }
+
+.header--mini .header__mini {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-left: auto;
+  order: 2;
+}
+
+.header--mini .header__mini-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--heading-color);
+  white-space: nowrap;
+}
+
+.header--mini .header__mini-phone .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+}
+
+/* Виджеты корзины/сравнения/избранного — на месте соцсетей:
+   иконка со счётчиком + подпись, как в обычной шапке. */
+.header--mini .header__mini-widgets {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.header--mini .header__mini-widgets .header-widget { gap: 2px; }
+
+/* Кнопка «Позвонить» — только на мобильном: там телефон это иконка,
+   и позвонить удобнее кнопкой, чем набирать номер. На десктопе вместо
+   неё — «Оставить заявку». */
+.header--mini .header__mini-call { display: none; }
+
+/* На мобильном кнопка заявки живёт в меню: в строку она не влезает */
+.header--mini .header__mobile-cta { padding: var(--space-2) 0 var(--space-3); }
+.header--mini .header__mobile-cta .btn { width: 100%; color: var(--on-primary, var(--white)); }
+
+/* Бургер в компактной шапке виден всегда: в строке нет меню. */
+.header--mini .burger { display: inline-flex; }
+
+/* Меню на десктопе — выпадающая панель под шапкой, а не вторая строка.
+   Панель не растягивается на весь экран: ограниченная ширина и левый
+   край по контейнеру сайта — иначе пункты «прибиты» к краю экрана и не
+   совпадают с логотипом. */
+@media (min-width: 992px) {
+  .header--mini .header__mobile {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: max(0px, calc((100% - var(--container, 1240px)) / 2));
+    right: auto;
+    width: min(560px, calc(100% - var(--gutter, var(--space-4)) * 2));
+    max-width: none;
+    margin: 0;
+    max-height: calc(100vh - var(--header-height, 64px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--surface-2);
+    border: var(--border-width) solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+  .header--mini .header__mobile.is-hidden { display: none; }
+  /* Кнопка заявки уже есть в строке шапки — в панели меню она лишняя. */
+  .header--mini .header__mobile-cta { display: none; }
+}
+
+@media (max-width: 1199px) {
+  .header--mini .logo__slogan { display: none; }
+}
+
+@media (max-width: 1023px) {
+  .header--mini .header__mini { gap: var(--space-3); }
+}
+
+@media (max-width: 767px) {
+  .header--mini .header__mini-phone span { display: none; }
+  /* Кнопка заявки в строку не влезает — она живёт в мобильном меню.
+     В её место — кнопка «Позвонить» (между иконкой телефона и виджетами). */
+  .header--mini .header__mini-cta { display: none; }
+  .header--mini .header__mini-call { display: inline-flex; }
+  /* Подписи виджетов на узком экране не помещаются — только иконки. */
+  .header--mini .header__mini-widgets .header-widget__label { display: none; }
+  /* Компактная строка: элементы ближе друг к другу, логотип ужимается —
+     иначе ряд (лого + телефон + виджеты + «Позвонить» + бургер) не влезает. */
+  .header--mini .header__mini { gap: var(--space-2); }
+  .header--mini .header__mini-widgets { gap: var(--space-1); }
+  .header--mini .header__mini-widgets .header-widget__icon .icon { width: 18px; height: 18px; }
+  .header--mini .logo { flex: 0 1 auto; min-width: 96px; }
+  .header--mini .logo img { max-width: 100%; height: auto; max-height: 26px; }
+  .header--mini .header__mini-call { padding: 6px 10px; font-size: 13px; }
+  .header--mini .burger { width: 40px; }
+  /* Дропдаун корзины на узком экране: прижать к краям экрана — виджет стоит
+     у правого края шапки, и «right: 0» уводит дропдаун за левую границу. */
+  .header--mini .basket-widget__dropdown {
+    position: fixed;
+    top: calc(var(--header-height, 64px) + 8px);
+    left: var(--space-3);
+    right: var(--space-3);
+    width: auto;
+    max-width: none;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Совсем узкий экран: отдельная иконка телефона не помещается —
+     звонить можно кнопкой «Позвонить». Порог 360px (не 359px): при
+     ширине ровно 360 ряд в шапке вылезал за правый край на 7px. */
+  .header--mini .header__mini-phone { display: none; }
+}
 
 .header--center .header__main { flex-wrap: wrap; justify-content: center; row-gap: var(--space-2); }
 .header--center .logo { flex: 1 0 100%; justify-content: center; }
@@ -464,9 +605,12 @@ button {
 .header__nav .nav-link.is-active::after,
 .header__nav .nav-item.is-active > .nav-link::after { display: none; }
 
+/* Активный раздел в меню бургера: не полоса во всю ширину панели (она
+   читается как «прибитая» к краям экрана), а подсветка цветом — текст
+   остаётся на одной линии с остальными пунктами. */
 .header__mobile .nav-link.is-active {
-  color: var(--white);
-  background: var(--gradient);
+  color: var(--primary);
+  background: rgba(var(--primary-rgb), 0.08);
 }
 
 /* Подменю (dropdown) */
@@ -781,10 +925,10 @@ button {
 .burger.is-active span:nth-child(2) { opacity: 0; }
 .burger.is-active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Мобильное меню (подменю раскрыты — всегда видны, с отступом).
-   Горизонтальный отступ задаём тем же --gutter, что и .container: иначе
-   shorthand `padding` ниже перебивает padding контейнера и меню липнет
-   к левому краю. */
+/* Мобильное меню (меню бургера): подменю свёрнуты и раскрываются по клику
+   (кнопка-каретка .nav-submenu-toggle). Горизонтальный отступ задаём тем же
+   --gutter, что и .container: иначе shorthand `padding` ниже перебивает
+   padding контейнера и меню липнет к левому краю. */
 .header__mobile {
   display: none;
   padding: var(--space-2) var(--gutter, var(--space-4)) var(--space-4);
@@ -792,8 +936,22 @@ button {
 
 .header__mobile a { display: block; padding: var(--space-3) 0; border-bottom: var(--border-width) solid var(--border); color: var(--on-surface); font-weight: 600; }
 
-.header__mobile .nav-item { position: static; }
+/* Пункт с подменю: ссылка и кнопка-каретка — в одну строку, подменю —
+   отдельной строкой ниже (flex-wrap). Так каретка не «наезжает» на
+   соседние пункты и остаётся в своей строке. */
+.header__mobile .nav-item {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
 
+.header__mobile .nav-item > a { flex: 1 1 auto; min-width: 0; }
+.header__mobile .nav-item > .nav-submenu { flex: 1 0 100%; }
+
+/* Подменю свёрнуто по умолчанию; раскрывает его клик по кнопке-каретке
+   (js/app.js, initHeaderSubmenu). Если кнопки в разметке нет (старая
+   версия меню) — подменю остаются раскрытыми, как раньше. */
 .header__mobile .nav-submenu {
   position: static;
   min-width: 0;
@@ -803,10 +961,31 @@ button {
   border-radius: 0;
   box-shadow: none;
   background: transparent;
-  opacity: 1;
-  visibility: visible;
-  transform: none;
 }
+
+.header__mobile .nav-item.has-submenu > .nav-submenu { display: none; }
+
+.header__mobile .nav-item.has-submenu.is-open > .nav-submenu,
+.header__mobile .nav-item.has-submenu:not(:has(> .nav-submenu-toggle)) > .nav-submenu { display: block; }
+
+/* Кнопка-каретка: раскрывает/скрывает подменю. Название пункта рядом
+   остаётся ссылкой — ведёт на страницу раздела. */
+.header__mobile .nav-submenu-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  padding: 0;
+  border: none;
+  border-bottom: var(--border-width) solid var(--border);
+  background: transparent;
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.header__mobile .nav-submenu-toggle .nav-link__caret { width: 14px; height: 14px; }
+.header__mobile .nav-item.is-open > .nav-submenu-toggle .nav-link__caret { transform: rotate(180deg); }
 
 .header__mobile .nav-submenu a {
   padding: var(--space-2) 0;
@@ -820,14 +999,45 @@ button {
 /* В мобильном меню нет флаюутов: каретки 3-го уровня не нужны */
 .header__mobile .nav-link__caret--flyout { display: none; }
 
-/* ---------- Секции ---------- */
+/* ---------- Секции ----------
+   Единая вертикальная модель:
+     --block-pad  — внутренний отступ: контент → край заливки;
+     --section-gap — внешний зазор между соседними заливками.
+   Поэтому у всех блоков одинаковый отступ внутри, а расстояние
+   «контент → контент» = 2×--block-pad + --section-gap. */
 .section {
-  padding: var(--section-y, 80px) 0;
+  padding: var(--block-pad, 48px) 0;
+}
+.section + .section { padding-top: var(--block-pad, 48px); }
+
+/* Гарантия (правило 6, agent-doc/19_layout_grid.md): ВНУТРИ заливки
+   (.section--alt/--bleed) верхний отступ не обнуляется, и секция сразу
+   после заливки его тоже сохраняет — иначе заголовок липнет к границе
+   фона («Каталог товаров» на главной). Величина — внутренний отступ
+   блока (--block-pad): внешний зазор (--section-gap) и внутренний
+   отступ складываются симметрично с обеих сторон границы фона.
+   .section--page исключён: там верхний отступ переносится в .page-head. */
+.section.section--alt:not(.section--page),
+.section.section--bleed:not(.section--page),
+.section--alt + .section:not(.section--page),
+.section--bleed + .section:not(.section--page) {
+  padding-top: var(--block-pad, 48px);
 }
 
-/* Единый вертикальный ритм: у соседних секций верхний паддинг снимаем,
-   иначе зазор между блоками удваивался (2×--section-y). */
-.section + .section { padding-top: 0; }
+/* Внешний ритм задаём только верхнеуровневым секциям страницы:
+   вложенные секции (например, .catalog.section внутри .section--page)
+   не должны добавлять второй зазор. */
+main > .section {
+  margin: 0 0 var(--section-gap, 80px);
+}
+main > .section:last-child { margin-bottom: 0; }
+
+/* Слайдер — full-bleed и не имеет своего внутреннего отступа: внешний
+   зазор до следующей заливки равен общему --section-gap. */
+main > hero-slider {
+  display: block;
+  margin-bottom: var(--section-gap, 80px);
+}
 
 .section--alt {
   background: var(--light);
