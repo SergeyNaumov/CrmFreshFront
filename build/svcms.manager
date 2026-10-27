@@ -7,8 +7,8 @@ set -euo pipefail
 # (и configure.js не заливался вовсе -> «дрейф» настроек).
 # Стало: rsync всего dist/ по ssh + env-специфичный configure.js для svcmsmanager.
 #
-# ENV: SSH_PORT=7725 SSH_USER=naumov SSH_HOST=178.57.220.192
-#      REMOTE_DIR=/var/www/svcms-async/manager/frontend   (== /var/www/svcms/manager/frontend, nginx)
+# ENV: SSH_PORT=7725 SSH_USER=naumov SSH_HOST=185.76.252.12
+#      REMOTE_DIR=/var/www/svcms/manager/frontend   (рантайм менеджера, nginx)
 #
 # Favicon: каноническая иконка лежит в build/favicon/ (DigitalStrateg, как на
 # demo1.digitalstrateg.ru). В dist/ попадает public/favicon.ico, поэтому он
@@ -16,8 +16,8 @@ set -euo pipefail
 
 SSH_PORT="${SSH_PORT:-7725}"
 SSH_USER="${SSH_USER:-naumov}"
-SSH_HOST="${SSH_HOST:-178.57.220.192}"
-REMOTE_DIR="${REMOTE_DIR:-/var/www/svcms-async/manager/frontend}"
+SSH_HOST="${SSH_HOST:-185.76.252.12}"
+REMOTE_DIR="${REMOTE_DIR:-/var/www/svcms/manager/frontend}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # .../build
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"                          # CrmFreshFront

@@ -8,7 +8,7 @@ set -euo pipefail
 # configure.js целиком.
 # Стало: rsync всего dist/ по ssh + env-специфичный configure.js для svcmsadmin.
 #
-# ENV: SSH_PORT=7725 SSH_USER=naumov SSH_HOST=178.57.220.192
+# ENV: SSH_PORT=7725 SSH_USER=naumov SSH_HOST=185.76.252.12
 #      REMOTE_DIR=/var/www/svcms/admin/frontend
 #
 # Favicon: каноническая иконка лежит в build/favicon/ (DigitalStrateg, как на
@@ -17,7 +17,7 @@ set -euo pipefail
 
 SSH_PORT="${SSH_PORT:-7725}"
 SSH_USER="${SSH_USER:-naumov}"
-SSH_HOST="${SSH_HOST:-178.57.220.192}"
+SSH_HOST="${SSH_HOST:-185.76.252.12}"
 REMOTE_DIR="${REMOTE_DIR:-/var/www/svcms/admin/frontend}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # .../build
