@@ -133,26 +133,44 @@ methods: {
             }
           },
           save () {
+            const reload = () => this.Init()
             this.save_form(get_cgi_params()).then(R=>{
               if(!R) return
               if(R.success){
                 this.dialog_header='Изменения сохранены';
                 this.dialog_body='';
+                this.dialog=true;
+                if(!this.errors.length){
+                  setTimeout(()=>{this.dialog=false},500)
+                }
+                let nav=null;
                 if(this.form.id){
+                  const target='/edit_form/'+this.params.config+'/'+this.form.id;
                   try {
-                    this.$router.replace('/edit_form/'+this.params.config+'/'+this.form.id);
+                    // $router.replace() асинхронный: если вызвать Init() сразу,
+                    // get_params() читает ещё старый location.pathname и форма
+                    // новой записи грузится пустой (поля пустые до F5).
+                    nav=this.$router.replace(target);
                   } catch (e) {
                     window.history.pushState(null, document.title, BaseUrl+'edit_form/'+this.params.config+'/'+this.form.id);
                   }
                 }
-                this.Init()
+                if(nav && typeof nav.then=='function'){
+                  nav.then(reload).catch(()=>{
+                    window.history.pushState(null, document.title, BaseUrl+'edit_form/'+this.params.config+'/'+this.form.id);
+                    reload();
+                  });
+                }
+                else{
+                  reload();
+                }
               }
               else{
                 this.dialog_header='При сохранении произошли ошибки';
-              }
-              this.dialog=true;
-              if(!this.errors.length){
-                setTimeout(()=>{this.dialog=false},500)
+                this.dialog=true;
+                if(!this.errors.length){
+                  setTimeout(()=>{this.dialog=false},500)
+                }
               }
             })
           },
