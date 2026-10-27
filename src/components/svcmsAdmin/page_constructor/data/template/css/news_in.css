@@ -45,6 +45,9 @@
   line-height: 1.25;
   color: var(--heading-color);
   margin: 0 0 var(--space-5);
+  /* Прокрутка к заголовку при смене новости без перезагрузки (js/news_in.js):
+     не заезжаем под липкую шапку. */
+  scroll-margin-top: var(--header-sticky-offset, var(--header-height, 80px));
 }
 
 /* Обложка новости: обычный блок над текстом (БЕЗ float). Обтекание

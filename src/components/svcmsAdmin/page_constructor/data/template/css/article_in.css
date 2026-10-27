@@ -45,6 +45,9 @@
   line-height: 1.25;
   color: var(--heading-color);
   margin: 0 0 var(--space-5);
+  /* Прокрутка к заголовку при смене статьи без перезагрузки
+     (js/article_in.js): не заезжаем под липкую шапку. */
+  scroll-margin-top: var(--header-sticky-offset, var(--header-height, 80px));
 }
 
 /* ---------- Автор статьи (необязательное поле) ----------

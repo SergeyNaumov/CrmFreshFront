@@ -99,6 +99,25 @@ window.__T1_NEWS_IN_VER = '2026-10-02';
 
       if (push) {
         history.pushState({ id: id }, '', data.url || ('/news/' + id));
+        // Клик по «Другим новостям» меняет URL и содержимое на месте (без
+        // перезагрузки) — прокрутка остаётся внизу, у карусели, и кажется,
+        // что ссылка не сработала. Возвращаем к заголовку новости.
+        scrollToRecord();
+      }
+    }
+
+    /* Прокрутка к заголовку открытой записи (после смены новости без
+       перезагрузки). Отступ сверху — высота липкой шапки (--header-sticky-offset). */
+    function scrollToRecord() {
+      var target = titleEl || root;
+      if (!target || !target.scrollIntoView) {
+        window.scrollTo(0, 0);
+        return;
+      }
+      try {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (e) {
+        target.scrollIntoView(true);
       }
     }
 

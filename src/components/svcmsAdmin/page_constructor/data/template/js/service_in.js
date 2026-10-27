@@ -103,6 +103,25 @@ window.__T1_SERVICE_IN_VER = '2026-10-02';
       syncButtons();
       if (push) {
         history.pushState({ id: id }, '', data.url || ('/service/' + id));
+        // Смена услуги без перезагрузки: возвращаем к заголовку, иначе
+        // остаёмся внизу (у карусели «Другие услуги») и кажется, что
+        // ссылка не сработала.
+        scrollToRecord();
+      }
+    }
+
+    /* Прокрутка к заголовку открытой услуги. Отступ сверху — высота
+       липкой шапки (--header-sticky-offset, задан в scroll-margin-top). */
+    function scrollToRecord() {
+      var target = titleEl || root;
+      if (!target || !target.scrollIntoView) {
+        window.scrollTo(0, 0);
+        return;
+      }
+      try {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (e) {
+        target.scrollIntoView(true);
       }
     }
 
