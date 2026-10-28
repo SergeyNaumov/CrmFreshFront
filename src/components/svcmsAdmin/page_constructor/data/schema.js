@@ -8560,6 +8560,27 @@
           "title": "Карта с маршрутом",
           "params": [
             {
+              "name": "provider",
+              "label": "Провайдер карты",
+              "kind": "select",
+              "default": "yandex",
+              "options": [
+                {
+                  "value": "yandex",
+                  "label": "Яндекс.Карты"
+                },
+                {
+                  "value": "osm",
+                  "label": "OpenStreetMap"
+                },
+                {
+                  "value": "google",
+                  "label": "Google Maps"
+                }
+              ],
+              "hint": "Если задано поле «Ссылка виджета» (url) — используется оно, провайдер игнорируется. 2GIS требует API-ключ и в схеме пока не подключён."
+            },
+            {
               "name": "url",
               "label": "URL карты",
               "kind": "text",
@@ -8607,6 +8628,27 @@
         "full": {
           "title": "Карта во всю ширину",
           "params": [
+            {
+              "name": "provider",
+              "label": "Провайдер карты",
+              "kind": "select",
+              "default": "yandex",
+              "options": [
+                {
+                  "value": "yandex",
+                  "label": "Яндекс.Карты"
+                },
+                {
+                  "value": "osm",
+                  "label": "OpenStreetMap"
+                },
+                {
+                  "value": "google",
+                  "label": "Google Maps"
+                }
+              ],
+              "hint": "Если задано поле «Ссылка виджета» (url) — используется оно, провайдер игнорируется. 2GIS требует API-ключ и в схеме пока не подключён."
+            },
             {
               "name": "url",
               "label": "URL карты",

@@ -342,6 +342,13 @@ button {
   min-width: 0;
 }
 
+/* Строка поиска монтируется Vue-компонентом (js/components/header-search.js):
+   до монтирования контейнер пустой, и шапка «вырастает» на высоту поля —
+   это давало CLS (сдвиг всей страницы). Резервируем высоту поля (42px). */
+.header__search .hsearch {
+  min-height: 42px;
+}
+
 .header--search-row .header__search,
 .header--two .header__search {
   order: 2;
@@ -1664,7 +1671,9 @@ catalog-block { display: block; }
   margin: var(--space-2) 0 var(--space-4);
   font-size: 13.5px;
   line-height: 1.55;
-  color: rgba(var(--white-rgb), 0.9);
+  /* Непрозрачный цвет: 90%-белый на фирменной заливке давал 4.07:1 (AA — 4.5).
+     Наследуем цвет задней грани (--on-primary, для тёмных тем — тёмный). */
+  color: var(--on-primary, var(--white));
 }
 
 .cat-card__more {
@@ -2045,6 +2054,14 @@ catalog-block { display: block; }
   display: block;
   aspect-ratio: 4 / 3;
   overflow: hidden;
+}
+
+/* <picture> внутри плитки — обёртка для выбора mini1/mini2; растягиваем на
+   всю плитку, чтобы img с height:100% заполнял её (иначе picture строчный). */
+.service-tile__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .service-tile__media img {
@@ -5702,7 +5719,7 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 .gal-chip:hover .gal-chip__count { color: var(--primary); }
 .gal-chip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .gal-chip.is-active { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
-.gal-chip.is-active .gal-chip__count { color: var(--on-primary); opacity: 0.75; }
+.gal-chip.is-active .gal-chip__count { color: var(--on-primary); }
 .gal-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--card-pad); }
 .gal-item {
   position: relative; display: block; border-radius: var(--card-radius); overflow: hidden;

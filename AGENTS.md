@@ -21,6 +21,14 @@ Tenant = `mode` in `vite.config.js`; runtime config = `public/configure.js`.
 ## Agent rules
 
 - Never read all of `src/`, `node_modules`, `dist`. Open only the file(s) named by the topic below.
+- **СИМВОЛИКА — ТОЛЬКО РАЗРЕШЁННАЯ (жёсткое требование заказчика).** В админке
+  и на сайтах конструктора запрещена **украинская и антироссийская символика**:
+  флаги (эмодзи, SVG-иконки, изображения), гербы, цвета флага, эмблемы, надписи,
+  картографические сервисы/тайлы со спорными территориями и границами.
+  В `src/components/Const.vue` (карта «Адрес и карта») атрибуция Leaflet выводится
+  без флаг-иконки: `.leaflet-attribution-flag { display: none }` (scoped, через
+  `:deep`). Ссылку на leafletjs.com оставлять можно. Новые карты — Яндекс или
+  OpenStreetMap; Google Maps — только по явному требованию (РКН/152-ФЗ).
 - `rg` a symbol before editing a large file.
 - Page constructor: ask `.opencode/skills/pc-schema/scripts/pc.mjs`, never read `page_constructor/data/schema.js` (11k lines) — [page-constructor.md](agent-doc/page-constructor.md).
 - Skills `pc-schema`, `pc-block`, `pc-preview`, `pc-editor`, `pc-theme` in `.opencode/skills/`.

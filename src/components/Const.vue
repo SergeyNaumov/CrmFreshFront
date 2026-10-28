@@ -412,6 +412,10 @@ export default {
     border: 1px solid rgba(var(--v-theme-on-surface), 0.24); border-radius: 4px;}
   .addr-map__hint {margin: 6px 0 0; font-size: 10pt;
     color: rgba(var(--v-theme-on-surface), 0.6);}
+  /* Leaflet-атрибуция в правом нижнем углу: скрываем флаг-иконку (сине-жёлтый
+     SVG Leaflet — читается как украинский флаг). Текст «Leaflet | © OSM»
+     остаётся, ссылка на leafletjs.com сохраняется. */
+  :deep(.leaflet-attribution-flag) { display: none; }
   table {
     width: 100%;
     border-left: 1px solid gray;
