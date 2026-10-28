@@ -415,7 +415,8 @@ export default {
   /* Leaflet-атрибуция в правом нижнем углу: скрываем флаг-иконку (сине-жёлтый
      SVG Leaflet — читается как украинский флаг). Текст «Leaflet | © OSM»
      остаётся, ссылка на leafletjs.com сохраняется. */
-  :deep(.leaflet-attribution-flag) { display: none; }
+  /* Leaflet сам задаёт display:inline !important — перебиваем !important'ом. */
+  :deep(.leaflet-attribution-flag) { display: none !important; }
   table {
     width: 100%;
     border-left: 1px solid gray;

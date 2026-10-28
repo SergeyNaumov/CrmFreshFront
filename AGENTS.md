@@ -26,7 +26,7 @@ Tenant = `mode` in `vite.config.js`; runtime config = `public/configure.js`.
   флаги (эмодзи, SVG-иконки, изображения), гербы, цвета флага, эмблемы, надписи,
   картографические сервисы/тайлы со спорными территориями и границами.
   В `src/components/Const.vue` (карта «Адрес и карта») атрибуция Leaflet выводится
-  без флаг-иконки: `.leaflet-attribution-flag { display: none }` (scoped, через
+  без флаг-иконки: `.leaflet-attribution-flag { display: none !important }` (scoped, через
   `:deep`). Ссылку на leafletjs.com оставлять можно. Новые карты — Яндекс или
   OpenStreetMap; Google Maps — только по явному требованию (РКН/152-ФЗ).
 - `rg` a symbol before editing a large file.
