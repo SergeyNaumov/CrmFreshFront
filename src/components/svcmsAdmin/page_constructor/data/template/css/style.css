@@ -250,15 +250,27 @@ button {
   box-shadow: var(--shadow-md);
 }
 
-.header.is-scrolled .topbar {
-  display: none;
-}
-
 /* Топбар (телефон, email, часы работы) */
 .topbar {
   background: var(--topbar-bg);
   color: rgba(var(--white-rgb), 0.85);
   font-size: var(--font-size-sm);
+  /* При прокрутке топбар не исчезает скачком (display: none), а плавно
+     уезжает вверх: анимируется max-height. Базовое значение — реальная
+     высота полосы на десктопе (min-height: 40px); на планшетах полоса
+     может переноситься в два ряда, там max-height больше. */
+  overflow: hidden;
+  max-height: 40px;
+  transition: max-height var(--transition), opacity var(--transition);
+}
+
+@media (max-width: 991px) {
+  .topbar { max-height: 96px; }
+}
+
+.header.is-scrolled .topbar {
+  max-height: 0;
+  opacity: 0;
 }
 
 .topbar__inner {
@@ -425,18 +437,19 @@ button {
 /* Бургер в компактной шапке виден всегда: в строке нет меню. */
 .header--mini .burger { display: inline-flex; }
 
-/* Меню на десктопе — выпадающая панель под шапкой, а не вторая строка.
-   Панель не растягивается на весь экран: ограниченная ширина и левый
-   край по контейнеру сайта — иначе пункты «прибиты» к краю экрана и не
-   совпадают с логотипом. */
+/* Меню на десктопе — выпадающая панель под кнопкой бургера, а не вторая
+   строка. Панель открывается там, где нажали: правый край панели совпадает
+   с правым краем бургера (край контейнера), сама карточка узкая и не
+   растягивается на весь экран. */
 @media (min-width: 992px) {
-  .header--mini .header__mobile {
+  .header--mini .header__mobile,
+  .header.is-scrolled .header__mobile {
     display: block;
     position: absolute;
-    top: 100%;
-    left: max(0px, calc((100% - var(--container, 1240px)) / 2));
-    right: auto;
-    width: min(560px, calc(100% - var(--gutter, var(--space-4)) * 2));
+    top: calc(100% + var(--space-2));
+    right: calc(max(0px, (100% - var(--container, 1240px)) / 2) + var(--gutter, var(--space-4)));
+    left: auto;
+    width: min(360px, calc(100% - var(--gutter, var(--space-4)) * 2));
     max-width: none;
     margin: 0;
     max-height: calc(100vh - var(--header-height, 64px));
@@ -444,11 +457,11 @@ button {
     overscroll-behavior: contain;
     background: var(--surface-2);
     border: var(--border-width) solid var(--border);
-    border-top: none;
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
   }
-  .header--mini .header__mobile.is-hidden { display: none; }
+  .header--mini .header__mobile.is-hidden,
+  .header.is-scrolled .header__mobile.is-hidden { display: none; }
   /* Кнопка заявки уже есть в строке шапки — в панели меню она лишняя. */
   .header--mini .header__mobile-cta { display: none; }
 }
@@ -495,6 +508,79 @@ button {
      звонить можно кнопкой «Позвонить». Порог 360px (не 359px): при
      ширине ровно 360 ряд в шапке вылезал за правый край на 7px. */
   .header--mini .header__mini-phone { display: none; }
+}
+
+/* ---------- Компактная шапка при прокрутке ----------
+   Любой вид шапки (кроме «mini» — там меню и так нет) при прокрутке вниз
+   сжимается в один ряд: топбар уезжает, меню сворачивается, вместо него
+   появляется бургер (панель меню — та же, что у вида «mini»), логотип
+   уменьшается. Строка поиска остаётся видимой.
+   Переход плавный: анимируются высоты топбара и ряда меню, отступы
+   основной строки и логотип (см. transition ниже). */
+@media (min-width: 992px) {
+  .header__main {
+    transition: min-height var(--transition), padding var(--transition);
+  }
+
+  /* Высота ряда меню анимируется через max-height: базовое значение чуть
+     больше реальной высоты (от `none` transition не запускается).
+     Подменю — position: absolute, поэтому overflow: visible в обычном
+     состоянии ничего не обрезает; hidden включаем только в свёрнутом. */
+  .header__nav {
+    max-height: 48px;
+    overflow: visible;
+    transition: max-height var(--transition), opacity var(--transition),
+                margin-top var(--transition), padding-top var(--transition),
+                border-top-width var(--transition);
+  }
+
+  /* У видов «поиск в строке» меню — отдельный ряд с отступами и линией. */
+  .header--search-row .header__nav,
+  .header--two .header__nav {
+    max-height: 96px;
+  }
+
+  .header.is-scrolled:not(.header--mini) .header__main {
+    min-height: 56px;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+
+  .header.is-scrolled .header__nav {
+    max-height: 0;
+    margin-top: 0;
+    padding-top: 0;
+    border-top-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .header.is-scrolled:not(.header--mini) .logo img {
+    width: auto;
+    height: 30px;
+  }
+
+  .header.is-scrolled .logo__slogan { display: none; }
+
+  /* Бургер в обычной шапке скрыт (там меню) — при прокрутке показываем. */
+  .header.is-scrolled .burger {
+    display: inline-flex;
+    animation: header-burger-in var(--transition) both;
+  }
+
+  @keyframes header-burger-in {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+/* Меньше движения — тем, кто просил (prefers-reduced-motion). */
+@media (prefers-reduced-motion: reduce) {
+  .topbar,
+  .header__main,
+  .header__nav { transition: none; }
+  .header.is-scrolled .burger { animation: none; }
 }
 
 .header--center .header__main { flex-wrap: wrap; justify-content: center; row-gap: var(--space-2); }
@@ -1340,20 +1426,38 @@ hero-slider {
   transform: translateX(-50%);
   z-index: var(--z-3);
   display: flex;
-  gap: var(--space-2);
+  gap: 0;
 }
 
+/* Кнопка-точка: визуально 10px, но кликабельная область 24×24 (WCAG 2.5.8 /
+   Lighthouse target-size). Сам «шарик» — псевдоэлемент, кнопка прозрачная. */
 .hero__dot {
-  width: 10px;
-  height: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: none;
+  background: transparent;
+  transition: width var(--transition);
+}
+
+.hero__dot::before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
   border-radius: var(--radius-pill);
   background: rgba(var(--white-rgb), 0.45);
-  transition: all var(--transition);
+  transition: width var(--transition), background var(--transition);
 }
 
 .hero__dot.is-active {
+  width: 32px;
+}
+
+.hero__dot.is-active::before {
   width: 32px;
   background: var(--white);
 }
@@ -4255,6 +4359,9 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 /* ---------- Анимация появления (.block--anim-*) ----------
    Scroll-driven без JS (animation-timeline: view()): блок «входит»
    при попадании во вьюпорт и в т.ч. при загрузке, если уже на экране.
+   Анимируем ТОЛЬКО движение/clip, без opacity: блоки ниже экрана с
+   animation-fill-mode: both получают начальное состояние, и полупрозрачный
+   текст давал ложные провалы контраста (Lighthouse color-contrast).
    Работает в превью, конструкторе и на любом сайте после вставки
    сниппета. Модификаторы: .block--anim-zoom, .block--anim-clip,
    .block--no-anim. Каскад вложенных карточек/пунктов — через единый
@@ -4262,16 +4369,16 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
    Всё отключается по prefers-reduced-motion и в печати. */
 
 @keyframes tbReveal {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: none; }
+  from { transform: translateY(24px); }
+  to   { transform: none; }
 }
 @keyframes tbRevealZoom {
-  from { opacity: 0; transform: scale(0.97); }
-  to   { opacity: 1; transform: none; }
+  from { transform: scale(0.985); }
+  to   { transform: none; }
 }
 @keyframes tbRevealClip {
-  from { opacity: 0; clip-path: inset(0 0 14% 0 round var(--radius-lg)); transform: translateY(14px); }
-  to   { opacity: 1; clip-path: none; transform: none; }
+  from { clip-path: inset(0 0 14% 0 round var(--radius-lg)); transform: translateY(14px); }
+  to   { clip-path: none; transform: none; }
 }
 @keyframes tbStagger {
   from { transform: translateY(20px); }

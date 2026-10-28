@@ -454,6 +454,7 @@ window.__T1_HEADER_SEARCH_VER = '2026-10-03-release';
     </svg>
 
     <input class="hsearch__input" type="search" name="q"
+           role="combobox" aria-haspopup="listbox"
            :placeholder="shownPlaceholder" autocomplete="off"
            :aria-label="'Поиск: ' + placeholder"
            :aria-controls="listId" aria-autocomplete="list"

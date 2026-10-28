@@ -2604,39 +2604,6 @@
           "title": "Шапка",
           "params": [
             {
-              "name": "layout",
-              "label": "Вид шапки",
-              "kind": "select",
-              "default": "classic",
-              "options": [
-                {
-                  "value": "classic",
-                  "label": "Классическая"
-                },
-                {
-                  "value": "minimal",
-                  "label": "Минимальная"
-                },
-                {
-                  "value": "two",
-                  "label": "Двухстрочная (поиск в строке)"
-                },
-                {
-                  "value": "search-row",
-                  "label": "С поиском в строке"
-                },
-                {
-                  "value": "center",
-                  "label": "Центрированная"
-                },
-                {
-                  "value": "account",
-                  "label": "С акцентом на вход"
-                }
-              ],
-              "hint": "Вид шапки. Разметка одна, различается только CSS (header--<layout>): classic — поиск отдельной строкой; search-row/two — логотип, поиск и виджеты в одной строке, меню под ними; minimal — без топбара и меню; center — всё по центру. На мобильном (≤991px) поиск всегда отдельной строкой."
-            },
-            {
               "name": "sticky",
               "label": "Прилипающая",
               "kind": "bool",
@@ -2663,12 +2630,6 @@
             {
               "name": "workTime",
               "label": "Часы работы",
-              "kind": "bool",
-              "default": true
-            },
-            {
-              "name": "search",
-              "label": "Строка поиска",
               "kind": "bool",
               "default": true
             },

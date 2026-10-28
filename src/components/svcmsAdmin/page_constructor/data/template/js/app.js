@@ -367,6 +367,14 @@ document.addEventListener('DOMContentLoaded', function () {
     else if (scrolled && y < SCROLL_SHOW) scrolled = false;
     else return;                            // в «мёртвой зоне» не трогаем класс
     header.classList.toggle('is-scrolled', scrolled);
+    // На десктопе меню-панель бургера есть только у компактной шапки.
+    // Вернулись наверх — в шапке снова обычное меню, поэтому панель
+    // закрываем, иначе бургер остался бы «нажатым».
+    if (!scrolled && burger && mobileMenu && window.innerWidth >= 992) {
+      burger.classList.remove('is-active');
+      burger.setAttribute('aria-expanded', 'false');
+      mobileMenu.classList.add('is-hidden');
+    }
   }
   window.addEventListener('scroll', onScrollHeader, { passive: true });
   header && header.classList.toggle('is-scrolled', scrolled);

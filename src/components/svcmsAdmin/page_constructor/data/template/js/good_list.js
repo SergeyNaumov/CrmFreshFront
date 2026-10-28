@@ -650,8 +650,9 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
 
         // Обновить <title>, og/twitter, H1 и хлебные крошки под новую рубрику.
         updateMeta: function (node) {
-          var title = (node && node.header) || '';
-          if (!title) return;
+          var header = (node && node.header) || '';
+          var title = (node && node.seo_title) || header;
+          if (!header) return;
           var full = this.orgname ? (title + ' — ' + this.orgname) : title;
           document.title = full;
           var og = document.querySelector('meta[property="og:title"]');
@@ -659,8 +660,8 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           var tw = document.querySelector('meta[name="twitter:title"]');
           if (tw) tw.setAttribute('content', full);
           var h1 = document.getElementById('catTitle');
-          if (h1) h1.textContent = title;
-          this.updateCrumbs(node, title);
+          if (h1) h1.textContent = (node.h1 || header);
+          this.updateCrumbs(node, header);
         },
 
         /* Крошки при переходе в другую подкатегорию (SPA, без перезагрузки).

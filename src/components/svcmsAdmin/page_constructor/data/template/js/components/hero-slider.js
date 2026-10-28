@@ -228,7 +228,7 @@ window.HeroSlider = {
            v-for="(s, i) in slides"
            :key="s.id"
            :class="{ 'is-active': activeIndex === i, 'is-out': leaving === i }">
-        <img class="hero__media" :src="s.photo" :alt="s.header"
+        <img class="hero__media" :src="s.photo" :srcset="s.srcset || null" sizes="100vw" :alt="s.header"
              width="1600" height="760" decoding="async"
              :fetchpriority="i === 0 ? 'high' : null"
              :loading="i === 0 ? 'eager' : 'lazy'">
