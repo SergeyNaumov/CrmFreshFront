@@ -7,6 +7,10 @@
     <v-tabs v-model="cur_tab" bg-color="primary" v-if="tabs.length">
           <v-tab v-for="(t, i) in tabs" :key="`tab${t.name}`" :value="i">{{ t.description }}</v-tab>
     </v-tabs>
+    <!-- Общая справка по активной вкладке (например, плейсхолдеры SEO-шаблонов). -->
+    <div class="tab-hint" v-if="tabs.length && tabs[cur_tab] && tabs[cur_tab].add_description">
+      {{ tabs[cur_tab].add_description }}
+    </div>
 
     <div>
       <!-- Вывод ошибок -->
@@ -76,6 +80,11 @@
                             </p>
                           </div>
                         </template>
+                        <!-- Подсказка как в edit_form. Для select её уже рисует
+                             field-select (components/fields/select.vue). -->
+                        <div class="add_description" v-if="l.add_description && l.type!=='select'">
+                          {{ l.add_description }}
+                        </div>
                         <div v-if="l.saved" class="saved">
                             сохранено
                         </div>
@@ -468,6 +477,14 @@ export default {
     margin-top: 10px;
     color: gray;
     font-size: 0.8rem;
+  }
+  /* Общая справка под вкладками (плейсхолдеры SEO-шаблонов и т.п.) */
+  .tab-hint {
+    margin: 6px 0 12px;
+    color: gray;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    max-width: 960px;
   }
   .saved {
     height: 10px; position: relative; top: -1px; font-size: 9pt;

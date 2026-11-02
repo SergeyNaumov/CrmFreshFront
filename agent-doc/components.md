@@ -23,7 +23,7 @@ Backend config → component mapping: [backend-contract.md](backend-contract.md)
 | `transfere-cards` | `components/TransfereCards/TransfereCards.vue` | transfer cards |
 | `GPTAssist` (eager) | `components/GPTAssist/GPTAssist.vue` + `functions.js` | GPT helper |
 | `table_component` | `components/Table.vue` | arbitrary table |
-| `const` | `components/Const.vue` | constants/dictionaries |
+| `const` | `components/Const.vue` | constants/dictionaries; `add_description` под полями + подсказка вкладки |
 | `login` / `register` / `remember` | `components/{Login,Register,Remember}.vue` | auth |
 | `errors` (eager) | `components/errors.vue` | error output |
 | `notifications`, `birth-days` | `components/{Notifications,BirthDays}.vue` | `/mainpage/...` |
