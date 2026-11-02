@@ -1206,13 +1206,15 @@ main > hero-slider {
 }
 
 /* H1-секция (block/h1.html): заголовок между hero-слайдером и «Почему мы».
-   Сжатые вертикальные отступы — сверху почти без зазора от слайдера,
-   снизу ровно половина обычного блока, чтобы не было двойного ритма. */
-.section--h1 {
-  padding: 0 0 calc(var(--block-pad, 48px) / 2);
-}
-.section--h1 + .section {
-  padding-top: calc(var(--block-pad, 48px) / 2);
+   Блок raw — собственная <section class="section section--h1"> идёт сразу
+   после слайдера, без общей block-обёртки: вложённый .container сдвигал
+   заголовок вправо относительно других заголовков. Отступы — по одному
+   блочному паддингу сверху и снизу (низ задаёт соседняя секция через
+   .section + .section), без дополнительного --section-gap: иначе H1
+   оторван от «Почему мы». */
+main > .section--h1 {
+  padding: 0 0 var(--block-pad, 48px);
+  margin-bottom: 0;
 }
 .section-title--h1 {
   margin: 0;

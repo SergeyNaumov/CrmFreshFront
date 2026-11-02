@@ -78,7 +78,7 @@ window.__t1_tb_types = window.__t1_tb_types || {
   stats:   { label: 'Статистика', desc: '.tb-stats: крупные числа в ряд (2 или 4), на мобильном — сетка 2×2. На акцентной заливке числа светлые.' },
   quote:   { label: 'Цитата / отзыв', desc: '.tb-quote: текст отзыва, аватар-заглушка, имя и должность. Хорошо смотрится на мягкой и акцентной заливках.' },
   steps:   { label: 'Шаги / процесс', desc: '.tb-steps: шаги с номерами 01–04 и соединительной линией; на мобильном — вертикальный список с линией слева.' },
-  cta:     { label: 'CTA-баннер', desc: '.tb-cta: заголовок, текст и кнопка .btn-white. Классика — акцентная (градиент) или тёмная заливка.' },
+  cta:     { label: 'CTA-баннер', desc: '.tb-cta: заголовок, текст и кнопка .btn-primary (акцентная градиентная).' },
   faq:     { label: 'FAQ-аккордеон', desc: '.tb-faq на <details>/<summary>: раскрытие без JavaScript, плавная анимация панели, иконка «+» → «×».' },
   cards:   { label: 'Карточки', desc: '.tb-cards: карточки с заголовком, текстом и ссылкой. Hover-подъём и стрелка «Подробнее →».' },
   article: { label: 'Статья + оглавление', desc: '.tb-article: статья .tb-prose и sticky-оглавление .tb-toc на якорях (подсветка :target).' },
@@ -373,7 +373,7 @@ function initTextBlockBuilder() {
           if (c.eyebrow) L.push('    <span class="tb-eyebrow">' + tbEsc(c.eyebrow) + '</span>');
           if (c.title) L.push('    <h2 class="tb-cta__title">' + tbEsc(c.title) + '</h2>');
           if (c.text) L.push('    <p class="tb-cta__text">' + tbEsc(c.text) + '</p>');
-          if (c.btnText) L.push('    <a class="btn btn-white" href="' + tbEsc(c.btnUrl || '#') + '">' + tbEsc(c.btnText) + ' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-dev-arrow"/></svg></a>');
+          if (c.btnText) L.push('    <a class="btn btn-primary" href="' + tbEsc(c.btnUrl || '#') + '">' + tbEsc(c.btnText) + ' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-dev-arrow"/></svg></a>');
           L.push('  </div>');
         }
 
