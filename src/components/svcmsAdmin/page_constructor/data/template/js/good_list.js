@@ -271,14 +271,16 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
             favorites: f.favorites !== false
           };
         },
-        // Список подкатегорий для чипов — собирается из данных товаров
+        // Список меток для чипов — собирается из данных товаров.
+        // «Прочее» — служебная метка товаров без акций/новинок; отдельным
+        // фильтром она не нужна и только путает, поэтому не показываем.
         categories: function () {
           var seen = {};
           for (var i = 0; i < this.goods.length; i++) {
             var c = this.goods[i].category;
             var list = Array.isArray(c) ? c : [c || 'other'];
             for (var j = 0; j < list.length; j++) {
-              if (list[j]) seen[list[j]] = true;
+              if (list[j] && list[j] !== 'other') seen[list[j]] = true;
             }
           }
           var arr = Object.keys(seen);
@@ -287,6 +289,30 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
                    (CATEGORY_ORDER[b] != null ? CATEGORY_ORDER[b] : 9);
           });
           return arr;
+        },
+
+        // Есть ли активные фильтры — «Сбросить» показываем только тогда.
+        hasFilters: function () {
+          if (String(this.q || '').trim()) return true;
+          if (this.priceMin !== '' && this.priceMin != null) return true;
+          if (this.priceMax !== '' && this.priceMax != null) return true;
+          if (this.category !== 'all') return true;
+          if (normRubric(this.rubric)) return true;
+          for (var i = 0; i < this.catalogParams.length; i++) {
+            var prm = this.catalogParams[i];
+            var lo = this.paramMin[prm.id], hi = this.paramMax[prm.id];
+            if (lo !== '' && lo != null) return true;
+            if (hi !== '' && hi != null) return true;
+            var sel = this.paramVals[prm.id];
+            if (sel && Object.keys(sel).some(function (k) { return sel[k]; })) return true;
+          }
+          return false;
+        },
+
+        // Всего товаров в текущем разделе (с подрубриками) — для пункта «Все».
+        allCount: function () {
+          return (this.scope && this.scope.count != null)
+            ? Number(this.scope.count) : this.goods.length;
         },
 
         // Применение всех фильтров: поиск + цена + подкатегория
@@ -303,7 +329,13 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
               if (list.indexOf(vm.category) === -1) return false;
             }
             if (normRubric(vm.rubric)) {
-              if (rubricatorList(g).indexOf(Number(vm.rubric)) === -1) return false;
+              var rids = vm.rubricIds(vm.rubric);
+              var hit = false;
+              var grub = rubricatorList(g);
+              for (var ri = 0; ri < rids.length; ri++) {
+                if (grub.indexOf(rids[ri]) !== -1) { hit = true; break; }
+              }
+              if (!hit) return false;
             }
             var p = Number(g.price) || 0;
             if (pmin != null && p < pmin) return false;
@@ -729,18 +761,36 @@ window.__T1_GOOD_LIST_VER = '2026-09-25-rubric-sidebar';
           return null;
         },
 
+        // id рубрики и всех её подрубрик (сервер кладёт в sidebarKids[].ids).
+        // Без этого фильтр по родителю («Смартфоны») не находил товары,
+        // которые лежат в его подрубриках.
+        rubricIds: function (id) {
+          var k = Number(id);
+          var node = this.kidById(k);
+          if (node && Array.isArray(node.ids) && node.ids.length) {
+            return node.ids.map(Number);
+          }
+          return [k];
+        },
+
         // Счётчик товаров рубрики/подрубрики; 0/'all' → все товары.
-        // Если загружены глобальные счётчики (loadCounts) — используем их,
+        // Если сервер прислал count (с учётом поддерева) — используем его,
         // иначе считаем по текущему набору товаров.
         rubricCount: function (id) {
           var k = Number(id);
-          if (!k) return this.goods.length;
+          if (!k) return this.allCount;
+          var node = this.kidById(k);
+          if (node && node.count != null) return Number(node.count);
           if (this.rubricCounts && this.rubricCounts[k] !== undefined) {
             return this.rubricCounts[k];
           }
+          var ids = this.rubricIds(k);
           var n = 0;
           for (var i = 0; i < this.goods.length; i++) {
-            if (rubricatorList(this.goods[i]).indexOf(k) !== -1) n++;
+            var grub = rubricatorList(this.goods[i]);
+            for (var j = 0; j < ids.length; j++) {
+              if (grub.indexOf(ids[j]) !== -1) { n++; break; }
+            }
           }
           return n;
         },

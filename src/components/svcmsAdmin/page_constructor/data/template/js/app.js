@@ -351,21 +351,23 @@ document.addEventListener('DOMContentLoaded', function () {
      хедера. С одиночным порогом (scrollY > 10) при скролле вверх класс
      начинает «дребезжать»: высота хедера меняется → страница смещается →
      scrollY перескакивает порог → топбар то появляется, то исчезает.
-     Поэтому гистерезис: включаем на 40px, снимаем только ниже 10px,
-     плюс игнорируем микродвижения (<2px) вблизи порога. */
+     Поэтому:
+       1) гистерезис: включаем на 40px, снимаем только ниже 10px;
+       2) игнорируем микродвижения (<2px);
+       3) кулдаун: после переключения не трогаем класс ~400мс (дольше
+          CSS-transition 0.25s). Иначе быстрый флик/инерция успевает
+          переключить класс туда-обратно, и шапка «мигает». */
   var header = document.getElementById('siteHeader');
   var SCROLL_HIDE = 40;   // дальше — топбар прячем
   var SCROLL_SHOW = 10;   // ближе — показываем обратно
+  var COOLDOWN_MS = 400;  // пауза после переключения (transition 250мс)
   var lastY = window.scrollY || 0;
   var scrolled = (lastY > SCROLL_HIDE);
-  function onScrollHeader() {
-    if (!header) return;
-    var y = window.scrollY || 0;
-    if (Math.abs(y - lastY) < 2) return;   // дребезг/микродвижения
-    lastY = y;
-    if (!scrolled && y > SCROLL_HIDE) scrolled = true;
-    else if (scrolled && y < SCROLL_SHOW) scrolled = false;
-    else return;                            // в «мёртвой зоне» не трогаем класс
+  var lastToggle = 0;
+  var settleTimer = 0;
+  function applyHeaderState(want) {
+    scrolled = want;
+    lastToggle = Date.now();
     header.classList.toggle('is-scrolled', scrolled);
     // На десктопе меню-панель бургера есть только у компактной шапки.
     // Вернулись наверх — в шапке снова обычное меню, поэтому панель
@@ -375,6 +377,33 @@ document.addEventListener('DOMContentLoaded', function () {
       burger.setAttribute('aria-expanded', 'false');
       mobileMenu.classList.add('is-hidden');
     }
+  }
+  function onScrollHeader() {
+    if (!header) return;
+    var y = window.scrollY || 0;
+    if (Math.abs(y - lastY) < 2) return;   // дребезг/микродвижения
+    lastY = y;
+    var want = scrolled;
+    if (!scrolled && y > SCROLL_HIDE) want = true;
+    else if (scrolled && y < SCROLL_SHOW) want = false;
+    else return;                            // в «мёртвой зоне» не трогаем класс
+    // Кулдаун: пока идёт CSS-анимация шапки, быстрый флик не должен
+    // переключать состояние обратно (это и вызывало «мигание»).
+    var now = Date.now();
+    if (now - lastToggle < COOLDOWN_MS) {
+      // Прокрутка остановилась внутри кулдауна — перепроверим после него,
+      // иначе шапка останется в неверном состоянии.
+      if (!settleTimer) {
+        settleTimer = window.setTimeout(function () {
+          settleTimer = 0;
+          lastToggle = 0;                  // снять блокировку
+          lastY = (window.scrollY || 0) - 3; // форсируем delta > 2
+          onScrollHeader();
+        }, COOLDOWN_MS);
+      }
+      return;
+    }
+    applyHeaderState(want);
   }
   window.addEventListener('scroll', onScrollHeader, { passive: true });
   header && header.classList.toggle('is-scrolled', scrolled);
@@ -405,6 +434,25 @@ document.addEventListener('DOMContentLoaded', function () {
         mobileMenu.querySelectorAll('.nav-item.is-open').forEach(function (item) {
           setMobileSubmenu(item, false);
         });
+      }
+    });
+  }
+
+  /* Поиск-иконка на мобильном: раскрывает/скрывает строку поиска (.header__search).
+     Класс .search-open вешается на <header>, состояние — в aria-expanded. */
+  var searchToggle = document.getElementById('searchToggle');
+  if (searchToggle) {
+    var siteHeader = document.getElementById('siteHeader');
+    searchToggle.addEventListener('click', function () {
+      var open = searchToggle.classList.toggle('is-active');
+      if (siteHeader) siteHeader.classList.toggle('search-open', open);
+      searchToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) {
+        // Даём Vue-полю поиска сфокусироваться после раскрытия.
+        setTimeout(function () {
+          var input = document.querySelector('#headerSearch .hsearch__input');
+          if (input) input.focus();
+        }, 60);
       }
     });
   }

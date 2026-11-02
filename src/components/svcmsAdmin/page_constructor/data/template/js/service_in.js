@@ -53,6 +53,7 @@ window.__T1_SERVICE_IN_VER = '2026-10-02';
     var imgEl    = document.getElementById('serviceInMedia');
     var iconEl   = document.getElementById('serviceInIcon');
     var priceEl  = document.getElementById('serviceInPrice');
+    var pricePrefixEl = document.getElementById('serviceInPricePrefix');
     var priceWrapEl = document.getElementById('serviceInPriceWrap');
     var anonsEl  = document.getElementById('serviceInAnons');
     var bodyEl   = document.getElementById('serviceInBody');
@@ -77,8 +78,10 @@ window.__T1_SERVICE_IN_VER = '2026-10-02';
         imgEl.alt = (title || 'Услуга') + ' — DigitalStrateg';
       }
       setIcon(iconEl, data.icon || '');
-      if (priceEl) priceEl.textContent = data.price_from || '';
-      if (priceWrapEl) priceWrapEl.hidden = !data.price_from;
+      if (priceEl) priceEl.textContent = data.price_fmt || '';
+      if (priceEl) priceEl.setAttribute('data-price', String(data.price || ''));
+      if (pricePrefixEl) pricePrefixEl.textContent = data.price_from ? 'Цена от' : 'Цена';
+      if (priceWrapEl) priceWrapEl.hidden = !data.price;
       if (anonsEl) anonsEl.textContent = data.anons || '';
       if (bodyEl) {
         bodyEl.innerHTML = '';

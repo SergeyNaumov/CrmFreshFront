@@ -65,14 +65,19 @@ window.__T1_ARTICLE_IN_VER = '2026-10-02';
       }
 
       if (bodyEl) {
-        bodyEl.innerHTML = '';
-        var pars = Array.isArray(data.body) ? data.body
-                  : (data.anons ? [data.anons] : []);
-        pars.forEach(function (text) {
-          var p = document.createElement('p');
-          p.textContent = text;
-          bodyEl.appendChild(p);
-        });
+        if (data.body_html) {
+          /* Статья из wysiwyg: сервер отдаёт готовый HTML. */
+          bodyEl.innerHTML = data.body_html;
+        } else {
+          bodyEl.innerHTML = '';
+          var pars = Array.isArray(data.body) ? data.body
+                    : (data.anons ? [data.anons] : []);
+          pars.forEach(function (text) {
+            var p = document.createElement('p');
+            p.textContent = text;
+            bodyEl.appendChild(p);
+          });
+        }
       }
       if (crumbEl) crumbEl.textContent = data.title || data.header || '';
 

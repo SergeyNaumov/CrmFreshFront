@@ -1,18 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 58" fill="none" role="img" aria-labelledby="pkTorgTitle">
-  <title id="pkTorgTitle">ПК-торг</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 58" fill="none" role="img" aria-labelledby="dsTitle">
+  <title id="dsTitle">DigitalStrateg</title>
 
-  <!-- Иконка: моноблок/ноутбук -->
-  <rect x="3" y="5" width="62" height="44" rx="7" fill="#0b6e8f" opacity="0.10"/>
-  <rect x="8" y="9" width="52" height="34" rx="5" fill="#0b6e8f"/>
-  <rect x="12" y="13" width="44" height="26" rx="2.5" fill="#eef8fc"/>
-  <path d="M17 32l7-8 6 5 9-11" stroke="#00c2ff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="40" cy="17.5" r="2.6" fill="#00c2ff"/>
-  <path d="M29 43v7M21 50h16" stroke="#0b6e8f" stroke-width="2.8" stroke-linecap="round"/>
-  <rect x="12" y="53" width="44" height="3" rx="1.5" fill="#00c2ff"/>
+  <!-- Иконка: стилизованный импульс/график -->
+  <rect x="3" y="5" width="62" height="44" rx="8" fill="#0b6e8f" opacity="0.10"/>
+  <rect x="8" y="9" width="52" height="34" rx="6" fill="#0b6e8f"/>
+  <path d="M17 33l9-11 7 6 12-15" stroke="#00c2ff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="45" cy="12" r="2.8" fill="#00c2ff"/>
+  <circle cx="27" cy="23" r="2.4" fill="#00c2ff"/>
 
   <!-- Название -->
-  <text x="80" y="38" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">
-    <tspan fill="#0b6e8f">ПК</tspan><tspan fill="#1f2a33">-торг</tspan>
+  <text x="80" y="37" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">
+    <tspan fill="#0b6e8f">Digital</tspan><tspan fill="#1f2a33">Strateg</tspan>
   </text>
-  <rect x="81" y="45" width="76" height="3" rx="1.5" fill="#00c2ff"/>
+  <rect x="81" y="45" width="112" height="3" rx="1.5" fill="#00c2ff"/>
 </svg>

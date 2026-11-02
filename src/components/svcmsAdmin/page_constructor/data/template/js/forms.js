@@ -124,6 +124,10 @@
     success: function (d) {
       var yid = (window.CNST && window.CNST.ym_id) || 0;
       if (typeof ym !== 'undefined' && yid) ym(yid, 'reachGoal', 'sendorder');
+      var tl = document.querySelector('.modal_thanks__title');
+      if (tl) tl.textContent = 'Спасибо за отзыв!';
+      var t = document.querySelector('.modal_thanks__text');
+      if (t) t.textContent = 'Отзыв отправлен и появится на сайте после проверки модератором.';
       if (window.jmodalOpen) jmodalOpen('modal_thanks');
     }
   });

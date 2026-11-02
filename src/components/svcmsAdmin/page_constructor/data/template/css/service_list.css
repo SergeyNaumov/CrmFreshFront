@@ -60,11 +60,12 @@
 
 .service-card:hover .service-card__media img { transform: scale(1.05); }
 
-/* Иконка-бейдж «свисает» с фото в тело карточки */
+/* Иконка-бейдж сидит на границе фото и тела: якорь — .service-card__media
+   (position: relative, overflow: visible), половина вынесена вниз в тело. */
 .service-card__icon {
   position: absolute;
   left: 16px;
-  bottom: -22px;
+  bottom: -26px;
   display: grid;
   place-items: center;
   width: 52px;
@@ -75,16 +76,19 @@
   box-shadow: var(--shadow-sm);
   font-size: 24px;
   line-height: 1;
+  z-index: 2;
 }
 
 .service-card__icon .icon { width: 26px; height: 26px; }
 
 .service-card__body {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   flex: 1;
-  padding: var(--space-6) var(--space-5) var(--space-5);
+  /* padding-top = половина иконки (26px), чтобы заголовок не наезжал на бейдж */
+  padding: var(--space-7) var(--space-5) var(--space-5);
 }
 
 .service-card__title { margin: 0; font-size: 1.15rem; line-height: 1.3; }

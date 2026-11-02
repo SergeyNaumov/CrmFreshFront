@@ -239,3 +239,30 @@
   .service-in__nav-group .service-nav__btn { flex: 1 1 0; justify-content: center; }
   .service-in__all { text-align: center; }
 }
+
+/* Редактируемые разделы страницы услуги (что входит, этапы, сроки, гарантия). */
+.service-section {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: var(--border-width) solid var(--border);
+}
+.service-section__title {
+  margin: 0 0 var(--space-3);
+  font-size: clamp(19px, 2.2vw, 24px);
+}
+.service-section__body {
+  color: var(--body-color);
+  font-size: 16px;
+  line-height: 1.75;
+}
+.service-section__body p { margin: 0 0 var(--space-3); }
+.service-section__body p:last-child { margin-bottom: 0; }
+
+/* Цена в плитке «Другие услуги». */
+.service-tile__price {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--heading-color);
+}

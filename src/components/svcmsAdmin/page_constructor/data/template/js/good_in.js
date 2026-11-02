@@ -28,7 +28,7 @@
    Fancybox v5 (self-hosted js/fancybox.umd.js). Увеличение —
    клик по фото; стрелки/клавиатура/swipe в лайтбоксе.
    ============================================================ */
-window.__T1_GOOD_IN_VER = '2026-09-18';
+window.__T1_GOOD_IN_VER = '2026-11-02';
 
 (function () {
   if (typeof window.Vue === 'undefined') return;
@@ -109,6 +109,12 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
           /* «Заказать в 1 клик» (F-06) — кнопка появляется, если блок
              включён в конструкторе (data-one-click="1"). */
           oneClick: root.getAttribute('data-one-click') === '1',
+          /* gv-quick: краткие характеристики / преимущества / артикул. */
+          variant: root.getAttribute('data-variant') || 'gv-classic',
+          quickSpecsCount: numAttr(root, 'data-quick-specs-count', 5),
+          usps: root.getAttribute('data-usps') !== '0',
+          sticky: root.getAttribute('data-sticky') !== '0',
+          artikul: root.getAttribute('data-artikul') || '',
           _timer: null,
           _received: false
         };
@@ -148,6 +154,12 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
           var p = this.product.price;
           if (!(old > p)) return null;
           return Math.round((1 - p / old) * 100);
+        },
+        /* gv-quick: первые quickSpecsCount характеристик для карты товара. */
+        quickSpecs: function () {
+          var sp = this.product.specs;
+          if (!sp || !sp.length) return [];
+          return sp.slice(0, this.quickSpecsCount);
         }
       },
 
@@ -415,6 +427,17 @@ window.__T1_GOOD_IN_VER = '2026-09-18';
         // ---------- UI ----------
         badgeLabel: function (b) {
           return BADGE_LABELS[b] || b;
+        },
+        /* gv-quick: переключиться на вкладку «Характеристики» и проскроллить. */
+        showAllSpecs: function () {
+          this.tab = 'specs';
+          var vm = this;
+          vm.$nextTick(function () {
+            var el = vm.$root.$el.querySelector('.good-in__tabs');
+            if (el && el.scrollIntoView) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
         },
         priceFmt: function (n) {
           return new Intl.NumberFormat('ru-RU').format(Number(n) || 0) + ' ₽';
