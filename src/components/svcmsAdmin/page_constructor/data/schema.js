@@ -832,6 +832,42 @@
         "график"
       ]
     },
+    "h1": {
+      "title": "Заголовок H1",
+      "group": "Контент",
+      "partial": "block/h1.html",
+      "status": "planned",
+      "check": "strict",
+      "contract_classes": [
+        "section-title"
+      ],
+      "default_variant": "h1",
+      "variants": {
+        "h1": {
+          "title": "H1 из константы",
+          "params": [
+            {
+              "name": "note",
+              "label": "Подсказка",
+              "kind": "text",
+              "default": "Текст берётся из константы main_h1"
+            }
+          ]
+        }
+      },
+      "shared_params": {},
+      "items_shared": {},
+      "keywords": [
+        "h1",
+        "заголовок",
+        "заголовок страницы",
+        "главная",
+        "title"
+      ],
+      "data": false,
+      "items_are_data": false,
+      "views": true
+    },
     "slider": {
       "title": "Слайдер",
       "group": "Медиа",
