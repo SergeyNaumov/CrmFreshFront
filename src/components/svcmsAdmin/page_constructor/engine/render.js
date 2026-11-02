@@ -384,7 +384,7 @@
             el('div', { class: 'tb-eyebrow' }, esc(p(block, 'eyebrow'))) +
             el('h2', null, header) + el('p', { class: 'tb-lead' }, esc(p(block, 'lead'))) +
             el('p', null, esc(p(block, 'p1'))) +
-            (p(block, 'btnText') ? link(p(block, 'btnUrl'), 'btn', esc(p(block, 'btnText'))) : '')));
+            (p(block, 'btnText') ? link(p(block, 'btnUrl'), 'btn btn-primary', esc(p(block, 'btnText'))) : '')));
       case 'feature':
         return el('div', { class: 'tb-feature', style: '--tb-cols:' + esc(p(block, 'cols', 3)) },
           it.map(function (i, n) {
@@ -415,7 +415,7 @@
         return el('div', { class: 'tb-cta' }, el('div', { class: 'tb-eyebrow' }, esc(p(block, 'eyebrow'))) +
           el('h2', { class: 'tb-cta__title' }, esc(p(block, 'title'))) +
           el('p', { class: 'tb-cta__text' }, esc(p(block, 'text'))) +
-          (p(block, 'btnText') ? link(p(block, 'btnUrl'), 'btn', esc(p(block, 'btnText'))) : ''));
+          (p(block, 'btnText') ? link(p(block, 'btnUrl'), 'btn btn-primary', esc(p(block, 'btnText'))) : ''));
       case 'faq':
         return el('div', { class: 'tb-faq' }, it.map(function (i, n) {
           return el('details', { class: 'tb-faq__item', open: n === 0 ? true : null },
@@ -448,7 +448,7 @@
           (ph ? '' : el('h2', null, header)) +
           (bool(block, 'leadOn') || p(block, 'lead') ? el('p', { class: 'tb-lead' }, esc(p(block, 'lead'))) : '') +
           el('p', null, esc(p(block, 'p1'))) +
-          (p(block, 'btnText') ? link('#', 'btn', esc(p(block, 'btnText'))) : ''));
+          (p(block, 'btnText') ? link('#', 'btn btn-primary', esc(p(block, 'btnText'))) : ''));
     }
   }
 
