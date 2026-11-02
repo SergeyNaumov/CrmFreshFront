@@ -452,6 +452,16 @@
     }
   }
 
+  // -------- h1 --------
+  function renderH1(block) {
+    // Текст — из константы main_h1; в превью её нет, поэтому берём
+    // PC_HEADER_DATA.main_h1 (если админка положит) или видимую заглушку.
+    var d = global.PC_HEADER_DATA || {};
+    var text = d.main_h1 || 'Заголовок страницы';
+    return '<section class="section section--h1" aria-label="Заголовок страницы">' +
+      '<div class="container"><h1 class="section-title section-title--h1">' + esc(text) + '</h1></div></section>';
+  }
+
   // -------- компонентные --------
   function renderSlider(block) {
     // Слайды — из items блока (per-block), инлайн data-list; фото block-images/… через filesBase.
@@ -1855,6 +1865,7 @@
   // -------- сборка --------
   var RENDER = {
     text: { raw: false, fn: renderText },
+    h1: { raw: true, fn: renderH1 },
     slider: { raw: true, fn: renderSlider },
     catalog: { raw: false, fn: renderCatalog },
     goods: { raw: false, fn: renderGoods },
