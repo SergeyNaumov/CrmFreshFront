@@ -3575,6 +3575,18 @@
               "default": false
             }
           ]
+        },
+        "gv-quick": {
+          "title": "Быстрая карта",
+          "params_ref": "pd_common",
+          "params": [
+            {
+              "name": "one_click",
+              "label": "Кнопка «Заказать в 1 клик»",
+              "kind": "bool",
+              "default": false
+            }
+          ]
         }
       },
       "shared_params": {
@@ -3602,6 +3614,33 @@
           {
             "name": "showSpecs",
             "label": "Характеристики",
+            "kind": "bool",
+            "default": true
+          },
+          {
+            "name": "showQuickSpecs",
+            "label": "Краткие характеристики в карте",
+            "kind": "bool",
+            "default": true
+          },
+          {
+            "name": "quickSpecsCount",
+            "label": "Сколько характеристик в карте",
+            "kind": "number",
+            "default": 5,
+            "min": 2,
+            "max": 8,
+            "step": 1
+          },
+          {
+            "name": "usps",
+            "label": "Преимущества (доставка/гарантия/возврат)",
+            "kind": "bool",
+            "default": true
+          },
+          {
+            "name": "stickyInfo",
+            "label": "Липкая карта покупки (десктоп)",
             "kind": "bool",
             "default": true
           }
