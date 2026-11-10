@@ -5510,6 +5510,10 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 /* ---------- Кастомная страница (page/custom_page.html) ---------- */
 .custom-page { max-width: 820px; }
 
+/* Режим «на всю ширину» (ds_text.full_width — соглашения, регламенты):
+   контент тянется на всю ширину .container. */
+.custom-page--full { max-width: none; }
+
 .custom-page .h2,
 .custom-page .h3,
 .custom-page .h4 {
