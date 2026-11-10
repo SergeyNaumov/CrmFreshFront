@@ -138,7 +138,9 @@ export default{
 </script>
 <style lang="scss" scoped>
   .left_menu {
-    margin-top: 10px;    
+    margin-top: 10px;
+    /* Отступ снизу — чтобы последний пункт не лип к нижнему краю экрана. */
+    padding-bottom: 24px;
   }
   .cur_profile {
     height: 65px;

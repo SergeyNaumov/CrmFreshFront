@@ -3,7 +3,10 @@
     
     <div v-for="f in fields_for_block" :key="f.name+'_1'" class="field">
 
-      <template v-if="is_only_field(f)"> <!--только поле без всего лишнего (для миниатюрных полей) -->
+      <!-- Заголовок-секция формы (type: header) — декоративный, контрола нет -->
+      <div v-if="f.type=='header'" class="form-section-header">{{ f.description }}</div>
+
+      <template v-if="f.type!='header' && is_only_field(f)"> <!--только поле без всего лишнего (для миниатюрных полей) -->
           
           <template v-if="f.before_html" v-html="f.before_html"></template>
           
@@ -17,7 +20,7 @@
           </div>
           <!--<div v-if="f.after_html" v-html="f.after_html"></div>-->
       </template>
-      <div v-else>
+      <div v-else-if="f.type!='header'">
           
           <v-col md="12" cols="12" v-if="f.full_str || !f.description || is_default_full_str(f) || is_default_not_description(f)">
             <!-- FULL_STR -->
@@ -120,6 +123,8 @@ import FieldPassword from '../fields/password';
             return false
           if(field.type=='save_button')
             return true
+          if(field.type=='header')
+            return true
           if(field.before_html)
             return true
           return !!this.dynamic_component(field)
@@ -201,7 +206,17 @@ import FieldPassword from '../fields/password';
   }
 </script>
 <style scoped>
-  .block {margin-top: var(--app-space-section); padding-bottom: 0;}  
+  .block {margin-top: var(--app-space-section); padding-bottom: 0;}
+  /* Заголовок-секции (type: header): визуально отделяет группу полей,
+     напр. «Сервисы для SEO» внизу формы. */
+  .form-section-header {
+    margin: var(--app-space-section) 0 4px;
+    padding-top: var(--app-space-inline);
+    border-top: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    font-weight: 600;
+    font-size: 1rem;
+    color: rgb(var(--v-theme-primary));
+  }
   /* Иконка поля выравнивается по контролу: высота как у поля */
   .control_row {display: flex; align-items: flex-start; gap: var(--app-space-inline);}
   .field_icon {

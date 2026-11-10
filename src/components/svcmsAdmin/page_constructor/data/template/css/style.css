@@ -341,6 +341,12 @@ button {
   flex-wrap: wrap;
 }
 
+/* Десктоп: нижний отступ шапки уменьшен — иначе под меню остаётся
+   слишком большой белый зазор до содержимого страницы. */
+@media (min-width: 992px) {
+  .header__main { padding-bottom: var(--space-2); }
+}
+
 /* ---------- Виды шапки (параметр блока «Вид шапки») ----------
    Разметка одна (см. block/header.html): .logo, .header__nav,
    .header__actions и .header__search лежат внутри .header__main, а вид
@@ -374,8 +380,10 @@ button {
   margin: 0 auto;
   padding-bottom: 0;
 }
-.header--search-row .logo,
-.header--two .logo { order: 1; }
+/* order задаём на .logo-block (дочерний элемент .header__main), а не на .logo:
+   иначе order применялся бы внутри flex .logo-block и слоган вставал ЛЕВЕЕ лого. */
+.header--search-row .logo-block,
+.header--two .logo-block { order: 1; }
 .header--search-row .header__actions,
 .header--two .header__actions { order: 3; }
 .header--search-row .header__nav,
@@ -845,6 +853,29 @@ button {
   align-items: center;
   gap: var(--space-4);
   flex-shrink: 0;
+}
+
+/* Телефон в основной строке шапки (левее избранного). На мобильном
+   скрыт — там кнопка «Позвонить» в шапке mini и телефон в топбаре. */
+.header__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-h5);
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--heading-color);
+}
+.header__phone .icon { width: 18px; height: 18px; opacity: 0.6; }
+.header__phone:hover { color: var(--primary); }
+
+@media (max-width: 1199px) {
+  /* На планшете оставляем только иконку — номер не помещается. */
+  .header__phone-num { display: none; }
+}
+
+@media (max-width: 767px) {
+  .header__phone { display: none; }
 }
 
 /* Избранное и корзина: иконка + подпись снизу (НЕ кнопки — без рамок,
