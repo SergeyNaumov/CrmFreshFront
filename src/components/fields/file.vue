@@ -178,17 +178,6 @@ export default {
         return ''
 
       },
-      // URL файла: ./files/... — это файлы САЙТА (docroot), они отдаются из
-      // корня домена. Менеджер живёт по префиксу (/manager/) — подставлять
-      // BaseUrl нельзя, иначе превью уходит на /manager/files/... → 404.
-      // Аргумент приводим к строке: value/filename в некоторых формах приходят
-      // не строкой — иначе startsWith падает и РЕНДЕР ВСЕГО ПОЛЯ ломается.
-      file_url(p){
-        p=String(p==null?'':p)
-        if(p.startsWith('/files/') && String(window.BackendBase||'').indexOf('/manager')!==-1)
-          return p
-        return (BaseUrl+p).replace('//','/')
-      },
       download_link(){
         let filedir=this.field.filedir.replace(/^\./,'')
         let saved_filename=''
@@ -240,6 +229,20 @@ export default {
       this.field_error_check()
     },
     methods:{
+      // URL файла: ./files/... — это файлы САЙТА (docroot), они отдаются из
+      // корня домена. Менеджер живёт по префиксу (/manager/) — подставлять
+      // BaseUrl нельзя, иначе превью уходит на /manager/files/... → 404.
+      // Аргумент приводим к строке: value/filename в некоторых формах приходят
+      // не строкой — иначе startsWith падает и РЕНДЕР ВСЕГО ПОЛЯ ломается.
+      file_url(p){
+        p=String(p==null?'':p)
+        if(p.startsWith('/files/') && String(window.BackendBase||'').indexOf('/manager')!==-1)
+          return p
+        return (BaseUrl+p).replace('//','/')
+      // ВАЖНО: это METHOD, не computed — вызывается с аргументом;
+      // computed при таком вызове получает инстанс и рендер поля падает.
+      // (инцидент: поле файла пропадало из формы ds_clients).
+    },
       init(){ // читаем field.resize и на его основе собираем crops (правила ресайзов)
         let field=this.field;
         this.begin_value=field.begin_value || field.value || '';
