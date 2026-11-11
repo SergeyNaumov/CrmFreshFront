@@ -178,16 +178,21 @@ export default {
         return ''
 
       },
+      // URL файла: ./files/... — это файлы САЙТА (docroot), они отдаются из
+      // корня домена. Менеджер живёт по префиксу (/manager/) — подставлять
+      // BaseUrl нельзя, иначе превью уходит на /manager/files/... → 404.
+      file_url(p){
+        if(p.startsWith('/files/') && String(window.BackendBase||'').indexOf('/manager')!==-1)
+          return p
+        return (BaseUrl+p).replace('//','/')
+      },
       download_link(){
-        let filedir=BaseUrl+this.field.filedir.replace(/^\./,'')
+        let filedir=this.field.filedir.replace(/^\./,'')
         let saved_filename=''
         if(this.begin_value){
           saved_filename=this.field.keep_orig_filename?this.begin_value.split(';').shift():this.begin_value
         }
-        let download_link=filedir+'/'+saved_filename
-        download_link=download_link.replace('//','/')
-        
-        return download_link
+        return this.file_url(filedir+'/'+saved_filename)
       },
       extend_file_link_ok(){
         let v=/^https?:\/\/.+?\..+$/.test(this.extent_file_link)
@@ -401,7 +406,7 @@ export default {
       start_crop_already_loaded(){
         let full_name=this.field.filedir+'/'+this.begin_value;       
         this.orig_name=this.begin_value;
-        this.imgSrc=BaseUrl+full_name.replace(/^\.\//,'/');
+        this.imgSrc=this.file_url(full_name.replace(/^\.\//,'/'));
       },
       remove(){ // удаляем текущее фото с сервера
         // получить с сервера загруженное ранее фото для кропа

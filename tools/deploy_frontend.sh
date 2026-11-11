@@ -64,10 +64,18 @@ run_step() {
 
 SSH_TARGET="${REMOTE_USER}@${REMOTE_HOST}"
 
-# 1. dist/ без favicon (флаги как в syncsvcmsmanager.py)
-run_step "dist/ -> ${SSH_TARGET}:${REMOTE_DIR}/ (без favicon*)" \
+# 1. dist/ без favicon (флаги как в syncsvcmsmanager.py) и без /files:
+#    в репо public/files — симлинк на файловое хранилище бэкенда (для
+#    локального dev), vite копирует его СОДЕРЖИМОЕ в dist/files; без этого
+#    исключения rsync перебил бы симлинк {REMOTE}/files реальной папкой
+#    (такой инцидент уже был).
+if [ -d dist/files ]; then
+  echo "⚠ dist/files — каталог (vite скопировал public/files): исключаю из деплоя." >&2
+fi
+run_step "dist/ -> ${SSH_TARGET}:${REMOTE_DIR}/ (без favicon* и /files)" \
   rsync -rltvz -O --no-perms --no-owner --no-group \
     --exclude='favicon.ico' --exclude='favicon.svg' \
+    --exclude='/files' \
     --exclude='__pycache__/' \
     -e "ssh -p ${REMOTE_PORT}" \
     dist/ "${SSH_TARGET}:${REMOTE_DIR}/"
