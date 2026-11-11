@@ -31,8 +31,13 @@
         <v-app-bar app  >
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title >
-            <a href="/"><v-icon size="small">fa fa-home</v-icon>&nbsp; {{title}}</a>
+            <!-- заголовок без ссылки: название CMS, не переход -->
+            <v-icon size="small">fa fa-home</v-icon>&nbsp; {{title}}
           </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <a v-if="site" :href="site" target="_blank" class="app-bar-site-link">
+            <v-icon size="small">fa fa-external-link</v-icon>&nbsp; перейти на сайт
+          </a>
           <Messenger v-if="false" :config="app_components.navigator" :manager="manager"/>
         </v-app-bar>
 
@@ -99,6 +104,7 @@ export default {
           left_menu:[],
           bottom_menu:[],
           title:'',
+          site:'',
           MenuItem:{type:'vue',value:'mainpage'},
           MenuItemParams:{},
           errors:[],
@@ -166,6 +172,7 @@ export default {
                 }
                 this.$nextTick(()=>{
                     this.copyright=D.copyright, document.title=this.title=D.title;
+                    this.site=D.site || '';
                 });
                 this.errors=D.errors;
 
@@ -242,6 +249,15 @@ export default {
 .app-footer {
     background-color: rgb(var(--v-theme-primary)) !important;
   }
+  /* «перейти на сайт» в правой части шапки — тем же шрифтом, что и заголовок */
+  .app-bar-site-link {
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    margin-right: 8px;
+    white-space: nowrap;
+  }
+  .app-bar-site-link:hover { color: rgb(var(--v-theme-primary)); }
   .v-application .error {background-color: white !important;}
   /* настройка полосы прокрутки */
   ::-webkit-scrollbar {
