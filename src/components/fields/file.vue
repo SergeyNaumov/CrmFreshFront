@@ -181,7 +181,10 @@ export default {
       // URL файла: ./files/... — это файлы САЙТА (docroot), они отдаются из
       // корня домена. Менеджер живёт по префиксу (/manager/) — подставлять
       // BaseUrl нельзя, иначе превью уходит на /manager/files/... → 404.
+      // Аргумент приводим к строке: value/filename в некоторых формах приходят
+      // не строкой — иначе startsWith падает и РЕНДЕР ВСЕГО ПОЛЯ ломается.
       file_url(p){
+        p=String(p==null?'':p)
         if(p.startsWith('/files/') && String(window.BackendBase||'').indexOf('/manager')!==-1)
           return p
         return (BaseUrl+p).replace('//','/')
