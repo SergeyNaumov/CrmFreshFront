@@ -26,6 +26,16 @@ cd "$ROOT"
 echo "▶ сборка: npm run build_svcms (vite build --mode svcms)"
 npm run build_svcms
 
+# СТРАХОВКА ОТ НЕ ТОГО BASE: админка svcms-manager живёт по префиксу
+# /manager/ (vite mode svcms). Сборка mode default/trade (base / или
+# /CrmFresh/) заливает index.html со ссылками в корень (/js/index.js) —
+# /manager ломается. Такой инцидент уже случался: проверяем dist ДО деплоя.
+if grep -qE '(src|href)="/(js|css)/' dist/index.html; then
+    echo "❌ dist/index.html содержит ссылки в корень (/js/, /css/) — собрано" >&2
+    echo "   не с тем base. Нужен mode svcms (base /manager/). Деплой прерван." >&2
+    exit 1
+fi
+
 # env-специфичный configure.js именно для svcmsmanager (в public/ он dev-овый)
 CONF="$SCRIPT_DIR/config/svcmsmanager/configure.js"
 if [ ! -f "$CONF" ]; then
@@ -38,19 +48,36 @@ DST="$SSH_USER@$SSH_HOST:$REMOTE_DIR/"
 RSYNC=(rsync -rltvz --no-perms --no-owner --no-group --human-readable
        -e "ssh -p $SSH_PORT")
 
+# Прод периодически рвёт новые SSH-подключения (rate-limit) — шаги повторяем.
+RETRIES="${RETRIES:-5}"
+RETRY_DELAY="${RETRY_DELAY:-30}"
+run_step() {
+  local desc="$1"; shift
+  local attempt=1
+  while true; do
+    echo "▶ $desc (попытка $attempt/$RETRIES)"
+    if "$@"; then return 0; fi
+    if [ "$attempt" -ge "$RETRIES" ]; then
+      echo "❌ $desc: не удалось после $RETRIES попыток" >&2
+      return 1
+    fi
+    attempt=$((attempt + 1))
+    sleep "$RETRY_DELAY"
+  done
+}
+
 # Заливаем ВЕСЬ dist/ (js/css/fonts/index.html/dist-ассеты/configure.js),
 # не удаляя серверные файлы. `files` не трогаем: на сервере это симлинк
 # на ../backend/files. `/favicon*` (только корень) не трогаем: favicon на проде
 # живёт отдельно от билда (build/favicon), деплой его НЕ перезаписывает.
 # Вложенные favicon* (page_constructor/template/images/favicon.svg) обновляем.
 echo "▶ rsync dist/ -> $DST (без --delete, исключая files, /favicon*)"
-"${RSYNC[@]}" --exclude='files' --exclude='/favicon*' dist/ "$DST"
+run_step "rsync dist/" "${RSYNC[@]}" --exclude='files' --exclude='/favicon*' dist/ "$DST"
 
 # Favicon: кладём только если на сервере его ещё нет (--ignore-existing).
 # Загруженный вручную favicon на проде не перезатирается никогда.
 if [ -d "$SCRIPT_DIR/favicon" ]; then
-    echo "▶ favicon -> $DST (--ignore-existing: не перезаписывать существующий)"
-    "${RSYNC[@]}" --ignore-existing "$SCRIPT_DIR/favicon/" "$DST"
+    run_step "favicon (--ignore-existing)" "${RSYNC[@]}" --ignore-existing "$SCRIPT_DIR/favicon/" "$DST"
 fi
 
 echo "✅ Деплой svcms-manager: $REMOTE_DIR"

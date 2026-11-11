@@ -14,9 +14,27 @@ npm run build_svcms  # mode svcms,   base /manager/
 
 Деплой — **только скриптами** `build/`: `./build/svcms.admin` (админка, mode default)
 или `./build/svcms.manager` (svcms-manager, mode svcms) — в зависимости от того, что
-билдим. Подробности — [agent-doc/build-and-tenant.md](agent-doc/build-and-tenant.md).
+билдим. Оба сами собирают нужный mode и **страхуют от не того base** (ссылки
+`/js/` в корень = сломанный /manager — инцидент уже был). Подробности —
+[agent-doc/build-and-tenant.md](agent-doc/build-and-tenant.md).
 
 Tenant = `mode` in `vite.config.js`; runtime config = `public/configure.js`.
+
+## Подводные камни (дорогие инциденты)
+
+- **Никогда не деплоить svcms-manager сборкой `npm run build`** (mode default,
+  base `/`): `index.html` получает ссылки `/js/index.js` и `/manager` ломается.
+  Только `build/svcms.manager` (или `build_svcms` + ручная проверка base).
+- **`public/files` — симлинк** на файловое хранилище бэкенда (для локального
+  dev). Vite копирует его содержимое в `dist/files`; rsync на прод **должен
+  исключать `files`** (в `build/svcms.manager` исключение есть) — иначе
+  симлинк `{REMOTE}/files` на проде перебивается реальной папкой.
+- **Файлы сайта (`./files/...`) отдаются из корня домена**, а не под префиксом
+  админки: превью/ссылки строить через корень (`/files/...`), не `BaseUrl+...`
+  (см. `file_url` в `src/components/fields/file.vue`). Иначе `/manager/files/…` → 404.
+- **Хелпер с аргументом — только в `methods:`, не в `computed`**: вызов
+  `this.helper(arg)` по computed получает инстанс компонента и рендер всего
+  поля падает (поле молча исчезает из формы; инцидент с полем файла ds_clients).
 
 ## Agent rules
 
