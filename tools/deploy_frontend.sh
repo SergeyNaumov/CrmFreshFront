@@ -23,7 +23,26 @@ RETRY_DELAY="${RETRY_DELAY:-30}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-[ -d dist ] || { echo "нет dist/ — сначала npm run build" >&2; exit 1; }
+# Сборка с ПРАВИЛЬНЫМ base: админка живёт по префиксу /manager/ (vite mode
+# svcms). Обычный `npm run build` (mode default, base /) заливает админку
+# ссылками вида /js/index.js — админка ломается (такое уже случалось).
+# Здесь сборка с нужным mode + страховочная проверка base в dist/index.html.
+if [ "${SKIP_BUILD:-0}" != "1" ]; then
+  echo "▶ сборка: npm run build_svcms (base /manager/)"
+  npm run build_svcms
+fi
+
+if grep -qE '(src|href)="/(js|css|assets)/' dist/index.html; then
+  echo "❌ В dist/index.html ссылки в корень (/js/, /css/…) — собрано не с тем base." >&2
+  echo "   Нужен: npm run build_svcms (base /manager/). Деплой прерван." >&2
+  exit 1
+fi
+grep -q '"/manager/' dist/index.html || grep -q '/manager/js/' dist/index.html || {
+  echo "⚠ в dist/index.html не найден base /manager/ — проверьте сборку вручную." >&2
+  exit 1
+}
+
+[ -d dist ] || { echo "нет dist/ — сначала npm run build_svcms" >&2; exit 1; }
 [ -d build/favicon ] || { echo "нет build/favicon/" >&2; exit 1; }
 
 run_step() {
